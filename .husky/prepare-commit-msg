@@ -9,13 +9,13 @@ if [ "$BRANCH_NAME" = "main" ] || [ "$BRANCH_NAME" = "dev" ] || [ "$BRANCH_NAME"
   exit 0
 fi
 
-# echo "feat/etc-S11P21A701-153-common-templates" | grep -qE '^[a-z]+\/[a-z]+-S11P21A701-.+-.+$'
+echo "feat/etc-S11P21A701-153-common-templates" | grep -qE '^[a-z]+-S11P21A701-.+-.+$'
 
 # 정규 표현식을 사용하여 브랜치의 형식이 "커밋유형/분야-S11P21A701-이슈번호-이슈요약" 형식을 따르는지 확인
-# if ! echo "$BRANCH_NAME" | grep -qE '^[a-z]+\/[a-z]+-S11P21A701-.+-.+$'; then
-#   echo "커밋유형/분야-S11P21A701-숫자-이슈요약 형식의 브랜치명을 사용해주세요."
-#   exit 1
-# fi
+if ! echo "$BRANCH_NAME" | grep -qE '^[a-z]+-S11P21A701-.+-.+$'; then
+  echo "커밋유형/분야-S11P21A701-숫자-이슈요약 형식의 브랜치명을 사용해주세요."
+  exit 1
+fi
 
 echo $BRANCH_NAME
 
