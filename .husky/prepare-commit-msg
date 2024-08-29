@@ -8,14 +8,6 @@ if [ "$BRANCH_NAME" = "main" ] || [ "$BRANCH_NAME" = "dev" ] || [ "$BRANCH_NAME"
   exit 0
 fi
 
-echo "feat/etc-S11P21A701-153-common-templates" | grep -qE '^[a-z]+-S11P21A701-.+-.+$'
-
-# 정규 표현식을 사용하여 브랜치의 형식이 "커밋유형/분야-S11P21A701-이슈번호-이슈요약" 형식을 따르는지 확인
-# if ! echo "$BRANCH_NAME" | grep -qE '^[a-z]+-S11P21A701-.+-.+$'; then
-#   echo "커밋유형/분야-S11P21A701-숫자-이슈요약 형식의 브랜치명을 사용해주세요."
-#   exit 1
-# fi
-
 if ! echo "$BRANCH_NAME" | grep -qE '^[a-z]+\/[a-z]+-S11P21A701-[0-9]+-[a-z0-9-]+$'; then
   echo "커밋유형/분야-S11P21A701-숫자-이슈요약 형식의 브랜치명을 사용해주세요."
   exit 1
@@ -32,7 +24,16 @@ JIRA_ID="${BRANCH_PARTS[1]}-${BRANCH_PARTS[2]}"
 echo "추출된 JIRA ID: $JIRA_ID"
 
 # 커밋 메시지에 JIRA 이슈 번호가 없는 경우에만 본문에 추가
+# if ! grep -q "$JIRA_ID" "$1"; then
+#   # 커밋 메시지 본문이 시작되는 부분에 JIRA 이슈 번호 추가
+#   sed -i.bak -e "\$a\ \nJira: $JIRA_ID" "$1"
+# fi
+
 if ! grep -q "$JIRA_ID" "$1"; then
-  # 커밋 메시지 본문이 시작되는 부분에 JIRA 이슈 번호 추가
-  sed -i.bak -e "\$a\ \nJira: $JIRA_ID" "$1"
+  # 임시 파일에 새로운 메시지를 작성
+  {
+    cat "$1"  # 기존 커밋 메시지 내용 모두 추가
+    echo ""   # 개행 추가
+    echo "Jira: $JIRA_ID"  # JIRA ID 추가
+  } > "$1".tmp && mv "$1".tmp "$1"  # 임시 파일을 원래 파일로 교체
 fi
