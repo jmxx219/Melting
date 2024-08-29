@@ -5,15 +5,17 @@ BRANCH_NAME=$(git symbolic-ref --short HEAD)
 BRANCH_NAME="${BRANCH_NAME##*/}"
 
 # master 및 develop 브랜치에서는 작업을 스킵
-if [ "$BRANCH_NAME" = "main" ] || [ "$BRANCH_NAME" = "dev"  || [ "$BRANCH_NAME" = "fe-dev"   || [ "$BRANCH_NAME" = "be-dev"  ]; then
+if [ "$BRANCH_NAME" = "main" ] || [ "$BRANCH_NAME" = "dev" ] || [ "$BRANCH_NAME" = "fe-dev" ] || [ "$BRANCH_NAME" = "be-dev"  ]; then
   exit 0
 fi
 
-# 정규 표현식을 사용하여 브랜치의 형식이 "커밋유형/분야-S11P21A701-숫자-이슈요약" 형식을 따르는지 확인
-if ! echo "$BRANCH_NAME" | grep -qE '^[a-zA-Z]+\/[a-z]+-S11P21A701-[0-9]+-[a-zA-Z0-9_-]+$'; then
-  echo "커밋유형/분야-S11P21A701-숫자-이슈요약 형식의 브랜치명을 사용해주세요."
-  exit 1
-fi
+# echo "feat/etc-S11P21A701-153-common-templates" | grep -qE '^[a-z]+\/[a-z]+-S11P21A701-.+-.+$'
+
+# 정규 표현식을 사용하여 브랜치의 형식이 "커밋유형/분야-S11P21A701-이슈번호-이슈요약" 형식을 따르는지 확인
+# if ! echo "$BRANCH_NAME" | grep -qE '^[a-z]+\/[a-z]+-S11P21A701-.+-.+$'; then
+#   echo "커밋유형/분야-S11P21A701-숫자-이슈요약 형식의 브랜치명을 사용해주세요."
+#   exit 1
+# fi
 
 # 브랜치 이름을 "-" 기준으로 분할하여 배열로 저장
 IFS='-' read -ra BRANCH_PARTS <<< "$BRANCH_NAME"
@@ -21,17 +23,7 @@ IFS='-' read -ra BRANCH_PARTS <<< "$BRANCH_NAME"
 # JIRA 이슈 번호 추출 (두 번째와 세 번째 부분을 조합)
 JIRA_ID="${BRANCH_PARTS[1]}-${BRANCH_PARTS[2]}"
 
-# 커밋 메시지에 JIRA 이슈 번호가 없는 경우에만 추가
-# ex. feat: login S11P21A701-58
-if ! grep -q "$JIRA_ID" "$1"; then
-  sed -i.bak -e "\$s/$/ $JIRA_ID/" "$1"
-fi
-
-# 커밋 메시지에 JIRA 이슈 번호가 없는 경우에만 추가 
-# ex. [S11P21A701-58] feat: login
-if ! grep -q "$JIRA_ID" "$1"; then
-  sed -i.bak -e "1s/^/[$JIRA_ID] /" "$1"
-fi
+echo JIRA_ID
 
 # 커밋 메시지에 JIRA 이슈 번호가 없는 경우에만 본문에 추가
 if ! grep -q "$JIRA_ID" "$1"; then
