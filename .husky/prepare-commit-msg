@@ -23,12 +23,6 @@ JIRA_ID="${BRANCH_PARTS[1]}-${BRANCH_PARTS[2]}"
 
 echo "추출된 JIRA ID: $JIRA_ID"
 
-# 커밋 메시지에 JIRA 이슈 번호가 없는 경우에만 본문에 추가
-# if ! grep -q "$JIRA_ID" "$1"; then
-#   # 커밋 메시지 본문이 시작되는 부분에 JIRA 이슈 번호 추가
-#   sed -i.bak -e "\$a\ \nJira: $JIRA_ID" "$1"
-# fi
-
 if ! grep -q "$JIRA_ID" "$1"; then
   # 임시 파일에 새로운 메시지를 작성
   {
