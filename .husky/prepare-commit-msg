@@ -17,6 +17,8 @@ fi
 #   exit 1
 # fi
 
+echo BRANCH_NAME
+
 # 브랜치 이름을 "-" 기준으로 분할하여 배열로 저장
 IFS='-' read -ra BRANCH_PARTS <<< "$BRANCH_NAME"
 
