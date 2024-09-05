@@ -1,0 +1,25 @@
+spring:
+  application:
+    name: melting
+  datasource:
+    username: sa
+    password:
+    url: jdbc:h2:mem:testdb;MODE=PostgreSQL
+  jpa:
+    hibernate:
+      ddl-auto: create
+    properties:
+      hibernate:
+        format_sql: true
+    show-sql: true
+    defer-datasource-initialization: true
+  mvc:
+    problem details:
+      enabled: true
+
+logging:
+  level:
+    com:
+      dayangsung:
+        melting: debug
+    web: debug

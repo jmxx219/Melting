@@ -1,0 +1,15 @@
+spring:
+  application:
+    name: melting
+  datasource:
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+
+logging:
+  level:
+    com:
+      dayangsung:
+        melting: debug
+    web: debug
