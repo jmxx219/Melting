@@ -1,6 +1,7 @@
 package com.dayangsung.melting.domain.member.entity;
 
 import com.dayangsung.melting.domain.auth.enums.ProviderType;
+import com.dayangsung.melting.domain.member.enums.Gender;
 import com.dayangsung.melting.global.entity.BaseEntity;
 
 import jakarta.persistence.Column;
@@ -27,6 +28,9 @@ public class Member extends BaseEntity {
 
 	@Column(unique = true)
 	private String email;
+
+	@Enumerated(EnumType.STRING)
+	private Gender gender;
 
 	private String profileImage;
 
