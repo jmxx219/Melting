@@ -15,9 +15,9 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class CustomOAuth2User implements OAuth2User {
 
+	private final String email;
 	@Getter
 	private final ProviderType provider;
-	private final String email;
 
 	@Override
 	public Map<String, Object> getAttributes() {
