@@ -10,6 +10,7 @@ import com.dayangsung.melting.domain.auth.dto.CustomOAuth2User;
 import com.dayangsung.melting.domain.auth.dto.response.GoogleResponse;
 import com.dayangsung.melting.domain.auth.dto.response.KakaoResponse;
 import com.dayangsung.melting.domain.auth.dto.response.OAuth2Response;
+import com.dayangsung.melting.domain.auth.enums.ProviderType;
 import com.dayangsung.melting.domain.member.entity.Member;
 import com.dayangsung.melting.domain.member.repository.MemberRepository;
 
@@ -30,9 +31,9 @@ public class AuthService extends DefaultOAuth2UserService {
 		String registrationId = userRequest.getClientRegistration().getRegistrationId();
 
 		OAuth2Response oAuth2Response;
-		if (registrationId.equals("kakao")) {
+		if (registrationId.equals(ProviderType.KAKAO.type())) {
 			oAuth2Response = new KakaoResponse(oAuth2User.getAttributes());
-		} else if (registrationId.equals("google")) {
+		} else if (registrationId.equals(ProviderType.GOOGLE.type())) {
 			oAuth2Response = new GoogleResponse(oAuth2User.getAttributes());
 		} else {
 			// TODO: 예외 처리
