@@ -42,10 +42,8 @@ public class Member extends BaseEntity {
 	private boolean isDeleted;
 
 	@Builder
-	public Member(String email, String profileImage, String nickname, ProviderType provider) {
+	public Member(String email, ProviderType provider) {
 		this.email = email;
-		this.profileImage = profileImage;
-		this.nickname = nickname;
 		this.provider = provider;
 		this.isDeleted = false;
 	}
