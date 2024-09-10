@@ -95,8 +95,7 @@ public class JwtUtil {
 			.refreshToken(refreshToken)
 			.email(email)
 			.build());
-
-		System.out.println(refreshToken);
+		
 		return refreshToken;
 	}
 
