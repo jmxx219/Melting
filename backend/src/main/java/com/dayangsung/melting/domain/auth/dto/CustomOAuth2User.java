@@ -10,17 +10,14 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 import com.dayangsung.melting.domain.auth.enums.ProviderType;
 
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
+@RequiredArgsConstructor
 public class CustomOAuth2User implements OAuth2User {
 
 	@Getter
 	private final ProviderType provider;
 	private final String email;
-
-	public CustomOAuth2User(String email, ProviderType provider) {
-		this.email = email;
-		this.provider = provider;
-	}
 
 	@Override
 	public Map<String, Object> getAttributes() {
