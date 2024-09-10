@@ -127,3 +127,6 @@ key.js
 
 # End of https://www.toptal.com/developers/gitignore/api/windows,eclipse,java
 .DS_Store
+
+# application-secret.yml
+application-secret.yml
