@@ -45,11 +45,11 @@ public class MemberController {
 	}
 
 	@PatchMapping("/init")
-	public ApiResponse<MemberResponseDto> init(
+	public ApiResponse<MemberResponseDto> initMemberInfo(
 		@RequestBody MemberInitRequestDto memberInitRequestDto,
 		@AuthenticationPrincipal CustomOAuth2User customOAuth2User) {
 		MemberResponseDto memberResponseDto =
-			memberService.init(memberInitRequestDto.profileImageFileName(),
+			memberService.initMemberInfo(memberInitRequestDto.profileImageFileName(),
 				memberInitRequestDto.nickName(),
 				Gender.valueOf(memberInitRequestDto.gender()),
 				customOAuth2User);
