@@ -1,13 +1,14 @@
+// src/components/auth/LoginForm.tsx
 export default function LoginForm() {
   return (
-    <div className="flex flex-col w-full max-w-md">
-      <button className="flex flex-row items-center w-full py-1 px-2 font-bold text-black bg-[#FEE500] rounded-full">
-        <img src="/images/logo/kakao_logo.png" alt="" width={18} className="m-3" />
-        <p className="flex ml-16 items-center text-center">카카오 로그인</p>
+    <div className="flex flex-col space-y-4 w-[350px]">
+      <button className="w-full py-3 flex items-center justify-center relative bg-[#FEE500] text-black font-bold rounded-full transition-colors h-14">
+        <img src="/images/logo/kakao_logo.png" alt="카카오 로고" className="absolute left-4 w-4 h-4" />
+        <p className="ml-6">카카오 로그인</p>
       </button>
-      <button className="flex flex-row items-center w-full py-1 px-2 font-bold text-black bg-[#EEEEEE] rounded-full">
-        <img src="/images/logo/google_logo.png" alt="" width={40} className="" />
-        <p className="flex ml-16 items-center text-center">구글 로그인</p>
+      <button className="w-full py-3 flex items-center justify-center relative bg-[#EEEEEE] text-black font-bold rounded-full transition-colors h-14">
+        <img src="/images/logo/google_logo.png" alt="구글 로고" className="absolute left-4 w-4 h-4" />
+        <p className="ml-6">구글 로그인</p>
       </button>
       <button type="button" className="text-sm text-center">
         로그인 없이 진행할게요
