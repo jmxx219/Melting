@@ -24,7 +24,7 @@ public class MemberService {
 		return memberRepository.existsByNickname(nickname);
 	}
 
-	public MemberResponseDto init(String profileImage, String nickname, Gender gender, CustomOAuth2User customOAuth2User) {
+	public MemberResponseDto initMemberInfo(String profileImage, String nickname, Gender gender, CustomOAuth2User customOAuth2User) {
 		String preSignedUrl = fileService.getImageSignedUrl(profileImage);
 
 		Member member = memberRepository.findByEmail(customOAuth2User.getName())
