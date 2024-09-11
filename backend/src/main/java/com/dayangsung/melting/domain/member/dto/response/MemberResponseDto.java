@@ -8,13 +8,15 @@ import lombok.Builder;
 
 @Builder
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-public record MemberInitResponseDto (
-	String nickname
+public record MemberResponseDto(
+	String nickname,
+	String profileImageUrl
 ) {
 
-	public static MemberInitResponseDto of(Member member) {
-		return MemberInitResponseDto.builder()
+	public static MemberResponseDto of(Member member) {
+		return MemberResponseDto.builder()
 			.nickname(member.getNickname())
+			.profileImageUrl(member.getProfileImage())
 			.build();
 	}
 }

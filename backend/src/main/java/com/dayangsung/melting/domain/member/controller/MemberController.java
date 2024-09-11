@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.dayangsung.melting.domain.auth.dto.CustomOAuth2User;
 import com.dayangsung.melting.domain.member.dto.request.MemberInitRequestDto;
-import com.dayangsung.melting.domain.member.dto.response.MemberInitResponseDto;
+import com.dayangsung.melting.domain.member.dto.response.MemberResponseDto;
 import com.dayangsung.melting.domain.member.enums.Gender;
 import com.dayangsung.melting.domain.member.service.MemberService;
 import com.dayangsung.melting.global.common.response.ApiResponse;
@@ -28,6 +28,13 @@ public class MemberController {
 
 	private final MemberService memberService;
 
+	@GetMapping
+	public ApiResponse<MemberResponseDto> getMemberInfo(
+		@AuthenticationPrincipal CustomOAuth2User customOAuth2User) {
+		MemberResponseDto memberResponseDto = memberService.getMemberInfo(customOAuth2User);
+		return ApiResponse.ok(memberResponseDto);
+	}
+
 	@GetMapping("/nickname-check")
 	public ApiResponse<?> nicknameCheck(@RequestParam String nickname) {
 		if (!memberService.nicknameCheck(nickname)) {
@@ -38,10 +45,10 @@ public class MemberController {
 	}
 
 	@PatchMapping("/init")
-	public ApiResponse<MemberInitResponseDto> init(
+	public ApiResponse<MemberResponseDto> init(
 		@RequestBody MemberInitRequestDto memberInitRequestDto,
 		@AuthenticationPrincipal CustomOAuth2User customOAuth2User) {
-		MemberInitResponseDto memberResponseDto =
+		MemberResponseDto memberResponseDto =
 			memberService.init(memberInitRequestDto.profileImageFileName(),
 				memberInitRequestDto.nickName(),
 				Gender.valueOf(memberInitRequestDto.gender()),
