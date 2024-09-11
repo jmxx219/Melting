@@ -53,7 +53,7 @@ public class MemberController {
 			memberService.initMemberInfo(memberInitRequestDto.profileImageFileName(),
 				memberInitRequestDto.nickName(),
 				Gender.valueOf(memberInitRequestDto.gender()),
-				customOAuth2User);
+				customOAuth2User.getName());
 		return ApiResponse.ok(memberResponseDto);
 	}
 
