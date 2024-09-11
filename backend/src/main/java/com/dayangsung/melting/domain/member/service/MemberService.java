@@ -40,4 +40,13 @@ public class MemberService {
 			.orElseThrow(RuntimeException::new);
 		return MemberResponseDto.of(member);
 	}
+
+	public MemberResponseDto updateMemberInfo(String nickname, String profileImageFileName, String email) {
+		Member member = memberRepository.findByEmail(email).orElseThrow(RuntimeException::new);
+		String imageSignedUrl = fileService.getImageSignedUrl(profileImageFileName);
+		member.updateMember(imageSignedUrl, nickname);
+		memberRepository.save(member);
+
+		return MemberResponseDto.of(member);
+	}
 }

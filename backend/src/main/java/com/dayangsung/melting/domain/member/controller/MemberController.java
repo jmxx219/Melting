@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.dayangsung.melting.domain.auth.dto.CustomOAuth2User;
 import com.dayangsung.melting.domain.member.dto.request.MemberInitRequestDto;
+import com.dayangsung.melting.domain.member.dto.request.MemberUpdateRequestDto;
 import com.dayangsung.melting.domain.member.dto.response.MemberResponseDto;
 import com.dayangsung.melting.domain.member.enums.Gender;
 import com.dayangsung.melting.domain.member.service.MemberService;
@@ -53,6 +54,17 @@ public class MemberController {
 				memberInitRequestDto.nickName(),
 				Gender.valueOf(memberInitRequestDto.gender()),
 				customOAuth2User);
+		return ApiResponse.ok(memberResponseDto);
+	}
+
+	@PatchMapping
+	public ApiResponse<MemberResponseDto> updateMemberInfo(
+		@RequestBody MemberUpdateRequestDto memberUpdateRequestDto,
+		@AuthenticationPrincipal CustomOAuth2User customOAuth2User) {
+		MemberResponseDto memberResponseDto = memberService.updateMemberInfo(
+			memberUpdateRequestDto.nickName(),
+			memberUpdateRequestDto.profileImageFileName(),
+			customOAuth2User.getName());
 		return ApiResponse.ok(memberResponseDto);
 	}
 }
