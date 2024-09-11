@@ -14,7 +14,10 @@ import com.dayangsung.melting.domain.auth.dto.RedisToken;
 import com.dayangsung.melting.domain.auth.repository.RedisRepository;
 import com.dayangsung.melting.domain.auth.service.AuthService;
 
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.security.SignatureException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
@@ -23,7 +26,7 @@ import lombok.extern.slf4j.Slf4j;
 @Component
 public class JwtUtil {
 
-	private static final long ACCESS_TOKEN_EXPIRE_TIME = 60 * 30;
+	private static final long ACCESS_TOKEN_EXPIRE_TIME = 60 * 30 * 1000;
 	private final SecretKey secretKey;
 	private final RedisRepository redisRepository;
 	private final AuthService authService;
@@ -50,13 +53,18 @@ public class JwtUtil {
 	}
 
 	public Boolean isExpired(String token) {
-		return Jwts.parser()
-			.verifyWith(secretKey)
-			.build()
-			.parseSignedClaims(token)
-			.getPayload()
-			.getExpiration()
-			.before(new Date());
+		try {
+			Claims claims = Jwts.parser()
+				.verifyWith(secretKey)
+				.build()
+				.parseSignedClaims(token)
+				.getPayload();
+
+			Date expiration = claims.getExpiration();
+			return expiration.before(new Date());
+		} catch (ExpiredJwtException e) {
+			return true;
+		}
 	}
 
 	public String createAccessToken(String email) {
@@ -72,17 +80,18 @@ public class JwtUtil {
 		RedisToken redisToken = redisRepository.findRedisTokenByRefreshToken(refreshToken);
 
 		if (redisToken == null) {
-			cookieUtil.deleteJwtCookies(request);
+			cookieUtil.deleteJwtCookies(request, response);
 			return null;
 		}
 
 		String accessToken = createAccessToken(redisToken.getEmail());
+		redisRepository.deleteRedisTokenByRefreshToken(redisToken.getRefreshToken());
 		redisRepository.save(RedisToken.builder()
 			.email(redisToken.getEmail())
 			.refreshToken(createRefreshToken(redisToken.getEmail()))
 			.build());
-		cookieUtil.updateCookie(request, response, "access_token", accessToken);
-		cookieUtil.updateCookie(request, response, "refresh_token", refreshToken);
+		response.addCookie(cookieUtil.createCookie("access_token", accessToken));
+		response.addCookie(cookieUtil.createCookie("refresh_token", refreshToken));
 
 		return accessToken;
 	}
@@ -98,16 +107,17 @@ public class JwtUtil {
 		return refreshToken;
 	}
 
-	public boolean isValidate(String token) {
+	public boolean signatureValidate(String token) {
 		try {
 			Jwts.parser()
 				.verifyWith(secretKey)
 				.build()
 				.parseSignedClaims(token);
-
 			return true;
-		} catch (Exception e) {
+		} catch (SignatureException e) {
 			return false;
+		} catch (Exception e) {
+			return true;
 		}
 	}
 }
