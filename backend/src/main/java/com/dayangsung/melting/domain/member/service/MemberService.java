@@ -8,7 +8,10 @@ import com.dayangsung.melting.domain.member.entity.Member;
 import com.dayangsung.melting.domain.member.enums.Gender;
 import com.dayangsung.melting.domain.member.repository.MemberRepository;
 import com.dayangsung.melting.global.common.service.FileService;
+import com.dayangsung.melting.global.util.CookieUtil;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -17,6 +20,7 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 public class MemberService {
 
+	private final CookieUtil cookieUtil;
 	private final FileService fileService;
 	private final MemberRepository memberRepository;
 
@@ -47,5 +51,9 @@ public class MemberService {
 		memberRepository.save(member);
 
 		return MemberResponseDto.of(member);
+	}
+
+	public void logout(HttpServletRequest request, HttpServletResponse response) {
+		cookieUtil.deleteJwtCookies(request, response);
 	}
 }
