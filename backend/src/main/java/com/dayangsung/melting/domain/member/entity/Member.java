@@ -47,4 +47,10 @@ public class Member extends BaseEntity {
 		this.provider = provider;
 		this.isDeleted = false;
 	}
+
+	public void initMember(Gender gender, String profileImage, String nickname) {
+		this.gender = gender;
+		this.profileImage = profileImage;
+		this.nickname = nickname;
+	}
 }

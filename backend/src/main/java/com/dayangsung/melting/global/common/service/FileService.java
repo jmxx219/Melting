@@ -3,10 +3,10 @@ package com.dayangsung.melting.global.common.service;
 import static com.dayangsung.melting.global.common.response.enums.ErrorMessage.*;
 
 import java.time.Duration;
-import java.util.Map;
 import java.util.UUID;
 import java.util.regex.Pattern;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
@@ -20,8 +20,14 @@ import software.amazon.awssdk.services.s3.presigner.model.PutObjectPresignReques
 public class FileService {
 
 	private final S3Presigner presigner;
+	@Value("${spring.profiles.active}")
+	private String activeProfile;
+	@Value("${cloud.aws.bucket.image}")
+	private String imageBucketName;
+	@Value("${cloud.aws.bucket.path}")
+	private String imageBucketPath;
 
-	public Map<String, String> getImageSignedUrl(String activeProfile, String imageBucketName, String imageBucketPath, String fileName) {
+	public String getImageSignedUrl(String fileName) {
 
 		val regExp = "^(jpeg|png|gif|bmp)$";
 		val keyName = "/" + activeProfile + imageBucketPath + "%s-%s".formatted(UUID.randomUUID().toString(), fileName);
@@ -42,8 +48,7 @@ public class FileService {
 			.signatureDuration(Duration.ofMinutes(10))
 			.putObjectRequest(objectRequest)
 			.build();
-		val presignedRequest = presigner.presignPutObject(presignRequest);
-		val signedUrl = presignedRequest.url().toString();
-		return Map.of("signedUrl", signedUrl, "filename", keyName);
+		val preSignedRequest = presigner.presignPutObject(presignRequest);
+		return preSignedRequest.url().toString();
 	}
 }

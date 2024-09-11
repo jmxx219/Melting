@@ -1,5 +1,8 @@
 package com.dayangsung.melting.domain.member.enums;
 
+import lombok.Getter;
+
+@Getter
 public enum Gender {
 	MALE("male"),
 	FEMALE("female");
@@ -10,7 +13,4 @@ public enum Gender {
 		this.gender = gender;
 	}
 
-	public String getGender() {
-		return gender;
-	}
 }
