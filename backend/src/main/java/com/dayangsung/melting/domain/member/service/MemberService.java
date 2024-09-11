@@ -24,12 +24,11 @@ public class MemberService {
 		return memberRepository.existsByNickname(nickname);
 	}
 
-	public MemberResponseDto initMemberInfo(String profileImage, String nickname, Gender gender, CustomOAuth2User customOAuth2User) {
-		String preSignedUrl = fileService.getImageSignedUrl(profileImage);
-
-		Member member = memberRepository.findByEmail(customOAuth2User.getName())
+	public MemberResponseDto initMemberInfo(String profileImage, String nickname, Gender gender, String email) {
+		String imageSignedUrl = fileService.getImageSignedUrl(profileImage);
+		Member member = memberRepository.findByEmail(email)
 			.orElseThrow(RuntimeException::new); // TODO : 예외 처리
-		member.initMember(gender, preSignedUrl, nickname);
+		member.initMember(gender, imageSignedUrl, nickname);
 		memberRepository.save(member);
 
 		return MemberResponseDto.of(member);
