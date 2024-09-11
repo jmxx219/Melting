@@ -18,6 +18,8 @@ import com.dayangsung.melting.domain.member.enums.Gender;
 import com.dayangsung.melting.domain.member.service.MemberService;
 import com.dayangsung.melting.global.common.response.ApiResponse;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -37,7 +39,7 @@ public class MemberController {
 	}
 
 	@GetMapping("/nickname-check")
-	public ApiResponse<?> nicknameCheck(@RequestParam String nickname) {
+	public ApiResponse<Void> nicknameCheck(@RequestParam String nickname) {
 		if (!memberService.nicknameCheck(nickname)) {
 			return ApiResponse.ok(null);
 		} else {
@@ -66,5 +68,11 @@ public class MemberController {
 			memberUpdateRequestDto.profileImageFileName(),
 			customOAuth2User.getName());
 		return ApiResponse.ok(memberResponseDto);
+	}
+
+	@GetMapping("/logout")
+	public ApiResponse<Void> logout(HttpServletRequest request, HttpServletResponse response) {
+		memberService.logout(request, response);
+		return ApiResponse.ok(null);
 	}
 }
