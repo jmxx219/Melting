@@ -20,6 +20,10 @@ public class MemberService {
 	private final FileService fileService;
 	private final MemberRepository memberRepository;
 
+	public Boolean nicknameCheck(String nickname) {
+		return memberRepository.existsByNickname(nickname);
+	}
+
 	public MemberInitResponseDto init(String profileImage, String nickname, Gender gender, CustomOAuth2User customOAuth2User) {
 		String preSignedUrl = fileService.getImageSignedUrl(profileImage);
 
