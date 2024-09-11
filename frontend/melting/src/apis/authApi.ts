@@ -1,10 +1,4 @@
-interface LoginResponse {
-  token: string
-  user: {
-    id: string
-    email: string
-  }
-}
+import { LoginResponse } from '@/types/auth'
 
 // 소셜 로그인으로 구현
 export const login = async (email: string, password: string): Promise<LoginResponse> => {
@@ -13,7 +7,7 @@ export const login = async (email: string, password: string): Promise<LoginRespo
   return new Promise((resolve) => {
     setTimeout(() => {
       resolve({
-        token: 'dummy_token',
+        accessToken: 'dummy_token',
         user: {
           id: '1',
           email: email,
