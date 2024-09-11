@@ -3,7 +3,7 @@ package com.dayangsung.melting.domain.member.service;
 import org.springframework.stereotype.Service;
 
 import com.dayangsung.melting.domain.auth.dto.CustomOAuth2User;
-import com.dayangsung.melting.domain.member.dto.response.MemberInitResponseDto;
+import com.dayangsung.melting.domain.member.dto.response.MemberResponseDto;
 import com.dayangsung.melting.domain.member.entity.Member;
 import com.dayangsung.melting.domain.member.enums.Gender;
 import com.dayangsung.melting.domain.member.repository.MemberRepository;
@@ -24,7 +24,7 @@ public class MemberService {
 		return memberRepository.existsByNickname(nickname);
 	}
 
-	public MemberInitResponseDto init(String profileImage, String nickname, Gender gender, CustomOAuth2User customOAuth2User) {
+	public MemberResponseDto init(String profileImage, String nickname, Gender gender, CustomOAuth2User customOAuth2User) {
 		String preSignedUrl = fileService.getImageSignedUrl(profileImage);
 
 		Member member = memberRepository.findByEmail(customOAuth2User.getName())
@@ -32,6 +32,12 @@ public class MemberService {
 		member.initMember(gender, preSignedUrl, nickname);
 		memberRepository.save(member);
 
-		return MemberInitResponseDto.of(member);
+		return MemberResponseDto.of(member);
+	}
+
+	public MemberResponseDto getMemberInfo(CustomOAuth2User customOAuth2User) {
+		Member member = memberRepository.findByEmail(customOAuth2User.getName())
+			.orElseThrow(RuntimeException::new);
+		return MemberResponseDto.of(member);
 	}
 }
