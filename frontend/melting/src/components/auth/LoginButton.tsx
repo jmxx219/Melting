@@ -20,7 +20,7 @@ export default function LoginForm() {
     // 비회원 상태 저장, 비회원 권한 부여 등을 처리
     // 로컬스토리지나 상태 관리 라이브러리로 권한 관리 가능
     localStorage.setItem('role', 'guest')
-    navigate('/main') // 메인 화면으로 이동
+    navigate('/') // 메인 화면으로 이동
   }
 
   return (
