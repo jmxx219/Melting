@@ -73,7 +73,6 @@ public class JwtUtil {
 
 		if (redisToken == null) {
 			cookieUtil.deleteJwtCookies(request);
-			authService.logout();
 			return null;
 		}
 
