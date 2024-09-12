@@ -24,8 +24,8 @@ public class MemberService {
 	private final FileService fileService;
 	private final MemberRepository memberRepository;
 
-	public Boolean nicknameCheck(String nickname) {
-		return memberRepository.existsByNickname(nickname);
+	public Boolean validateNickname(String nickname) {
+		return !memberRepository.existsByNickname(nickname);
 	}
 
 	public MemberResponseDto initMemberInfo(String profileImage, String nickname, Gender gender, Long memberId) {
