@@ -6,10 +6,10 @@ import com.dayangsung.melting.domain.auth.enums.ProviderType;
 
 public class GoogleResponse implements OAuth2Response {
 
-	private final Map<String, Object> attribute;
+	private final String email;
 
 	public GoogleResponse(Map<String, Object> attribute) {
-		this.attribute = attribute;
+		this.email = attribute.get("email").toString();
 	}
 
 	@Override
@@ -19,16 +19,6 @@ public class GoogleResponse implements OAuth2Response {
 
 	@Override
 	public String getEmail() {
-		return attribute.get("email").toString();
-	}
-
-	@Override
-	public String getProfileImage() {
-		return attribute.get("picture").toString();
-	}
-
-	@Override
-	public String getNickname() {
-		return attribute.get("name").toString();
+		return email;
 	}
 }
