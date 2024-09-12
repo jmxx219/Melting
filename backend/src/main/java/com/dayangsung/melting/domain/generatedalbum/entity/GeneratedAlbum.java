@@ -73,4 +73,19 @@ public class GeneratedAlbum extends BaseEntity {
 		this.isDeleted = false;
 	}
 
+	public void updateAlbumName(String albumName) {
+		this.albumName = albumName;
+	}
+
+	public void updateAlbumDescription(String albumDescription) {
+		this.albumDescription = albumDescription;
+	}
+
+	public void togglePublicStatus() {
+		this.isPublic = !isPublic;
+	}
+
+	public void deleteAlbum() {
+		this.isDeleted = true;
+	}
 }
