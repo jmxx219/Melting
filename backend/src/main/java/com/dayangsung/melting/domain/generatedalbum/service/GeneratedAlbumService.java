@@ -23,4 +23,8 @@ public class GeneratedAlbumService {
 		return generatedAlbumRepository.findByIsPublicTrue();
 	}
 
+	public GeneratedAlbum createAlbum(GeneratedAlbum album) {
+		return generatedAlbumRepository.save(album);
+	}
+	
 }
