@@ -39,8 +39,8 @@ public class MemberController {
 	}
 
 	@GetMapping("/nickname-check")
-	public ApiResponse<Void> nicknameCheck(@RequestParam String nickname) {
-		if (!memberService.nicknameCheck(nickname)) {
+	public ApiResponse<Void> validateNickname(@RequestParam String nickname) {
+		if (memberService.validateNickname(nickname)) {
 			return ApiResponse.ok(null);
 		} else {
 			return ApiResponse.error(DUPLICATE_NICKNAME.getErrorMessage());
