@@ -1,6 +1,7 @@
 package com.dayangsung.melting.domain.member.entity;
 
 import com.dayangsung.melting.domain.auth.enums.ProviderType;
+import com.dayangsung.melting.domain.member.enums.Gender;
 import com.dayangsung.melting.global.entity.BaseEntity;
 
 import jakarta.persistence.Column;
@@ -28,6 +29,9 @@ public class Member extends BaseEntity {
 	@Column(unique = true)
 	private String email;
 
+	@Enumerated(EnumType.STRING)
+	private Gender gender;
+
 	private String profileImage;
 
 	private String nickname;
@@ -38,11 +42,28 @@ public class Member extends BaseEntity {
 	private boolean isDeleted;
 
 	@Builder
-	public Member(String email, String profileImage, String nickname, ProviderType provider) {
+	public Member(String email, ProviderType provider) {
 		this.email = email;
-		this.profileImage = profileImage;
-		this.nickname = nickname;
 		this.provider = provider;
 		this.isDeleted = false;
+	}
+
+	public void initMember(Gender gender, String profileImage, String nickname) {
+		this.gender = gender;
+		this.profileImage = profileImage;
+		this.nickname = nickname;
+	}
+
+	public void updateMember(String profileImage, String nickname) {
+		this.profileImage = profileImage;
+		this.nickname = nickname;
+	}
+
+	public void updateNickname(String nickname) {
+		this.nickname = nickname;
+	}
+
+	public void updateProfileImage(String profileImage) {
+		this.profileImage = profileImage;
 	}
 }

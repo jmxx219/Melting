@@ -7,8 +7,4 @@ public interface OAuth2Response {
 	ProviderType getProvider();
 
 	String getEmail();
-
-	String getProfileImage();
-
-	String getNickname();
 }
