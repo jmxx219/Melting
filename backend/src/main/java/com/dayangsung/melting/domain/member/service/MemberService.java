@@ -28,24 +28,25 @@ public class MemberService {
 		return memberRepository.existsByNickname(nickname);
 	}
 
-	public MemberResponseDto initMemberInfo(String profileImage, String nickname, Gender gender, String email) {
+	public MemberResponseDto initMemberInfo(String profileImage, String nickname, Gender gender, Long memberId) {
 		String imageSignedUrl = fileService.getImageSignedUrl(profileImage);
-		Member member = memberRepository.findByEmail(email)
-			.orElseThrow(RuntimeException::new); // TODO : 예외 처리
+		Member member = memberRepository.findById(memberId)
+			.orElseThrow(RuntimeException::new);
 		member.initMember(gender, imageSignedUrl, nickname);
 		memberRepository.save(member);
 
 		return MemberResponseDto.of(member);
 	}
 
-	public MemberResponseDto getMemberInfo(CustomOAuth2User customOAuth2User) {
-		Member member = memberRepository.findByEmail(customOAuth2User.getName())
+	public MemberResponseDto getMemberInfo(Long memberId) {
+		Member member = memberRepository.findById(memberId)
 			.orElseThrow(RuntimeException::new);
 		return MemberResponseDto.of(member);
 	}
 
-	public MemberResponseDto updateMemberInfo(String nickname, String profileImageFileName, String email) {
-		Member member = memberRepository.findByEmail(email).orElseThrow(RuntimeException::new);
+	public MemberResponseDto updateMemberInfo(String nickname, String profileImageFileName, Long memberId) {
+		Member member = memberRepository.findById(memberId)
+			.orElseThrow(RuntimeException::new);
 		String imageSignedUrl = fileService.getImageSignedUrl(profileImageFileName);
 		member.updateMember(imageSignedUrl, nickname);
 		memberRepository.save(member);

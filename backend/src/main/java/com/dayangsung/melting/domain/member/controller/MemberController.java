@@ -34,7 +34,7 @@ public class MemberController {
 	@GetMapping
 	public ApiResponse<MemberResponseDto> getMemberInfo(
 		@AuthenticationPrincipal CustomOAuth2User customOAuth2User) {
-		MemberResponseDto memberResponseDto = memberService.getMemberInfo(customOAuth2User);
+		MemberResponseDto memberResponseDto = memberService.getMemberInfo(customOAuth2User.getId());
 		return ApiResponse.ok(memberResponseDto);
 	}
 
@@ -55,7 +55,7 @@ public class MemberController {
 			memberService.initMemberInfo(memberInitRequestDto.profileImageFileName(),
 				memberInitRequestDto.nickName(),
 				Gender.valueOf(memberInitRequestDto.gender()),
-				customOAuth2User.getName());
+				customOAuth2User.getId());
 		return ApiResponse.ok(memberResponseDto);
 	}
 
@@ -66,7 +66,7 @@ public class MemberController {
 		MemberResponseDto memberResponseDto = memberService.updateMemberInfo(
 			memberUpdateRequestDto.nickName(),
 			memberUpdateRequestDto.profileImageFileName(),
-			customOAuth2User.getName());
+			customOAuth2User.getId());
 		return ApiResponse.ok(memberResponseDto);
 	}
 
