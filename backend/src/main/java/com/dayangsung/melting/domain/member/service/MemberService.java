@@ -44,11 +44,21 @@ public class MemberService {
 		return MemberResponseDto.of(member);
 	}
 
-	public MemberResponseDto updateMemberInfo(String nickname, String profileImageFileName, Long memberId) {
+	public MemberResponseDto updateMemberInfo(String nickname,
+		String profileImageFileName, Long memberId) {
 		Member member = memberRepository.findById(memberId)
 			.orElseThrow(RuntimeException::new);
+
 		String imageSignedUrl = fileService.getImageSignedUrl(profileImageFileName);
-		member.updateMember(imageSignedUrl, nickname);
+		if (nickname == null) {
+			member.updateProfileImage(imageSignedUrl);
+		} else {
+			if (profileImageFileName == null) {
+				member.updateNickname(nickname);
+			} else {
+				member.updateMember(imageSignedUrl, nickname);
+			}
+		}
 		memberRepository.save(member);
 
 		return MemberResponseDto.of(member);
