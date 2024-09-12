@@ -33,12 +33,12 @@ public class JwtFilter extends OncePerRequestFilter {
 		String accessToken = cookieUtil.getCookie(request, "access_token");
 		String refreshToken = cookieUtil.getCookie(request, "refresh_token");
 
-		if (accessToken == null || refreshToken == null) {
+		if (accessToken == null && refreshToken == null) {
 			filterChain.doFilter(request, response);
 			return;
 		}
 
-		if (jwtUtil.isValidate(accessToken) && jwtUtil.isExpired(accessToken)) {
+		if (jwtUtil.signatureValidate(accessToken) && jwtUtil.isExpired(accessToken)) {
 			accessToken = jwtUtil.reissueToken(request, response, refreshToken);
 			if (accessToken == null) {
 				filterChain.doFilter(request, response);

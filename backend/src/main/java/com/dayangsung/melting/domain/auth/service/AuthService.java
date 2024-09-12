@@ -39,16 +39,18 @@ public class AuthService extends DefaultOAuth2UserService {
 			// TODO: 예외 처리
 			return null;
 		}
-		insertMemberIfNotExist(oAuth2Response);
-		return new CustomOAuth2User(oAuth2Response.getEmail(), oAuth2Response.getProvider());
+		Member member = insertMemberIfNotExist(oAuth2Response);
+		return new CustomOAuth2User(member.getId(), oAuth2Response.getEmail(), oAuth2Response.getProvider());
 	}
 
-	private void insertMemberIfNotExist(OAuth2Response oAuth2Response) {
+	private Member insertMemberIfNotExist(OAuth2Response oAuth2Response) {
 		memberRepository.findByEmail(oAuth2Response.getEmail())
 			.orElseGet(() -> memberRepository.save(
 				Member.builder()
 					.provider(oAuth2Response.getProvider())
 					.email(oAuth2Response.getEmail())
 					.build()));
+		return memberRepository.findByEmail(oAuth2Response.getEmail())
+			.orElseThrow(RuntimeException::new);
 	}
 }
