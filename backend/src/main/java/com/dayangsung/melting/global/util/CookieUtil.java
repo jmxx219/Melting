@@ -38,12 +38,6 @@ public class CookieUtil {
 			return;
 		}
 
-		for (Cookie cookie : cookies) {
-			if (cookie.getName().equals(cookieName)) {
-				cookie.setMaxAge(0);
-			}
-		}
-
 		response.addCookie(new Cookie(cookieName, newCookieValue));
 	}
 
@@ -57,7 +51,7 @@ public class CookieUtil {
 		return cookie;
 	}
 
-	public void deleteJwtCookies(HttpServletRequest request) {
+	public void deleteJwtCookies(HttpServletRequest request, HttpServletResponse response) {
 
 		Cookie[] cookies = request.getCookies();
 
@@ -68,6 +62,7 @@ public class CookieUtil {
 		for (Cookie cookie : cookies) {
 			if (cookie.getName().equals("access_token") || cookie.getName().equals("refresh_token")) {
 				cookie.setMaxAge(0);
+				response.addCookie(cookie);
 			}
 		}
 	}

@@ -6,4 +6,6 @@ import com.dayangsung.melting.domain.auth.dto.RedisToken;
 
 public interface RedisRepository extends CrudRepository<RedisToken, Long> {
 	RedisToken findRedisTokenByRefreshToken(String refreshToken);
+
+	void deleteRedisTokenByRefreshToken(String refreshToken);
 }

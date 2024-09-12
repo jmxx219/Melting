@@ -49,7 +49,8 @@ public class SecurityConfig {
 			.authorizeHttpRequests(authorize ->
 				authorize
 					.requestMatchers(
-						"/api/v1/login/oauth2/code/*")
+						"/"
+					)
 					.permitAll()
 					.anyRequest()
 					.authenticated())
