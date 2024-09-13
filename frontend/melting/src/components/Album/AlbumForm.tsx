@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react'
-import { Input } from '../ui/input'
 
-import SongSelection from './SongSelection'
+import { Input } from '../ui/input'
 import { Label } from '../ui/label'
 import { Textarea } from '../ui/textarea'
+import SongSelection from './SongSelection'
 import GenreSelection from './GenreSelection'
 import HashtagSelection from './HashtagSelection'
 import SubmitButton from '../Button/SubmitButton'
@@ -78,6 +78,7 @@ export default function AlbumForm() {
             placeholder="앨범 명을 입력해주세요"
             value={albumName}
             onChange={(e) => setAlbumName(e.target.value)}
+            className={`${albumName ? 'border-primary-400' : ''}`}
           />
           <div className="h-5">
             <span
@@ -104,7 +105,9 @@ export default function AlbumForm() {
             placeholder={`앨범에 대한 소개를 입력해주세요.\n입력하지 않으면 AI가 자동으로 생성합니다.`}
             onChange={(e) => setAlbumIntro(e.target.value)}
           ></Textarea>
-          <p className="absolute right-2 bottom-0.1 mt-1 text-sm text-gray">
+          <p
+            className={`absolute right-2 bottom-0.1 mt-1 text-sm  ${albumIntro ? 'text-primary-400' : 'text-gray'}`}
+          >
             {albumIntro.length}/1000
           </p>
         </div>
