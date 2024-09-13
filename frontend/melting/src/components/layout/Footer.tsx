@@ -1,16 +1,16 @@
 import {
   NavigationMenu,
+  NavigationMenuList,
   NavigationMenuItem,
   NavigationMenuLink,
-  NavigationMenuList,
-  NavigationMenuTrigger,
 } from '@/components/ui/navigation-menu'
 import { ReactNode, useState } from 'react'
+import Hash from '../icon/Hash'
+import Home from '../icon/Home'
 import MusicAlbum from '../icon/MusicAlbum'
 import MusicNote from '../icon/MusicNote'
-import Home from '../icon/Home'
-import Hash from '../icon/Hash'
 import User from '../icon/User'
+
 interface NavItem {
   icon: ReactNode
   name: string
@@ -27,7 +27,6 @@ const navItems: NavItem[] = [
 
 export default function Footer() {
   const [activeItem, setActiveItem] = useState('/')
-  const []
   return (
     <NavigationMenu>
       <NavigationMenuList>
