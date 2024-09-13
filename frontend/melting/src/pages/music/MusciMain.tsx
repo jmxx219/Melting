@@ -1,10 +1,15 @@
 import LineTitle from '@/components/music/LineTitle'
 import MusicTypeButton from '@/components/music/MusicTypeButton'
+import Layout from '@/components/layout/Layout'
+import TitleHeader from '@/components/layout/TitleHeader'
+import MusicTypeSelect from '@/components/music/MusicTypeSelect'
+
 export default function MusciMain() {
   return (
-    <div className="w-screen px-8">
-      <LineTitle titles={['곡 제작 유형을', '선택해주세요']}></LineTitle>
-      <MusicTypeButton bgColor="#FFAF25"></MusicTypeButton>
-    </div>
+    <Layout
+      Header={<TitleHeader titles={['곡 제작 유형을', '선택해주세요']} />}
+      children={<MusicTypeSelect />}
+      isMainCenter={true}
+    ></Layout>
   )
 }
