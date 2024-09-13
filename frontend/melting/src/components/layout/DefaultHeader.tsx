@@ -1,11 +1,11 @@
 import { ReactNode } from 'react'
 
-type Props = {
+type HeaderProps = {
   title: string
   buttonArea: ReactNode
 }
 
-export default function DefaultHeader({ title, buttonArea }: Props) {
+export default function DefaultHeader({ title, buttonArea }: HeaderProps) {
   return (
     <div className="flex w-full">
       <div className="w-1/4 flex justify-start">{buttonArea}</div>

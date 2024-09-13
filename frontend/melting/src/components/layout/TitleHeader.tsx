@@ -1,9 +1,9 @@
-interface Props {
+interface TitleProps {
   titles: string[]
   comment?: string
 }
 
-export default function TitleHeader({ titles, comment }: Props) {
+export default function TitleHeader({ titles, comment }: TitleProps) {
   return (
     <div>
       {titles.map((title, index) => (
