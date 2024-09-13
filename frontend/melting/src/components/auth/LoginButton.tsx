@@ -1,16 +1,43 @@
-// src/components/auth/LoginForm.tsx
+import { useNavigate } from 'react-router-dom'
+
+import OAuthButton from './OAuthButton'
+
 export default function LoginForm() {
+  const navigate = useNavigate()
+
+  const handleKakaoLogin = () => {
+    // window.location.href = '/oauth2/authorization/kakao';
+    console.log('카카오 로그인!')
+  }
+
+  const handleGoogleLogin = () => {
+    // window.location.href = '/oauth2/authorization/google';
+    console.log('구글 로그인!')
+  }
+
+  // 비회원일 경우 바로 메인 화면으로 이동
+  const handleGuestLogin = () => {
+    // 비회원 상태 저장, 비회원 권한 부여 등을 처리
+    // 로컬스토리지나 상태 관리 라이브러리로 권한 관리 가능
+    localStorage.setItem('role', 'guest')
+    navigate('/') // 메인 화면으로 이동
+  }
+
   return (
     <div className="flex flex-col space-y-4 w-[350px]">
-      <button className="w-full py-3 flex items-center justify-center relative bg-[#FEE500] text-black font-bold rounded-full transition-colors h-14">
-        <img src="/images/logo/kakao_logo.png" alt="카카오 로고" className="absolute left-4 w-4 h-4" />
-        <p className="ml-6">카카오 로그인</p>
-      </button>
-      <button className="w-full py-3 flex items-center justify-center relative bg-[#EEEEEE] text-black font-bold rounded-full transition-colors h-14">
-        <img src="/images/logo/google_logo.png" alt="구글 로고" className="absolute left-4 w-4 h-4" />
-        <p className="ml-6">구글 로그인</p>
-      </button>
-      <button type="button" className="text-sm text-center">
+      <OAuthButton
+        imageName="kakao_logo.png"
+        buttonText="카카오 로그인"
+        bgColor="bg-[#FEE500]"
+        onClick={handleKakaoLogin}
+      />
+      <OAuthButton
+        imageName="google_logo.png"
+        buttonText="구글 로그인"
+        bgColor="bg-[#EEEEEE]"
+        onClick={handleGoogleLogin}
+      />
+      <button type="button" className="text-sm text-center" onClick={handleGuestLogin}>
         로그인 없이 진행할게요
       </button>
     </div>
