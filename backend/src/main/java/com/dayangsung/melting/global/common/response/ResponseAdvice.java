@@ -13,7 +13,7 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-@RestControllerAdvice
+@RestControllerAdvice(basePackages = "com.dayangsung.melting")
 public class ResponseAdvice implements ResponseBodyAdvice<Object> {
 
 	@Override
