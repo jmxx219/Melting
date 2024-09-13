@@ -24,6 +24,6 @@ build_FE:
   script:
     - npm install
     - npm run build
-    - cp -R dist ~/melting
+    - cp -R dist ~/frontend/melting
   rules:
     - if: '$CI_COMMIT_BRANCH == "dev-fe"'
