@@ -35,3 +35,7 @@ logging:
         melting: debug
     web: debug
 
+file:
+  upload:
+    directory : C:\Users\SSAFY\uploadAudio\audio
+
