@@ -1,4 +1,4 @@
-package com.dayangsung.melting.domain.song.entity;
+package com.dayangsung.melting.domain.originalsong.entity;
 
 import com.dayangsung.melting.global.entity.BaseEntity;
 import jakarta.persistence.Column;
@@ -14,12 +14,12 @@ import lombok.NoArgsConstructor;
 @Getter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Table(name = "song")
-public class Song extends BaseEntity {
+@Table(name = "originalsong")
+public class OriginalSong extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "song_id")
+    @Column(name = "originalsong_id")
     private Long id;
 
 
