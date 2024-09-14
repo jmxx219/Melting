@@ -1,0 +1,29 @@
+stages:
+  - build
+
+build_BE:
+  stage: build
+  image: gradle:8.8-jdk21
+  before_script:
+    - echo "[INFO] YML Settings"
+    - chmod +x backend/gradlew
+  script:
+    - cd backend
+    - ./gradlew clean build -x test
+    - cp build/libs/melting-0.0.1-SNAPSHOT.jar ~/melting/spring-docker
+    - sh ~/spring.sh
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "dev-be"'
+
+build_FE:
+  stage: build
+  image: node
+  before_script:
+    - echo "[INFO] YML Settings"
+    - cd frontend/melting
+  script:
+    - npm install
+    - npm run build
+    - cp -R dist ~/melting/melting-fe
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "dev-fe"'
