@@ -34,7 +34,7 @@ public class Voice extends BaseEntity {
     private Member member;
 
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "song_id", nullable = false)
+    @JoinColumn(name = "original_song_id", nullable = false)
     private OriginalSong originalSong;
 
     private boolean isTrained;
