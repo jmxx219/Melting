@@ -29,9 +29,9 @@ public class VoiceService {
     @Transactional
     public VoiceCreateResponse addVoice(VoiceCreateRequest request, Long memberId) throws IOException {
         Member member = memberRepository.findById(memberId).orElseThrow(RuntimeException::new);
-        OriginalSong originalSong = originalSongRepository.findById(request.getSongId()).orElseThrow(RuntimeException::new);
+        OriginalSong originalSong = originalSongRepository.findById(request.originalSongId()).orElseThrow(RuntimeException::new);
 
-        String voiceUrl = localFileService.saveAudioFile(request.getVoiceFile());
+        String voiceUrl = localFileService.saveAudioFile(request.voiceFile());
 
         Voice voice = request.toEntity(member, originalSong, voiceUrl);
 
