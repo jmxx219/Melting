@@ -1,16 +1,14 @@
 package com.dayangsung.melting.domain.voice.dto.response;
 
-import lombok.Builder;
-import lombok.Getter;
+import com.fasterxml.jackson.databind.PropertyNamingStrategies;
+import com.fasterxml.jackson.databind.annotation.JsonNaming;
 
-@Builder
-@Getter
-public class VoiceCreateResponse {
-    private Long voiceId;
+@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
+public record VoiceCreateResponse (
+    Long voiceId
+){
 
     public static VoiceCreateResponse of(Long voiceId){
-        return VoiceCreateResponse.builder()
-                .voiceId(voiceId)
-                .build();
+        return new VoiceCreateResponse(voiceId);
     }
 }
