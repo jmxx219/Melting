@@ -5,7 +5,7 @@ import SignupPage from '@/pages/Login/Signup'
 // import HomePage from '@/pages/Home/Home'
 
 const AlbumRegist = React.lazy(() => import('@/pages/Album/AlbumRegist'))
-// const SongSelection = React.lazy(() => import('@/pages/Album/SongSelection'));
+const SongSelection = React.lazy(() => import('@/pages/Album/SongSelection'))
 // const GenreSelection = React.lazy(() => import('@/pages/Album/GenreSelection'));
 // const AlbumEdit = React.lazy(() => import('@/pages/Album/AlbumEdit'));
 
@@ -22,7 +22,7 @@ export default function AppRoutes() {
           <Route path="/signup" element={<SignupPage />} />
           <Route path="/album">
             <Route path="create" element={<AlbumRegist />} />
-            {/* <Route path="create/song-selection" element={<SongSelection />} /> */}
+            <Route path="create/song-selection" element={<SongSelection />} />
             {/* <Route path="create/genre-selection" element={<GenreSelection />} /> */}
             {/* <Route path=":id/edit" element={<AlbumEdit />} /> */}
           </Route>
