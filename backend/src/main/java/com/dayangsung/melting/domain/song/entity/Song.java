@@ -19,6 +19,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -52,6 +53,13 @@ public class Song extends BaseEntity {
 	@Column(nullable = false)
 	private SongType songType;
 
-	@Column(length = 2083)
-	private String albumImageUrl;
+	@Builder
+	public Song(OriginalSong originalSong, Member member, AudioFile file, SongType songType) {
+		this.originalSong = originalSong;
+		this.member = member;
+		this.file = file;
+		this.likedCount = 0L;
+		this.songType = songType;
+	}
+
 }
