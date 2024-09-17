@@ -9,12 +9,16 @@ import {
 import { ChevronDown } from 'lucide-react'
 
 interface SongDropdownProps {
+  initialType: 'melting' | 'ai'
   onSelect: (value: 'melting' | 'ai') => void // onSelect를 props로 받음
 }
 
-export default function SongDropdown({ onSelect }: SongDropdownProps) {
+export default function SongDropdown({
+  initialType,
+  onSelect,
+}: SongDropdownProps) {
   const [selectedOption, setSelectedOption] = useState<'melting' | 'ai'>(
-    'melting',
+    initialType,
   )
 
   // 선택한 옵션에 따라 표시되는 텍스트를 매핑하는 함수
