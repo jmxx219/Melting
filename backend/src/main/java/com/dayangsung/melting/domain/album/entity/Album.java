@@ -1,4 +1,4 @@
-package com.dayangsung.melting.domain.generatedalbum.entity;
+package com.dayangsung.melting.domain.album.entity;
 
 import com.dayangsung.melting.domain.member.entity.Member;
 import com.dayangsung.melting.global.entity.BaseEntity;
@@ -21,7 +21,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @Table(name = "generated_album")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class GeneratedAlbum extends BaseEntity {
+public class Album extends BaseEntity {
 
 	// 생성 앨범 식별자
 	@Id
@@ -62,7 +62,7 @@ public class GeneratedAlbum extends BaseEntity {
 	private Boolean isDeleted;
 
 	@Builder
-	public GeneratedAlbum(String albumName, String category, String albumDescription, String albumCoverImage,
+	public Album(String albumName, String category, String albumDescription, String albumCoverImage,
 			Long albumLiked) {
 		this.albumName = albumName;
 		this.category = category;
