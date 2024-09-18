@@ -9,5 +9,7 @@ import com.dayangsung.melting.domain.album.entity.Album;
 public interface AlbumRepository extends JpaRepository<Album, Long> {
 
 	List<Album> findByIsPublicTrue();
+	List<Album> findByIsPublicTrueAndIsDeletedFalse();
+
 
 }
