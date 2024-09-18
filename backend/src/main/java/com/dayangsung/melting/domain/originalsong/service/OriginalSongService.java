@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 import com.dayangsung.melting.domain.originalsong.dto.response.OriginalSongResponseDto;
 import com.dayangsung.melting.domain.originalsong.entity.OriginalSong;
 import com.dayangsung.melting.domain.originalsong.repository.OriginalSongRepository;
-import com.dayangsung.melting.global.entity.AudioFile;
+import com.dayangsung.melting.global.common.service.AwsS3Service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,6 +19,7 @@ import lombok.extern.slf4j.Slf4j;
 public class OriginalSongService {
 
 	private final OriginalSongRepository originalSongRepository;
+	private final AwsS3Service awsS3Service;
 
 	public List<OriginalSongResponseDto> getSearchList(String keyword) {
 
@@ -29,15 +30,12 @@ public class OriginalSongService {
 	}
 
 	public String getLyrics(Long originalSongId) {
-
 		OriginalSong originalSong = originalSongRepository.findById(originalSongId).orElseThrow(RuntimeException::new);
 		return originalSong.getLyrics();
 	}
 
-	public String getMrFilePath(Long originalSongId) {
-
-		OriginalSong originalSong = originalSongRepository.findById(originalSongId).orElseThrow(RuntimeException::new);
-		AudioFile mr = originalSong.getMr();
-		return mr.getAudioFileFullPath();
+	public String getMrUrl(Long originalSongId) {
+		originalSongRepository.findById(originalSongId).orElseThrow(RuntimeException::new);
+		return awsS3Service.getOriginalSongMrUrl(originalSongId);
 	}
 }
