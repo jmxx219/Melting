@@ -10,11 +10,11 @@ interface SongItemProps extends Song {
 }
 
 export default function Item({
-  album_cover_img_url,
-  song_title,
+  albumCoverImgUrl,
+  songTitle,
   artist,
   nickname,
-  song_type,
+  songType,
   isSelected,
   onSelect,
   onTypeChange,
@@ -24,12 +24,12 @@ export default function Item({
     <div className="flex items-center justify-between p-2 border-b border-gray-200">
       <div className="flex items-center space-x-3">
         <img
-          src={album_cover_img_url}
-          alt={song_title}
+          src={albumCoverImgUrl}
+          alt={songTitle}
           className="w-12 h-12 object-cover rounded-full"
         />
         <div>
-          <p className="font-semibold">{song_title}</p>
+          <p className="font-semibold">{songTitle}</p>
           <p className="text-xs text-gray">
             {nickname} Original by {artist}
           </p>
@@ -38,7 +38,7 @@ export default function Item({
       <div className="flex items-center space-x-2">
         {showTypeSelect && onTypeChange && (
           <SongDropdown
-            initialType={song_type}
+            initialType={songType}
             onSelect={onTypeChange} // 선택된 값 변경을 onTypeChange로 전달
           />
         )}

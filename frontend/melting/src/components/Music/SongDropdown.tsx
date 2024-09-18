@@ -42,6 +42,7 @@ export default function SongDropdown({
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button
+          type="button"
           variant="outline"
           className="flex items-center border-2 border-primary-400 text-primary-400 rounded-3xl pl-2 pr-1 py-0 h-7"
         >

@@ -1,8 +1,7 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Search, ArrowDown } from 'lucide-react'
+import { ArrowDown } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
 import SongItem from '@/components/Music/SongItem'
 
 import { Song } from '@/types/music'
@@ -19,41 +18,41 @@ export default function SongSearch() {
     // For now, we'll use mock data
     const mockResults: Song[] = [
       {
-        song_id: 1,
-        album_cover_img_url: '/api/placeholder/50/50',
-        song_title: '좋은 날',
+        songId: 1,
+        albumCoverImgUrl: '/api/placeholder/50/50',
+        songTitle: '좋은 날',
         nickname: '쏠랑쏠랑',
         artist: 'IU',
-        song_type: 'melting',
+        songType: 'melting',
       },
       {
-        song_id: 2,
-        album_cover_img_url: '/api/placeholder/50/50',
-        song_title: '좋은 하루는 바다',
+        songId: 2,
+        albumCoverImgUrl: '/api/placeholder/50/50',
+        songTitle: '좋은 하루는 바다',
         nickname: '쏠랑쏠랑',
         artist: '윤하',
-        song_type: 'ai',
+        songType: 'ai',
       },
       {
-        song_id: 3,
-        album_cover_img_url: '/api/placeholder/50/50',
-        song_title: '좋은 아침',
+        songId: 3,
+        albumCoverImgUrl: '/api/placeholder/50/50',
+        songTitle: '좋은 아침',
         nickname: '쏠랑쏠랑',
         artist: 'IU',
-        song_type: 'melting',
+        songType: 'melting',
       },
     ]
     setSearchResults(mockResults)
   }
 
   const handleSelectSong = (song: Song) => {
-    const isSelected = selectedSongs.some((s) => s.song_id === song.song_id)
+    const isSelected = selectedSongs.some((s) => s.songId === song.songId)
 
     if (isSelected) {
-      setSelectedSongs(selectedSongs.filter((s) => s.song_id !== song.song_id))
+      setSelectedSongs(selectedSongs.filter((s) => s.songId !== song.songId))
     } else {
       const songInSearchResults = searchResults.find(
-        (s) => s.song_id === song.song_id,
+        (s) => s.songId === song.songId,
       )
       if (songInSearchResults) {
         setSelectedSongs([...selectedSongs, songInSearchResults])
@@ -64,20 +63,20 @@ export default function SongSearch() {
   const handleTypeChange = (songId: number, type: 'melting' | 'ai') => {
     setSearchResults(
       searchResults.map((song) =>
-        song.song_id === songId ? { ...song, song_type: type } : song,
+        song.songId === songId ? { ...song, song_type: type } : song,
       ),
     )
 
     setSelectedSongs(
       selectedSongs.map((song) =>
-        song.song_id === songId ? { ...song, song_type: type } : song,
+        song.songId === songId ? { ...song, song_type: type } : song,
       ),
     )
   }
 
   const handleSubmit = () => {
     // TODO: Pass selected songs back to SongSelection component
-    navigate('/album/create')
+    navigate('/album/create', { state: { selectedSongs } })
   }
 
   return (
@@ -95,11 +94,11 @@ export default function SongSearch() {
         <div className="space-y-2">
           {searchResults.map((song) => (
             <SongItem
-              key={song.song_id}
+              key={`${song.songId}-${song.songType}`}
               {...song}
-              isSelected={selectedSongs.some((s) => s.song_id === song.song_id)}
+              isSelected={selectedSongs.some((s) => s.songId === song.songId)}
               onSelect={() => handleSelectSong(song)}
-              onTypeChange={(value) => handleTypeChange(song.song_id, value)}
+              onTypeChange={(value) => handleTypeChange(song.songId, value)}
               showTypeSelect
             />
           ))}
@@ -130,11 +129,11 @@ export default function SongSearch() {
         ) : (
           selectedSongs.map((song) => (
             <SongItem
-              key={song.song_id}
+              key={`${song.songId}-${song.songType}`}
               {...song}
               isSelected={true}
               onSelect={() => handleSelectSong(song)}
-              onTypeChange={(value) => handleTypeChange(song.song_id, value)}
+              onTypeChange={(value) => handleTypeChange(song.songId, value)}
               showTypeSelect
             />
           ))
@@ -142,6 +141,7 @@ export default function SongSearch() {
       </div>
 
       <Button
+        type="button"
         variant={'destructive'}
         onClick={handleSubmit}
         disabled={selectedSongs.length === 0 || selectedSongs.length > 10}
