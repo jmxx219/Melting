@@ -1,15 +1,20 @@
+import { CoverType } from '@/types/constType'
 import { ArrowUpRight, Mic } from 'lucide-react'
+import { useNavigate } from 'react-router-dom'
 
 interface TypeBtnProps {
   bgColor: string
   title: string
   detail: string[]
   footer: string
+  type: CoverType
 }
 
 export default function MusicTypeButton(props: TypeBtnProps) {
-  const clickEvent: React.MouseEventHandler<HTMLButtonElement> = (event) => {
-    console.log(event)
+  const navigate = useNavigate()
+
+  const clickEvent: React.MouseEventHandler<HTMLButtonElement> = () => {
+    navigate('/music/list', { state: { type: props.type } })
   }
   return (
     <button

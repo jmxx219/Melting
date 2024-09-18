@@ -10,12 +10,14 @@ export default function MusicTypeSelect({}: Props) {
         title={'멜팅하기'}
         detail={['원하는 곡을 커버하고', '앨범을 제작해보세요!']}
         footer={`여러분의 목소리를 뽐내주세요`}
+        type="normal"
       ></MusicTypeButton>
       <MusicTypeButton
         bgColor="#A5A5A5"
         title={'AI 자동 커버'}
         detail={['사용자의 목소리를 AI가 학습하여', '원곡 커버를 자동 생성해요']}
         footer={`현재 2곡의 커버가 더 필요해요 `}
+        type="ai"
       ></MusicTypeButton>
     </div>
   )
