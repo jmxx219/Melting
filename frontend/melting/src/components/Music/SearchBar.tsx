@@ -16,7 +16,7 @@ export default function SearchBar({
   placeholderText = 'Search...',
 }: SearchBarProps) {
   return (
-    <div className="flex w-full items-center rounded-full bg-gray-100 text-black px-4 py-2">
+    <div className="flex w-full items-center rounded-full bg-gray-100 text-black px-4 py-1">
       <Input
         placeholder={placeholderText}
         value={searchTerm}
