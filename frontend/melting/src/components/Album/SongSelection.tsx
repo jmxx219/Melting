@@ -1,69 +1,87 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Music, Plus, Minus, Crown } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
+import { Song } from '@/types/music'
 
-interface Song {
-  id: string
-  artist: string
-  title: string
+interface SongSelectionProps {
+  initialSongs?: Song[]
+  titleSongIndex: number | null
+  onTitleSongChange: (index: number | null) => void
 }
 
-export default function SongSelection() {
-  const [selectedSongs, setSelectedSongs] = useState<Song[]>([])
-  const [titleSongIndex, setTitleSongIndex] = useState<number | null>(null)
+export default function SongSelection({
+  initialSongs,
+  titleSongIndex,
+  onTitleSongChange,
+}: SongSelectionProps) {
+  const [selectedSongs, setSelectedSongs] = useState<Song[]>(initialSongs || [])
   const navigate = useNavigate()
+
+  useEffect(() => {
+    setSelectedSongs(initialSongs || [])
+  }, [initialSongs])
 
   const handleAddSong = () => {
     navigate('/album/create/song-selection') // 곡 검색 페이지로 이동
   }
 
-  const handleRemoveSong = (index: number) => {
-    setSelectedSongs((prev) => prev.filter((_, i) => i !== index))
-    if (titleSongIndex === index) {
-      setTitleSongIndex(null)
-    } else if (titleSongIndex !== null && titleSongIndex > index) {
-      setTitleSongIndex(titleSongIndex - 1)
+  const handleRemoveSong = (songId: number) => {
+    const songIndex = selectedSongs.findIndex((song) => song.songId === songId)
+    setSelectedSongs((prev) => prev.filter((song) => song.songId !== songId))
+
+    if (titleSongIndex === songId) {
+      onTitleSongChange(null)
+    } else if (
+      titleSongIndex !== null &&
+      songIndex !== -1 &&
+      songIndex < selectedSongs.length
+    ) {
+      onTitleSongChange(titleSongIndex) // 선택 곡 이후에도 유지
     }
   }
 
-  const handleSetTitleSong = (index: number) => {
-    setTitleSongIndex(index === titleSongIndex ? null : index)
+  const handleSetTitleSong = (songId: number) => {
+    onTitleSongChange(songId === titleSongIndex ? null : songId)
   }
 
   return (
     <div className="space-y-4">
-      <div className="border-b-2 rounded-md p-2">
+      <div
+        className={`${selectedSongs.length > 0 ? '' : 'border-b-2'}  rounded-md p-2`}
+      >
         {selectedSongs.length === 0 ? (
           <div className="flex justify-between items-center text-sm text-gray">
             <span>나의 곡을 선택해주세요</span>
             <Music size={24} />
           </div>
         ) : (
-          <ul className="space-y-2">
-            {selectedSongs.map((song, index) => (
+          <ul className="space-y-2 ">
+            {selectedSongs.map((song) => (
               <li
-                key={song.id}
-                className="flex items-center justify-between w-full border-b border-gray-200 py-2"
+                key={song.songId}
+                className="flex items-center justify-between w-full border-b-2 p-1"
               >
                 <div className="flex items-center">
                   <Button
+                    type="button"
                     variant="ghost"
                     size="sm"
-                    onClick={() => handleSetTitleSong(index)}
-                    className={`text-${titleSongIndex === index ? 'primary-400' : 'gray-400'}`}
+                    onClick={() => handleSetTitleSong(song.songId)}
+                    className={`text-${titleSongIndex === song.songId ? 'primary-400' : 'gray-400'}`}
                   >
                     <Crown size={18} />
                   </Button>
-                  <span className="ml-2">{`${index + 1}. ${song.artist} - ${song.title}`}</span>
+                  <span className="">{`${selectedSongs.findIndex((s) => s.songId === song.songId) + 1}. ${song.artist} - ${song.songTitle}`}</span>{' '}
                 </div>
                 <Button
+                  type="button"
                   variant="ghost"
                   size="sm"
-                  onClick={() => handleRemoveSong(index)}
+                  onClick={() => handleRemoveSong(song.songId)}
                 >
-                  <Minus size={18} className="text-primary-400" />
+                  <Minus size={24} className="text-primary-400" />
                 </Button>
               </li>
             ))}
@@ -71,18 +89,19 @@ export default function SongSelection() {
         )}
       </div>
 
+      <div className="text-sm text-primary-500 space-y-1">
+        <p className="flex items-center">
+          ※ 타이틀 곡(
+          <Crown size={14} />
+          )을 지정하지 않으면 1번 트랙이 타이틀 곡이 됩니다
+        </p>
+        <p>※ 트랙 순서는 드래그로 수정이 가능합니다</p>
+      </div>
       <div className="flex justify-center">
-        <Button variant="ghost" size="sm" onClick={handleAddSong}>
+        <Button type="button" variant="ghost" size="sm" onClick={handleAddSong}>
           <Plus size={24} className="text-gray-400" />
         </Button>
       </div>
-
-      {titleSongIndex !== null && (
-        <div className="text-primary-400 text-sm">
-          <p>선택한 곡이 앨범의 대표곡으로 지정됩니다.</p>
-          <p>대표곡은 앨범 소개 페이지에서 가장 먼저 표시됩니다.</p>
-        </div>
-      )}
     </div>
   )
 }

@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { useLocation } from 'react-router-dom'
 
 import { Input } from '../ui/input'
 import { Label } from '../ui/label'
@@ -9,8 +10,12 @@ import HashtagSelection from './HashtagSelection'
 import SubmitButton from '../Button/SubmitButton'
 
 export default function AlbumForm() {
+  const location = useLocation()
+
   const [albumName, setAlbumName] = useState('')
   const [albumIntro, setAlbumIntro] = useState('')
+  const selectedSongs = location.state?.selectedSongs || []
+  const [titleSongIndex, setTitleSongIndex] = useState<number | null>(null)
   const [selectedGenres, setSelectedGenres] = useState<string[]>([])
   const [selectedHashtags, setSelectedHashtags] = useState<string[]>([])
   const [selectedCover, setSelectedCover] = useState<string | null>(null)
@@ -58,14 +63,21 @@ export default function AlbumForm() {
     setIsCoverValid(selectedCover !== null)
   }, [selectedCover])
 
+  const handleTitleSongChange = (index: number | null) => {
+    setTitleSongIndex(index)
+  }
+
   return (
     <form className="space-y-6">
-      AlbumForm
       <div>
         <Label htmlFor="hashtag" className="font-semibold">
           선정된 곡<span className="text-primary-400 ml-1">*</span>
         </Label>
-        <SongSelection />
+        <SongSelection
+          initialSongs={selectedSongs}
+          titleSongIndex={titleSongIndex}
+          onTitleSongChange={handleTitleSongChange}
+        />
       </div>
       <div className="space-y-3">
         <Label htmlFor="albumName" className="font-semibold">
