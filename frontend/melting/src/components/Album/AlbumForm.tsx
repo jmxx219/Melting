@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useLocation } from 'react-router-dom'
 
+import { Song } from '@/types/music'
 import { Input } from '../ui/input'
 import { Label } from '../ui/label'
 import { Textarea } from '../ui/textarea'
@@ -14,7 +15,9 @@ export default function AlbumForm() {
 
   const [albumName, setAlbumName] = useState('')
   const [albumIntro, setAlbumIntro] = useState('')
-  const selectedSongs = location.state?.selectedSongs || []
+  const [selectedSongs, setSelectedSongs] = useState<Song[]>(
+    location.state?.selectedSongs || [],
+  )
   const [titleSongIndex, setTitleSongIndex] = useState<number | null>(null)
   const [selectedGenres, setSelectedGenres] = useState<string[]>([])
   const [selectedHashtags, setSelectedHashtags] = useState<string[]>([])
@@ -77,6 +80,7 @@ export default function AlbumForm() {
           initialSongs={selectedSongs}
           titleSongIndex={titleSongIndex}
           onTitleSongChange={handleTitleSongChange}
+          onSongsChange={setSelectedSongs}
         />
       </div>
       <div className="space-y-3">
