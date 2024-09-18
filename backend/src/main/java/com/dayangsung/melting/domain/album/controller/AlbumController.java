@@ -3,6 +3,8 @@ package com.dayangsung.melting.domain.album.controller;
 import java.util.List;
 
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -42,15 +44,17 @@ public class AlbumController {
 
 	// 앨범 생성
 	@PostMapping
-	public ResponseEntity<Album> createAlbum(@RequestBody Album album) {
-		Album createdAlbum = albumService.createAlbum(album);
-		return new ResponseEntity<>(createdAlbum, HttpStatus.CREATED);
 	public ApiResponse<AlbumDetailsResponseDto> createAlbum(
 		@RequestBody AlbumCreateRequestDto albumCreateRequestDto) {
 		AlbumDetailsResponseDto albumDetailsResponseDto = albumService.createAlbum(albumCreateRequestDto);
 		return ApiResponse.ok(albumDetailsResponseDto);
 	}
 
+	// 앨범 상세정보 조회
+	@GetMapping("/{albumId}")
+	public ApiResponse<AlbumDetailsResponseDto> getAlbumDetails(@PathVariable Long albumId) {
+		AlbumDetailsResponseDto albumDetails = albumService.getAlbumDetails(albumId);
+		return ApiResponse.ok(albumDetails);
 	}
 	
 }
