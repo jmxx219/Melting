@@ -56,5 +56,14 @@ public class AlbumController {
 		AlbumDetailsResponseDto albumDetails = albumService.getAlbumDetails(albumId);
 		return ApiResponse.ok(albumDetails);
 	}
+
+	// 앨범 수정
+	@PatchMapping("/{albumId}")
+	public ApiResponse<AlbumResponseDto> updateAlbum(
+		@PathVariable Long albumId,
+		@RequestBody AlbumUpdateRequestDto albumUpdateRequestDto) {
+		AlbumResponseDto updatedAlbumDto = albumService.updateAlbum(albumId, albumUpdateRequestDto);
+		return ApiResponse.ok(updatedAlbumDto);
+	}
 	
 }
