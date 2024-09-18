@@ -2,7 +2,6 @@ package com.dayangsung.melting.domain.member.service;
 
 import org.springframework.stereotype.Service;
 
-import com.dayangsung.melting.domain.auth.dto.CustomOAuth2User;
 import com.dayangsung.melting.domain.member.dto.response.MemberResponseDto;
 import com.dayangsung.melting.domain.member.entity.Member;
 import com.dayangsung.melting.domain.member.enums.Gender;
@@ -34,7 +33,6 @@ public class MemberService {
 			.orElseThrow(RuntimeException::new);
 		member.initMember(gender, imageSignedUrl, nickname);
 		memberRepository.save(member);
-
 		return MemberResponseDto.of(member);
 	}
 

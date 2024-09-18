@@ -34,7 +34,7 @@ public class OriginalSongService {
 		return originalSong.getLyrics();
 	}
 
-	public String getMR(Long originalSongId) {
+	public String getMrFilePath(Long originalSongId) {
 
 		OriginalSong originalSong = originalSongRepository.findById(originalSongId).orElseThrow(RuntimeException::new);
 		AudioFile mr = originalSong.getMr();
