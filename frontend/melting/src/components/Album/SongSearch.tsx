@@ -80,7 +80,7 @@ export default function SongSearch() {
   }
 
   return (
-    <div className="space-y-4 p-4">
+    <div className="space-y-6 p-4">
       <div className="flex items-center space-x-2">
         <SearchBar
           searchTerm={searchTerm}
@@ -104,7 +104,7 @@ export default function SongSearch() {
           ))}
         </div>
       ) : (
-        <p className="text-gray-500 text-center">검색한 곡이 없습니다</p>
+        <p className="text-gray-400 text-left">검색한 곡이 없습니다</p>
       )}
 
       <div className="text-sm text-primary-500 space-y-1">
@@ -142,7 +142,7 @@ export default function SongSearch() {
 
       <Button
         type="button"
-        variant={'destructive'}
+        variant={selectedSongs.length === 0 ? 'gray' : 'destructive'}
         onClick={handleSubmit}
         disabled={selectedSongs.length === 0 || selectedSongs.length > 10}
         className="w-full rounded-full h-14"
