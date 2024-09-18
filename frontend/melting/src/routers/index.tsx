@@ -2,6 +2,8 @@ import React, { Suspense } from 'react'
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom'
 import LoginPage from '@/pages/Login/Login'
 import SignupPage from '@/pages/Login/Signup'
+import MusicSelect from '@/pages/music/MusicSelect'
+import MusciMain from '@/pages/music/MusciMain'
 // import HomePage from '@/pages/Home/Home'
 
 const AlbumRegist = React.lazy(() => import('@/pages/Album/AlbumRegist'))
@@ -26,6 +28,8 @@ export default function AppRoutes() {
             {/* <Route path="create/genre-selection" element={<GenreSelection />} /> */}
             {/* <Route path=":id/edit" element={<AlbumEdit />} /> */}
           </Route>
+          <Route path="/music" element={<MusciMain />} />
+          <Route path="/music/list" element={<MusicSelect />} />
         </Routes>
       </Suspense>
     </Router>

@@ -31,7 +31,7 @@ export default function Footer() {
     <NavigationMenu>
       <NavigationMenuList>
         {navItems.map((item) => (
-          <NavigationMenuItem key={item.href}>
+          <NavigationMenuItem key={item.name}>
             <NavigationMenuLink
               href={item.href}
               className={`flex flex-col items-center p-2 ${
