@@ -1,17 +1,19 @@
 import { useEffect, useState } from 'react'
 import { useLocation } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 
 import { Song } from '@/types/music'
 import { Input } from '../ui/input'
 import { Label } from '../ui/label'
 import { Textarea } from '../ui/textarea'
 import SongSelection from './SongSelection'
-import GenreSelection from './GenreSelection'
 import HashtagSelection from './HashtagSelection'
 import SubmitButton from '../Button/SubmitButton'
+import GenreSelector from './GenreSelector'
 
 export default function AlbumForm() {
   const location = useLocation()
+  const navigate = useNavigate()
 
   const [albumName, setAlbumName] = useState('')
   const [albumIntro, setAlbumIntro] = useState('')
@@ -70,6 +72,20 @@ export default function AlbumForm() {
     setTitleSongIndex(index)
   }
 
+  useEffect(() => {
+    // 장르 선택 페이지에서 돌아왔을 때 state로 전달된 selectedGenres를 확인
+    const genres = location.state?.selectedGenres
+    if (genres) {
+      setSelectedGenres(genres)
+    }
+  }, [location])
+
+  const handleGenreEdit = () => {
+    navigate('/album/create/genre-selection', {
+      state: { initialGenres: selectedGenres },
+    })
+  }
+
   return (
     <form className="space-y-6">
       <div>
@@ -110,7 +126,7 @@ export default function AlbumForm() {
           </div>
         </div>
       </div>
-      <div className="space-y-3 ">
+      <div className="space-y-3">
         <Label htmlFor="albumName" className="font-semibold">
           앨범 소개
         </Label>
@@ -128,11 +144,14 @@ export default function AlbumForm() {
           </p>
         </div>
       </div>
-      <div>
+      <div className="space-y-3">
         <Label htmlFor="genre" className="font-semibold">
           장르<span className="text-primary-400 ml-1">*</span>
         </Label>
-        <GenreSelection />
+        <GenreSelector
+          selectedGenres={selectedGenres}
+          onGenreEdit={handleGenreEdit}
+        />
       </div>
       <div>
         <Label htmlFor="hashtag" className="font-semibold">
