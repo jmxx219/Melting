@@ -31,10 +31,10 @@ public class FileService {
 
 		val regExp = "^(jpeg|png|gif|bmp)$";
 		val keyName = "/" + activeProfile + imageBucketPath + "%s-%s".formatted(UUID.randomUUID().toString(), fileName);
-		val splittedFileName = fileName.split("\\.");
-		val extension = splittedFileName[splittedFileName.length-1].equalsIgnoreCase("jpg")
-			? "jpeg" : splittedFileName[splittedFileName.length-1].toLowerCase();
-		if(!Pattern.matches(regExp, extension)) {
+		val splitFileName = fileName.split("\\.");
+		val extension = splitFileName[splitFileName.length - 1].equalsIgnoreCase("jpg")
+			? "jpeg" : splitFileName[splitFileName.length - 1].toLowerCase();
+		if (!Pattern.matches(regExp, extension)) {
 			throw new IllegalArgumentException(INCORRECT_IMAGE_EXTENSION.getErrorMessage());
 		}
 
