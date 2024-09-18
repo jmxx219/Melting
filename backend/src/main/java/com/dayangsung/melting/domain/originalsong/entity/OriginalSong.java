@@ -1,16 +1,12 @@
 package com.dayangsung.melting.domain.originalsong.entity;
 
-import com.dayangsung.melting.global.entity.AudioFile;
 import com.dayangsung.melting.global.entity.BaseEntity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToOne;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -34,21 +30,16 @@ public class OriginalSong extends BaseEntity {
 
 	private int lengthInSeconds;
 
-	@OneToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "file_id")
-	private AudioFile mr;
-
 	@Column(nullable = false, columnDefinition = "TEXT")
 	private String lyrics;
 
 	@Builder
-	public OriginalSong(String title, String artist, String coverImageUrl, int lengthInSeconds, AudioFile mr,
+	public OriginalSong(String title, String artist, String coverImageUrl, int lengthInSeconds,
 		String lyrics) {
 		this.title = title;
 		this.artist = artist;
 		this.coverImageUrl = coverImageUrl;
 		this.lengthInSeconds = lengthInSeconds;
-		this.mr = mr;
 		this.lyrics = lyrics;
 	}
 }
