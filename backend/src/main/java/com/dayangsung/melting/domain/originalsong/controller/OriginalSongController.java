@@ -38,9 +38,9 @@ public class OriginalSongController {
 	}
 
 	@GetMapping("/{originalSongId}/mr")
-	public ApiResponse<String> getMR(@PathVariable Long originalSongId) {
+	public ApiResponse<String> getMrUrl(@PathVariable Long originalSongId) {
 
-		String mrFilePath = originalSongService.getMrFilePath(originalSongId);
-		return ApiResponse.ok(mrFilePath);
+		String mrFileUrl = originalSongService.getMrUrl(originalSongId);
+		return ApiResponse.ok(mrFileUrl);
 	}
 }

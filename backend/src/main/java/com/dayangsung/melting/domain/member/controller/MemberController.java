@@ -8,7 +8,9 @@ import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.dayangsung.melting.domain.auth.dto.CustomOAuth2User;
 import com.dayangsung.melting.domain.member.dto.request.MemberInitRequestDto;
@@ -49,10 +51,11 @@ public class MemberController {
 
 	@PatchMapping("/init")
 	public ApiResponse<MemberResponseDto> initMemberInfo(
+		@RequestPart MultipartFile multipartFile,
 		@RequestBody MemberInitRequestDto memberInitRequestDto,
 		@AuthenticationPrincipal CustomOAuth2User customOAuth2User) {
 		MemberResponseDto memberResponseDto =
-			memberService.initMemberInfo(memberInitRequestDto.profileImageFileName(),
+			memberService.initMemberInfo(multipartFile,
 				memberInitRequestDto.nickName(),
 				Gender.valueOf(memberInitRequestDto.gender()),
 				customOAuth2User.getId());
@@ -61,11 +64,12 @@ public class MemberController {
 
 	@PatchMapping
 	public ApiResponse<MemberResponseDto> updateMemberInfo(
+		@RequestPart MultipartFile multipartFile,
 		@RequestBody MemberUpdateRequestDto memberUpdateRequestDto,
 		@AuthenticationPrincipal CustomOAuth2User customOAuth2User) {
 		MemberResponseDto memberResponseDto = memberService.updateMemberInfo(
+			multipartFile,
 			memberUpdateRequestDto.nickName(),
-			memberUpdateRequestDto.profileImageFileName(),
 			customOAuth2User.getId());
 		return ApiResponse.ok(memberResponseDto);
 	}

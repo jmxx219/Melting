@@ -32,7 +32,7 @@ public class Member extends BaseEntity {
 	@Enumerated(EnumType.STRING)
 	private Gender gender;
 
-	private String profileImage;
+	private String profileImageExtension;
 
 	private String nickname;
 
@@ -48,14 +48,14 @@ public class Member extends BaseEntity {
 		this.isDeleted = false;
 	}
 
-	public void initMember(Gender gender, String profileImage, String nickname) {
+	public void initMember(Gender gender, String profileImageExtension, String nickname) {
 		this.gender = gender;
-		this.profileImage = profileImage;
+		this.profileImageExtension = profileImageExtension;
 		this.nickname = nickname;
 	}
 
-	public void updateMember(String profileImage, String nickname) {
-		this.profileImage = profileImage;
+	public void updateMember(String profileImageExtension, String nickname) {
+		this.profileImageExtension = profileImageExtension;
 		this.nickname = nickname;
 	}
 
@@ -63,7 +63,7 @@ public class Member extends BaseEntity {
 		this.nickname = nickname;
 	}
 
-	public void updateProfileImage(String profileImage) {
-		this.profileImage = profileImage;
+	public void updateProfileImageExtension(String profileImage) {
+		this.profileImageExtension = profileImageExtension;
 	}
 }
