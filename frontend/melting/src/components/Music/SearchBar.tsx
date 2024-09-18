@@ -16,7 +16,7 @@ export default function SearchBar({
   placeholderText = 'Search...',
 }: SearchBarProps) {
   return (
-    <div className="flex w-full items-center rounded-full bg-gray-100 text-black px-4 py-1">
+    <div className="flex w-full items-center justify-between rounded-full bg-gray-100 text-black px-4 py-1">
       <Input
         placeholder={placeholderText}
         value={searchTerm}
@@ -24,7 +24,7 @@ export default function SearchBar({
         onKeyPress={(e) => e.key === 'Enter' && onSearch()}
         className="border-none bg-transparent flex-grow"
       />
-      <Button variant={'ghost'} onClick={onSearch} className="ml-2">
+      <Button variant={'ghost'} onClick={onSearch} className="p-0">
         <Search size={24} />
       </Button>
     </div>
