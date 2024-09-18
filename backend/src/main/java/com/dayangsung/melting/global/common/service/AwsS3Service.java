@@ -21,8 +21,9 @@ public class AwsS3Service {
 
 	@Value("${cloud.aws.s3.bucket}")
 	private String bucket;
-
 	private final AmazonS3 amazonS3;
+	private static final String CLOUDFRONTURL = "https://d35fpwscei7sb8.cloudfront.net";
+	private static final String MP3EXTENSION = ".mp3";
 
 	public String uploadFileToS3(MultipartFile multipartFile, String bucketFolderPath, Long id) throws IOException {
 		String originalFilename = multipartFile.getOriginalFilename();
@@ -34,7 +35,7 @@ public class AwsS3Service {
 		metadata.setContentType(multipartFile.getContentType());
 
 		amazonS3.putObject(bucket + bucketFolderPath, s3FileName, multipartFile.getInputStream(), metadata);
-		return amazonS3.getUrl(bucket + bucketFolderPath, s3FileName).toString();
+		return CLOUDFRONTURL + bucketFolderPath + "/" + s3FileName;
 	}
 
 	public String uploadAlbumCoverImage(MultipartFile albumCoverImage, Long albumId) {
@@ -72,15 +73,15 @@ public class AwsS3Service {
 	}
 
 	public String getProfileImageUrl(Long memberId, String extension) {
-		return "https://" + bucket + "/image/profile/" + memberId + extension;
+		return CLOUDFRONTURL + "/image/profile/" + memberId + extension;
 	}
 
 	public String getOriginalSongMrUrl(Long originalSongId) {
-		return "https://" + bucket + "/audio/original_song/mr/" + originalSongId + ".mp3";
+		return CLOUDFRONTURL + "/audio/original_song/mr/" + originalSongId + MP3EXTENSION;
 	}
 
 	public String getOriginalSongVocal(Long originalSongId) {
-		return "https://" + bucket + "/audio/original_song/vocal/" + originalSongId + ".mp3";
+		return CLOUDFRONTURL + "/audio/original_song/vocal/" + originalSongId + MP3EXTENSION;
 	}
 
 	private void validateImageFileExtension(String filename) {
