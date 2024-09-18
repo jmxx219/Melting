@@ -50,8 +50,7 @@ public class SecurityConfig {
 				authorize
 					.requestMatchers(
 						"/swagger-ui/**",
-						"/v3/api-docs/**",
-						"/api/v1/original-songs/**"
+						"/v3/api-docs/**"
 					)
 					.permitAll()
 					.anyRequest()
