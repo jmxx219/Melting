@@ -1,10 +1,10 @@
-package com.dayangsung.melting.domain.generatedalbum.dto.request;
+package com.dayangsung.melting.domain.album.dto.request;
 
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-public record GeneratedAlbumUpdateRequestDto(
+public record AlbumUpdateRequestDto(
 		String albumName,
 		String albumDescription
 ) {

@@ -1,4 +1,4 @@
-package com.dayangsung.melting.domain.generatedalbum.controller;
+package com.dayangsung.melting.domain.album.controller;
 
 import java.util.List;
 
@@ -10,29 +10,29 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.dayangsung.melting.domain.generatedalbum.entity.GeneratedAlbum;
-import com.dayangsung.melting.domain.generatedalbum.service.GeneratedAlbumService;
+import com.dayangsung.melting.domain.album.entity.Album;
+import com.dayangsung.melting.domain.album.service.AlbumService;
 
 import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/albums")
-public class GeneratedAlbumController {
+public class AlbumController {
 
-	private final GeneratedAlbumService generatedAlbumService;
+	private final AlbumService albumService;
 
 	// 공개 설정된 앨범 조회
 	@GetMapping
-	public ResponseEntity<List<GeneratedAlbum>> getPublicAlbums() {
-		List<GeneratedAlbum> albums = generatedAlbumService.getPublicAlbums();
+	public ResponseEntity<List<Album>> getPublicAlbums() {
+		List<Album> albums = albumService.getPublicAlbums();
 		return new ResponseEntity<>(albums, HttpStatus.OK);
 	}
 
 	// 앨범 생성
 	@PostMapping
-	public ResponseEntity<GeneratedAlbum> createAlbum(@RequestBody GeneratedAlbum album) {
-		GeneratedAlbum createdAlbum = generatedAlbumService.createAlbum(album);
+	public ResponseEntity<Album> createAlbum(@RequestBody Album album) {
+		Album createdAlbum = albumService.createAlbum(album);
 		return new ResponseEntity<>(createdAlbum, HttpStatus.CREATED);
 	}
 	
