@@ -9,7 +9,7 @@ import com.fasterxml.jackson.databind.annotation.JsonNaming;
 public record AlbumCreateRequestDto(
 	String albumName,
 	String category,
-	List<String> genre,
+	List<String> genres,
 	String albumDescription,
 	String albumCoverImage,
 	List<Long> albumTracks
