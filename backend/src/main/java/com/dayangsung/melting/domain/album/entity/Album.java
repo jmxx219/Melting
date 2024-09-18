@@ -1,5 +1,7 @@
 package com.dayangsung.melting.domain.album.entity;
 
+import java.util.List;
+
 import com.dayangsung.melting.domain.member.entity.Member;
 import com.dayangsung.melting.global.entity.BaseEntity;
 
@@ -9,7 +11,6 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
@@ -41,6 +42,10 @@ public class Album extends BaseEntity {
 	@Column(nullable = false)
 	private String category;
 
+	// TODO: 장르 entity 생성 or String
+	@Column(nullable = false)
+	private List<String> genres;
+
 	// 앨범 소개
 	@Column(columnDefinition = "TEXT")
 	private String albumDescription;
@@ -62,10 +67,11 @@ public class Album extends BaseEntity {
 	private Boolean isDeleted;
 
 	@Builder
-	public Album(String albumName, String category, String albumDescription, String albumCoverImage,
+	public Album(String albumName, String category, List<String> genres, String albumDescription, String albumCoverImage,
 			Long albumLiked) {
 		this.albumName = albumName;
 		this.category = category;
+		this.genres = genres;
 		this.albumDescription = albumDescription;
 		this.albumCoverImage = albumCoverImage;
 		this.albumLiked = albumLiked;
