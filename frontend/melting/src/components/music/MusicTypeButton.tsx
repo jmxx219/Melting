@@ -18,16 +18,17 @@ export default function MusicTypeButton(props: TypeBtnProps) {
   }
   return (
     <button
+      type="button"
       className="w-full px-3 py-5 flex items-center justify-center text-black font-bold rounded-lg transition-colors "
       style={{ backgroundColor: props.bgColor }}
       onClick={clickEvent}
     >
       <div className="flex w-full flex-col items-start text-white me-3">
-        <div className="text-1xl mb-3 font-semibold flex">
+        <div className="text-1xl mb-5 font-semibold flex">
           {props.title}
           <Mic />
         </div>
-        <div className="mb-3">
+        <div className="mb-5">
           {props.detail.map((text, index) => (
             <div className="font-thin text-start text-sm" key={index}>
               {text}
@@ -37,7 +38,7 @@ export default function MusicTypeButton(props: TypeBtnProps) {
         <div className="font-thin text-sm">{props.footer}</div>
       </div>
       <div>
-        <ArrowUpRight />
+        <ArrowUpRight className="text-white" />
       </div>
     </button>
   )

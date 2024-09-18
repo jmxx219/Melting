@@ -4,13 +4,13 @@ type Props = {}
 
 export default function MusicTypeSelect({}: Props) {
   return (
-    <div className="flex flex-col items-center justify-center w-full space-y-10">
+    <div className="flex flex-col items-center justify-center w-full space-y-14">
       <MusicTypeButton
         bgColor="#FFAF25"
         title={'멜팅하기'}
         detail={['원하는 곡을 커버하고', '앨범을 제작해보세요!']}
         footer={`여러분의 목소리를 뽐내주세요`}
-        type="normal"
+        type="melting"
       ></MusicTypeButton>
       <MusicTypeButton
         bgColor="#A5A5A5"

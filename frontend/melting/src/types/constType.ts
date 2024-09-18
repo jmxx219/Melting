@@ -1,5 +1,5 @@
 const cover = {
-  normal: 'normal',
+  melting: 'melting',
   ai: 'ai',
 } as const
 
