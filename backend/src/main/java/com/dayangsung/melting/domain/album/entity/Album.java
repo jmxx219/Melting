@@ -42,7 +42,7 @@ public class Album extends BaseEntity {
 	private String category;
 
 	// 앨범 소개
-	@Lob
+	@Column(columnDefinition = "TEXT")
 	private String albumDescription;
 
 	// 앨범 커버 이미지
