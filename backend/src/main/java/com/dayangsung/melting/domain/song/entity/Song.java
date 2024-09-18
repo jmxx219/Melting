@@ -1,6 +1,5 @@
 package com.dayangsung.melting.domain.song.entity;
 
-import com.dayangsung.melting.domain.AudioFile.entity.AudioFile;
 import com.dayangsung.melting.domain.member.entity.Member;
 import com.dayangsung.melting.domain.originalsong.entity.OriginalSong;
 import com.dayangsung.melting.domain.song.enums.SongType;
@@ -16,7 +15,6 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -42,10 +40,6 @@ public class Song extends BaseEntity {
 	@JoinColumn(name = "member_id")
 	private Member member;
 
-	@OneToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "audio_file_id")
-	private AudioFile file;
-
 	@Column(nullable = false)
 	private Long likedCount;
 
@@ -53,13 +47,19 @@ public class Song extends BaseEntity {
 	@Column(nullable = false)
 	private SongType songType;
 
+	@Column(nullable = false)
+	private String coverImage;
+
+	@Column(nullable = false)
+	private String songUrl;
+
 	@Builder
-	public Song(OriginalSong originalSong, Member member, AudioFile file, SongType songType) {
+	public Song(OriginalSong originalSong, Member member, SongType songType, String coverImage, String songUrl) {
 		this.originalSong = originalSong;
 		this.member = member;
-		this.file = file;
 		this.likedCount = 0L;
 		this.songType = songType;
+		this.coverImage = coverImage;
+		this.songUrl = songUrl;
 	}
-
 }
