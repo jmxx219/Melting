@@ -1,11 +1,12 @@
-import { Song } from '@/types/music'
+import { Song } from '@/types/song'
+import { CoverType } from '@/types/constType'
 import ToggleMusicButton from '../Button/ToggleMusicButton'
 import SongDropdown from './SongDropdown'
 
 interface SongItemProps extends Song {
   isSelected: boolean
   onSelect: () => void
-  onTypeChange?: (value: 'melting' | 'ai') => void
+  onTypeChange?: (value: CoverType) => void
   showTypeSelect?: boolean
 }
 
@@ -38,7 +39,7 @@ export default function Item({
       <div className="flex items-center space-x-2">
         {showTypeSelect && onTypeChange && (
           <SongDropdown
-            initialType={songType}
+            initialType={songType as CoverType}
             onSelect={onTypeChange} // 선택된 값 변경을 onTypeChange로 전달
           />
         )}

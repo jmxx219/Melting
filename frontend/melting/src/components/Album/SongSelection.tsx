@@ -9,7 +9,7 @@ import {
 } from 'react-beautiful-dnd'
 
 import { Button } from '@/components/ui/button'
-import { Song } from '@/types/music'
+import { Song } from '@/types/song'
 
 interface SongSelectionProps {
   initialSongs?: Song[]
