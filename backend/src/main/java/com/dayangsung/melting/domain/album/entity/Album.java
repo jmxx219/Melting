@@ -42,6 +42,7 @@ public class Album extends BaseEntity {
 	@Column(nullable = false)
 	private String category;
 
+	// 장르 목록
 	@ElementCollection
 	@Column(nullable = false)
 	private List<String> genres = new ArrayList<>();
