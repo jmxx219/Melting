@@ -22,14 +22,14 @@ import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
-@Table(name = "generated_album")
+@Table(name = "album")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Album extends BaseEntity {
 
 	// 생성 앨범 식별자
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long generatedAlbumId;
+	private Long albumId;
 
 	// 회원 식별자
 	@ManyToOne
