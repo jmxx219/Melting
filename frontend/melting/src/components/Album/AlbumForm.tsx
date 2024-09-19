@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+
 import { useEffect, useState } from 'react'
 import { useLocation } from 'react-router-dom'
 import { useNavigate } from 'react-router-dom'
@@ -23,6 +25,7 @@ export default function AlbumForm() {
   const [titleSongIndex, setTitleSongIndex] = useState<number | null>(null)
   const [selectedGenres, setSelectedGenres] = useState<string[]>([])
   const [selectedHashtags, setSelectedHashtags] = useState<string[]>([])
+  // @ts-ignore
   const [selectedCover, setSelectedCover] = useState<string | null>(null)
   const [releaseDate, setReleaseDate] = useState<string>('')
 
@@ -87,7 +90,7 @@ export default function AlbumForm() {
   }
 
   const handleHashtagsChange = (hashtags: string[]) => {
-    console.log('Selected hashtags:', hashtags)
+    // console.log('Selected hashtags:', hashtags)
     // 여기서 선택된 해시태그를 처리할 수 있습니다.
     setSelectedHashtags(hashtags)
   }

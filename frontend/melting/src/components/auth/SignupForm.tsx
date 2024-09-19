@@ -2,7 +2,13 @@ import { useState, useEffect } from 'react'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
 import { ArrowRight, Camera, User } from 'lucide-react'
 
 const isValidNickname = (nickname: string): boolean => {
@@ -13,6 +19,7 @@ const isValidNickname = (nickname: string): boolean => {
 // 닉네임 중복 체크 함수 (실제로는 API 호출이 필요)
 const checkNicknameDuplicate = async (nickname: string): Promise<boolean> => {
   // 여기에 실제 API 호출 로직 구현
+  console.log(nickname)
   return new Promise((resolve) => setTimeout(() => resolve(false), 1000))
 }
 
@@ -27,7 +34,9 @@ export default function SignupForm() {
   useEffect(() => {
     const validateForm = async () => {
       const nicknameValid = isValidNickname(nickname)
-      const nicknameDuplicate = nicknameValid ? await checkNicknameDuplicate(nickname) : true
+      const nicknameDuplicate = nicknameValid
+        ? await checkNicknameDuplicate(nickname)
+        : true
 
       setIsNicknameValid(nicknameValid)
       setIsNicknameDuplicate(nicknameDuplicate)
@@ -60,7 +69,9 @@ export default function SignupForm() {
       <div className="flex flex-col mb-16">
         <div className="text-2xl font-bold">정보를</div>
         <div className="text-2xl font-bold mb-2">입력해주세요</div>
-        <div className="text-sm text-gray">닉네임은 영어, 한글, 숫자 포함 20글자까지 가능해요</div>
+        <div className="text-sm text-gray">
+          닉네임은 영어, 한글, 숫자 포함 20글자까지 가능해요
+        </div>
       </div>
       <div>
         <div className="flex justify-center mb-16">
@@ -77,7 +88,13 @@ export default function SignupForm() {
             >
               <Camera className="w-6 h-6 text-black" />
             </label>
-            <input id="profile-upload" type="file" accept="image/*" className="hidden" onChange={handleImageUpload} />
+            <input
+              id="profile-upload"
+              type="file"
+              accept="image/*"
+              className="hidden"
+              onChange={handleImageUpload}
+            />
           </div>
         </div>
         <div className="space-y-6 mb-14">
@@ -96,14 +113,22 @@ export default function SignupForm() {
                 {nickname.length}/20
               </span>
               {!isNicknameValid && nickname && (
-                <p className="text-status-warning text-xs mt-1">닉네임은 2-20자의 한글, 영문, 숫자만 가능합니다.</p>
+                <p className="text-status-warning text-xs mt-1">
+                  닉네임은 2-20자의 한글, 영문, 숫자만 가능합니다.
+                </p>
               )}
-              {isNicknameDuplicate && <p className="text-status-warning text-xs mt-1">이미 사용 중인 닉네임입니다.</p>}
+              {isNicknameDuplicate && (
+                <p className="text-status-warning text-xs mt-1">
+                  이미 사용 중인 닉네임입니다.
+                </p>
+              )}
             </div>
           </div>
 
           <Select onValueChange={setGender}>
-            <SelectTrigger className={`w-full mt-10 ${gender ? 'text-black border-b-primary-400' : ''}`}>
+            <SelectTrigger
+              className={`w-full mt-10 ${gender ? 'text-black border-b-primary-400' : ''}`}
+            >
               <SelectValue placeholder="성별을 선택해주세요" />
             </SelectTrigger>
             <SelectContent>

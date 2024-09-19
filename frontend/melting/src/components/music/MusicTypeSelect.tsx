@@ -15,7 +15,10 @@ export default function MusicTypeSelect({}: Props) {
       <MusicTypeButton
         bgColor="#A5A5A5"
         title={'AI 자동 커버'}
-        detail={['사용자의 목소리를 AI가 학습하여', '원곡 커버를 자동 생성해요']}
+        detail={[
+          '사용자의 목소리를 AI가 학습하여',
+          '원곡 커버를 자동 생성해요',
+        ]}
         footer={`현재 2곡의 커버가 더 필요해요 `}
         type="ai"
       ></MusicTypeButton>
