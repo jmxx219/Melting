@@ -67,6 +67,9 @@ public class MemberController {
 		@RequestPart MultipartFile multipartFile,
 		@RequestBody MemberUpdateRequestDto memberUpdateRequestDto,
 		@AuthenticationPrincipal CustomOAuth2User customOAuth2User) {
+		if (multipartFile.isEmpty() && memberUpdateRequestDto.nickName().isEmpty()) {
+			return ApiResponse.error(MEMBER_BAD_REQUEST.getErrorMessage());
+		}
 		MemberResponseDto memberResponseDto = memberService.updateMemberInfo(
 			multipartFile,
 			memberUpdateRequestDto.nickName(),

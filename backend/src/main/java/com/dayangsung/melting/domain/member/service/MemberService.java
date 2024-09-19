@@ -1,6 +1,7 @@
 package com.dayangsung.melting.domain.member.service;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.dayangsung.melting.domain.member.dto.response.MemberResponseDto;
@@ -28,8 +29,9 @@ public class MemberService {
 		return !memberRepository.existsByNickname(nickname);
 	}
 
+	@Transactional
 	public MemberResponseDto initMemberInfo(MultipartFile profileImage, String nickname, Gender gender, Long memberId) {
-		String profileImageUrl = null;
+		String profileImageUrl = awsS3Service.getDefaultProfileImageUrl();
 		if (!profileImage.isEmpty()) {
 			profileImageUrl = awsS3Service.uploadProfileImage(profileImage, memberId, null);
 		}
@@ -46,10 +48,8 @@ public class MemberService {
 		return MemberResponseDto.of(member);
 	}
 
+	@Transactional
 	public MemberResponseDto updateMemberInfo(MultipartFile multipartFile, String nickname, Long memberId) {
-		if (multipartFile.isEmpty() && nickname.isEmpty()) {
-			throw new RuntimeException();
-		}
 		Member member = memberRepository.findById(memberId).orElseThrow(RuntimeException::new);
 		String newFileName = multipartFile.getOriginalFilename();
 		if (nickname == null) {
