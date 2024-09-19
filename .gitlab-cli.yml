@@ -1,6 +1,6 @@
 stages:
   - build
-
+ 
 build_BE:
   stage: build
   image: gradle:8.8-jdk21
@@ -9,12 +9,14 @@ build_BE:
     - chmod +x backend/gradlew
   script:
     - cd backend
-    - ./gradlew clean build -x test
+    - ./gradlew clean build -x test -Dspring.profiles.active=prod
     - cp build/libs/melting-0.0.1-SNAPSHOT.jar ~/melting/spring-docker
-    - sh ~/spring.sh
+    - sh ~/melting/spring-docker/spring.sh
   rules:
     - if: '$CI_COMMIT_BRANCH == "dev-be"'
-
+  tags: 
+    - prod
+ 
 build_FE:
   stage: build
   image: node
@@ -22,8 +24,10 @@ build_FE:
     - echo "[INFO] YML Settings"
     - cd frontend/melting
   script:
-    - npm install
-    - npm run build
-    - cp -R dist ~/melting/melting-fe
+    - yarn install
+    - yarn build
+    - sudo cp -R dist ~/melting/melting-fe
   rules:
     - if: '$CI_COMMIT_BRANCH == "dev-fe"'
+  tags: 
+    - prod
