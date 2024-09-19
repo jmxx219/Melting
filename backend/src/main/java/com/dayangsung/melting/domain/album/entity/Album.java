@@ -42,9 +42,9 @@ public class Album extends BaseEntity {
 	@Column(nullable = false)
 	private String category;
 
-	// TODO: 장르 entity 생성 or String
+	@ElementCollection
 	@Column(nullable = false)
-	private List<String> genres;
+	private List<String> genres = new ArrayList<>();
 
 	// 앨범 소개
 	@Column(columnDefinition = "TEXT")
