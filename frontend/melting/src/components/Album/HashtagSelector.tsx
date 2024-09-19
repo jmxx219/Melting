@@ -110,6 +110,8 @@ export default function HashtagSelector({
           onChange={handleInputChange}
           placeholder={hashtags.length === 0 ? '해시태그를 추가해주세요' : ''}
           className="flex-grow outline-none bg-transparent"
+          autoComplete="false"
+          spellCheck="false"
         />
         <Hash
           size={24}
