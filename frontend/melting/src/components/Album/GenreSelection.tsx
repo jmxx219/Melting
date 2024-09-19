@@ -21,11 +21,6 @@ const genres = [
   '전자음악',
 ]
 
-interface GenreSelectionProps {
-  selectedGenres: string[]
-  onGenresSubmit: (genres: string[]) => void
-}
-
 export default function GenreSelection() {
   const [selectedGenres, setSelectedGenres] = useState<string[]>([])
   const location = useLocation()

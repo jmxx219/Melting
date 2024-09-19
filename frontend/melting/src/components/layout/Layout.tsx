@@ -1,4 +1,4 @@
-import { ReactNode, ComponentType } from 'react'
+import { ReactNode } from 'react'
 import DefaultHeader from '@/components/layout/DefaultHeader'
 import Footer from './Footer'
 import Logo from './Logo'

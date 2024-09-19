@@ -3,13 +3,11 @@ import { Hash } from 'lucide-react'
 import {
   AlertDialog,
   AlertDialogAction,
-  AlertDialogCancel,
   AlertDialogContent,
   AlertDialogDescription,
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-  AlertDialogTrigger,
 } from '@/components/ui/alert-dialog'
 
 // 가상의 API 호출 함수 (실제 구현 시 이 부분을 실제 API로 대체해야 합니다)
