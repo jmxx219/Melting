@@ -4,7 +4,8 @@ import { ArrowDown } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import SongItem from '@/components/Music/SongItem'
 
-import { Song } from '@/types/music'
+import { Song } from '@/types/song'
+import { CoverType } from '@/types/constType'
 import SearchBar from '../Music/SearchBar'
 
 export default function SongSearch() {
@@ -60,7 +61,7 @@ export default function SongSearch() {
     }
   }
 
-  const handleTypeChange = (songId: number, type: 'melting' | 'ai') => {
+  const handleTypeChange = (songId: number, type: CoverType) => {
     setSearchResults(
       searchResults.map((song) =>
         song.songId === songId ? { ...song, song_type: type } : song,
