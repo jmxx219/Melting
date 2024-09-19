@@ -1,11 +1,13 @@
 package com.dayangsung.melting.domain.album.entity;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.dayangsung.melting.domain.member.entity.Member;
 import com.dayangsung.melting.global.entity.BaseEntity;
 
 import jakarta.persistence.Column;
+import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
