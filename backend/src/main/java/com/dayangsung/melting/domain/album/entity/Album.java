@@ -7,6 +7,7 @@ import com.dayangsung.melting.domain.member.entity.Member;
 import com.dayangsung.melting.global.entity.BaseEntity;
 
 import jakarta.persistence.Column;
+import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -44,6 +45,7 @@ public class Album extends BaseEntity {
 	private String category;
 
 	// TODO: 장르 entity 생성 or String
+	@ElementCollection
 	@Column(nullable = false)
 	private List<String> genres = new ArrayList<>();
 
