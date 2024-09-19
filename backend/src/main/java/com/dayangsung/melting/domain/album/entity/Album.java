@@ -22,7 +22,7 @@ import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
-@Table(name = "generated_album")
+@Table(name = "album")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Album extends BaseEntity {
 
