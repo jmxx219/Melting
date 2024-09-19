@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 import { useLocation } from 'react-router-dom'
 import { useNavigate } from 'react-router-dom'
 
-import { Song } from '@/types/music'
+import { Song } from '@/types/song'
 import { Input } from '../ui/input'
 import { Label } from '../ui/label'
 import { Textarea } from '../ui/textarea'
@@ -120,6 +120,8 @@ export default function AlbumForm() {
             value={albumName}
             onChange={(e) => setAlbumName(e.target.value)}
             className={`${albumName ? 'border-primary-400' : ''}`}
+            autoComplete="false"
+            spellCheck="false"
           />
           <div className="h-5">
             <span
@@ -127,7 +129,7 @@ export default function AlbumForm() {
             >
               {albumName.length}/20
             </span>
-            {!isAlbumNameValid && (
+            {!isAlbumNameValid && albumName.length > 0 && (
               <p className="text-status-warning text-xs">
                 앨범명은 2-20자의 한글, 영문, 숫자만 가능합니다.
               </p>
@@ -145,6 +147,8 @@ export default function AlbumForm() {
             className={`min-h-[100px] ${albumIntro ? 'border-primary-400' : ''}`}
             placeholder={`앨범에 대한 소개를 입력해주세요.\n입력하지 않으면 AI가 자동으로 생성합니다.`}
             onChange={(e) => setAlbumIntro(e.target.value)}
+            autoComplete="false"
+            spellCheck="false"
           ></Textarea>
           <p
             className={`absolute right-2 bottom-0.1 mt-1 text-sm  ${albumIntro ? 'text-primary-400' : 'text-gray'}`}
