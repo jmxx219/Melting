@@ -16,7 +16,7 @@ public record MemberResponseDto(
 	public static MemberResponseDto of(Member member) {
 		return MemberResponseDto.builder()
 			.nickname(member.getNickname())
-			.profileImageUrl(member.getProfileImage())
+			.profileImageUrl(member.getProfileImageExtension())
 			.build();
 	}
 }
