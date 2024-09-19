@@ -1,6 +1,5 @@
 import { Hash } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { useNavigate } from 'react-router-dom'
 
 interface GenreSelectorProps {
   selectedGenres: string[]
@@ -11,13 +10,6 @@ export default function GenreSelector({
   selectedGenres,
   onGenreEdit,
 }: GenreSelectorProps) {
-  const navigate = useNavigate()
-
-  const handleGenreEdit = () => {
-    // Navigate to the genre selection page, passing the selected genres as state
-    navigate('/album/create/genre-selection', { state: { selectedGenres } })
-  }
-
   return (
     <div className="flex justify-between items-center relative border-b-2 pb-3 px-2">
       <div>
@@ -35,7 +27,7 @@ export default function GenreSelector({
         {selectedGenres.length > 0 ? '수정하기' : '추가하기'}
       </Button>
       <Hash
-        className={`ml-2 ${selectedGenres.length > 0 ? 'text-primary-400' : 'text-gray-400'}`}
+        className={`absolute right-3 top-1/2 transform -translate-y-1/2 ${selectedGenres.length > 0 ? 'text-primary-400' : 'text-gray-400'}`}
       />
     </div>
   )
