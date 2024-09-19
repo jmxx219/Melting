@@ -6,16 +6,19 @@ import com.fasterxml.jackson.databind.annotation.JsonNaming;
 
 import lombok.Builder;
 
+// 커뮤니티에서 검색 후 반환되는 앨범 관련 DTO
 @Builder
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-public record AlbumResponseDto(
-		String albumName,
-		String albumDescription
+public record AlbumSearchResponseDto(
+	String albumCoverImage,
+	String albumName,
+	String nickname
 ) {
-	public static AlbumResponseDto of(Album album) {
-		return AlbumResponseDto.builder()
+	public static AlbumSearchResponseDto of(Album album) {
+		return AlbumSearchResponseDto.builder()
+				.albumCoverImage(album.getAlbumCoverImage())
 				.albumName(album.getAlbumName())
-				.albumDescription(album.getAlbumDescription())
+				.nickname(album.getMember().getNickname())
 				.build();
 	}
 }
