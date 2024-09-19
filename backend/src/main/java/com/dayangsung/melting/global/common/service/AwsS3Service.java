@@ -1,10 +1,13 @@
 package com.dayangsung.melting.global.common.service;
 
+import static com.dayangsung.melting.global.common.response.enums.ErrorMessage.*;
+
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
+import org.springdoc.api.ErrorMessage;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -72,6 +75,10 @@ public class AwsS3Service {
 		return uploadImage(profileImage, "/image/profile", memberId);
 	}
 
+	public String getDefaultProfileImageUrl() {
+		return CLOUDFRONTURL + "/image/profile/default_image.png";
+	}
+
 	public String getProfileImageUrl(Long memberId, String extension) {
 		return CLOUDFRONTURL + "/image/profile/" + memberId + extension;
 	}
@@ -87,14 +94,14 @@ public class AwsS3Service {
 	private void validateImageFileExtension(String filename) {
 		int lastDotIndex = filename.lastIndexOf(".");
 		if (lastDotIndex == -1) {
-			throw new RuntimeException();
+			throw new RuntimeException(INCORRECT_IMAGE_EXTENSION.getErrorMessage());
 		}
 
 		String extension = filename.substring(lastDotIndex + 1).toLowerCase();
 		List<String> allowedExtentionList = Arrays.asList("jpg", "jpeg", "png", "gif");
 
 		if (!allowedExtentionList.contains(extension)) {
-			throw new RuntimeException();
+			throw new RuntimeException(INCORRECT_IMAGE_EXTENSION.getErrorMessage());
 		}
 	}
 
