@@ -14,7 +14,6 @@ build_BE:
     - sh ~/melting/spring-docker/spring.sh
   rules:
     - if: '$CI_COMMIT_BRANCH == "dev-be"'
-    - if: '$CI_COMMIT_BRANCH == "feat/infra-S11P21A701-464-fe-ci-test"'
   tags: 
     - prod
  
@@ -30,6 +29,5 @@ build_FE:
     - sudo cp -R dist ~/melting/melting-fe
   rules:
     - if: '$CI_COMMIT_BRANCH == "dev-fe"'
-    - if: '$CI_COMMIT_BRANCH == "feat/infra-S11P21A701-464-fe-ci-test"'
   tags: 
     - prod
