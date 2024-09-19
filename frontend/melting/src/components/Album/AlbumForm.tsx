@@ -7,7 +7,7 @@ import { Input } from '../ui/input'
 import { Label } from '../ui/label'
 import { Textarea } from '../ui/textarea'
 import SongSelection from './SongSelection'
-import HashtagSelection from './HashtagSelection'
+import HashtagSelector from './HashtagSelector'
 import SubmitButton from '../Button/SubmitButton'
 import GenreSelector from './GenreSelector'
 
@@ -86,6 +86,12 @@ export default function AlbumForm() {
     })
   }
 
+  const handleHashtagsChange = (hashtags: string[]) => {
+    console.log('Selected hashtags:', hashtags)
+    // 여기서 선택된 해시태그를 처리할 수 있습니다.
+    setSelectedHashtags(hashtags)
+  }
+
   return (
     <form className="space-y-6">
       <div>
@@ -157,13 +163,12 @@ export default function AlbumForm() {
         <Label htmlFor="hashtag" className="font-semibold">
           해시태그<span className="text-primary-400 ml-1">*</span>
         </Label>
-        <HashtagSelection />
+        <HashtagSelector onHashtagsChange={handleHashtagsChange} />
       </div>
       <div>
         <Label htmlFor="hashtag" className="font-semibold">
           앨범 커버<span className="text-primary-400 ml-1">*</span>
         </Label>
-        <HashtagSelection />
       </div>
       <div className="text-gray text-center">
         <p>발매 일자 : {releaseDate}</p>
