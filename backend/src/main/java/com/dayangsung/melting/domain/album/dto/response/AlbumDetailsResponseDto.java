@@ -22,7 +22,7 @@ public record AlbumDetailsResponseDto(
 ) {
 	public static AlbumDetailsResponseDto of(Album album) {
 		return new AlbumDetailsResponseDto(
-			album.getGeneratedAlbumId(),
+			album.getAlbumId(),
 			album.getAlbumName(),
 			album.getCategory(),
 			album.getGenres(),
