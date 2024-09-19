@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.dayangsung.melting.domain.originalsong.dto.response.OriginalSongResponseDto;
+import com.dayangsung.melting.domain.originalsong.dto.response.OriginalSongSearchResponseDto;
 import com.dayangsung.melting.domain.originalsong.service.OriginalSongService;
 import com.dayangsung.melting.global.common.response.ApiResponse;
 
@@ -24,23 +25,16 @@ public class OriginalSongController {
 	private final OriginalSongService originalSongService;
 
 	@GetMapping
-	public ApiResponse<List<OriginalSongResponseDto>> getSearchList(@RequestParam String keyword) {
+	public ApiResponse<List<OriginalSongSearchResponseDto>> getSearchList(@RequestParam String keyword) {
 
-		List<OriginalSongResponseDto> originalSongServiceSearchList = originalSongService.getSearchList(keyword);
+		List<OriginalSongSearchResponseDto> originalSongServiceSearchList = originalSongService.getSearchList(keyword);
 		return ApiResponse.ok(originalSongServiceSearchList);
 	}
 
 	@GetMapping("/{originalSongId}")
-	public ApiResponse<String> getLyrics(@PathVariable Long originalSongId) {
+	public ApiResponse<OriginalSongResponseDto> getOriginalSongInfo(@PathVariable Long originalSongId) {
 
-		String lyrics = originalSongService.getLyrics(originalSongId);
-		return ApiResponse.ok(lyrics);
-	}
-
-	@GetMapping("/{originalSongId}/mr")
-	public ApiResponse<String> getMrUrl(@PathVariable Long originalSongId) {
-
-		String mrFileUrl = originalSongService.getMrUrl(originalSongId);
-		return ApiResponse.ok(mrFileUrl);
+		OriginalSongResponseDto originalSongResponseDto = originalSongService.getOriginalSongInfo(originalSongId);
+		return ApiResponse.ok(originalSongResponseDto);
 	}
 }

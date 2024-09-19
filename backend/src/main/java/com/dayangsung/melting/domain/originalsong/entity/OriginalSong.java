@@ -28,17 +28,20 @@ public class OriginalSong extends BaseEntity {
 
 	private String coverImageUrl;
 
+	private String mrUrl;
+
 	private int lengthInSeconds;
 
 	@Column(nullable = false, columnDefinition = "TEXT")
 	private String lyrics;
 
 	@Builder
-	public OriginalSong(String title, String artist, String coverImageUrl, int lengthInSeconds,
+	public OriginalSong(String title, String artist, String coverImageUrl, String mrUrl, int lengthInSeconds,
 		String lyrics) {
 		this.title = title;
 		this.artist = artist;
 		this.coverImageUrl = coverImageUrl;
+		this.mrUrl = mrUrl;
 		this.lengthInSeconds = lengthInSeconds;
 		this.lyrics = lyrics;
 	}
