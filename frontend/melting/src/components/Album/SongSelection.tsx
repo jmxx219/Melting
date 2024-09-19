@@ -1,12 +1,13 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Music, Plus, Minus, Crown } from 'lucide-react'
+import { Plus, Minus, Crown } from 'lucide-react'
 import {
   DragDropContext,
   Droppable,
   Draggable,
   DropResult,
 } from 'react-beautiful-dnd'
+import MusicNote from '../icon/MusicNote'
 
 import { Button } from '@/components/ui/button'
 import { Song } from '@/types/song'
@@ -80,7 +81,7 @@ export default function SongSelection({
               {selectedSongs.length === 0 ? (
                 <div className="flex justify-between items-center text-sm text-gray">
                   <span>나의 곡을 선택해주세요</span>
-                  <Music size={24} />
+                  <MusicNote />
                 </div>
               ) : (
                 <ul className="space-y-2">
