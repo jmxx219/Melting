@@ -37,10 +37,13 @@ public class AlbumSong extends BaseEntity {
 
 	private int trackNumber;
 
+	private boolean isTitle;
+
 	@Builder
-	public AlbumSong(Album album, Song song, int trackNumber) {
+	public AlbumSong(Album album, Song song, int trackNumber, boolean isTitle) {
 		this.album = album;
 		this.song = song;
 		this.trackNumber = trackNumber;
+		this.isTitle = isTitle;
 	}
 }
