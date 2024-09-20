@@ -12,6 +12,7 @@ import SongSelection from './SongSelection'
 import HashtagSelector from './HashtagSelector'
 import SubmitButton from '../Button/SubmitButton'
 import GenreSelector from './GenreSelector'
+import AlbumCoverSelector from './AlbumCoverSelector'
 
 export default function AlbumForm() {
   const location = useLocation()
@@ -176,6 +177,7 @@ export default function AlbumForm() {
         <Label htmlFor="hashtag" className="font-semibold">
           앨범 커버<span className="text-primary-400 ml-1">*</span>
         </Label>
+        <AlbumCoverSelector onSelectCover={setSelectedCover} />
       </div>
       <div className="text-gray text-center">
         <p>발매 일자 : {releaseDate}</p>
