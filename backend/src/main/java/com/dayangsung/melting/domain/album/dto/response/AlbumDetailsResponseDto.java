@@ -4,6 +4,8 @@ import java.util.List;
 
 import com.dayangsung.melting.domain.album.entity.Album;
 import com.dayangsung.melting.domain.album.enums.AlbumCategory;
+import com.dayangsung.melting.domain.genre.entity.Genre;
+import com.dayangsung.melting.domain.hashtag.entity.AlbumGenre;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 
@@ -19,7 +21,7 @@ public record AlbumDetailsResponseDto(
 	String nickname,
 	Long albumLiked,
 	AlbumCategory category,
-	List<String> genres,
+	List<AlbumGenre> genres,
 	String albumDescription
 ) {
 	public static AlbumDetailsResponseDto of(Album album) {
