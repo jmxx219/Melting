@@ -1,15 +1,13 @@
 import { Hash } from 'lucide-react'
+import { useAlbumContext } from '@/contexts/AlbumContext'
 import { Button } from '@/components/ui/button'
 
 interface GenreSelectorProps {
-  selectedGenres: string[]
   onGenreEdit: () => void
 }
 
-export default function GenreSelector({
-  selectedGenres,
-  onGenreEdit,
-}: GenreSelectorProps) {
+export default function GenreSelector({ onGenreEdit }: GenreSelectorProps) {
+  const { selectedGenres } = useAlbumContext()
   return (
     <div className="flex justify-between items-center relative border-b-2 pb-3 px-2">
       <div>

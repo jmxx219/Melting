@@ -26,7 +26,7 @@ export default function SongSelection() {
     setSelectedSongs(newSongs)
 
     if (titleSongIndex === songId) {
-      setTitleSongIndex(1)
+      setTitleSongIndex(null)
     } else if (
       titleSongIndex !== null &&
       songIndex !== -1 &&
@@ -42,7 +42,7 @@ export default function SongSelection() {
 
   const onDragEnd = (result: DropResult) => {
     if (!result.destination) return
-
+    ;``
     const items = Array.from(selectedSongs)
     const [reorderedItem] = items.splice(result.source.index, 1)
     items.splice(result.destination.index, 0, reorderedItem)

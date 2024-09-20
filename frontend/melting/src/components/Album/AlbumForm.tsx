@@ -181,10 +181,7 @@ export default function AlbumForm() {
         <Label htmlFor="genre" className="font-semibold">
           장르<span className="text-primary-400 ml-1">*</span>
         </Label>
-        <GenreSelector
-          selectedGenres={selectedGenres}
-          onGenreEdit={handleGenreEdit}
-        />
+        <GenreSelector onGenreEdit={handleGenreEdit} />
       </div>
       <div>
         <Label htmlFor="hashtag" className="font-semibold">
