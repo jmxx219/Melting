@@ -4,16 +4,19 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.dayangsung.melting.domain.member.entity.Member;
+import com.dayangsung.melting.domain.song.entity.Song;
 import com.dayangsung.melting.global.entity.BaseEntity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -29,10 +32,11 @@ public class Album extends BaseEntity {
 	// 생성 앨범 식별자
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long generatedAlbumId;
+	@Column(name = "album_id")
+	private Long id;
 
 	// 회원 식별자
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "member_id", nullable = false)
 	private Member member;
 
@@ -69,16 +73,19 @@ public class Album extends BaseEntity {
 	@Column(nullable = false)
 	private Boolean isDeleted;
 
+	@OneToMany(mappedBy = "album")
+	private List<Song> songs = new ArrayList<>();
+
 	@Builder
-	public Album(String albumName, String category, List<String> genres, String albumDescription,
-		String albumCoverImage,
-		Long albumLiked) {
+	public Album(Member member, String albumName, String category, List<String> genres, String albumDescription,
+		String albumCoverImage) {
+		this.member = member;
 		this.albumName = albumName;
 		this.category = category;
 		this.genres = genres;
 		this.albumDescription = albumDescription;
 		this.albumCoverImage = albumCoverImage;
-		this.albumLiked = albumLiked;
+		this.albumLiked = 0L;
 		this.isPublic = false;
 		this.isDeleted = false;
 	}
@@ -95,7 +102,13 @@ public class Album extends BaseEntity {
 		this.isPublic = !isPublic;
 	}
 
-	public void deleteAlbum() {
-		this.isDeleted = true;
+	public void addSong(Song song, Integer trackNumber, Boolean isTitle) {
+		this.songs.add(song);
+		song.setAlbum(this, trackNumber, isTitle);
+	}
+
+	public void removeSong(Song song) {
+		this.songs.remove(song);
+		song.removeFromAlbum();
 	}
 }
