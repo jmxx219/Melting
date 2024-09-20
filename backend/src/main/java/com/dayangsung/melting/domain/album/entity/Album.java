@@ -3,6 +3,7 @@ package com.dayangsung.melting.domain.album.entity;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.dayangsung.melting.domain.album.enums.AlbumCategory;
 import com.dayangsung.melting.domain.member.entity.Member;
 import com.dayangsung.melting.global.entity.BaseEntity;
 
@@ -42,7 +43,7 @@ public class Album extends BaseEntity {
 
 	// 유형
 	@Column(nullable = false)
-	private String category;
+	private AlbumCategory category;
 
 	// 장르 목록
 	@ElementCollection
@@ -72,6 +73,8 @@ public class Album extends BaseEntity {
 	@Builder
 	public Album(String albumName, String category, List<String> genres, String albumDescription, String albumCoverImage,
 			Long albumLiked) {
+	public Album(Member member, String albumName, AlbumCategory category, List<String> genres, String albumDescription,
+			String albumCoverImage) {
 		this.albumName = albumName;
 		this.category = category;
 		this.genres = genres;
