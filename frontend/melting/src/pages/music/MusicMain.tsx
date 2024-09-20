@@ -1,6 +1,6 @@
 import Layout from '@/components/layout/Layout'
 import TitleHeader from '@/components/layout/TitleHeader'
-import MusicTypeSelect from '@/components/music/MusicTypeSelect'
+import MusicTypeSelect from '@/components/Music/MusicTypeSelect'
 
 export default function MusicMain() {
   return (
