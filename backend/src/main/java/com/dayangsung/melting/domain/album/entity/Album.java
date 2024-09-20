@@ -3,12 +3,14 @@ package com.dayangsung.melting.domain.album.entity;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.dayangsung.melting.domain.album.enums.AlbumCategory;
+import com.dayangsung.melting.domain.hashtag.entity.AlbumGenre;
+import com.dayangsung.melting.domain.hashtag.entity.AlbumHashtag;
 import com.dayangsung.melting.domain.member.entity.Member;
 import com.dayangsung.melting.domain.song.entity.Song;
 import com.dayangsung.melting.global.entity.BaseEntity;
 
 import jakarta.persistence.Column;
-import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -44,12 +46,7 @@ public class Album extends BaseEntity {
 
 	// 유형
 	@Column(nullable = false)
-	private String category;
-
-	// TODO: 장르 entity 생성 or String
-	@ElementCollection
-	@Column(nullable = false)
-	private List<String> genres = new ArrayList<>();
+	private AlbumCategory category;
 
 	// 앨범 소개
 	@Column(columnDefinition = "TEXT")
@@ -61,7 +58,7 @@ public class Album extends BaseEntity {
 
 	// 좋아요 수
 	@Column(nullable = false)
-	private Long albumLiked;
+	private Long likedCount;
 
 	// 공개 여부
 	@Column(nullable = false)
@@ -71,19 +68,26 @@ public class Album extends BaseEntity {
 	@Column(nullable = false)
 	private Boolean isDeleted;
 
+	// 수록곡
 	@OneToMany(mappedBy = "album")
 	private List<Song> songs = new ArrayList<>();
 
+	// 해시태그 목록
+	@OneToMany(mappedBy = "album")
+	private List<AlbumHashtag> hashtags = new ArrayList<>();
+
+	// 장르 목록
+	@OneToMany(mappedBy = "album")
+	private List<AlbumGenre> genres = new ArrayList<>();
+
 	@Builder
-	public Album(Member member, String albumName, String category, List<String> genres, String albumDescription,
-		String albumCoverImage) {
+	public Album(Member member, String albumName, AlbumCategory category, String albumDescription, String albumCoverImage) {
 		this.member = member;
 		this.albumName = albumName;
 		this.category = category;
-		this.genres = genres;
 		this.albumDescription = albumDescription;
 		this.albumCoverImage = albumCoverImage;
-		this.albumLiked = 0L;
+		this.likedCount = 0L;
 		this.isPublic = false;
 		this.isDeleted = false;
 	}
@@ -98,6 +102,10 @@ public class Album extends BaseEntity {
 
 	public void togglePublicStatus() {
 		this.isPublic = !isPublic;
+	}
+
+	public void deleteAlbum() {
+		this.isDeleted = true;
 	}
 
 	public void addSong(Song song, Integer trackNumber, Boolean isTitle) {
