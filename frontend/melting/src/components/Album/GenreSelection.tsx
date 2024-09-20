@@ -1,11 +1,12 @@
 import { useState, useEffect } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
+import { useAlbumContext } from '@/contexts/AlbumContext'
 import { Button } from '@/components/ui/button'
 import SubmitButton from '../Button/SubmitButton'
 import { genres, GenreType } from '@/types/constType'
 
 export default function GenreSelection() {
-  const [selectedGenres, setSelectedGenres] = useState<GenreType[]>([])
+  const { selectedGenres, setSelectedGenres } = useAlbumContext()
   const location = useLocation()
   const navigate = useNavigate()
 
