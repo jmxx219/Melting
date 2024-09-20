@@ -13,7 +13,7 @@ import {
 // 가상의 API 호출 함수 (실제 구현 시 이 부분을 실제 API로 대체해야 합니다)
 const searchHashtags = async (query: string): Promise<string[]> => {
   // 실제 API 호출 대신 임시 데이터 반환
-  return ['#사진', '#사랑해', '#사랑합니다', '#사진스타그램'].filter((tag) =>
+  return ['사진', '사랑해', '사랑합니다', '사진스타그램'].filter((tag) =>
     tag.includes(query),
   )
 }
@@ -34,8 +34,9 @@ export default function HashtagSelector({
 
   useEffect(() => {
     const fetchSuggestions = async () => {
-      if (input.length > 1) {
-        const results = await searchHashtags(input)
+      const cleanedInput = input.replace(/^#/, '') // #을 제거한 상태로 검색
+      if (cleanedInput.length > 0) {
+        const results = await searchHashtags(cleanedInput) // API에 #이 없는 검색어 전달
         setSuggestions(results)
         setIsDropdownOpen(true)
       } else {
@@ -101,7 +102,7 @@ export default function HashtagSelector({
             className="border-2 border-primary-400 rounded-full px-2 py-1 text-sm mr-2 mb-2 cursor-pointer"
             onClick={() => removeHashtag(tag)}
           >
-            {tag}
+            #{tag}
           </span>
         ))}
         <input
