@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.dayangsung.melting.domain.album.enums.AlbumCategory;
 import com.dayangsung.melting.domain.hashtag.entity.AlbumGenre;
+import com.dayangsung.melting.domain.hashtag.entity.AlbumHashtag;
 import com.dayangsung.melting.domain.member.entity.Member;
 import com.dayangsung.melting.domain.song.entity.Song;
 import com.dayangsung.melting.global.entity.BaseEntity;
@@ -67,6 +68,7 @@ public class Album extends BaseEntity {
 	@Column(nullable = false)
 	private Boolean isDeleted;
 
+	// 수록곡
 	@OneToMany(mappedBy = "album")
 	private List<Song> songs = new ArrayList<>();
 
