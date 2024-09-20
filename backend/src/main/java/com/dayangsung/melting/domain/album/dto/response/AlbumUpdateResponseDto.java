@@ -9,6 +9,6 @@ public record AlbumUpdateResponseDto(
 		Long albumId
 ) {
 	public static AlbumUpdateResponseDto of(Album album) {
-		return new AlbumUpdateResponseDto(album.getAlbumId());
+		return new AlbumUpdateResponseDto(album.getId());
 	}
 }

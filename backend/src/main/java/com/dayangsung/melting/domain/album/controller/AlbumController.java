@@ -1,5 +1,6 @@
 package com.dayangsung.melting.domain.album.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,8 +15,9 @@ import org.springframework.web.bind.annotation.RestController;
 import com.dayangsung.melting.domain.album.dto.request.AlbumCreateRequestDto;
 import com.dayangsung.melting.domain.album.dto.request.AlbumUpdateRequestDto;
 import com.dayangsung.melting.domain.album.dto.response.AlbumDetailsResponseDto;
-import com.dayangsung.melting.domain.album.dto.response.AlbumResponseDto;
-import com.dayangsung.melting.domain.album.entity.Album;
+import com.dayangsung.melting.domain.album.dto.response.AlbumMainResponseDto;
+import com.dayangsung.melting.domain.album.dto.response.AlbumSearchResponseDto;
+import com.dayangsung.melting.domain.album.dto.response.AlbumUpdateResponseDto;
 import com.dayangsung.melting.domain.album.service.AlbumService;
 import com.dayangsung.melting.global.common.response.ApiResponse;
 
@@ -28,26 +30,33 @@ public class AlbumController {
 
 	private final AlbumService albumService;
 
-	// 공개 설정된 앨범 조회
-	public ApiResponse<List<AlbumResponseDto>> getAlbumList() {
-		List<AlbumResponseDto> albumDtos = albumService.getPublicAndNotDeletedAlbums();
-		return ApiResponse.ok(albumDtos);
+	// 커뮤니티 메인 페이지에 보여지는 앨범 조회, 기본값은 최신순
+	@GetMapping
+	public ApiResponse<List<AlbumMainResponseDto>> getAlbumsInCommunityMainPage(
+			@RequestParam(value = "sort", defaultValue = "latest") String sort) {
+		List<AlbumMainResponseDto> albumMainResponseDtoList = albumService.getAlbumsSorted(sort);
+		return ApiResponse.ok(albumMainResponseDtoList);
 	}
 
 	// 키워드 검색을 통한 앨범 조회
-	@GetMapping
-	public ApiResponse<List<AlbumResponseDto>> getAlbumListByKeyword(
-		@RequestParam(value = "keyword", required = false) String keyword) {
-		List<AlbumResponseDto> albumDtos = albumService.searchAlbumsByKeyword(keyword);
-		return ApiResponse.ok(albumDtos);
+	@GetMapping("/search")
+	public ApiResponse<List<AlbumSearchResponseDto>> searchAlbumsByKeyword(
+			@RequestParam(value = "keyword") String keyword) {
+		List<AlbumSearchResponseDto> result = new ArrayList<>();
+		result.addAll(albumService.searchAlbumsByAlbumName(keyword));
+		result.addAll(albumService.searchAlbumsBySongName(keyword));
+		result.addAll(albumService.searchAlbumsByHashtag(keyword));
+		result.addAll(albumService.searchAlbumsByGenre(keyword));
+		return ApiResponse.ok(result);
 	}
 
 	// 앨범 생성
+	// TODO: 수정 필요
 	@PostMapping
-	public ApiResponse<AlbumDetailsResponseDto> createAlbum(
+	public ApiResponse<AlbumUpdateResponseDto> createAlbum(
 		@RequestBody AlbumCreateRequestDto albumCreateRequestDto) {
-		AlbumDetailsResponseDto albumDetailsResponseDto = albumService.createAlbum(albumCreateRequestDto);
-		return ApiResponse.ok(albumDetailsResponseDto);
+		AlbumUpdateResponseDto albumUpdateResponseDto = albumService.createAlbum(albumCreateRequestDto);
+		return ApiResponse.ok(albumUpdateResponseDto);
 	}
 
 	// 앨범 상세정보 조회
@@ -59,10 +68,10 @@ public class AlbumController {
 
 	// 앨범 수정
 	@PatchMapping("/{albumId}")
-	public ApiResponse<AlbumResponseDto> updateAlbum(
+	public ApiResponse<AlbumUpdateResponseDto> updateAlbum(
 		@PathVariable Long albumId,
 		@RequestBody AlbumUpdateRequestDto albumUpdateRequestDto) {
-		AlbumResponseDto updatedAlbumDto = albumService.updateAlbum(albumId, albumUpdateRequestDto);
+		AlbumUpdateResponseDto updatedAlbumDto = albumService.updateAlbum(albumId, albumUpdateRequestDto);
 		return ApiResponse.ok(updatedAlbumDto);
 	}
 	
