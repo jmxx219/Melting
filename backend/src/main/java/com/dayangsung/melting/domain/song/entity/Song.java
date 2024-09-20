@@ -1,5 +1,6 @@
 package com.dayangsung.melting.domain.song.entity;
 
+import com.dayangsung.melting.domain.album.entity.Album;
 import com.dayangsung.melting.domain.member.entity.Member;
 import com.dayangsung.melting.domain.originalsong.entity.OriginalSong;
 import com.dayangsung.melting.domain.song.enums.SongType;
@@ -40,6 +41,10 @@ public class Song extends BaseEntity {
 	@JoinColumn(name = "member_id")
 	private Member member;
 
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "album_id")
+	private Album album;
+
 	@Column(nullable = false)
 	private Long likedCount;
 
@@ -48,18 +53,34 @@ public class Song extends BaseEntity {
 	private SongType songType;
 
 	@Column(nullable = false)
-	private String coverImage;
-
-	@Column(nullable = false)
 	private String songUrl;
 
+	private Integer trackNumber;
+
+	private Boolean isTitle;
+
 	@Builder
-	public Song(OriginalSong originalSong, Member member, SongType songType, String coverImage, String songUrl) {
+	public Song(OriginalSong originalSong, Member member, SongType songType,
+		String songUrl) {
 		this.originalSong = originalSong;
 		this.member = member;
+		this.album = null;
 		this.likedCount = 0L;
 		this.songType = songType;
-		this.coverImage = coverImage;
 		this.songUrl = songUrl;
+		this.trackNumber = null;
+		this.isTitle = null;
+	}
+
+	public void setAlbum(Album album, Integer trackNumber, Boolean isTitle) {
+		this.album = album;
+		this.trackNumber = trackNumber;
+		this.isTitle = isTitle;
+	}
+
+	public void removeFromAlbum() {
+		this.album = null;
+		this.trackNumber = null;
+		this.isTitle = null;
 	}
 }
