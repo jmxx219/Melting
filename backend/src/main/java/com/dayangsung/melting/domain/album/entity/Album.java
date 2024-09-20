@@ -4,12 +4,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.dayangsung.melting.domain.album.enums.AlbumCategory;
+import com.dayangsung.melting.domain.hashtag.entity.AlbumGenre;
 import com.dayangsung.melting.domain.member.entity.Member;
 import com.dayangsung.melting.domain.song.entity.Song;
 import com.dayangsung.melting.global.entity.BaseEntity;
 
 import jakarta.persistence.Column;
-import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -47,11 +47,6 @@ public class Album extends BaseEntity {
 	@Column(nullable = false)
 	private AlbumCategory category;
 
-	// 장르 목록
-	@ElementCollection
-	@Column(nullable = false)
-	private List<String> genres = new ArrayList<>();
-
 	// 앨범 소개
 	@Column(columnDefinition = "TEXT")
 	private String albumDescription;
@@ -74,6 +69,10 @@ public class Album extends BaseEntity {
 
 	@OneToMany(mappedBy = "album")
 	private List<Song> songs = new ArrayList<>();
+
+	// 해시태그 목록
+	@OneToMany(mappedBy = "album")
+	private List<AlbumHashtag> hashtags = new ArrayList<>();
 
 	// 장르 목록
 	@OneToMany(mappedBy = "album")
@@ -101,6 +100,10 @@ public class Album extends BaseEntity {
 
 	public void togglePublicStatus() {
 		this.isPublic = !isPublic;
+	}
+
+	public void deleteAlbum() {
+		this.isDeleted = true;
 	}
 
 	public void addSong(Song song, Integer trackNumber, Boolean isTitle) {
