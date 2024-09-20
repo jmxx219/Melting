@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.dayangsung.melting.domain.album.enums.AlbumCategory;
 import com.dayangsung.melting.domain.member.entity.Member;
+import com.dayangsung.melting.domain.song.entity.Song;
 import com.dayangsung.melting.global.entity.BaseEntity;
 
 import jakarta.persistence.Column;
@@ -16,16 +17,14 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.OneToMany;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-// TODO: 해시태그 추가
 @Entity
 @Getter
-@Table(name = "album")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Album extends BaseEntity {
 
@@ -73,6 +72,9 @@ public class Album extends BaseEntity {
 	@Column(nullable = false)
 	private Boolean isDeleted;
 
+	@OneToMany(mappedBy = "album")
+	private List<Song> songs = new ArrayList<>();
+
 	@Builder
 	public Album(Member member, String albumName, AlbumCategory category, List<String> genres, String albumDescription,
 			String albumCoverImage) {
@@ -99,7 +101,13 @@ public class Album extends BaseEntity {
 		this.isPublic = !isPublic;
 	}
 
-	public void deleteAlbum() {
-		this.isDeleted = true;
+	public void addSong(Song song, Integer trackNumber, Boolean isTitle) {
+		this.songs.add(song);
+		song.setAlbum(this, trackNumber, isTitle);
+	}
+
+	public void removeSong(Song song) {
+		this.songs.remove(song);
+		song.removeFromAlbum();
 	}
 }
