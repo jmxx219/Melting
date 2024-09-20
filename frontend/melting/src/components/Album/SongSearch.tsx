@@ -81,7 +81,7 @@ export default function SongSearch() {
   }
 
   return (
-    <div className="space-y-6 p-4">
+    <div className="flex flex-col justify-between flex-1 space-y-6 p-4">
       <div className="flex items-center space-x-2">
         <SearchBar
           searchTerm={searchTerm}
