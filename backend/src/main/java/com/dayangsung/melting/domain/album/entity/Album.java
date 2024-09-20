@@ -1,0 +1,112 @@
+package com.dayangsung.melting.domain.album.entity;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import com.dayangsung.melting.domain.member.entity.Member;
+import com.dayangsung.melting.domain.song.entity.Song;
+import com.dayangsung.melting.global.entity.BaseEntity;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.ElementCollection;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
+@Entity
+@Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+public class Album extends BaseEntity {
+
+	// 생성 앨범 식별자
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "album_id")
+	private Long id;
+
+	// 회원 식별자
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "member_id", nullable = false)
+	private Member member;
+
+	// 앨범명
+	@Column(nullable = false)
+	private String albumName;
+
+	// 유형
+	@Column(nullable = false)
+	private String category;
+
+	// TODO: 장르 entity 생성 or String
+	@ElementCollection
+	@Column(nullable = false)
+	private List<String> genres = new ArrayList<>();
+
+	// 앨범 소개
+	@Column(columnDefinition = "TEXT")
+	private String albumDescription;
+
+	// 앨범 커버 이미지
+	@Column(nullable = false)
+	private String albumCoverImage;
+
+	// 좋아요 수
+	@Column(nullable = false)
+	private Long albumLiked;
+
+	// 공개 여부
+	@Column(nullable = false)
+	private Boolean isPublic;
+
+	// 삭제 여부
+	@Column(nullable = false)
+	private Boolean isDeleted;
+
+	@OneToMany(mappedBy = "album")
+	private List<Song> songs = new ArrayList<>();
+
+	@Builder
+	public Album(Member member, String albumName, String category, List<String> genres, String albumDescription,
+		String albumCoverImage) {
+		this.member = member;
+		this.albumName = albumName;
+		this.category = category;
+		this.genres = genres;
+		this.albumDescription = albumDescription;
+		this.albumCoverImage = albumCoverImage;
+		this.albumLiked = 0L;
+		this.isPublic = false;
+		this.isDeleted = false;
+	}
+
+	public void updateAlbumName(String albumName) {
+		this.albumName = albumName;
+	}
+
+	public void updateAlbumDescription(String albumDescription) {
+		this.albumDescription = albumDescription;
+	}
+
+	public void togglePublicStatus() {
+		this.isPublic = !isPublic;
+	}
+
+	public void addSong(Song song, Integer trackNumber, Boolean isTitle) {
+		this.songs.add(song);
+		song.setAlbum(this, trackNumber, isTitle);
+	}
+
+	public void removeSong(Song song) {
+		this.songs.remove(song);
+		song.removeFromAlbum();
+	}
+}
