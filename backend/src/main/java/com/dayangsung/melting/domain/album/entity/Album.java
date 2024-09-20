@@ -10,6 +10,7 @@ import com.dayangsung.melting.global.entity.BaseEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -21,6 +22,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+// TODO: 해시태그 추가
 @Entity
 @Getter
 @Table(name = "album")
@@ -30,10 +32,11 @@ public class Album extends BaseEntity {
 	// 생성 앨범 식별자
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long albumId;
+	@Column(name = "album_id")
+	private Long id;
 
 	// 회원 식별자
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "member_id", nullable = false)
 	private Member member;
 
@@ -60,7 +63,7 @@ public class Album extends BaseEntity {
 
 	// 좋아요 수
 	@Column(nullable = false)
-	private Long albumLiked;
+	private Long likedCount;
 
 	// 공개 여부
 	@Column(nullable = false)
@@ -79,7 +82,7 @@ public class Album extends BaseEntity {
 		this.genres = genres;
 		this.albumDescription = albumDescription;
 		this.albumCoverImage = albumCoverImage;
-		this.albumLiked = albumLiked;
+		this.likedCount = 0L;
 		this.isPublic = false;
 		this.isDeleted = false;
 	}
