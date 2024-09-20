@@ -19,10 +19,12 @@ const searchHashtags = async (query: string): Promise<string[]> => {
 }
 
 interface HashtagSelectorProps {
+  selectedHashtag: string[]
   onHashtagsChange: (hashtags: string[]) => void
 }
 
 export default function HashtagSelector({
+  selectedHashtag,
   onHashtagsChange,
 }: HashtagSelectorProps) {
   const [input, setInput] = useState('')
@@ -96,9 +98,9 @@ export default function HashtagSelector({
   return (
     <div className="space-y-2" ref={dropdownRef}>
       <div className="relative border-b-2 rounded-md p-2 flex flex-wrap items-center">
-        {hashtags.map((tag, index) => (
+        {hashtags.map((tag) => (
           <span
-            key={index}
+            key={tag}
             className="border-2 border-primary-400 rounded-full px-2 py-1 text-sm mr-2 mb-2 cursor-pointer"
             onClick={() => removeHashtag(tag)}
           >
