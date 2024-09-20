@@ -3,15 +3,17 @@ import { useNavigate } from 'react-router-dom'
 import { ArrowDown } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import SongItem from '@/components/Music/SongItem'
+import { useAlbumContext } from '@/contexts/AlbumContext'
 
 import { Song } from '@/types/song'
 import { CoverType } from '@/types/constType'
 import SearchBar from '../Music/SearchBar'
+import MusicNote from '../icon/MusicNote'
 
 export default function SongSearch() {
   const [searchTerm, setSearchTerm] = useState('')
   const [searchResults, setSearchResults] = useState<Song[]>([])
-  const [selectedSongs, setSelectedSongs] = useState<Song[]>([])
+  const { selectedSongs, setSelectedSongs } = useAlbumContext()
   const navigate = useNavigate()
 
   const handleSearch = async () => {
@@ -77,7 +79,7 @@ export default function SongSearch() {
 
   const handleSubmit = () => {
     // TODO: Pass selected songs back to SongSelection component
-    navigate('/album/create', { state: { selectedSongs } })
+    navigate('/album/create')
   }
 
   return (
@@ -109,7 +111,11 @@ export default function SongSearch() {
       )}
 
       <div className="text-sm text-primary-500 space-y-1">
-        <p>※ 음표(♪)를 클릭하여 곡을 추가/삭제할 수 있습니다.</p>
+        <p className="flex items-center">
+          ※ 음표(
+          <MusicNote width={15} height={15} fill="#da961f" />
+          )를 클릭하여 곡을 추가/삭제할 수 있습니다.
+        </p>
         <p>※ 선택한 곡은 아래서 확인 가능합니다.</p>
         <p>※ 곡은 최소 1곡에서 최대 10곡까지 등록할 수 있습니다.</p>
       </div>

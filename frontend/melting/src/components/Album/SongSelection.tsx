@@ -1,4 +1,3 @@
-import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Plus, Minus, Crown } from 'lucide-react'
 import {
@@ -9,28 +8,13 @@ import {
 } from 'react-beautiful-dnd'
 import MusicNote from '../icon/MusicNote'
 
+import { useAlbumContext } from '@/contexts/AlbumContext'
 import { Button } from '@/components/ui/button'
-import { Song } from '@/types/song'
 
-interface SongSelectionProps {
-  initialSongs?: Song[]
-  titleSongIndex: number | null
-  onTitleSongChange: (index: number | null) => void
-  onSongsChange: (songs: Song[]) => void
-}
-
-export default function SongSelection({
-  initialSongs,
-  titleSongIndex,
-  onTitleSongChange,
-  onSongsChange,
-}: SongSelectionProps) {
-  const [selectedSongs, setSelectedSongs] = useState<Song[]>(initialSongs || [])
+export default function SongSelection() {
+  const { selectedSongs, setSelectedSongs, titleSongIndex, setTitleSongIndex } =
+    useAlbumContext()
   const navigate = useNavigate()
-
-  useEffect(() => {
-    setSelectedSongs(initialSongs || [])
-  }, [initialSongs])
 
   const handleAddSong = () => {
     navigate('/album/create/song-selection')
@@ -40,21 +24,20 @@ export default function SongSelection({
     const songIndex = selectedSongs.findIndex((song) => song.songId === songId)
     const newSongs = selectedSongs.filter((song) => song.songId !== songId)
     setSelectedSongs(newSongs)
-    onSongsChange(newSongs)
 
     if (titleSongIndex === songId) {
-      onTitleSongChange(null)
+      setTitleSongIndex(1)
     } else if (
       titleSongIndex !== null &&
       songIndex !== -1 &&
       songIndex < selectedSongs.length
     ) {
-      onTitleSongChange(titleSongIndex)
+      setTitleSongIndex(titleSongIndex)
     }
   }
 
   const handleSetTitleSong = (songId: number) => {
-    onTitleSongChange(songId === titleSongIndex ? null : songId)
+    setTitleSongIndex(songId === titleSongIndex ? null : songId)
   }
 
   const onDragEnd = (result: DropResult) => {
@@ -65,7 +48,6 @@ export default function SongSelection({
     items.splice(result.destination.index, 0, reorderedItem)
 
     setSelectedSongs(items)
-    onSongsChange(items)
   }
 
   return (

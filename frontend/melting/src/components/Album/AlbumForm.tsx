@@ -13,25 +13,43 @@ import HashtagSelector from './HashtagSelector'
 import SubmitButton from '../Button/SubmitButton'
 import GenreSelector from './GenreSelector'
 import AlbumCoverSelector from './AlbumCoverSelector'
+import { useAlbumContext } from '@/contexts/AlbumContext'
 
 export default function AlbumForm() {
   const location = useLocation()
   const navigate = useNavigate()
 
-  const [albumName, setAlbumName] = useState('')
-  const [albumIntro, setAlbumIntro] = useState('')
-  const [selectedSongs, setSelectedSongs] = useState<Song[]>(
-    location.state?.selectedSongs || [],
-  )
-  const [titleSongIndex, setTitleSongIndex] = useState<number | null>(null)
-  const [selectedGenres, setSelectedGenres] = useState<string[]>([])
-  const [selectedHashtags, setSelectedHashtags] = useState<string[]>([])
-  // @ts-ignore
-  const [selectedCover, setSelectedCover] = useState<string | null>(null)
+  // const [albumName, setAlbumName] = useState('')
+  // const [albumIntro, setAlbumIntro] = useState('')
+  // const [selectedSongs, setSelectedSongs] = useState<Song[]>(
+  //   location.state?.selectedSongs || [],
+  // )
+  // const [titleSongIndex, setTitleSongIndex] = useState<number | null>(null)
+  // const [selectedGenres, setSelectedGenres] = useState<string[]>([])
+  // const [selectedHashtags, setSelectedHashtags] = useState<string[]>([])
+  // const [selectedCover, setSelectedCover] = useState<string | null>(null)
   const [releaseDate, setReleaseDate] = useState<string>('')
+
+  const {
+    albumName,
+    setAlbumName,
+    albumIntro,
+    setAlbumIntro,
+    selectedSongs,
+    setSelectedSongs,
+    titleSongIndex,
+    setTitleSongIndex,
+    selectedGenres,
+    setSelectedGenres,
+    selectedHashtags,
+    setSelectedHashtags,
+    selectedCover,
+    setSelectedCover,
+  } = useAlbumContext()
 
   // 유효성 검사 상태
   const [isAlbumNameValid, setIsAlbumNameValid] = useState(false)
+  const [isSongValid, setIsSongValid] = useState(false)
   const [isGenreValid, setIsGenreValid] = useState(false)
   const [isHashtagValid, setIsHashtagValid] = useState(false)
   const [isCoverValid, setIsCoverValid] = useState(false)
@@ -56,6 +74,12 @@ export default function AlbumForm() {
     const nameRegex = /^[a-zA-Z0-9가-힣\s]{2,20}$/
     setIsAlbumNameValid(nameRegex.test(albumName))
   }, [albumName])
+
+  // 곡 유효성 검사
+  useEffect(() => {
+    console.log(selectedSongs)
+    setIsSongValid(selectedSongs.length > 0)
+  }, [selectedSongs])
 
   // 장르 유효성 검사
   useEffect(() => {
@@ -92,7 +116,7 @@ export default function AlbumForm() {
 
   const handleHashtagsChange = (hashtags: string[]) => {
     // console.log('Selected hashtags:', hashtags)
-    // 여기서 선택된 해시태그를 처리할 수 있습니다.
+    // 여기서 선택된 해시태그를 처리할  수 있습니다.
     setSelectedHashtags(hashtags)
   }
 
@@ -102,12 +126,7 @@ export default function AlbumForm() {
         <Label htmlFor="hashtag" className="font-semibold">
           선정된 곡<span className="text-primary-400 ml-1">*</span>
         </Label>
-        <SongSelection
-          initialSongs={selectedSongs}
-          titleSongIndex={titleSongIndex}
-          onTitleSongChange={handleTitleSongChange}
-          onSongsChange={setSelectedSongs}
-        />
+        <SongSelection />
       </div>
       <div className="space-y-3">
         <Label htmlFor="albumName" className="font-semibold">
@@ -171,7 +190,10 @@ export default function AlbumForm() {
         <Label htmlFor="hashtag" className="font-semibold">
           해시태그<span className="text-primary-400 ml-1">*</span>
         </Label>
-        <HashtagSelector onHashtagsChange={handleHashtagsChange} />
+        <HashtagSelector
+          selectedHashtag={selectedHashtags}
+          onHashtagsChange={handleHashtagsChange}
+        />
       </div>
       <div>
         <Label htmlFor="hashtag" className="font-semibold">
