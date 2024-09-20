@@ -71,10 +71,9 @@ public class Album extends BaseEntity {
 	private Boolean isDeleted;
 
 	@Builder
-	public Album(String albumName, String category, List<String> genres, String albumDescription, String albumCoverImage,
-			Long albumLiked) {
 	public Album(Member member, String albumName, AlbumCategory category, List<String> genres, String albumDescription,
 			String albumCoverImage) {
+		this.member = member;
 		this.albumName = albumName;
 		this.category = category;
 		this.genres = genres;
