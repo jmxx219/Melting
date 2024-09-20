@@ -75,13 +75,15 @@ public class Album extends BaseEntity {
 	@OneToMany(mappedBy = "album")
 	private List<Song> songs = new ArrayList<>();
 
+	// 장르 목록
+	@OneToMany(mappedBy = "album")
+	private List<AlbumGenre> genres = new ArrayList<>();
+
 	@Builder
-	public Album(Member member, String albumName, AlbumCategory category, List<String> genres, String albumDescription,
-			String albumCoverImage) {
+	public Album(Member member, String albumName, AlbumCategory category, String albumDescription, String albumCoverImage) {
 		this.member = member;
 		this.albumName = albumName;
 		this.category = category;
-		this.genres = genres;
 		this.albumDescription = albumDescription;
 		this.albumCoverImage = albumCoverImage;
 		this.likedCount = 0L;
