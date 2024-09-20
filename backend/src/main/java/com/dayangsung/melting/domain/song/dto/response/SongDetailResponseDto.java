@@ -9,21 +9,22 @@ import lombok.Builder;
 @Builder
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public record SongDetailResponseDto(
+
 	Long songId,
 	String songTitle,
 	String nickname,
 	String artist,
-	String albumImageUrl,
+	String coverImageUrl,
 	Long likedCount,
 	String songUrl
 ) {
-	public static SongDetailResponseDto of(Song song, String albumImageUrl) {
+	public static SongDetailResponseDto of(Song song, String coverImageUrl) {
 		return SongDetailResponseDto.builder()
 			.songId(song.getId())
 			.songTitle(song.getOriginalSong().getTitle())
 			.nickname(song.getMember().getNickname())
 			.artist(song.getOriginalSong().getArtist())
-			.albumImageUrl(albumImageUrl)
+			.coverImageUrl(coverImageUrl)
 			.likedCount(song.getLikedCount())
 			.songUrl(song.getSongUrl())
 			.build();
