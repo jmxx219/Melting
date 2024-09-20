@@ -2,9 +2,10 @@ import { Search } from 'lucide-react'
 import { Button } from '../ui/button'
 import { Input } from '../ui/input'
 
-import MusicList from './MusicList'
-import { useState } from 'react'
 import { Song } from '@/types/song'
+import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
+import MusicList from './MusicList'
 
 export default function MusicSelectList() {
   const [songs, setSongs] = useState<Song[]>([
@@ -18,12 +19,17 @@ export default function MusicSelectList() {
     },
   ])
   const [selectId, setSelectId] = useState<number>(-1)
-  // const [songs, setSongs] = useState<Song[]>()
   const [filteredSongs, setFilteredSongs] = useState<Song[]>(songs)
+  const navigate = useNavigate()
 
   const handleSongSelect = (songId: number) => {
     setSelectId(songId)
   }
+
+  const recordClick = () => {
+    navigate('/music/record', { state: { songId: selectId } })
+  }
+
   return (
     <div className="flex flex-col items-center flex-1 w-full space-y-3">
       <form className="w-full">
@@ -42,7 +48,13 @@ export default function MusicSelectList() {
         </div>
         <div className="text-sm text-[#DCAA53]">* 곡을 선택하여 커버를 시작해보세요!</div>
       </form>
-      <MusicList songs={filteredSongs} showNumbers={true} selectId={selectId} onSelectSong={handleSongSelect} />
+      <MusicList
+        songs={filteredSongs}
+        showNumbers={true}
+        selectId={selectId}
+        onSelectSong={handleSongSelect}
+        onSelectRecord={recordClick}
+      />
     </div>
   )
 }
