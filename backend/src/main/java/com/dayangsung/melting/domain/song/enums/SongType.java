@@ -4,7 +4,7 @@ import lombok.Getter;
 
 @Getter
 public enum SongType {
-	MELTING("melting"),
+	MELTING("Melting"),
 	AICOVER("AICover");
 
 	private final String songType;

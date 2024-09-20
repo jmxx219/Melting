@@ -8,23 +8,23 @@ import lombok.Builder;
 
 @Builder
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-public record SongDetailResponseDto(
+public record SongDetailsResponseDto(
 
 	Long songId,
 	String songTitle,
 	String nickname,
 	String artist,
-	String coverImageUrl,
+	String albumCoverImage,
 	Long likedCount,
 	String songUrl
 ) {
-	public static SongDetailResponseDto of(Song song, String coverImageUrl) {
-		return SongDetailResponseDto.builder()
+	public static SongDetailsResponseDto of(Song song, String albumCoverImage) {
+		return SongDetailsResponseDto.builder()
 			.songId(song.getId())
 			.songTitle(song.getOriginalSong().getTitle())
 			.nickname(song.getMember().getNickname())
 			.artist(song.getOriginalSong().getArtist())
-			.coverImageUrl(coverImageUrl)
+			.albumCoverImage(albumCoverImage)
 			.likedCount(song.getLikedCount())
 			.songUrl(song.getSongUrl())
 			.build();

@@ -5,7 +5,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.dayangsung.melting.domain.song.dto.response.SongDetailResponseDto;
+import com.dayangsung.melting.domain.song.dto.response.SongDetailsResponseDto;
 import com.dayangsung.melting.domain.song.service.SongService;
 import com.dayangsung.melting.global.common.response.ApiResponse;
 
@@ -23,8 +23,8 @@ public class SongController {
 
 	@Operation(summary = "곡 상세조회(스트리밍) API")
 	@GetMapping("/{songId}")
-	public ApiResponse<SongDetailResponseDto> getSongDetail(@PathVariable Long songId) {
-		SongDetailResponseDto responseDto = songService.getSongDetail(songId);
+	public ApiResponse<SongDetailsResponseDto> getSongDetails(@PathVariable Long songId) {
+		SongDetailsResponseDto responseDto = songService.getSongDetails(songId);
 		return ApiResponse.ok(responseDto);
 	}
 }
