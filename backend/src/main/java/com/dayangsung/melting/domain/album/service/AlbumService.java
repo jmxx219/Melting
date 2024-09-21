@@ -129,7 +129,6 @@ public class AlbumService {
 		// 앨범 객체 생성
 		Album album = Album.builder()
 				.albumName(albumCreateRequestDto.albumName())
-				.category(albumCreateRequestDto.category())
 				.albumDescription(albumCreateRequestDto.albumDescription())
 				.albumCoverImage(albumCreateRequestDto.albumCoverImage())
 				.build();
