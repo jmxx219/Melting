@@ -81,15 +81,20 @@ public class Album extends BaseEntity {
 	private List<AlbumGenre> genres = new ArrayList<>();
 
 	@Builder
-	public Album(Member member, String albumName, AlbumCategory category, String albumDescription, String albumCoverImage) {
+	public Album(Member member, String albumName, String albumDescription, String albumCoverImage) {
 		this.member = member;
 		this.albumName = albumName;
-		this.category = category;
 		this.albumDescription = albumDescription;
 		this.albumCoverImage = albumCoverImage;
 		this.likedCount = 0L;
 		this.isPublic = false;
 		this.isDeleted = false;
+		this.setCategory();
+	}
+
+	private void setCategory() {
+		int songCount = this.songs.size();
+		this.category = AlbumCategory.getCategoryBySongCount(songCount);
 	}
 
 	public void updateAlbumName(String albumName) {
