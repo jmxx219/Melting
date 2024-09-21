@@ -31,7 +31,7 @@ public class AlbumController {
 	private final AlbumService albumService;
 
 	// 커뮤니티 메인 페이지에 보여지는 앨범 조회, 기본값은 최신순
-	@GetMapping
+	@GetMapping("/main")
 	public ApiResponse<List<AlbumMainResponseDto>> getAlbumsInCommunityMainPage(
 			@RequestParam(value = "sort", defaultValue = "latest") String sort) {
 		List<AlbumMainResponseDto> albumMainResponseDtoList = albumService.getAlbumsSorted(sort);
