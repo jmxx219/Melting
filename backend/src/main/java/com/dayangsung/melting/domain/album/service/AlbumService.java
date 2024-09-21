@@ -1,10 +1,13 @@
 package com.dayangsung.melting.domain.album.service;
 
+import static com.dayangsung.melting.global.common.response.enums.ErrorMessage.*;
+
 import java.util.List;
 import java.util.function.Supplier;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.webjars.NotFoundException;
 
 import com.dayangsung.melting.domain.album.dto.request.AlbumCreateRequestDto;
 import com.dayangsung.melting.domain.album.dto.request.AlbumUpdateRequestDto;
@@ -14,6 +17,7 @@ import com.dayangsung.melting.domain.album.dto.response.AlbumSearchResponseDto;
 import com.dayangsung.melting.domain.album.dto.response.AlbumUpdateResponseDto;
 import com.dayangsung.melting.domain.album.entity.Album;
 import com.dayangsung.melting.domain.album.repository.AlbumRepository;
+import com.dayangsung.melting.domain.song.entity.Song;
 
 import lombok.RequiredArgsConstructor;
 
@@ -38,8 +42,7 @@ public class AlbumService {
 		} else if ("latest".equalsIgnoreCase(sort)) {
 			albums = albumRepository.findByIsPublicTrueAndIsDeletedFalseOrderByCreatedAtDesc();
 		} else {
-			// TODO: 예외 처리 수정
-			throw new IllegalArgumentException("유효하지 않은 정렬 기준입니다.");
+			throw new IllegalArgumentException(INVALID_SORT_CRITERIA.getErrorMessage());
 		}
 
 		// 앨범을 DTO로 변환하여 반환
@@ -75,8 +78,7 @@ public class AlbumService {
 	// 검색에서 공통 사용된 예외 처리 부분 메서드화
 	private void validateKeyword(String keyword) {
 		if (keyword == null || keyword.trim().length() < 2) {
-			// TODO: 예외 처리 수정
-			throw new IllegalArgumentException("최소 2자 이상 입력해 주세요.");
+			throw new IllegalArgumentException(SEARCH_QUERY_TOO_SHORT.getErrorMessage());
 		}
 	}
 
@@ -90,30 +92,31 @@ public class AlbumService {
 
 	public AlbumDetailsResponseDto getAlbumDetails(Long albumId) {
 		// 앨범 조회
-		// TODO: 예외 처리
 		Album album = albumRepository.findById(albumId)
-				.orElseThrow(RuntimeException::new);
+			.orElseThrow(() -> new NotFoundException(ALBUM_NOT_FOUND.getErrorMessage()));
 
 		// 앨범 데이터를 DTO로 변환
 		return AlbumDetailsResponseDto.of(album);
 	}
 	
-	// TODO: 수정 필요
 	@Transactional
 	public AlbumUpdateResponseDto updateAlbum(Long albumId, AlbumUpdateRequestDto albumUpdateRequestDto) {
 		// 앨범 조회
-		// TODO: 예외 처리
 		Album album = albumRepository.findById(albumId)
-			.orElseThrow(RuntimeException::new);
+			.orElseThrow(() -> new NotFoundException(ALBUM_NOT_FOUND.getErrorMessage()));
 
 		// DTO에서 받은 정보로 앨범 업데이트
 		String newAlbumName = albumUpdateRequestDto.albumName();
 		if (newAlbumName != null) {
 			album.updateAlbumName(newAlbumName);
+		} else {
+			throw new IllegalArgumentException(ALBUM_NAME_BLANK_ERROR.getErrorMessage());
 		}
 		String newAlbumDescription = albumUpdateRequestDto.albumDescription();
 		if (newAlbumDescription != null) {
 			album.updateAlbumDescription(newAlbumDescription);
+		} else {
+			// TODO: AI 소개 생성
 		}
 
 		// 앨범 저장
@@ -123,21 +126,45 @@ public class AlbumService {
 		return AlbumUpdateResponseDto.of(updatedAlbum);
 	}
 
-	// TODO: 수정 필요
+	// TODO: 수정 및 확인 필요
 	@Transactional
 	public AlbumUpdateResponseDto createAlbum(AlbumCreateRequestDto albumCreateRequestDto) {
+		// 앨범 이름 유효성 검사
+		if (albumCreateRequestDto.albumName() == null || albumCreateRequestDto.albumName().trim().isEmpty()) {
+			throw new IllegalArgumentException(ALBUM_NAME_BLANK_ERROR.getErrorMessage());
+		}
+
+		// 앨범 설명 유효성 검사
+		if (albumCreateRequestDto.albumDescription() == null || albumCreateRequestDto.albumDescription().trim().isEmpty()) {
+			// TODO: AI 소개 생성
+		}
+
+		// 앨범 커버 이미지 유효성 검사
+		if (albumCreateRequestDto.albumCoverImage() == null || albumCreateRequestDto.albumCoverImage().trim().isEmpty()) {
+			throw new IllegalArgumentException(ALBUM_COVER_IMAGE_BLANK_ERROR.getErrorMessage());
+		}
+
+		// TODO: Song에서 이미 처리하고 있는 부분인지 확인
+		// 곡 목록 유효성 검사
+		List<Song> songs = albumCreateRequestDto.songs();
+		if (songs == null || songs.isEmpty()) {
+			throw new IllegalArgumentException(ALBUM_SONGS_EMPTY_ERROR.getErrorMessage());
+		} else if (10 <= songs.size()) {
+			throw new IllegalArgumentException(INVALID_SONG_COUNT.getErrorMessage());
+		}
+
 		// 앨범 객체 생성
 		Album album = Album.builder()
-				.albumName(albumCreateRequestDto.albumName())
-				.albumDescription(albumCreateRequestDto.albumDescription())
-				.albumCoverImage(albumCreateRequestDto.albumCoverImage())
-				.build();
+			.albumName(albumCreateRequestDto.albumName())
+			.albumDescription(albumCreateRequestDto.albumDescription())
+			.albumCoverImage(albumCreateRequestDto.albumCoverImage())
+			.build();
 
 		// 앨범 저장
 		Album savedAlbum = albumRepository.save(album);
 
 		// 저장된 앨범을 DTO로 변환하여 반환
-		return AlbumUpdateResponseDto.of(album);
+		return AlbumUpdateResponseDto.of(savedAlbum);
 	}
 
 }
