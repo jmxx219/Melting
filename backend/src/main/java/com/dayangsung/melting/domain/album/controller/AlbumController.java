@@ -1,7 +1,8 @@
 package com.dayangsung.melting.domain.album.controller;
 
-import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -33,20 +34,35 @@ public class AlbumController {
 	// 커뮤니티 메인 페이지에 보여지는 앨범 조회, 기본값은 최신순
 	@GetMapping
 	public ApiResponse<List<AlbumMainResponseDto>> getAlbumsInCommunityMainPage(
-			@RequestParam(value = "sort", defaultValue = "latest") String sort) {
+		@RequestParam(value = "sort", defaultValue = "latest") String sort) {
 		List<AlbumMainResponseDto> albumMainResponseDtoList = albumService.getAlbumsSorted(sort);
 		return ApiResponse.ok(albumMainResponseDtoList);
 	}
 
 	// 키워드 검색을 통한 앨범 조회
 	@GetMapping("/search")
-	public ApiResponse<List<AlbumSearchResponseDto>> searchAlbumsByKeyword(
-			@RequestParam(value = "keyword") String keyword) {
-		List<AlbumSearchResponseDto> result = new ArrayList<>();
-		result.addAll(albumService.searchAlbumsByAlbumName(keyword));
-		result.addAll(albumService.searchAlbumsBySongName(keyword));
-		result.addAll(albumService.searchAlbumsByHashtag(keyword));
-		result.addAll(albumService.searchAlbumsByGenre(keyword));
+	public ApiResponse<Set<AlbumSearchResponseDto>> searchAlbumsByKeyword(
+		@RequestParam(value = "keyword") String keyword,
+		@RequestParam(value = "type") List<String> types) {
+
+		Set<AlbumSearchResponseDto> result = new HashSet<>();
+
+		// TODO: 최소 하나 선택 되도록 예외 처리 (프론트에 물어 보기)
+
+		// 각 type에 따른 검색 수행
+		if (types.contains("album")) {
+			result.addAll(albumService.searchAlbumsByAlbumName(keyword));
+		}
+		if (types.contains("song")) {
+			result.addAll(albumService.searchAlbumsBySongName(keyword));
+		}
+		if (types.contains("hashtag")) {
+			result.addAll(albumService.searchAlbumsByHashtag(keyword));
+		}
+		if (types.contains("genre")) {
+			result.addAll(albumService.searchAlbumsByGenre(keyword));
+		}
+
 		return ApiResponse.ok(result);
 	}
 
@@ -74,5 +90,5 @@ public class AlbumController {
 		AlbumUpdateResponseDto updatedAlbumDto = albumService.updateAlbum(albumId, albumUpdateRequestDto);
 		return ApiResponse.ok(updatedAlbumDto);
 	}
-	
+
 }
