@@ -41,15 +41,6 @@ public class JwtUtil {
 		this.cookieUtil = cookieUtil;
 	}
 
-	public String getEmail(String token) {
-		return Jwts.parser()
-			.verifyWith(secretKey)
-			.build()
-			.parseSignedClaims(token)
-			.getPayload()
-			.get("email", String.class);
-	}
-
 	public Boolean isExpired(String token) {
 		try {
 			Claims claims = Jwts.parser()
