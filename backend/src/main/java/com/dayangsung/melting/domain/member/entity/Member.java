@@ -1,6 +1,10 @@
 package com.dayangsung.melting.domain.member.entity;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.dayangsung.melting.domain.auth.enums.ProviderType;
+import com.dayangsung.melting.domain.comment.entity.Comment;
 import com.dayangsung.melting.domain.member.enums.Gender;
 import com.dayangsung.melting.global.entity.BaseEntity;
 
@@ -11,6 +15,7 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -40,6 +45,9 @@ public class Member extends BaseEntity {
 	private ProviderType provider;
 
 	private boolean isDeleted;
+
+	@OneToMany(mappedBy = "member")
+	private List<Comment> comments = new ArrayList<>();
 
 	@Builder
 	public Member(String email, ProviderType provider) {
