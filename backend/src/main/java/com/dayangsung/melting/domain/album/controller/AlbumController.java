@@ -19,6 +19,7 @@ import com.dayangsung.melting.domain.album.dto.response.AlbumDetailsResponseDto;
 import com.dayangsung.melting.domain.album.dto.response.AlbumMainResponseDto;
 import com.dayangsung.melting.domain.album.dto.response.AlbumSearchResponseDto;
 import com.dayangsung.melting.domain.album.dto.response.AlbumUpdateResponseDto;
+import com.dayangsung.melting.domain.album.enums.AlbumSortType;
 import com.dayangsung.melting.domain.album.service.AlbumService;
 import com.dayangsung.melting.global.common.response.ApiResponse;
 
@@ -34,7 +35,7 @@ public class AlbumController {
 	// 커뮤니티 메인 페이지에 보여지는 앨범 조회, 기본값은 최신순
 	@GetMapping
 	public ApiResponse<List<AlbumMainResponseDto>> getAlbumsInCommunityMainPage(
-		@RequestParam(value = "sort", defaultValue = "latest") String sort) {
+		@RequestParam(value = "sort", defaultValue = "latest") AlbumSortType sort) {
 		List<AlbumMainResponseDto> albumMainResponseDtoList = albumService.getAlbumsSorted(sort);
 		return ApiResponse.ok(albumMainResponseDtoList);
 	}
