@@ -45,13 +45,6 @@ public class JwtFilter extends OncePerRequestFilter {
 			}
 			cookieUtil.updateCookie(request, response, "access_token", accessToken);
 		}
-
-		Authentication authentication = new UsernamePasswordAuthenticationToken(
-			jwtUtil.getEmail(accessToken),
-			null,
-			null);
-		SecurityContextHolder.getContext().setAuthentication(authentication);
-
 		filterChain.doFilter(request, response);
 	}
 }
