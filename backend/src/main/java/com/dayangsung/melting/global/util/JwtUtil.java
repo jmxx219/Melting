@@ -29,17 +29,15 @@ public class JwtUtil {
 	private static final long ACCESS_TOKEN_EXPIRE_TIME = 60 * 30 * 1000;
 	private final SecretKey secretKey;
 	private final RedisRepository redisRepository;
-	private final AuthService authService;
 	private final CookieUtil cookieUtil;
 
 	public JwtUtil(@Value("${spring.jwt.secret}") String secretKey,
 		RedisRepository redisRepository,
-		AuthService authService, CookieUtil cookieUtil) {
+		CookieUtil cookieUtil) {
 		this.secretKey = new SecretKeySpec(
 			secretKey.getBytes(StandardCharsets.UTF_8),
 			Jwts.SIG.HS256.key().build().getAlgorithm());
 		this.redisRepository = redisRepository;
-		this.authService = authService;
 		this.cookieUtil = cookieUtil;
 	}
 
