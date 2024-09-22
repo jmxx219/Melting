@@ -16,6 +16,7 @@ import com.dayangsung.melting.domain.album.dto.response.AlbumMainResponseDto;
 import com.dayangsung.melting.domain.album.dto.response.AlbumSearchResponseDto;
 import com.dayangsung.melting.domain.album.dto.response.AlbumUpdateResponseDto;
 import com.dayangsung.melting.domain.album.entity.Album;
+import com.dayangsung.melting.domain.album.enums.AlbumSortType;
 import com.dayangsung.melting.domain.album.repository.AlbumRepository;
 import com.dayangsung.melting.domain.song.entity.Song;
 
@@ -33,22 +34,17 @@ public class AlbumService {
 	}
 
 	// 커뮤니티 메인에서 사용. sort 파라미터에 따라 앨범 목록을 정렬하여 반환하는 메서드
-	public List<AlbumMainResponseDto> getAlbumsSorted(String sort) {
-		List<Album> albums;
-
-		// popular: 인기순으로 정렬, latest: 최신순으로 정렬
-		if ("popular".equalsIgnoreCase(sort)) {
-			albums = albumRepository.findByIsPublicTrueAndIsDeletedFalseOrderByLikedCountDesc();
-		} else if ("latest".equalsIgnoreCase(sort)) {
-			albums = albumRepository.findByIsPublicTrueAndIsDeletedFalseOrderByCreatedAtDesc();
-		} else {
-			throw new IllegalArgumentException(INVALID_SORT_CRITERIA.getErrorMessage());
-		}
+	public List<AlbumMainResponseDto> getAlbumsSorted(AlbumSortType sort) {
+		List<Album> albums = switch (sort) {
+			case POPULAR -> albumRepository.findByIsPublicTrueAndIsDeletedFalseOrderByLikedCountDesc();
+			case LATEST -> albumRepository.findByIsPublicTrueAndIsDeletedFalseOrderByCreatedAtDesc();
+			default -> throw new IllegalArgumentException(INVALID_SORT_CRITERIA.getErrorMessage());
+		};
 
 		// 앨범을 DTO로 변환하여 반환
 		return albums.stream()
-				.map(AlbumMainResponseDto::of)
-				.toList();
+			.map(AlbumMainResponseDto::of)
+			.toList();
 	}
 
 	// 앨범명 검색을 통한 앨범 조회
@@ -62,13 +58,13 @@ public class AlbumService {
 		validateKeyword(keyword);
 		return getAlbumsBy(() -> albumRepository.findAlbumsBySongName(keyword));
 	}
-	
+
 	// 해시태그 내용 검색을 통한 앨범 조회
 	public List<AlbumSearchResponseDto> searchAlbumsByHashtag(String keyword) {
 		validateKeyword(keyword);
 		return getAlbumsBy(() -> albumRepository.findAlbumsByHashtag(keyword));
 	}
-	
+
 	// 장르 검색을 통한 앨범 조회
 	public List<AlbumSearchResponseDto> searchAlbumsByGenre(String keyword) {
 		validateKeyword(keyword);
@@ -98,7 +94,7 @@ public class AlbumService {
 		// 앨범 데이터를 DTO로 변환
 		return AlbumDetailsResponseDto.of(album);
 	}
-	
+
 	@Transactional
 	public AlbumUpdateResponseDto updateAlbum(Long albumId, AlbumUpdateRequestDto albumUpdateRequestDto) {
 		// 앨범 조회
@@ -135,12 +131,16 @@ public class AlbumService {
 		}
 
 		// 앨범 설명 유효성 검사
-		if (albumCreateRequestDto.albumDescription() == null || albumCreateRequestDto.albumDescription().trim().isEmpty()) {
+		if (albumCreateRequestDto.albumDescription() == null || albumCreateRequestDto.albumDescription()
+			.trim()
+			.isEmpty()) {
 			// TODO: AI 소개 생성
 		}
 
 		// 앨범 커버 이미지 유효성 검사
-		if (albumCreateRequestDto.albumCoverImage() == null || albumCreateRequestDto.albumCoverImage().trim().isEmpty()) {
+		if (albumCreateRequestDto.albumCoverImage() == null || albumCreateRequestDto.albumCoverImage()
+			.trim()
+			.isEmpty()) {
 			throw new IllegalArgumentException(ALBUM_COVER_IMAGE_BLANK_ERROR.getErrorMessage());
 		}
 
