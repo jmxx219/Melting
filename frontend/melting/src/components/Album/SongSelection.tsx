@@ -112,11 +112,14 @@ export default function SongSelection() {
         </Droppable>
       </DragDropContext>
       <div className="text-sm text-primary-500 space-y-1">
-        <p className="flex items-center">
+        <p className="flex items-center whitespace-nowrap">
           ※ 타이틀 곡(
-          <Crown size={14} />
+          <span className="inline-flex items-center">
+            <Crown size={14} />
+          </span>
           )을 지정하지 않으면 1번 트랙이 타이틀 곡이 됩니다
         </p>
+
         <p>※ 트랙 순서는 드래그로 수정이 가능합니다</p>
       </div>
       <div className="flex justify-center">
