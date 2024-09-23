@@ -1,6 +1,6 @@
 import Layout from '@/components/layout/Layout'
 import MusicPlayerHeader from '@/components/layout/MusicPlayerHeader'
-import MusciRecordContent from '@/components/Music/MusciRecordContent'
+import MusicRecordContent from '@/components/Music/MusicRecordContent'
 import { Song } from '@/types/song'
 
 interface MusicRecord extends Song {
@@ -50,7 +50,7 @@ export default function MusicRecord() {
         <MusicPlayerHeader artist={song.artist} songTitle={song.songTitle} />
       }
       children={
-        <MusciRecordContent lyrics={song.lyrics} audioSrc={song.audioSrc} />
+        <MusicRecordContent lyrics={song.lyrics} audioSrc={song.audioSrc} />
       }
       showFooter={false}
     ></Layout>
