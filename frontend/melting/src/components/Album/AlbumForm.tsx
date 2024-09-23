@@ -96,24 +96,6 @@ export default function AlbumForm() {
     setIsCoverValid(selectedCover !== null)
   }, [selectedCover])
 
-  const handleTitleSongChange = (index: number | null) => {
-    setTitleSongIndex(index)
-  }
-
-  useEffect(() => {
-    // 장르 선택 페이지에서 돌아왔을 때 state로 전달된 selectedGenres를 확인
-    const genres = location.state?.selectedGenres
-    if (genres) {
-      setSelectedGenres(genres)
-    }
-  }, [location])
-
-  const handleGenreEdit = () => {
-    navigate('/album/create/genre-selection', {
-      state: { initialGenres: selectedGenres },
-    })
-  }
-
   const handleHashtagsChange = (hashtags: string[]) => {
     // console.log('Selected hashtags:', hashtags)
     // 여기서 선택된 해시태그를 처리할  수 있습니다.
@@ -181,16 +163,13 @@ export default function AlbumForm() {
         <Label htmlFor="genre" className="font-semibold">
           장르<span className="text-primary-400 ml-1">*</span>
         </Label>
-        <GenreSelector onGenreEdit={handleGenreEdit} />
+        <GenreSelector />
       </div>
       <div>
         <Label htmlFor="hashtag" className="font-semibold">
           해시태그<span className="text-primary-400 ml-1">*</span>
         </Label>
-        <HashtagSelector
-          selectedHashtag={selectedHashtags}
-          onHashtagsChange={handleHashtagsChange}
-        />
+        <HashtagSelector onHashtagsChange={handleHashtagsChange} />
       </div>
       <div>
         <Label htmlFor="hashtag" className="font-semibold">
