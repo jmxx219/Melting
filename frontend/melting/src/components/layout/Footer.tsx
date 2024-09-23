@@ -28,14 +28,17 @@ const navItems: NavItem[] = [
 export default function Footer() {
   const [activeItem, setActiveItem] = useState('/')
   return (
-    <NavigationMenu>
+    <NavigationMenu className="mx-auto">
       <NavigationMenuList>
         {navItems.map((item) => (
           <NavigationMenuItem key={item.name}>
             <NavigationMenuLink
+              key={item.name}
               href={item.href}
-              className={`flex flex-col items-center p-2 ${
-                activeItem === item.href ? 'text-primary' : 'text-muted-foreground'
+              className={`flex items-center p-2 ${
+                activeItem === item.href
+                  ? 'text-primary'
+                  : 'text-muted-foreground'
               }`}
               onClick={() => setActiveItem(item.href)}
             >
