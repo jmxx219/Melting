@@ -1,7 +1,9 @@
 import { useState } from 'react'
 import { Image, Loader } from 'lucide-react'
+
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area'
 import AI from '../icon/AI'
+import { useAlbumContext } from '@/contexts/AlbumContext'
 
 interface ImageInfo {
   id: string
@@ -10,13 +12,8 @@ interface ImageInfo {
   type: 'user' | 'ai' | 'default'
 }
 
-interface AlbumCoverSelectorProps {
-  onSelectCover: (cover: string) => void
-}
-
-export default function AlbumCoverSelector({
-  onSelectCover,
-}: AlbumCoverSelectorProps) {
+export default function AlbumCoverSelector() {
+  const { selectedCover, setSelectedCover } = useAlbumContext()
   const [images, setImages] = useState<ImageInfo[]>([
     {
       id: 'default1',
@@ -37,7 +34,6 @@ export default function AlbumCoverSelector({
       type: 'default',
     },
   ])
-  const [selectedImage, setSelectedImage] = useState<string | null>(null)
   const [isGeneratingAi, setIsGeneratingAi] = useState(false)
 
   const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -52,8 +48,7 @@ export default function AlbumCoverSelector({
           type: 'user',
         }
         setImages((prevImages) => [newImage, ...prevImages])
-        setSelectedImage(newImage.url)
-        onSelectCover(newImage.url)
+        setSelectedCover(newImage.url)
       }
       reader.readAsDataURL(file)
     }
@@ -73,15 +68,13 @@ export default function AlbumCoverSelector({
         type: 'ai',
       }
       setImages((prevImages) => [newImage, ...prevImages])
-      setSelectedImage(newImage.url)
-      onSelectCover(newImage.url)
+      setSelectedCover(newImage.url)
       setIsGeneratingAi(false)
     }, 3000)
   }
 
   const handleImageSelect = (image: ImageInfo) => {
-    setSelectedImage(image.url)
-    onSelectCover(image.url)
+    setSelectedCover(image.url)
   }
 
   return (
@@ -143,7 +136,7 @@ export default function AlbumCoverSelector({
               >
                 <div
                   className={`w-32 h-32 relative cursor-pointer rounded-xl mb-2 ${
-                    selectedImage === image.url ? 'ring-4 ring-primary-400' : ''
+                    selectedCover === image.url ? 'ring-4 ring-primary-400' : ''
                   }`}
                   onClick={() => handleImageSelect(image)}
                 >
