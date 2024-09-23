@@ -33,7 +33,6 @@ export default function MusicSelectList() {
   ])
   const [selectId, setSelectId] = useState<number>(-1)
   // const [songs, setSongs] = useState<Song[]>()
-  const [filteredSongs, setFilteredSongs] = useState<Song[]>(songs)
   const navigate = useNavigate()
 
   const handleSongSelect = (songId: number) => {
@@ -65,7 +64,7 @@ export default function MusicSelectList() {
         </div>
       </form>
       <MusicList
-        songs={filteredSongs}
+        songs={songs}
         showNumbers={true}
         selectId={selectId}
         onSelectSong={handleSongSelect}

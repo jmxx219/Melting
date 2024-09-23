@@ -14,7 +14,6 @@ export default function MusciRecordContent({
   audioSrc,
 }: MusciRecordProps) {
   const [isRecording, setIsRecording] = useState(false)
-  const [isPlaying, setIsPlaying] = useState(false)
   const [currentTime, setCurrentTime] = useState(0)
   const [duration, setDuration] = useState(0)
   const [isEnd, setIsEnd] = useState(false)
@@ -23,7 +22,6 @@ export default function MusciRecordContent({
   const streamRef = useRef<MediaStream | null>(null)
   const isMountedRef = useRef(true)
   const chunksRef = useRef<Blob[]>([])
-  const [recordedAudioBlob, setRecordedAudioBlob] = useState<Blob | null>(null)
   const navigate = useNavigate()
 
   const stopMicrophoneUsage = useCallback(() => {
@@ -42,16 +40,14 @@ export default function MusciRecordContent({
 
   const processRecordedAudio = useCallback(() => {
     const blob = new Blob(chunksRef.current, { type: 'audio/webm' })
-    setRecordedAudioBlob(blob)
     console.log('Recorded audio file size:', blob.size, 'bytes')
     console.log('Recorded audio file type:', blob.type)
+    // 여기서 blob을 사용하거나 저장하는 로직을 추가할 수 있습니다.
   }, [])
 
   const resetRecording = useCallback(() => {
     stopMicrophoneUsage()
-    setRecordedAudioBlob(null)
     setIsEnd(false)
-    setIsPlaying(false)
     setCurrentTime(0)
     chunksRef.current = []
     if (audioRef.current) {
@@ -114,16 +110,9 @@ export default function MusciRecordContent({
       const handleTimeUpdate = () => {
         if (isMountedRef.current) setCurrentTime(audio.currentTime)
       }
-      const handlePlay = () => {
-        if (isMountedRef.current) setIsPlaying(true)
-      }
-      const handlePause = () => {
-        if (isMountedRef.current) setIsPlaying(false)
-      }
       const handleEnded = () => {
         if (isMountedRef.current) {
           setIsEnd(true)
-          setIsPlaying(false)
           stopMicrophoneUsage()
           processRecordedAudio()
         }
@@ -131,16 +120,12 @@ export default function MusciRecordContent({
 
       audio.addEventListener('loadedmetadata', handleLoadedMetadata)
       audio.addEventListener('timeupdate', handleTimeUpdate)
-      audio.addEventListener('play', handlePlay)
-      audio.addEventListener('pause', handlePause)
       audio.addEventListener('ended', handleEnded)
 
       return () => {
         isMountedRef.current = false
         audio.removeEventListener('loadedmetadata', handleLoadedMetadata)
         audio.removeEventListener('timeupdate', handleTimeUpdate)
-        audio.removeEventListener('play', handlePlay)
-        audio.removeEventListener('pause', handlePause)
         audio.removeEventListener('ended', handleEnded)
         resetRecording()
       }
@@ -208,6 +193,7 @@ export default function MusciRecordContent({
 
       <div className="text-center">
         <Button
+          type="button"
           className={`w-full rounded-full font-bold py-7 text-white ${
             !isRecording && !isEnd
               ? 'bg-[#A5A5A5]'
@@ -218,7 +204,7 @@ export default function MusciRecordContent({
           onClick={isEnd && !isRecording ? handleCancel : undefined}
           disabled={isEnd && !isRecording ? false : true}
         >
-          {!isRecording && !isEnd ? '녹음 시작' : isEnd ? '완료' : '녹음 중'}
+          완료
         </Button>
         <span className="inline-block pt-3 text-center" onClick={handleCancel}>
           취소
