@@ -1,6 +1,6 @@
 import Layout from '@/components/layout/Layout'
 import MusicPlayerHeader from '@/components/layout/MusicPlayerHeader'
-import MusciRecordContent from '@/components/music/MusciRecordContent'
+import MusciRecordContent from '@/components/Music/MusciRecordContent'
 import { Song } from '@/types/song'
 import { useEffect, useRef, useState } from 'react'
 import { useLocation } from 'react-router-dom'
@@ -21,7 +21,8 @@ export default function MusicRecord() {
     albumCoverImgUrl: 'https://github.com/shadcn.png',
     lyrics:
       'dsadsd\n dasdasdada\n dasdasdas\n dsadsd\n dasdasdada\n dasdasdas dsadsd\n dasdasdada\n dasdasdasdsadsd\n dasdasdada\n dasdasdasdsadsd\n dasdasdada\n dasdasdasdsadsd\n dasdasdada\n dasdasdasdsadsd\n dasdasdada\n dasdasdasdsadsd\n dasdasdada\n dasdasdasdsadsd\n dasdasdada\n dasdasdasdsadsd\n dasdasdada\n dasdasdasdsadsd\n dasdasdada\n dasdasdasdsadsd\n dasdasdada\n dasdasdasdsadsd\n dasdasdada\n dasdasdasdsadsd\n dasdasdada\n dasdasdasdsadsd\n dasdasdada\n dasdasdasdsadsd\n dasdasdada\n dasdasdasdsadsd\n dasdasdada\n dasdasdasdsadsd\n dasdasdada\n dasdasdas ',
-    audioSrc: 'https://d35fpwscei7sb8.cloudfront.net/audio/original_song/mr/1.mp3',
+    audioSrc:
+      'https://d35fpwscei7sb8.cloudfront.net/audio/original_song/mr/1.mp3',
   })
   /*   useEffect(() => {
     if (songId) {
@@ -39,8 +40,12 @@ export default function MusicRecord() {
   }, [songId]) */
   return (
     <Layout
-      Header={<MusicPlayerHeader artist={song.artist} songTitle={song.songTitle} />}
-      children={<MusciRecordContent lyrics={song.lyrics} audioSrc={song.audioSrc} />}
+      Header={
+        <MusicPlayerHeader artist={song.artist} songTitle={song.songTitle} />
+      }
+      children={
+        <MusciRecordContent lyrics={song.lyrics} audioSrc={song.audioSrc} />
+      }
       showFooter={false}
     ></Layout>
   )

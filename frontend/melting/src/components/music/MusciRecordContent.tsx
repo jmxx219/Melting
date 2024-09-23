@@ -1,14 +1,18 @@
-import { useEffect, useRef, useState } from 'react'
-import { ScrollArea, ScrollBar } from '../ui/scroll-area'
-import { Button } from '../ui/button'
 import { Mic, RotateCcw } from 'lucide-react'
-import { Progress } from '../ui/progress'
+import { useCallback, useEffect, useRef, useState } from 'react'
+import { Button } from '../ui/button'
+import { ScrollArea } from '../ui/scroll-area'
+import { useNavigate } from 'react-router-dom'
+
 interface MusciRecordProps {
   lyrics: string
   audioSrc: string
 }
 
-export default function MusciRecordContent({ lyrics, audioSrc }: MusciRecordProps) {
+export default function MusciRecordContent({
+  lyrics,
+  audioSrc,
+}: MusciRecordProps) {
   const [isRecording, setIsRecording] = useState(false)
   const [isPlaying, setIsPlaying] = useState(false)
   const [currentTime, setCurrentTime] = useState(0)
@@ -16,27 +20,132 @@ export default function MusciRecordContent({ lyrics, audioSrc }: MusciRecordProp
   const [isEnd, setIsEnd] = useState(false)
   const audioRef = useRef<HTMLAudioElement>(null)
   const mediaRecorderRef = useRef<MediaRecorder | null>(null)
+  const streamRef = useRef<MediaStream | null>(null)
+  const isMountedRef = useRef(true)
+  const chunksRef = useRef<Blob[]>([])
+  const [recordedAudioBlob, setRecordedAudioBlob] = useState<Blob | null>(null)
+  const navigate = useNavigate()
+
+  const stopMicrophoneUsage = useCallback(() => {
+    if (
+      mediaRecorderRef.current &&
+      mediaRecorderRef.current.state === 'recording'
+    ) {
+      mediaRecorderRef.current.stop()
+    }
+    if (streamRef.current) {
+      streamRef.current.getTracks().forEach((track) => track.stop())
+      streamRef.current = null
+    }
+    setIsRecording(false)
+  }, [])
+
+  const processRecordedAudio = useCallback(() => {
+    const blob = new Blob(chunksRef.current, { type: 'audio/webm' })
+    setRecordedAudioBlob(blob)
+    console.log('Recorded audio file size:', blob.size, 'bytes')
+    console.log('Recorded audio file type:', blob.type)
+  }, [])
+
+  const resetRecording = useCallback(() => {
+    stopMicrophoneUsage()
+    setRecordedAudioBlob(null)
+    setIsEnd(false)
+    setIsPlaying(false)
+    setCurrentTime(0)
+    chunksRef.current = []
+    if (audioRef.current) {
+      audioRef.current.currentTime = 0
+      audioRef.current.pause()
+    }
+  }, [stopMicrophoneUsage])
+
+  const handleCancel = useCallback(() => {
+    resetRecording()
+    navigate('/music/list', { state: { type: 'melting' } })
+  }, [navigate, resetRecording])
+
+  const startRecording = useCallback(async () => {
+    try {
+      resetRecording()
+      const stream = await navigator.mediaDevices.getUserMedia({
+        audio: true,
+      })
+      streamRef.current = stream
+      mediaRecorderRef.current = new MediaRecorder(stream)
+
+      mediaRecorderRef.current.ondataavailable = (event) => {
+        if (event.data.size > 0) {
+          chunksRef.current.push(event.data)
+        }
+      }
+
+      mediaRecorderRef.current.onstop = () => {
+        processRecordedAudio()
+      }
+
+      mediaRecorderRef.current.start()
+      setIsRecording(true)
+      if (audioRef.current) {
+        audioRef.current.currentTime = 0
+        audioRef.current.play()
+      }
+    } catch (err) {
+      console.error('Error accessing the microphone', err)
+    }
+  }, [resetRecording, processRecordedAudio])
+
+  const handleRecordClick = useCallback(() => {
+    if (isRecording || isEnd) {
+      resetRecording()
+    } else {
+      startRecording()
+    }
+  }, [isRecording, isEnd, resetRecording, startRecording])
 
   const lyricsLines = lyrics.split('\n')
+
   useEffect(() => {
-    if (audioRef.current) {
-      audioRef.current.addEventListener('loadedmetadata', () => {
-        setDuration(audioRef.current!.duration)
-      })
-      audioRef.current.addEventListener('timeupdate', () => {
-        setCurrentTime(audioRef.current!.currentTime)
-      })
-      audioRef.current.addEventListener('play', () => {
-        setIsPlaying(true)
-      })
-      audioRef.current.addEventListener('pause', () => {
-        setIsPlaying(false)
-      })
-      audioRef.current.addEventListener('ended', () => {
-        setIsEnd(true)
-      })
+    const audio = audioRef.current
+    if (audio) {
+      const handleLoadedMetadata = () => {
+        if (isMountedRef.current) setDuration(audio.duration)
+      }
+      const handleTimeUpdate = () => {
+        if (isMountedRef.current) setCurrentTime(audio.currentTime)
+      }
+      const handlePlay = () => {
+        if (isMountedRef.current) setIsPlaying(true)
+      }
+      const handlePause = () => {
+        if (isMountedRef.current) setIsPlaying(false)
+      }
+      const handleEnded = () => {
+        if (isMountedRef.current) {
+          setIsEnd(true)
+          setIsPlaying(false)
+          stopMicrophoneUsage()
+          processRecordedAudio()
+        }
+      }
+
+      audio.addEventListener('loadedmetadata', handleLoadedMetadata)
+      audio.addEventListener('timeupdate', handleTimeUpdate)
+      audio.addEventListener('play', handlePlay)
+      audio.addEventListener('pause', handlePause)
+      audio.addEventListener('ended', handleEnded)
+
+      return () => {
+        isMountedRef.current = false
+        audio.removeEventListener('loadedmetadata', handleLoadedMetadata)
+        audio.removeEventListener('timeupdate', handleTimeUpdate)
+        audio.removeEventListener('play', handlePlay)
+        audio.removeEventListener('pause', handlePause)
+        audio.removeEventListener('ended', handleEnded)
+        resetRecording()
+      }
     }
-  }, [])
+  }, [stopMicrophoneUsage, processRecordedAudio, resetRecording])
 
   const formatTime = (time: number) => {
     const minutes = Math.floor(time / 60)
@@ -44,36 +153,13 @@ export default function MusciRecordContent({ lyrics, audioSrc }: MusciRecordProp
     return `${minutes}:${seconds.toString().padStart(2, '0')}`
   }
 
-  const handleRecordClick = async () => {
-    if (!isRecording) {
-      try {
-        const stream = await navigator.mediaDevices.getUserMedia({ audio: true })
-        mediaRecorderRef.current = new MediaRecorder(stream)
-        mediaRecorderRef.current.start()
-        setIsRecording(true)
-        if (audioRef.current) {
-          audioRef.current.play()
-        }
-      } catch (err) {
-        console.error('Error accessing the microphone', err)
-      }
-    } else {
-      if (mediaRecorderRef.current) {
-        mediaRecorderRef.current.stop()
-      }
-      setIsRecording(false)
-      if (audioRef.current) {
-        audioRef.current.pause()
-        audioRef.current.currentTime = 0
-      }
-    }
-  }
   const handleProgressChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newTime = (Number(e.target.value) / 100) * duration
     if (audioRef.current) {
       audioRef.current.currentTime = newTime
     }
   }
+
   return (
     <div className="flex flex-col h-full">
       <ScrollArea className="flex-grow">
@@ -92,7 +178,7 @@ export default function MusciRecordContent({ lyrics, audioSrc }: MusciRecordProp
           className="w-20 h-20 bg-[#FFAF25] rounded-full"
           onClick={handleRecordClick}
         >
-          {isPlaying || isEnd ? (
+          {isRecording || isEnd ? (
             <RotateCcw className="w-full h-full p-5 text-white" />
           ) : (
             <Mic className="w-full h-full p-5 text-white" />
@@ -120,10 +206,23 @@ export default function MusciRecordContent({ lyrics, audioSrc }: MusciRecordProp
       </div>
       <audio ref={audioRef} src={audioSrc} />
 
-      <div>
-        <Button className={`w-full rounded-full font-bold py-7 text-white ${!isEnd ? 'bg-[#A5A5A5]' : 'bg-[#FFAF25]'}`}>
-          완료
+      <div className="text-center">
+        <Button
+          className={`w-full rounded-full font-bold py-7 text-white ${
+            !isRecording && !isEnd
+              ? 'bg-[#A5A5A5]'
+              : isEnd
+                ? 'bg-[#FFAF25]'
+                : 'bg-[#A5A5A5]'
+          }`}
+          onClick={isEnd && !isRecording ? handleCancel : undefined}
+          disabled={isEnd && !isRecording ? false : true}
+        >
+          {!isRecording && !isEnd ? '녹음 시작' : isEnd ? '완료' : '녹음 중'}
         </Button>
+        <span className="inline-block pt-3 text-center" onClick={handleCancel}>
+          취소
+        </span>
       </div>
     </div>
   )
