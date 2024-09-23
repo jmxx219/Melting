@@ -10,10 +10,6 @@ import javax.crypto.spec.SecretKeySpec;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import com.dayangsung.melting.domain.auth.dto.RedisToken;
-import com.dayangsung.melting.domain.auth.repository.RedisRepository;
-import com.dayangsung.melting.domain.auth.service.AuthService;
-
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
@@ -28,17 +24,26 @@ public class JwtUtil {
 
 	private static final long ACCESS_TOKEN_EXPIRE_TIME = 60 * 30 * 1000;
 	private final SecretKey secretKey;
-	private final RedisRepository redisRepository;
+	private final RedisUtil redisUtil;
 	private final CookieUtil cookieUtil;
 
 	public JwtUtil(@Value("${spring.jwt.secret}") String secretKey,
-		RedisRepository redisRepository,
+		RedisUtil redisUtil,
 		CookieUtil cookieUtil) {
 		this.secretKey = new SecretKeySpec(
 			secretKey.getBytes(StandardCharsets.UTF_8),
 			Jwts.SIG.HS256.key().build().getAlgorithm());
-		this.redisRepository = redisRepository;
+		this.redisUtil = redisUtil;
 		this.cookieUtil = cookieUtil;
+	}
+
+	public String getEmail(String token) {
+		return Jwts.parser()
+			.verifyWith(secretKey)
+			.build()
+			.parseSignedClaims(token)
+			.getPayload()
+			.get("email", String.class);
 	}
 
 	public Boolean isExpired(String token) {
@@ -65,35 +70,26 @@ public class JwtUtil {
 			.compact();
 	}
 
-	public String reissueToken(HttpServletRequest request, HttpServletResponse response, String refreshToken) {
-		RedisToken redisToken = redisRepository.findRedisTokenByRefreshToken(refreshToken);
+	public String reissueToken(HttpServletRequest request, HttpServletResponse response, String accessToken) {
+		String refreshToken = redisUtil.getRefreshToken(accessToken);
 
-		if (redisToken == null) {
+		if (refreshToken == null) {
 			cookieUtil.deleteJwtCookies(request, response);
 			return null;
 		}
 
-		String accessToken = createAccessToken(redisToken.getEmail());
-		redisRepository.deleteRedisTokenByRefreshToken(redisToken.getRefreshToken());
-		redisRepository.save(RedisToken.builder()
-			.email(redisToken.getEmail())
-			.refreshToken(createRefreshToken(redisToken.getEmail()))
-			.build());
-		response.addCookie(cookieUtil.createCookie("access_token", accessToken));
+		String newAccessToken = createAccessToken(getEmail(accessToken));
+		redisUtil.deleteRefreshToken(accessToken);
+		redisUtil.saveRefreshToken(newAccessToken, refreshToken);
+
+		response.addCookie(cookieUtil.createCookie("access_token", newAccessToken));
 		response.addCookie(cookieUtil.createCookie("refresh_token", refreshToken));
 
-		return accessToken;
+		return newAccessToken;
 	}
 
-	public String createRefreshToken(String email) {
-		String refreshToken = UUID.randomUUID().toString();
-
-		redisRepository.save(RedisToken.builder()
-			.refreshToken(refreshToken)
-			.email(email)
-			.build());
-		
-		return refreshToken;
+	public String createRefreshToken() {
+		return UUID.randomUUID().toString();
 	}
 
 	public boolean signatureValidate(String token) {

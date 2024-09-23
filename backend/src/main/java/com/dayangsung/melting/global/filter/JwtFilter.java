@@ -39,7 +39,7 @@ public class JwtFilter extends OncePerRequestFilter {
 		}
 
 		if (jwtUtil.signatureValidate(accessToken) && jwtUtil.isExpired(accessToken)) {
-			accessToken = jwtUtil.reissueToken(request, response, refreshToken);
+			accessToken = jwtUtil.reissueToken(request, response, accessToken);
 			if (accessToken == null) {
 				filterChain.doFilter(request, response);
 			}
