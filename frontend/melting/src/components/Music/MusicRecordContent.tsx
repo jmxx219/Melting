@@ -3,6 +3,7 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { Button } from '../ui/button'
 import { ScrollArea } from '../ui/scroll-area'
 import { useNavigate } from 'react-router-dom'
+import AudioPlayer from './AudioPlayer'
 
 interface MusciRecordProps {
   lyrics: string
@@ -145,6 +146,12 @@ export default function MusciRecordContent({
     }
   }
 
+  const handleAudioEnded = useCallback(() => {
+    setIsEnd(true)
+    stopMicrophoneUsage()
+    processRecordedAudio()
+  }, [stopMicrophoneUsage, processRecordedAudio])
+
   return (
     <div className="flex flex-col h-full">
       <ScrollArea className="flex-grow">
@@ -171,26 +178,7 @@ export default function MusciRecordContent({
           )}
         </Button>
       </div>
-      <div className="mb-4">
-        <input
-          type="range"
-          min="0"
-          max="100"
-          value={(currentTime / duration) * 100 || 0}
-          onChange={handleProgressChange}
-          className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer progress-bg-orange"
-          style={{
-            background: `linear-gradient(to right, #FFB74D 0%, #FFB74D ${
-              (currentTime / duration) * 100
-            }%, #FFF3DF ${(currentTime / duration) * 100}%, #FFF3DF 100%)`,
-          }}
-        />
-        <div className="flex justify-between text-sm text-gray-500 mt-0.5">
-          <span>{formatTime(currentTime)}</span>
-          <span>{formatTime(duration)}</span>
-        </div>
-      </div>
-      <audio ref={audioRef} src={audioSrc} />
+      <AudioPlayer audioSrc={audioSrc} onEnded={handleAudioEnded} />
 
       <div className="text-center">
         <Button
