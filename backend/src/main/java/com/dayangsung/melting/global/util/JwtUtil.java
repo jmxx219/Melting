@@ -74,7 +74,6 @@ public class JwtUtil {
 		String refreshToken = redisUtil.getRefreshToken(accessToken);
 
 		if (refreshToken == null) {
-			cookieUtil.deleteJwtCookies(request, response);
 			return null;
 		}
 
