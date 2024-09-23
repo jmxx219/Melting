@@ -5,6 +5,7 @@ import SignupPage from '@/pages/Login/Signup'
 import MusicSelect from '@/pages/Music/MusicSelect'
 import MusciMain from '@/pages/Music/MusciMain'
 import MyPageMain from '@/pages/MyPage/MyPageMain'
+import ProfileEdit from '@/pages/MyPage/ProfileEdit'
 import { AlbumProvider } from '@/contexts/AlbumContext'
 // import HomePage from '@/pages/Home/Home'
 
@@ -39,6 +40,7 @@ export default function AppRoutes() {
           <Route path="/music" element={<MusciMain />} />
           <Route path="/music/list" element={<MusicSelect />} />
           <Route path="/mypage" element={<MyPageMain />} />
+          <Route path="/profile/edit" element={<ProfileEdit />} />
         </Routes>
       </Suspense>
     </Router>
