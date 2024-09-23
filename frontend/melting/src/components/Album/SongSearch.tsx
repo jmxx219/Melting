@@ -78,7 +78,6 @@ export default function SongSearch() {
   }
 
   const handleSubmit = () => {
-    // TODO: Pass selected songs back to SongSelection component
     navigate('/album/create')
   }
 

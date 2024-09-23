@@ -12,9 +12,9 @@ import { useAlbumContext } from '@/contexts/AlbumContext'
 import { Button } from '@/components/ui/button'
 
 export default function SongSelection() {
+  const navigate = useNavigate()
   const { selectedSongs, setSelectedSongs, titleSongIndex, setTitleSongIndex } =
     useAlbumContext()
-  const navigate = useNavigate()
 
   const handleAddSong = () => {
     navigate('/album/create/song-selection')
@@ -42,7 +42,7 @@ export default function SongSelection() {
 
   const onDragEnd = (result: DropResult) => {
     if (!result.destination) return
-    ;``
+
     const items = Array.from(selectedSongs)
     const [reorderedItem] = items.splice(result.source.index, 1)
     items.splice(result.destination.index, 0, reorderedItem)
