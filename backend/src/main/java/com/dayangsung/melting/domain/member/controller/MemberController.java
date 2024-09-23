@@ -82,4 +82,12 @@ public class MemberController {
 		memberService.logout(request, response);
 		return ApiResponse.ok(null);
 	}
+
+	// @Operation(summary = "사용자가 생성한 곡 목록")
+	// @GetMapping("/me/songs")
+	// public ApiResponse<List<MemberSongResponseDto>> getMemberSongs(
+	// 	@AuthenticationPrincipal CustomOAuth2User customOAuth2User) {
+	// 	List<MemberSongResponseDto> memberSongResponseDto = memberService.getMemberSongs(customOAuth2User.getId());
+	// 	return ApiResponse.ok(memberSongResponseDto);
+	// }
 }

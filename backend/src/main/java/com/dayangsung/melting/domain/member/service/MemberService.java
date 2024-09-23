@@ -8,6 +8,7 @@ import com.dayangsung.melting.domain.member.dto.response.MemberResponseDto;
 import com.dayangsung.melting.domain.member.entity.Member;
 import com.dayangsung.melting.domain.member.enums.Gender;
 import com.dayangsung.melting.domain.member.repository.MemberRepository;
+import com.dayangsung.melting.domain.song.repository.SongRepository;
 import com.dayangsung.melting.global.common.service.AwsS3Service;
 import com.dayangsung.melting.global.util.CookieUtil;
 
@@ -24,6 +25,7 @@ public class MemberService {
 	private final CookieUtil cookieUtil;
 	private final AwsS3Service awsS3Service;
 	private final MemberRepository memberRepository;
+	private final SongRepository songRepository;
 
 	public Boolean validateNickname(String nickname) {
 		return !memberRepository.existsByNickname(nickname);
@@ -74,4 +76,14 @@ public class MemberService {
 	public void logout(HttpServletRequest request, HttpServletResponse response) {
 		cookieUtil.deleteJwtCookies(request, response);
 	}
+
+	// public List<MemberSongResponseDto> getMemberSongs(Long memberId) {
+	// 	List<Song> membersongs = songRepository.findByMemberId(memberId);
+	// 	return membersongs.stream()
+	// 		.map(song -> MemberSongResponseDto.of(
+	// 			song.getAlbum().getAlbumCoverImage(),
+	// 			song.getLikedCount()
+	// 		))
+	// 		.collect(Collectors.toList());
+	// }
 }
