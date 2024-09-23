@@ -1,15 +1,17 @@
+import { useNavigate } from 'react-router-dom'
+
 import { Hash } from 'lucide-react'
+import { useAlbumContext } from '@/contexts/AlbumContext'
 import { Button } from '@/components/ui/button'
 
-interface GenreSelectorProps {
-  selectedGenres: string[]
-  onGenreEdit: () => void
-}
+export default function GenreSelector() {
+  const navigate = useNavigate()
+  const { selectedGenres } = useAlbumContext()
 
-export default function GenreSelector({
-  selectedGenres,
-  onGenreEdit,
-}: GenreSelectorProps) {
+  const onGenreEdit = () => {
+    navigate('/album/create/genre-selection')
+  }
+
   return (
     <div className="flex justify-between items-center relative border-b-2 pb-3 px-2">
       <div>
@@ -20,6 +22,7 @@ export default function GenreSelector({
         )}
       </div>
       <Button
+        type="button"
         variant="link"
         onClick={onGenreEdit}
         className="absolute bottom-9 -right-3 text-primary-400"
