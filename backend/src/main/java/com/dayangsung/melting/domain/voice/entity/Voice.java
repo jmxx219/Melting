@@ -3,6 +3,7 @@ package com.dayangsung.melting.domain.voice.entity;
 import com.dayangsung.melting.domain.member.entity.Member;
 import com.dayangsung.melting.domain.originalsong.entity.OriginalSong;
 import com.dayangsung.melting.global.entity.BaseEntity;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -24,29 +25,30 @@ import lombok.NoArgsConstructor;
 @Table(name = "voice")
 public class Voice extends BaseEntity {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "voice_id")
-    private Long id;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "voice_id")
+	private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id", nullable = false)
-    private Member member;
+	@OneToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "original_song_id", nullable = false)
+	private OriginalSong originalSong;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "original_song_id", nullable = false)
-    private OriginalSong originalSong;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "member_id", nullable = false)
+	private Member member;
 
-    private boolean isTrained;
+	private boolean isTrained;
 
-    private String voiceUrl;
+	@Column(nullable = false)
+	private String voiceUrl;
 
-    @Builder
-    public Voice(Member member, OriginalSong originalSong, boolean isTrained, String voiceUrl) {
-        this.member = member;
-        this.originalSong = originalSong;
-        this.isTrained = isTrained;
-        this.voiceUrl = voiceUrl;
-    }
+	@Builder
+	public Voice(Member member, OriginalSong originalSong, boolean isTrained, String voiceUrl) {
+		this.member = member;
+		this.originalSong = originalSong;
+		this.isTrained = isTrained;
+		this.voiceUrl = voiceUrl;
+	}
 
 }
