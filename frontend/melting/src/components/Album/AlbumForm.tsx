@@ -33,7 +33,7 @@ export default function AlbumForm() {
   const [isGenreValid, setIsGenreValid] = useState(false)
   const [isHashtagValid, setIsHashtagValid] = useState(false)
   const [isCoverValid, setIsCoverValid] = useState(false)
-  const isFormValid = albumName.trim() !== '' && selectedCover !== null
+  const [isFormValid, setIsFormValid] = useState(false)
 
   const handleSubmit = () => {
     if (isFormValid) {
@@ -57,7 +57,6 @@ export default function AlbumForm() {
 
   // 곡 유효성 검사
   useEffect(() => {
-    console.log(selectedSongs)
     setIsSongValid(selectedSongs.length > 0)
   }, [selectedSongs])
 
@@ -75,6 +74,12 @@ export default function AlbumForm() {
   useEffect(() => {
     setIsCoverValid(selectedCover !== null)
   }, [selectedCover])
+
+  useEffect(() => {
+    if (isSongValid && isGenreValid && isHashtagValid && isCoverValid) {
+      setIsFormValid(true)
+    }
+  }, [isSongValid, isGenreValid, isHashtagValid, isCoverValid])
 
   return (
     <form className="space-y-6">
@@ -149,7 +154,7 @@ export default function AlbumForm() {
         <Label htmlFor="hashtag" className="font-semibold">
           앨범 커버<span className="text-primary-400 ml-1">*</span>
         </Label>
-        <AlbumCoverSelector onSelectCover={setSelectedCover} />
+        <AlbumCoverSelector />
       </div>
       <div className="text-gray text-center">
         <p>발매 일자 : {releaseDate}</p>
