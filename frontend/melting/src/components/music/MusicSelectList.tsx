@@ -5,8 +5,9 @@ import { Button } from '../ui/button'
 import { Input } from '../ui/input'
 
 import MusicList from '@/components/Music/MusicList'
-import { useState } from 'react'
 import { Song } from '@/types/song'
+import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 
 export default function MusicSelectList() {
   // @ts-ignore
@@ -32,12 +33,16 @@ export default function MusicSelectList() {
   ])
   const [selectId, setSelectId] = useState<number>(-1)
   // const [songs, setSongs] = useState<Song[]>()
-  // @ts-ignore
-  const [filteredSongs, setFilteredSongs] = useState<Song[]>(songs)
+  const navigate = useNavigate()
 
   const handleSongSelect = (songId: number) => {
     setSelectId(songId)
   }
+
+  const recordClick = () => {
+    navigate('/music/record', { state: { songId: selectId } })
+  }
+
   return (
     <div className="flex flex-col items-center flex-1 w-full space-y-3">
       <form className="w-full">
@@ -59,10 +64,11 @@ export default function MusicSelectList() {
         </div>
       </form>
       <MusicList
-        songs={filteredSongs}
+        songs={songs}
         showNumbers={true}
         selectId={selectId}
         onSelectSong={handleSongSelect}
+        onSelectRecord={recordClick}
       />
     </div>
   )

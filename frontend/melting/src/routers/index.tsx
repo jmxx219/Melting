@@ -3,7 +3,8 @@ import { BrowserRouter as Router, Route, Routes } from 'react-router-dom'
 import LoginPage from '@/pages/Login/Login'
 import SignupPage from '@/pages/Login/Signup'
 import MusicSelect from '@/pages/Music/MusicSelect'
-import MusciMain from '@/pages/Music/MusciMain'
+import MusciMain from '@/pages/Music/MusicMain'
+import MusciRecord from '@/pages/Music/MusicRecord'
 import { AlbumProvider } from '@/contexts/AlbumContext'
 // import HomePage from '@/pages/Home/Home'
 
@@ -37,6 +38,7 @@ export default function AppRoutes() {
           <Route path="/album/*" element={<AlbumRoutes />} />
           <Route path="/music" element={<MusciMain />} />
           <Route path="/music/list" element={<MusicSelect />} />
+          <Route path="/music/record" element={<MusciRecord />} />
         </Routes>
       </Suspense>
     </Router>
