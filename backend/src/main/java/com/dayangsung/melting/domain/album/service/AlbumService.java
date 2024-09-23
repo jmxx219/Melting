@@ -18,6 +18,8 @@ import com.dayangsung.melting.domain.album.dto.response.AlbumUpdateResponseDto;
 import com.dayangsung.melting.domain.album.entity.Album;
 import com.dayangsung.melting.domain.album.enums.AlbumSortType;
 import com.dayangsung.melting.domain.album.repository.AlbumRepository;
+import com.dayangsung.melting.domain.likes.service.LikesService;
+import com.dayangsung.melting.global.util.RedisUtil;
 import com.dayangsung.melting.domain.song.entity.Song;
 
 import lombok.RequiredArgsConstructor;
@@ -27,6 +29,8 @@ import lombok.RequiredArgsConstructor;
 public class AlbumService {
 
 	private final AlbumRepository albumRepository;
+	private final LikesService likesService;
+	private final RedisUtil redisUtil;
 
 	// 모든 앨범 조회
 	public List<AlbumSearchResponseDto> getAllAlbums() {
@@ -36,7 +40,7 @@ public class AlbumService {
 	// 커뮤니티 메인에서 사용. sort 파라미터에 따라 앨범 목록을 정렬하여 반환하는 메서드
 	public List<AlbumMainResponseDto> getAlbumsSorted(AlbumSortType sort) {
 		List<Album> albums = switch (sort) {
-			case POPULAR -> albumRepository.findByIsPublicTrueAndIsDeletedFalseOrderByLikedCountDesc();
+			case POPULAR -> redisUtil.getTop5AlbumLikes();
 			case LATEST -> albumRepository.findByIsPublicTrueAndIsDeletedFalseOrderByCreatedAtDesc();
 			default -> throw new IllegalArgumentException(INVALID_SORT_CRITERIA.getErrorMessage());
 		};
@@ -92,7 +96,7 @@ public class AlbumService {
 			.orElseThrow(() -> new NotFoundException(ALBUM_NOT_FOUND.getErrorMessage()));
 
 		// 앨범 데이터를 DTO로 변환
-		return AlbumDetailsResponseDto.of(album);
+		return AlbumDetailsResponseDto.of(album, likesService.getAlbumLikesCount(albumId));
 	}
 
 	@Transactional
