@@ -126,7 +126,11 @@ export default function SongSearch() {
       <div className="space-y-2 ">
         <span className="flex items-center font-semibold">
           선택한 곡
-          <p className="ml-2 text-xs text-gray">{selectedSongs.length}/10</p>
+          <p
+            className={`ml-2 text-xs ${selectedSongs.length > 10 ? 'text-status-warning' : 'text-gray'}`}
+          >
+            {selectedSongs.length}/10
+          </p>
         </span>
         {selectedSongs.length === 0 ? (
           <div className="border border-gray w-full p-5 text-center">
