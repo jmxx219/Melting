@@ -23,6 +23,7 @@ import com.dayangsung.melting.domain.album.enums.AlbumSortType;
 import com.dayangsung.melting.domain.album.service.AlbumService;
 import com.dayangsung.melting.global.common.response.ApiResponse;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -68,10 +69,9 @@ public class AlbumController {
 	}
 
 	// 앨범 생성
-	// TODO: 수정 필요
 	@PostMapping
 	public ApiResponse<AlbumUpdateResponseDto> createAlbum(
-		@RequestBody AlbumCreateRequestDto albumCreateRequestDto) {
+			@Valid @RequestBody AlbumCreateRequestDto albumCreateRequestDto) {
 		AlbumUpdateResponseDto albumUpdateResponseDto = albumService.createAlbum(albumCreateRequestDto);
 		return ApiResponse.ok(albumUpdateResponseDto);
 	}
