@@ -34,7 +34,7 @@ export default function SteadyAlbum() {
 
   return (
     <>
-      <h2 className="text-2xl font-bold mb-2">스테디 앨범</h2>
+      <div className="text-2xl font-bold mb-2">스테디 앨범</div>
       <ScrollArea className="w-full whitespace-nowrap rounded-md">
         <div className="flex space-x-0">
           {steadyAlbums.map((album) => (
