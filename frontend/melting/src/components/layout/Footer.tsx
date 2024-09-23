@@ -22,7 +22,7 @@ const navItems: NavItem[] = [
   { icon: <MusicNote />, name: 'music', href: '/music' },
   { icon: <Home />, name: 'home', href: '/' },
   { icon: <Hash />, name: 'community', href: '*' },
-  { icon: <User />, name: 'user', href: '*' },
+  { icon: <User />, name: 'user', href: '/mypage' },
 ]
 
 export default function Footer() {
