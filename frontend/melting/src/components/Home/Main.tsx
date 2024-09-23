@@ -1,6 +1,7 @@
 import Greeting from './Greeting'
+import HotAlbum from './HotAlbums'
 import Intro from './Intro'
-import MonthlyAlbum from './MonthlyAlbum'
+import MonthlyAlbum from './MonthlyAlbums'
 import SteadyAlbum from './SteadyAlbums'
 
 export default function Main() {
@@ -12,11 +13,13 @@ export default function Main() {
       <div>
         <Intro />
       </div>
-      <div>
+      <div className="space-y-10">
         <div>
           <SteadyAlbum />
         </div>
-        <div>HOT 5 앨범</div>
+        <div>
+          <HotAlbum />
+        </div>
         <div>
           <MonthlyAlbum />
         </div>
