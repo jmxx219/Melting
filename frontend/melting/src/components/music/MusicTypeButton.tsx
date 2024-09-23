@@ -1,5 +1,5 @@
 import { CoverType } from '@/types/constType'
-import { ArrowUpRight, Mic } from 'lucide-react'
+import { ArrowUpRight, LucideIcon } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 
 interface TypeBtnProps {
@@ -8,10 +8,12 @@ interface TypeBtnProps {
   detail: string[]
   footer: string
   type: CoverType
+  icon: LucideIcon
 }
 
 export default function MusicTypeButton(props: TypeBtnProps) {
   const navigate = useNavigate()
+  const Icon = props.icon
 
   const clickEvent: React.MouseEventHandler<HTMLButtonElement> = () => {
     navigate('/music/list', { state: { type: props.type } })
@@ -19,14 +21,16 @@ export default function MusicTypeButton(props: TypeBtnProps) {
   return (
     <button
       type="button"
-      className="w-full px-3 py-5 flex items-center justify-center text-black font-bold rounded-lg transition-colors "
+      className="w-full px-5 py-7 flex items-center justify-center text-black font-bold rounded-lg transition-colors "
       style={{ backgroundColor: props.bgColor }}
       onClick={clickEvent}
     >
       <div className="flex w-full flex-col items-start text-white me-3">
-        <div className="text-1xl mb-5 font-semibold flex">
+        <div className="text-2xl mb-5 font-semibold flex justify-center items-center">
           {props.title}
-          <Mic />
+          <div className="ms-2">
+            <Icon />
+          </div>
         </div>
         <div className="mb-5">
           {props.detail.map((text, index) => (

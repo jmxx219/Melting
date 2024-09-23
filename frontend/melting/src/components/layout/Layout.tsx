@@ -19,10 +19,10 @@ export default function Layout({
   Header = <DefaultHeader title={'홈'} buttonArea={<Logo />} />,
 }: LayoutProps) {
   return (
-    <div className="flex flex-col w-screen min-h-screen">
-      <header className="px-5 pt-10">{showHeader && Header}</header>
+    <div className="flex flex-col w-screen h-screen overflow-hidden">
+      <header className="px-8 pt-10">{showHeader && Header}</header>
       <main
-        className={`overflow-y-auto flex-1 bg-white p-5 pb-20 flex flex-col max-w-screen ${isMainCenter ? 'justify-center' : ''}`}
+        className={`overflow-hidden flex-1 bg-white px-8 py-5 ${showFooter ? 'pb-20' : ''} flex flex-col max-w-screen ${isMainCenter ? 'justify-center' : ''}`}
       >
         {children}
       </main>
