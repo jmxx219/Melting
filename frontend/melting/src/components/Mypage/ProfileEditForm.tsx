@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import SubmitButton from '@/components/Button/SubmitButton'
 import { Input } from '@/components/ui/input'
-import { ArrowRight, Camera, User } from 'lucide-react'
+import { Camera, User } from 'lucide-react'
 
 const isValidNickname = (nickname: string): boolean => {
   const regex = /^[가-힣a-zA-Z0-9]{2,20}$/
@@ -16,7 +16,7 @@ const checkNicknameDuplicate = async (nickname: string): Promise<boolean> => {
   return new Promise((resolve) => setTimeout(() => resolve(false), 1000))
 }
 
-export default function SignupForm() {
+export default function ProfileEditForm() {
   const [profileImage, setProfileImage] = useState<string | null>(null)
   const [nickname, setNickname] = useState('노원핵주먹')
   const [isNicknameValid, setIsNicknameValid] = useState(false)
@@ -119,10 +119,6 @@ export default function SignupForm() {
           conditions={[!isFormValid]}
           text={'수정하기'}
         >
-          {/* <div className="flex justify-between items-center w-full px-2">
-            <span>수정하기</span>
-            <ArrowRight className="w-5 h-5" />
-          </div> */}
         </SubmitButton>
       </div>
     </div>
