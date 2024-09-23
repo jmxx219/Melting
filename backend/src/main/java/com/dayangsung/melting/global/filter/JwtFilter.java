@@ -34,7 +34,9 @@ public class JwtFilter extends OncePerRequestFilter {
 		if (jwtUtil.signatureValidate(accessToken) && jwtUtil.isExpired(accessToken)) {
 			accessToken = jwtUtil.reissueToken(request, response, accessToken);
 			if (accessToken == null) {
+				cookieUtil.deleteJwtCookies(request, response);
 				filterChain.doFilter(request, response);
+				return;
 			}
 			cookieUtil.updateCookie(request, response, "access_token", accessToken);
 		}
