@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { ArrowRight, Camera, User } from 'lucide-react'
+import { ArrowRight, User } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { useNavigate } from 'react-router-dom'
 
@@ -9,15 +9,15 @@ export default function MyPageSelect() {
   const navigate = useNavigate()
 
   const handleRegisteredSongs = () => {
-    navigate('/my-albums') // 내가 등록한 한 곡 & 앨범 페이지 경로
+    navigate('/mypage/my-albums') // 내가 등록한 한 곡 & 앨범 페이지 경로
   }
 
   const handleLikedSongs = () => {
-    navigate('/liked-albums') // 좋아요 한 곡 & 앨범 페이지 경로
+    navigate('/mypage/liked-albums') // 좋아요 한 곡 & 앨범 페이지 경로
   }
 
   const handleProfileEdit = () => {
-    navigate('/profile/edit')
+    navigate('/mypage/profile/edit')
   }
 
   const handleLogout = () => {

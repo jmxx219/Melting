@@ -6,6 +6,8 @@ import MusicSelect from '@/pages/Music/MusicSelect'
 import MusicMain from '@/pages/Music/MusicMain'
 import MyPageMain from '@/pages/MyPage/MyPageMain'
 import ProfileEdit from '@/pages/MyPage/ProfileEdit'
+import LikedAlbumsAndSongs from '@/pages/MyPage/LikedAlbumsAndSongs'
+import MyAlbumsAndSongs from '@/pages/MyPage/MyAlbumsAndSongs'
 import MusciRecord from '@/pages/Music/MusicRecord'
 import { AlbumProvider } from '@/contexts/AlbumContext'
 // import HomePage from '@/pages/Home/Home'
@@ -40,9 +42,11 @@ export default function AppRoutes() {
           <Route path="/album/*" element={<AlbumRoutes />} />
           <Route path="/music" element={<MusicMain />} />
           <Route path="/music/list" element={<MusicSelect />} />
-          <Route path="/mypage" element={<MyPageMain />} />
-          <Route path="/profile/edit" element={<ProfileEdit />} />
           <Route path="/music/record" element={<MusciRecord />} />
+          <Route path="/mypage" element={<MyPageMain />} />
+          <Route path="/mypage/profile/edit" element={<ProfileEdit />} />
+          <Route path="/mypage/my-albums" element={<MyAlbumsAndSongs />} />
+          <Route path="/mypage/liked-albums" element={<LikedAlbumsAndSongs />} />
         </Routes>
       </Suspense>
     </Router>
