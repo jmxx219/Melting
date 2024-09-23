@@ -14,6 +14,7 @@ export default function ToggleMusicButton({
 }: ToggleMusicButtonProps) {
   return (
     <Button
+      type="button"
       variant="ghost"
       size="sm"
       onClick={onClick}
