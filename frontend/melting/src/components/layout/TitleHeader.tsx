@@ -5,7 +5,7 @@ interface TitleProps {
 
 export default function TitleHeader({ titles, comment }: TitleProps) {
   return (
-    <div>
+    <div className="pt-10">
       {titles.map((title, index) => (
         <div className="text-2xl font-bold" key={index}>
           {title}
