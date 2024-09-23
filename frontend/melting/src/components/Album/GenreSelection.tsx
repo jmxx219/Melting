@@ -1,5 +1,4 @@
-import { useEffect } from 'react'
-import { useLocation, useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { useAlbumContext } from '@/contexts/AlbumContext'
 import { Button } from '@/components/ui/button'
 import SubmitButton from '../Button/SubmitButton'
@@ -31,6 +30,7 @@ export default function GenreSelection() {
         <div className="flex flex-wrap gap-2 mb-4">
           {genres.map((genre) => (
             <Button
+              type="button"
               key={genre}
               variant={selectedGenres.includes(genre) ? 'default' : 'tag'}
               onClick={() => toggleGenre(genre as GenreType)}
