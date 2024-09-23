@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.dayangsung.melting.domain.album.enums.AlbumCategory;
+import com.dayangsung.melting.domain.comment.entity.Comment;
 import com.dayangsung.melting.domain.hashtag.entity.AlbumGenre;
 import com.dayangsung.melting.domain.hashtag.entity.AlbumHashtag;
 import com.dayangsung.melting.domain.likes.entity.LikesAlbum;
@@ -83,15 +84,23 @@ public class Album extends BaseEntity {
 	@OneToMany(mappedBy = "album")
 	private List<LikesAlbum> likesAlbums = new ArrayList<>();
 
+	@OneToMany(mappedBy = "album")
+	private List<Comment> comments = new ArrayList<>();
+
 	@Builder
-	public Album(Member member, String albumName, AlbumCategory category, String albumDescription, String albumCoverImage) {
+	public Album(Member member, String albumName, String albumDescription, String albumCoverImage) {
 		this.member = member;
 		this.albumName = albumName;
-		this.category = category;
 		this.albumDescription = albumDescription;
 		this.albumCoverImage = albumCoverImage;
 		this.isPublic = false;
 		this.isDeleted = false;
+		this.setCategory();
+	}
+
+	private void setCategory() {
+		int songCount = this.songs.size();
+		this.category = AlbumCategory.getCategoryBySongCount(songCount);
 	}
 
 	public void updateAlbumName(String albumName) {

@@ -12,8 +12,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.model.AmazonS3Exception;
 import com.amazonaws.services.s3.model.DeleteObjectRequest;
 import com.amazonaws.services.s3.model.ObjectMetadata;
+import com.amazonaws.services.s3.model.S3Object;
 
 import lombok.RequiredArgsConstructor;
 
@@ -79,7 +81,13 @@ public class AwsS3Service {
 	}
 
 	public String getProfileImageUrl(Long memberId, String extension) {
-		return CLOUDFRONTURL + "/image/profile/" + memberId + extension;
+		String profileImageUrl = CLOUDFRONTURL + "/image/profile/" + memberId + extension;
+		try {
+			amazonS3.getObject(bucket, profileImageUrl);
+			return profileImageUrl;
+		} catch (AmazonS3Exception e) {
+			return getDefaultProfileImageUrl();
+		}
 	}
 
 	public String getDefaultSongCoverImageUrl() {

@@ -10,7 +10,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ZSetOperations;
 import org.springframework.stereotype.Component;
 
-import com.dayangsung.melting.domain.album.dto.response.AlbumMainResponseDto;
+import com.dayangsung.melting.domain.album.entity.Album;
 import com.dayangsung.melting.domain.album.repository.AlbumRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -35,7 +35,7 @@ public class RedisUtil {
 		redisTemplate.delete(accessToken);
 	}
 
-	public List<AlbumMainResponseDto> getTop5AlbumLikes() {
+	public List<Album> getTop5AlbumLikes() {
 		ZSetOperations<String, Object> zSetOperations = redisTemplate.opsForZSet();
 		Set<ZSetOperations.TypedTuple<Object>> top5Albums = zSetOperations.reverseRangeWithScores("album_likes", 0, 4);
 
@@ -46,7 +46,6 @@ public class RedisUtil {
 				.map(albumId -> albumRepository.findById(Long.valueOf(albumId))
 					.orElseThrow(RuntimeException::new))
 				.filter(Objects::nonNull)
-				.map(AlbumMainResponseDto::of)
 				.collect(Collectors.toList());
 		}
 		return List.of();
