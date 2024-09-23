@@ -3,6 +3,9 @@ package com.dayangsung.melting.domain.comment.service;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 
 import com.dayangsung.melting.domain.album.entity.Album;
@@ -27,8 +30,10 @@ public class CommentService {
 	private final MemberRepository memberRepository;
 	private final AwsS3Service awsS3Service;
 
-	public List<CommentResponseDto> getAllComments(Long albumId) {
-		List<Comment> commentList = commentRepository.findByAlbumIdAndNotDeleted(albumId);
+	public List<CommentResponseDto> getAllComments(Long albumId, int page, int size) {
+		Pageable pageable = PageRequest.of(page, size);
+		Slice<Comment> commentList =
+			commentRepository.findByAlbumIdAndNotDeleted(albumId, pageable);
 		return commentList.stream()
 			.map(comment -> CommentResponseDto.of(
 				comment,

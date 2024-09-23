@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.dayangsung.melting.domain.auth.dto.CustomOAuth2User;
@@ -29,8 +30,10 @@ public class CommentController {
 	private final CommentService commentService;
 
 	@GetMapping
-	public ApiResponse<List<CommentResponseDto>> getAllComments(@PathVariable Long albumId) {
-		List<CommentResponseDto> commentResponseDtoList = commentService.getAllComments(albumId);
+	public ApiResponse<List<CommentResponseDto>> getAllComments(@PathVariable Long albumId,
+		@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "25") int size) {
+		List<CommentResponseDto> commentResponseDtoList =
+			commentService.getAllComments(albumId, page, size);
 		return ApiResponse.ok(commentResponseDtoList);
 	}
 
