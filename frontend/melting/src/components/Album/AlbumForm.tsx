@@ -1,10 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
 import { useEffect, useState } from 'react'
-import { useLocation } from 'react-router-dom'
-import { useNavigate } from 'react-router-dom'
 
-import { Song } from '@/types/song'
 import { Input } from '../ui/input'
 import { Label } from '../ui/label'
 import { Textarea } from '../ui/textarea'
@@ -16,18 +13,6 @@ import AlbumCoverSelector from './AlbumCoverSelector'
 import { useAlbumContext } from '@/contexts/AlbumContext'
 
 export default function AlbumForm() {
-  const location = useLocation()
-  const navigate = useNavigate()
-
-  // const [albumName, setAlbumName] = useState('')
-  // const [albumIntro, setAlbumIntro] = useState('')
-  // const [selectedSongs, setSelectedSongs] = useState<Song[]>(
-  //   location.state?.selectedSongs || [],
-  // )
-  // const [titleSongIndex, setTitleSongIndex] = useState<number | null>(null)
-  // const [selectedGenres, setSelectedGenres] = useState<string[]>([])
-  // const [selectedHashtags, setSelectedHashtags] = useState<string[]>([])
-  // const [selectedCover, setSelectedCover] = useState<string | null>(null)
   const [releaseDate, setReleaseDate] = useState<string>('')
 
   const {
@@ -36,13 +21,8 @@ export default function AlbumForm() {
     albumIntro,
     setAlbumIntro,
     selectedSongs,
-    setSelectedSongs,
-    titleSongIndex,
-    setTitleSongIndex,
     selectedGenres,
-    setSelectedGenres,
     selectedHashtags,
-    setSelectedHashtags,
     selectedCover,
     setSelectedCover,
   } = useAlbumContext()
@@ -95,12 +75,6 @@ export default function AlbumForm() {
   useEffect(() => {
     setIsCoverValid(selectedCover !== null)
   }, [selectedCover])
-
-  const handleHashtagsChange = (hashtags: string[]) => {
-    // console.log('Selected hashtags:', hashtags)
-    // 여기서 선택된 해시태그를 처리할  수 있습니다.
-    setSelectedHashtags(hashtags)
-  }
 
   return (
     <form className="space-y-6">
@@ -169,7 +143,7 @@ export default function AlbumForm() {
         <Label htmlFor="hashtag" className="font-semibold">
           해시태그<span className="text-primary-400 ml-1">*</span>
         </Label>
-        <HashtagSelector onHashtagsChange={handleHashtagsChange} />
+        <HashtagSelector />
       </div>
       <div>
         <Label htmlFor="hashtag" className="font-semibold">
