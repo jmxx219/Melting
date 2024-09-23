@@ -14,7 +14,7 @@ export default function Intro() {
   }
 
   return (
-    <div className="flex flex-col justify-center text-center">
+    <div className="flex flex-col justify-center text-center my-8">
       <div
         className={`flex justify-center ${isRotating ? 'rotate-animation' : ''}`}
         onClick={handleClick}
