@@ -158,6 +158,7 @@ export default function MusciRecordContent({
       </ScrollArea>
       <div className="text-center pb-5 pt-10">
         <Button
+          type="button"
           variant="outline"
           size="icon"
           className="w-20 h-20 bg-[#FFAF25] rounded-full"
