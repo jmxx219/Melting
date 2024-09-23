@@ -1,5 +1,6 @@
 package com.dayangsung.melting.domain.album.controller;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -43,7 +44,7 @@ public class AlbumController {
 
 	// 키워드 검색을 통한 앨범 조회
 	@GetMapping("/search")
-	public ApiResponse<Set<AlbumSearchResponseDto>> searchAlbumsByKeyword(
+	public ApiResponse<List<AlbumSearchResponseDto>> searchAlbumsByKeyword(
 		@RequestParam(value = "keyword") String keyword,
 		@RequestParam(value = "type") List<String> types) {
 
@@ -65,7 +66,7 @@ public class AlbumController {
 			result.addAll(albumService.searchAlbumsByGenre(keyword));
 		}
 
-		return ApiResponse.ok(result);
+		return ApiResponse.ok(new ArrayList<>(result));
 	}
 
 	// 앨범 생성
