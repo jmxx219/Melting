@@ -24,7 +24,6 @@ export default function AlbumForm() {
     selectedGenres,
     selectedHashtags,
     selectedCover,
-    setSelectedCover,
   } = useAlbumContext()
 
   // 유효성 검사 상태
