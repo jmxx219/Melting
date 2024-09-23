@@ -3,6 +3,8 @@ package com.dayangsung.melting.global.common.service;
 import static com.dayangsung.melting.global.common.response.enums.ErrorMessage.*;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
@@ -38,6 +40,24 @@ public class AwsS3Service {
 
 		amazonS3.putObject(bucket + bucketFolderPath, s3FileName, multipartFile.getInputStream(), metadata);
 		return CLOUDFRONTURL + bucketFolderPath + "/" + s3FileName;
+	}
+
+	public String uploadVoice(MultipartFile voice, Long memberId, Long originalSongId) {
+		String originalFilename = voice.getOriginalFilename();
+		String extension = originalFilename.substring(originalFilename.lastIndexOf("."));
+		String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"));
+		String s3FileName = String.format("m%d_os%d_%s%s", memberId, originalSongId, timestamp, extension);
+
+		ObjectMetadata metadata = new ObjectMetadata();
+		metadata.setContentLength(voice.getSize());
+		metadata.setContentType(voice.getContentType());
+
+		try {
+			amazonS3.putObject(bucket + "/audio/member_voice", s3FileName, voice.getInputStream(), metadata);
+			return CLOUDFRONTURL + "/audio/member_voice/" + s3FileName;
+		} catch (IOException e) {
+			throw new RuntimeException();
+		}
 	}
 
 	public String uploadAlbumCoverImage(MultipartFile albumCoverImage, Long albumId) {
