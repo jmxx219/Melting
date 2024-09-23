@@ -41,11 +41,14 @@ public class Member extends BaseEntity {
 
 	private boolean isDeleted;
 
+	private int coverCount;
+
 	@Builder
 	public Member(String email, ProviderType provider) {
 		this.email = email;
 		this.provider = provider;
 		this.isDeleted = false;
+		this.coverCount = 0;
 	}
 
 	public void initMember(Gender gender, String profileImageExtension, String nickname) {
@@ -65,5 +68,9 @@ public class Member extends BaseEntity {
 
 	public void updateProfileImageExtension(String profileImageExtension) {
 		this.profileImageExtension = profileImageExtension;
+	}
+
+	public void increaseCoverCount() {
+		this.coverCount++;
 	}
 }
