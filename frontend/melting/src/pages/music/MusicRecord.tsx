@@ -2,8 +2,6 @@ import Layout from '@/components/layout/Layout'
 import MusicPlayerHeader from '@/components/layout/MusicPlayerHeader'
 import MusciRecordContent from '@/components/Music/MusciRecordContent'
 import { Song } from '@/types/song'
-import { useEffect, useRef, useState } from 'react'
-import { useLocation } from 'react-router-dom'
 
 interface MusicRecord extends Song {
   lyrics: string
@@ -11,10 +9,8 @@ interface MusicRecord extends Song {
 }
 
 export default function MusicRecord() {
-  const location = useLocation()
-  const { songId } = location.state || {}
-
-  const [song, setSong] = useState<MusicRecord>({
+  // const { songId } = location.state || {}
+  const song: MusicRecord = {
     songId: 1,
     songTitle: 'Blueming',
     artist: '아이유',
@@ -23,7 +19,17 @@ export default function MusicRecord() {
       'dsadsd\n dasdasdada\n dasdasdas\n dsadsd\n dasdasdada\n dasdasdas dsadsd\n dasdasdada\n dasdasdasdsadsd\n dasdasdada\n dasdasdasdsadsd\n dasdasdada\n dasdasdasdsadsd\n dasdasdada\n dasdasdasdsadsd\n dasdasdada\n dasdasdasdsadsd\n dasdasdada\n dasdasdasdsadsd\n dasdasdada\n dasdasdasdsadsd\n dasdasdada\n dasdasdasdsadsd\n dasdasdada\n dasdasdasdsadsd\n dasdasdada\n dasdasdasdsadsd\n dasdasdada\n dasdasdasdsadsd\n dasdasdada\n dasdasdasdsadsd\n dasdasdada\n dasdasdasdsadsd\n dasdasdada\n dasdasdasdsadsd\n dasdasdada\n dasdasdasdsadsd\n dasdasdada\n dasdasdas ',
     audioSrc:
       'https://d35fpwscei7sb8.cloudfront.net/audio/original_song/mr/1.mp3',
-  })
+  }
+  // const [song, setSong] = useState<MusicRecord>({
+  //   songId: 1,
+  //   songTitle: 'Blueming',
+  //   artist: '아이유',
+  //   albumCoverImgUrl: 'https://github.com/shadcn.png',
+  //   lyrics:
+  //     'dsadsd\n dasdasdada\n dasdasdas\n dsadsd\n dasdasdada\n dasdasdas dsadsd\n dasdasdada\n dasdasdasdsadsd\n dasdasdada\n dasdasdasdsadsd\n dasdasdada\n dasdasdasdsadsd\n dasdasdada\n dasdasdasdsadsd\n dasdasdada\n dasdasdasdsadsd\n dasdasdada\n dasdasdasdsadsd\n dasdasdada\n dasdasdasdsadsd\n dasdasdada\n dasdasdasdsadsd\n dasdasdada\n dasdasdasdsadsd\n dasdasdada\n dasdasdasdsadsd\n dasdasdada\n dasdasdasdsadsd\n dasdasdada\n dasdasdasdsadsd\n dasdasdada\n dasdasdasdsadsd\n dasdasdada\n dasdasdasdsadsd\n dasdasdada\n dasdasdasdsadsd\n dasdasdada\n dasdasdas ',
+  //   audioSrc:
+  //     'https://d35fpwscei7sb8.cloudfront.net/audio/original_song/mr/1.mp3',
+  // })
   /*   useEffect(() => {
     if (songId) {
       fetch(`/api/songs/${songId}`)
