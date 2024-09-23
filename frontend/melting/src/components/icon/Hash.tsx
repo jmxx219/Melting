@@ -1,8 +1,18 @@
 import { SVGIconProps } from '@/types/globalType'
 
-export default function Hash({ width = 32, height = 32, fill = '#A5A5A5' }: SVGIconProps) {
+export default function Hash({
+  width = 32,
+  height = 32,
+  fill = '#A5A5A5',
+}: SVGIconProps) {
   return (
-    <svg width={width} height={height} viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <svg
+      width={width}
+      height={height}
+      viewBox="0 0 32 32"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
       <path
         fillRule="evenodd"
         clipRule="evenodd"

@@ -1,10 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
 import { useEffect, useState } from 'react'
-import { useLocation } from 'react-router-dom'
-import { useNavigate } from 'react-router-dom'
 
-import { Song } from '@/types/song'
 import { Input } from '../ui/input'
 import { Label } from '../ui/label'
 import { Textarea } from '../ui/textarea'
@@ -12,29 +9,30 @@ import SongSelection from './SongSelection'
 import HashtagSelector from './HashtagSelector'
 import SubmitButton from '../Button/SubmitButton'
 import GenreSelector from './GenreSelector'
+import AlbumCoverSelector from './AlbumCoverSelector'
+import { useAlbumContext } from '@/contexts/AlbumContext'
 
 export default function AlbumForm() {
-  const location = useLocation()
-  const navigate = useNavigate()
-
-  const [albumName, setAlbumName] = useState('')
-  const [albumIntro, setAlbumIntro] = useState('')
-  const [selectedSongs, setSelectedSongs] = useState<Song[]>(
-    location.state?.selectedSongs || [],
-  )
-  const [titleSongIndex, setTitleSongIndex] = useState<number | null>(null)
-  const [selectedGenres, setSelectedGenres] = useState<string[]>([])
-  const [selectedHashtags, setSelectedHashtags] = useState<string[]>([])
-  // @ts-ignore
-  const [selectedCover, setSelectedCover] = useState<string | null>(null)
   const [releaseDate, setReleaseDate] = useState<string>('')
+
+  const {
+    albumName,
+    setAlbumName,
+    albumIntro,
+    setAlbumIntro,
+    selectedSongs,
+    selectedGenres,
+    selectedHashtags,
+    selectedCover,
+  } = useAlbumContext()
 
   // 유효성 검사 상태
   const [isAlbumNameValid, setIsAlbumNameValid] = useState(false)
+  const [isSongValid, setIsSongValid] = useState(false)
   const [isGenreValid, setIsGenreValid] = useState(false)
   const [isHashtagValid, setIsHashtagValid] = useState(false)
   const [isCoverValid, setIsCoverValid] = useState(false)
-  const isFormValid = albumName.trim() !== '' && selectedCover !== null
+  const [isFormValid, setIsFormValid] = useState(false)
 
   const handleSubmit = () => {
     if (isFormValid) {
@@ -56,6 +54,11 @@ export default function AlbumForm() {
     setIsAlbumNameValid(nameRegex.test(albumName))
   }, [albumName])
 
+  // 곡 유효성 검사
+  useEffect(() => {
+    setIsSongValid(selectedSongs.length > 0)
+  }, [selectedSongs])
+
   // 장르 유효성 검사
   useEffect(() => {
     setIsGenreValid(selectedGenres.length > 0)
@@ -71,29 +74,11 @@ export default function AlbumForm() {
     setIsCoverValid(selectedCover !== null)
   }, [selectedCover])
 
-  const handleTitleSongChange = (index: number | null) => {
-    setTitleSongIndex(index)
-  }
-
   useEffect(() => {
-    // 장르 선택 페이지에서 돌아왔을 때 state로 전달된 selectedGenres를 확인
-    const genres = location.state?.selectedGenres
-    if (genres) {
-      setSelectedGenres(genres)
+    if (isSongValid && isGenreValid && isHashtagValid && isCoverValid) {
+      setIsFormValid(true)
     }
-  }, [location])
-
-  const handleGenreEdit = () => {
-    navigate('/album/create/genre-selection', {
-      state: { initialGenres: selectedGenres },
-    })
-  }
-
-  const handleHashtagsChange = (hashtags: string[]) => {
-    // console.log('Selected hashtags:', hashtags)
-    // 여기서 선택된 해시태그를 처리할 수 있습니다.
-    setSelectedHashtags(hashtags)
-  }
+  }, [isSongValid, isGenreValid, isHashtagValid, isCoverValid])
 
   return (
     <form className="space-y-6">
@@ -101,12 +86,7 @@ export default function AlbumForm() {
         <Label htmlFor="hashtag" className="font-semibold">
           선정된 곡<span className="text-primary-400 ml-1">*</span>
         </Label>
-        <SongSelection
-          initialSongs={selectedSongs}
-          titleSongIndex={titleSongIndex}
-          onTitleSongChange={handleTitleSongChange}
-          onSongsChange={setSelectedSongs}
-        />
+        <SongSelection />
       </div>
       <div className="space-y-3">
         <Label htmlFor="albumName" className="font-semibold">
@@ -161,21 +141,19 @@ export default function AlbumForm() {
         <Label htmlFor="genre" className="font-semibold">
           장르<span className="text-primary-400 ml-1">*</span>
         </Label>
-        <GenreSelector
-          selectedGenres={selectedGenres}
-          onGenreEdit={handleGenreEdit}
-        />
+        <GenreSelector />
       </div>
       <div>
         <Label htmlFor="hashtag" className="font-semibold">
           해시태그<span className="text-primary-400 ml-1">*</span>
         </Label>
-        <HashtagSelector onHashtagsChange={handleHashtagsChange} />
+        <HashtagSelector />
       </div>
       <div>
         <Label htmlFor="hashtag" className="font-semibold">
           앨범 커버<span className="text-primary-400 ml-1">*</span>
         </Label>
+        <AlbumCoverSelector />
       </div>
       <div className="text-gray text-center">
         <p>발매 일자 : {releaseDate}</p>
