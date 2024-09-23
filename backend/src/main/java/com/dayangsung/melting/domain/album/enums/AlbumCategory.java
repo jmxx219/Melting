@@ -16,6 +16,7 @@ public enum AlbumCategory {
 	private final List<Integer> sizeList;
 
 	public static AlbumCategory getCategoryBySongCount(int songCount) {
+		// TODO: Change to custom exception
 		return Arrays.stream(AlbumCategory.values())
 			.filter(category -> category.sizeList.contains(songCount))
 			.findFirst()
