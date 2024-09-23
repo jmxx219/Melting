@@ -85,8 +85,7 @@ public class Album extends BaseEntity {
 	private List<Comment> comments = new ArrayList<>();
 
 	@Builder
-	public Album(Member member, String albumName, AlbumCategory category, String albumDescription,
-		String albumCoverImage) {
+	public Album(Member member, String albumName, AlbumCategory category, String albumDescription, String albumCoverImage) {
 		this.member = member;
 		this.albumName = albumName;
 		this.category = category;
