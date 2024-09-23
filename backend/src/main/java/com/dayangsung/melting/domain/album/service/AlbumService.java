@@ -14,6 +14,8 @@ import com.dayangsung.melting.domain.album.dto.response.AlbumSearchResponseDto;
 import com.dayangsung.melting.domain.album.dto.response.AlbumUpdateResponseDto;
 import com.dayangsung.melting.domain.album.entity.Album;
 import com.dayangsung.melting.domain.album.repository.AlbumRepository;
+import com.dayangsung.melting.domain.likes.service.LikesService;
+import com.dayangsung.melting.global.util.RedisUtil;
 
 import lombok.RequiredArgsConstructor;
 
@@ -22,6 +24,8 @@ import lombok.RequiredArgsConstructor;
 public class AlbumService {
 
 	private final AlbumRepository albumRepository;
+	private final LikesService likesService;
+	private final RedisUtil redisUtil;
 
 	// 모든 앨범 조회
 	public List<AlbumSearchResponseDto> getAllAlbums() {
@@ -34,7 +38,7 @@ public class AlbumService {
 
 		// popular: 인기순으로 정렬, latest: 최신순으로 정렬
 		if ("popular".equalsIgnoreCase(sort)) {
-			albums = albumRepository.findByIsPublicTrueAndIsDeletedFalseOrderByLikedCountDesc();
+			return redisUtil.getTop5AlbumLikes();
 		} else if ("latest".equalsIgnoreCase(sort)) {
 			albums = albumRepository.findByIsPublicTrueAndIsDeletedFalseOrderByCreatedAtDesc();
 		} else {
@@ -95,7 +99,7 @@ public class AlbumService {
 				.orElseThrow(RuntimeException::new);
 
 		// 앨범 데이터를 DTO로 변환
-		return AlbumDetailsResponseDto.of(album);
+		return AlbumDetailsResponseDto.of(album, likesService.getAlbumLikesCount(albumId));
 	}
 	
 	// TODO: 수정 필요
