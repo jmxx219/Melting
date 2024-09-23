@@ -163,10 +163,10 @@ export default function AlbumCoverSelector({
         </ScrollArea>
       </div>
 
-      <p className="text-primary-500 text-sm">
+      <div className="text-primary-500 text-sm">
         <p>※ 앨범 이미지를 하나 선택해주세요</p>
         <p>※ AI 이미지 자동 생성은 곡의 가사와 해시태그로 생성됩니다</p>
-      </p>
+      </div>
     </div>
   )
 }
