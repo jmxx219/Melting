@@ -1,5 +1,6 @@
 import Greeting from './Greeting'
 import Intro from './Intro'
+import MonthlyAlbum from './MonthlyAlbum'
 import SteadyAlbum from './SteadyAlbums'
 
 export default function Main() {
@@ -16,7 +17,9 @@ export default function Main() {
           <SteadyAlbum />
         </div>
         <div>HOT 5 앨범</div>
-        <div>이달의 앨범</div>
+        <div>
+          <MonthlyAlbum />
+        </div>
         <div>태그별 앨범 (비회원은 못봄)</div>
       </div>
     </div>
