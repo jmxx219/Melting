@@ -1,6 +1,10 @@
 package com.dayangsung.melting.domain.song.entity;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.dayangsung.melting.domain.album.entity.Album;
+import com.dayangsung.melting.domain.likes.entity.LikesSong;
 import com.dayangsung.melting.domain.member.entity.Member;
 import com.dayangsung.melting.domain.originalsong.entity.OriginalSong;
 import com.dayangsung.melting.domain.song.enums.SongType;
@@ -16,6 +20,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -45,9 +50,6 @@ public class Song extends BaseEntity {
 	@JoinColumn(name = "album_id")
 	private Album album;
 
-	@Column(nullable = false)
-	private Long likedCount;
-
 	@Enumerated(EnumType.STRING)
 	@Column(nullable = false)
 	private SongType songType;
@@ -59,13 +61,15 @@ public class Song extends BaseEntity {
 
 	private Boolean isTitle;
 
+	@OneToMany(mappedBy = "song")
+	private List<LikesSong> likesSongs = new ArrayList<>();
+
 	@Builder
 	public Song(OriginalSong originalSong, Member member, SongType songType,
 		String songUrl) {
 		this.originalSong = originalSong;
 		this.member = member;
 		this.album = null;
-		this.likedCount = 0L;
 		this.songType = songType;
 		this.songUrl = songUrl;
 		this.trackNumber = null;
