@@ -1,5 +1,5 @@
 import { CoverType } from '@/types/constType'
-import { ArrowUpRight, LucideIcon, Mic } from 'lucide-react'
+import { ArrowUpRight, LucideIcon } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 
 interface TypeBtnProps {

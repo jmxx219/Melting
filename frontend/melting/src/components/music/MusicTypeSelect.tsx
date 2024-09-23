@@ -1,5 +1,5 @@
 import { BrainCircuit, Mic } from 'lucide-react'
-import MusicTypeButton from './MusicTypeButton'
+import MusicTypeButton from '@/components/Music/MusicTypeButton'
 
 type Props = {}
 
