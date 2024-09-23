@@ -50,9 +50,6 @@ public class Song extends BaseEntity {
 	@JoinColumn(name = "album_id")
 	private Album album;
 
-	@Column(nullable = false)
-	private Long likedCount;
-
 	@Enumerated(EnumType.STRING)
 	@Column(nullable = false)
 	private SongType songType;
@@ -73,7 +70,6 @@ public class Song extends BaseEntity {
 		this.originalSong = originalSong;
 		this.member = member;
 		this.album = null;
-		this.likedCount = 0L;
 		this.songType = songType;
 		this.songUrl = songUrl;
 		this.trackNumber = null;

@@ -15,17 +15,17 @@ public record SongDetailsResponseDto(
 	String nickname,
 	String artist,
 	String albumCoverImage,
-	Long likedCount,
+	Integer likedCount,
 	String songUrl
 ) {
-	public static SongDetailsResponseDto of(Song song, String albumCoverImage) {
+	public static SongDetailsResponseDto of(Song song, String albumCoverImage, Integer likedCount) {
 		return SongDetailsResponseDto.builder()
 			.songId(song.getId())
 			.songTitle(song.getOriginalSong().getTitle())
 			.nickname(song.getMember().getNickname())
 			.artist(song.getOriginalSong().getArtist())
 			.albumCoverImage(albumCoverImage)
-			.likedCount(song.getLikedCount())
+			.likedCount(likedCount)
 			.songUrl(song.getSongUrl())
 			.build();
 	}
