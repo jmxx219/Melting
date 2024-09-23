@@ -9,24 +9,19 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
+import { useAlbumContext } from '@/contexts/AlbumContext'
 
 // 가상의 API 호출 함수 (실제 구현 시 이 부분을 실제 API로 대체해야 합니다)
 const searchHashtags = async (query: string): Promise<string[]> => {
   // 실제 API 호출 대신 임시 데이터 반환
-  return ['#사진', '#사랑해', '#사랑합니다', '#사진스타그램'].filter((tag) =>
+  return ['사진', '사랑해', '사랑합니다', '사진스타그램'].filter((tag) =>
     tag.includes(query),
   )
 }
 
-interface HashtagSelectorProps {
-  onHashtagsChange: (hashtags: string[]) => void
-}
-
-export default function HashtagSelector({
-  onHashtagsChange,
-}: HashtagSelectorProps) {
+export default function HashtagSelector() {
   const [input, setInput] = useState('')
-  const [hashtags, setHashtags] = useState<string[]>([])
+  const { selectedHashtags, setSelectedHashtags } = useAlbumContext()
   const [suggestions, setSuggestions] = useState<string[]>([])
   const [isDropdownOpen, setIsDropdownOpen] = useState(false)
   const [showWarning, setShowWarning] = useState(false)
@@ -34,8 +29,9 @@ export default function HashtagSelector({
 
   useEffect(() => {
     const fetchSuggestions = async () => {
-      if (input.length > 1) {
-        const results = await searchHashtags(input)
+      const cleanedInput = input.replace(/^#/, '') // #을 제거한 상태로 검색
+      if (cleanedInput.length > 0) {
+        const results = await searchHashtags(cleanedInput) // API에 #이 없는 검색어 전달
         setSuggestions(results)
         setIsDropdownOpen(true)
       } else {
@@ -47,23 +43,19 @@ export default function HashtagSelector({
     fetchSuggestions()
   }, [input])
 
-  useEffect(() => {
-    onHashtagsChange(hashtags)
-  }, [hashtags, onHashtagsChange])
-
   const addHashtag = (tag: string) => {
-    if (hashtags.length < 3 && !hashtags.includes(tag)) {
-      setHashtags([...hashtags, tag])
+    if (selectedHashtags.length < 3 && !selectedHashtags.includes(tag)) {
+      setSelectedHashtags([...selectedHashtags, tag])
       setInput('#')
       setSuggestions([])
       setIsDropdownOpen(false)
-    } else if (hashtags.length >= 3) {
+    } else if (selectedHashtags.length >= 3) {
       setShowWarning(true)
     }
   }
 
   const removeHashtag = (tag: string) => {
-    setHashtags(hashtags.filter((t) => t !== tag))
+    setSelectedHashtags(selectedHashtags.filter((t) => t !== tag))
   }
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -95,25 +87,29 @@ export default function HashtagSelector({
   return (
     <div className="space-y-2" ref={dropdownRef}>
       <div className="relative border-b-2 rounded-md p-2 flex flex-wrap items-center">
-        {hashtags.map((tag, index) => (
+        {selectedHashtags.map((tag) => (
           <span
-            key={index}
+            key={tag}
             className="border-2 border-primary-400 rounded-full px-2 py-1 text-sm mr-2 mb-2 cursor-pointer"
             onClick={() => removeHashtag(tag)}
           >
-            {tag}
+            #{tag}
           </span>
         ))}
         <input
           type="text"
           value={input}
           onChange={handleInputChange}
-          placeholder={hashtags.length === 0 ? '해시태그를 추가해주세요' : ''}
+          placeholder={
+            selectedHashtags.length === 0 ? '해시태그를 추가해주세요' : ''
+          }
           className="flex-grow outline-none bg-transparent"
+          autoComplete="false"
+          spellCheck="false"
         />
         <Hash
           size={24}
-          className={`absolute right-3 top-1/2 transform -translate-y-1/2 ${hashtags.length > 0 ? 'text-primary-400' : 'text-gray-400'}`}
+          className={`absolute right-3 top-1/2 transform -translate-y-1/2 ${selectedHashtags.length > 0 ? 'text-primary-400' : 'text-gray-400'}`}
         />
       </div>
       {isDropdownOpen && suggestions.length > 0 && (
