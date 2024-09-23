@@ -19,7 +19,9 @@ interface AlbumContextType {
   titleSongIndex: number | null
   setTitleSongIndex: (index: number | null) => void
   selectedGenres: GenreType[]
-  setSelectedGenres: (genres: GenreType[]) => void
+  setSelectedGenres: (
+    genres: GenreType[] | ((prev: GenreType[]) => GenreType[]),
+  ) => void
   selectedHashtags: string[]
   setSelectedHashtags: (hashtags: string[]) => void
   selectedCover: string | null
