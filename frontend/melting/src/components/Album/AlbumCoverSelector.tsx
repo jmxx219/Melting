@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { Image, Loader } from 'lucide-react'
 
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area'
-import AI from '../icon/AI'
+import AI from '../Icon/AI'
 import { useAlbumContext } from '@/contexts/AlbumContext'
 
 interface ImageInfo {

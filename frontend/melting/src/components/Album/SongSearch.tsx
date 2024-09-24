@@ -8,7 +8,7 @@ import { useAlbumContext } from '@/contexts/AlbumContext'
 import { Song } from '@/types/song'
 import { CoverType } from '@/types/constType'
 import SearchBar from '../Music/SearchBar'
-import MusicNote from '../icon/MusicNote'
+import MusicNote from '../Icon/MusicNote'
 
 export default function SongSearch() {
   const [searchTerm, setSearchTerm] = useState('')
