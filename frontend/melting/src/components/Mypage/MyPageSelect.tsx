@@ -42,21 +42,23 @@ export default function MyPageSelect() {
 
       <div className="flex flex-col w-full mb-8">
         <Button
+          type="button"
           variant={'outline'}
           className="w-full h-12 rounded-2xl mt-4 text-left border-2 border-primary-400 text-black"
           onClick={handleRegisteredSongs}
         >
           <div className="flex justify-between items-center w-full px-2">
-            <span>내가 등록한 한 곡 & 앨범</span>
+            <span>내가 등록한 한 곡 &amp; 앨범</span>
             <ArrowRight className="w-5 h-5" />
           </div>
         </Button>
         <Button
+          type="button"
           className="w-full h-12 rounded-2xl mt-4 text-left bg-primary-400 text-white"
           onClick={handleLikedSongs}
         >
           <div className="flex justify-between items-center w-full px-2">
-            <span>좋아요 한 곡 & 앨범</span>
+            <span>좋아요 한 곡 &amp; 앨범</span>
             <ArrowRight className="w-5 h-5" />
           </div>
         </Button>
@@ -64,6 +66,7 @@ export default function MyPageSelect() {
 
       <div className="flex flex-col w-full">
         <Button
+          type="button"
           className="w-full justify-between h-12 rounded-2xl text-primary-400 bg-transparent text-left"
           onClick={handleProfileEdit}
         >
@@ -71,6 +74,7 @@ export default function MyPageSelect() {
         </Button>
         <hr className="w-11/12 border-gray-300 my-1 mx-auto" />
         <Button
+          type="button"
           className="w-full justify-between h-12 rounded-2xl text-primary-400 bg-transparent text-left"
           onClick={handleLogout}
         >
@@ -78,6 +82,7 @@ export default function MyPageSelect() {
         </Button>
         <hr className="w-11/12 border-gray-300 my-1 mx-auto" />
         <Button
+          type="button"
           className="w-full justify-between h-12 rounded-2xl text-gray-400 bg-transparent text-left"
           onClick={handleAccountDelete}
         >

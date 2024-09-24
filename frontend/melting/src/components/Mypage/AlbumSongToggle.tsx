@@ -16,12 +16,14 @@ export default function AlbumSongToggle({ viewType }: AlbumSongToggleProps) {
       <div className="flex justify-between items-center mb-4">
         <div className="flex space-x-2">
           <button
+            type="button"
             onClick={() => setSelectedTab('album')}
             className={`px-4 py-2 rounded-full ${selectedTab === 'album' ? 'bg-primary-400 text-white' : 'bg-gray-200 text-black'}`}
           >
             앨범
           </button>
           <button
+            type="button"
             onClick={() => setSelectedTab('song')}
             className={`px-4 py-2 rounded-full ${selectedTab === 'song' ? 'bg-primary-400 text-white' : 'bg-gray-200 text-black'}`}
           >
