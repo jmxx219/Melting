@@ -19,8 +19,8 @@ export default function MusicPlayerHeader({
         <h2 className="text-lg text-[#A5A5A5]">{artist}</h2>
       </div>
       <div>
-        <Button size="icon" type="button" onClick={onClose}>
-          <X></X>
+        <Button size="icon" type="button" onClick={onClose} variant={'ghost'}>
+          <X className="font-bold"></X>
         </Button>
       </div>
     </div>
