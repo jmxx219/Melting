@@ -1,5 +1,5 @@
-import DefaultHeader from '@/components/layout/DefaultHeader'
-import Layout from '@/components/layout/Layout'
+import DefaultHeader from '@/components/Layout/DefaultHeader'
+import Layout from '@/components/Layout/Layout'
 import { ChevronLeft } from 'lucide-react'
 import AlbumSongToggle from '@/components/MyPage/AlbumSongToggle'
 

@@ -1,5 +1,5 @@
-import Layout from '@/components/layout/Layout'
-import TitleHeader from '@/components/layout/TitleHeader'
+import Layout from '@/components/Layout/Layout'
+import TitleHeader from '@/components/Layout/TitleHeader'
 import MusicTypeSelect from '@/components/Music/MusicTypeSelect'
 
 export default function MusicMain() {
