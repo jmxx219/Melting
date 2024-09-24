@@ -3,7 +3,7 @@ interface LogoProps {
   height?: number
 }
 
-export default function Logo({ width = 16, height = 16 }: LogoProps) {
+export default function Logo({ width = 4, height = 4 }: LogoProps) {
   return (
     <img
       src="/images/logo/logo.png"
