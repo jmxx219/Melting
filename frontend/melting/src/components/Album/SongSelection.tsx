@@ -6,7 +6,7 @@ import {
   Draggable,
   DropResult,
 } from 'react-beautiful-dnd'
-import MusicNote from '../icon/MusicNote'
+import MusicNote from '../Icon/MusicNote'
 
 import { useAlbumContext } from '@/contexts/AlbumContext'
 import { Button } from '@/components/ui/button'

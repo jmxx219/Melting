@@ -5,11 +5,11 @@ import {
   NavigationMenuLink,
 } from '@/components/ui/navigation-menu'
 import { ReactNode, useState } from 'react'
-import Hash from '../icon/Hash'
-import Home from '../icon/Home'
-import MusicAlbum from '../icon/MusicAlbum'
-import MusicNote from '../icon/MusicNote'
-import User from '../icon/User'
+import Hash from '../Icon/Hash'
+import Home from '../Icon/Home'
+import MusicAlbum from '../Icon/MusicAlbum'
+import MusicNote from '../Icon/MusicNote'
+import User from '../Icon/User'
 
 interface NavItem {
   icon: ReactNode
