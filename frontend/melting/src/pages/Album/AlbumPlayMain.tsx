@@ -1,9 +1,9 @@
-import { useCallback, useState } from 'react'
-import { useLocation, useNavigate } from 'react-router-dom'
 import Layout from '@/components/layout/Layout'
 import MusicPlayerHeader from '@/components/layout/MusicPlayerHeader'
-import { SongPlay } from '@/types/songPlay'
 import MusicPlayContent from '@/components/Music/MusicPlayContent'
+import { SongPlay } from '@/types/songPlay'
+import { useCallback, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 type Props = {}
 
 export default function AlbumPlayMain({}: Props) {
