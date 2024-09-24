@@ -3,7 +3,11 @@ import { BrowserRouter as Router, Route, Routes } from 'react-router-dom'
 import LoginPage from '@/pages/Login/Login'
 import SignupPage from '@/pages/Login/Signup'
 import MusicSelect from '@/pages/Music/MusicSelect'
-import MusciMain from '@/pages/Music/MusicMain'
+import MusicMain from '@/pages/Music/MusicMain'
+import MyPageMain from '@/pages/MyPage/MyPageMain'
+import ProfileEdit from '@/pages/MyPage/ProfileEdit'
+import LikedAlbumsAndSongs from '@/pages/MyPage/LikedAlbumsAndSongs'
+import MyAlbumsAndSongs from '@/pages/MyPage/MyAlbumsAndSongs'
 import MusciRecord from '@/pages/Music/MusicRecord'
 import { AlbumProvider } from '@/contexts/AlbumContext'
 // import HomePage from '@/pages/Home/Home'
@@ -36,9 +40,13 @@ export default function AppRoutes() {
           <Route path="/login" element={<LoginPage />} />
           <Route path="/signup" element={<SignupPage />} />
           <Route path="/album/*" element={<AlbumRoutes />} />
-          <Route path="/music" element={<MusciMain />} />
+          <Route path="/music" element={<MusicMain />} />
           <Route path="/music/list" element={<MusicSelect />} />
           <Route path="/music/record" element={<MusciRecord />} />
+          <Route path="/mypage" element={<MyPageMain />} />
+          <Route path="/mypage/profile/edit" element={<ProfileEdit />} />
+          <Route path="/mypage/my" element={<MyAlbumsAndSongs />} />
+          <Route path="/mypage/liked" element={<LikedAlbumsAndSongs />} />
         </Routes>
       </Suspense>
     </Router>
