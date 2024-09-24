@@ -11,7 +11,7 @@ const isValidNickname = (nickname: string): boolean => {
 
 // 닉네임 중복 체크 함수 (실제로는 API 호출이 필요)
 const checkNicknameDuplicate = async (nickname: string): Promise<boolean> => {
-  // 여기에 실제 API 호출 로직 구현
+  // TODO: 여기에 실제 API 호출 로직 구현
   console.log(nickname)
   return new Promise((resolve) => setTimeout(() => resolve(false), 1000))
 }
