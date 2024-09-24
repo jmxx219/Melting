@@ -8,10 +8,9 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.dayangsung.melting.domain.auth.dto.CustomOAuth2User;
-import com.dayangsung.melting.domain.auth.dto.RedisToken;
-import com.dayangsung.melting.domain.auth.repository.RedisRepository;
 import com.dayangsung.melting.global.util.CookieUtil;
 import com.dayangsung.melting.global.util.JwtUtil;
+import com.dayangsung.melting.global.util.RedisUtil;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -24,13 +23,13 @@ public class LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 	private final JwtUtil jwtUtil;
 	private final CookieUtil cookieUtil;
 	private static final String REDIRECT_URI = "http://localhost:8080/login";
-	private final RedisRepository redisRepository;
+	private final RedisUtil redisUtil;
 
-	public LoginSuccessHandler(JwtUtil jwtUtil, CookieUtil cookieUtil, RedisRepository redisRepository) {
+	public LoginSuccessHandler(JwtUtil jwtUtil, CookieUtil cookieUtil, RedisUtil redisUtil) {
 
 		this.jwtUtil = jwtUtil;
 		this.cookieUtil = cookieUtil;
-		this.redisRepository = redisRepository;
+		this.redisUtil = redisUtil;
 	}
 
 	@Transactional
@@ -41,21 +40,12 @@ public class LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 		CustomOAuth2User principal = (CustomOAuth2User)authentication.getPrincipal();
 
 		String accessToken = jwtUtil.createAccessToken(principal.getName());
-		String refreshToken = jwtUtil.createRefreshToken(principal.getName());
+		String refreshToken = jwtUtil.createRefreshToken();
 
 		response.addCookie(cookieUtil.createCookie("access_token", accessToken));
 		response.addCookie(cookieUtil.createCookie("refresh_token", refreshToken));
 
-		saveRefreshTokenOnRedis(refreshToken, principal.getName());
+		redisUtil.saveRefreshToken(accessToken, refreshToken);
 		response.sendRedirect(REDIRECT_URI);
-	}
-
-	private void saveRefreshTokenOnRedis(String refreshToken, String email) {
-		redisRepository.save(
-			RedisToken.builder()
-				.email(email)
-				.refreshToken(refreshToken)
-				.build()
-		);
 	}
 }

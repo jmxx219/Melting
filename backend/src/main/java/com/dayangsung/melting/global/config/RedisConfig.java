@@ -1,7 +1,6 @@
 package com.dayangsung.melting.global.config;
 
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cache.annotation.CachingConfigurerSupport;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -48,7 +47,6 @@ public class RedisConfig {
 				.SerializationPair.fromSerializer(new StringRedisSerializer()))
 			.serializeValuesWith(RedisSerializationContext
 				.SerializationPair.fromSerializer(new GenericJackson2JsonRedisSerializer()));
-
 
 		return RedisCacheManager
 			.RedisCacheManagerBuilder
