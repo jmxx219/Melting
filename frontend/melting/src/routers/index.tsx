@@ -5,6 +5,7 @@ import { Route, BrowserRouter as Router, Routes } from 'react-router-dom'
 import AlbumRoutes from './AlbumRoutes'
 import MusicRoutes from './MusicRoutes'
 import MyPageRoutes from './MyPageRoutes'
+import MainPage from '@/pages/Home/Main'
 
 const Loading = () => <div>Loading...</div>
 
@@ -13,7 +14,7 @@ export default function AppRoutes() {
     <Router>
       <Suspense fallback={<Loading />}>
         <Routes>
-          {/* <Route path="/" element={<HomePage />} /> */}
+          <Route path="/" element={<MainPage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/signup" element={<SignupPage />} />
 
