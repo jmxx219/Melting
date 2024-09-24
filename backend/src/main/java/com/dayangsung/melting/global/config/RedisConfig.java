@@ -3,6 +3,7 @@ package com.dayangsung.melting.global.config;
 import org.redisson.Redisson;
 import org.redisson.api.RedissonClient;
 import org.redisson.config.Config;
+import org.redisson.config.TransportMode;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
@@ -65,6 +66,7 @@ public class RedisConfig {
 	public RedissonClient redissonClient() {
 		Config config = new Config();
 		config.useSingleServer()
+			.setSslEnableEndpointIdentification(false)
 			.setAddress(redissonPrefix + host + ":" + port);
 
 		return Redisson.create(config);

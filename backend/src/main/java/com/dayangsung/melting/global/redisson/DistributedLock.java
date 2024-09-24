@@ -5,6 +5,7 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+import java.util.concurrent.TimeUnit;
 
 @Target({ElementType.METHOD, ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
@@ -12,6 +13,8 @@ import java.lang.annotation.Target;
 public @interface DistributedLock {
 
 	String value(); // Lock의 이름
+
+	TimeUnit timeUnit() default TimeUnit.MILLISECONDS;
 
 	long waitTime() default 5L; // Lock 획득을 시도하는 최대 시간
 
