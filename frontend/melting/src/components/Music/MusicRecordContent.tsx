@@ -1,8 +1,9 @@
 import { Mic, RotateCcw } from 'lucide-react'
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useRef, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { Button } from '../ui/button'
 import { ScrollArea } from '../ui/scroll-area'
-import { useNavigate } from 'react-router-dom'
+import AudioPlayer, { AudioPlayerHandle } from './AudioPlayer'
 
 interface MusciRecordProps {
   lyrics: string
@@ -14,14 +15,11 @@ export default function MusciRecordContent({
   audioSrc,
 }: MusciRecordProps) {
   const [isRecording, setIsRecording] = useState(false)
-  const [currentTime, setCurrentTime] = useState(0)
-  const [duration, setDuration] = useState(0)
   const [isEnd, setIsEnd] = useState(false)
-  const audioRef = useRef<HTMLAudioElement>(null)
   const mediaRecorderRef = useRef<MediaRecorder | null>(null)
   const streamRef = useRef<MediaStream | null>(null)
-  const isMountedRef = useRef(true)
   const chunksRef = useRef<Blob[]>([])
+  const audioPlayerRef = useRef<AudioPlayerHandle>(null)
   const navigate = useNavigate()
 
   const stopMicrophoneUsage = useCallback(() => {
@@ -36,6 +34,7 @@ export default function MusciRecordContent({
       streamRef.current = null
     }
     setIsRecording(false)
+    audioPlayerRef.current?.stop()
   }, [])
 
   const processRecordedAudio = useCallback(() => {
@@ -48,18 +47,19 @@ export default function MusciRecordContent({
   const resetRecording = useCallback(() => {
     stopMicrophoneUsage()
     setIsEnd(false)
-    setCurrentTime(0)
     chunksRef.current = []
-    if (audioRef.current) {
-      audioRef.current.currentTime = 0
-      audioRef.current.pause()
-    }
   }, [stopMicrophoneUsage])
 
   const handleCancel = useCallback(() => {
     resetRecording()
     navigate('/music/list', { state: { type: 'melting' } })
   }, [navigate, resetRecording])
+
+  const handleComplete = useCallback(() => {
+    if (isEnd && !isRecording) {
+      navigate('/music/play', { state: { songId: 0 } })
+    }
+  }, [isEnd, isRecording, navigate])
 
   const startRecording = useCallback(async () => {
     try {
@@ -82,10 +82,7 @@ export default function MusciRecordContent({
 
       mediaRecorderRef.current.start()
       setIsRecording(true)
-      if (audioRef.current) {
-        audioRef.current.currentTime = 0
-        audioRef.current.play()
-      }
+      audioPlayerRef.current?.play()
     } catch (err) {
       console.error('Error accessing the microphone', err)
     }
@@ -101,49 +98,11 @@ export default function MusciRecordContent({
 
   const lyricsLines = lyrics.split('\n')
 
-  useEffect(() => {
-    const audio = audioRef.current
-    if (audio) {
-      const handleLoadedMetadata = () => {
-        if (isMountedRef.current) setDuration(audio.duration)
-      }
-      const handleTimeUpdate = () => {
-        if (isMountedRef.current) setCurrentTime(audio.currentTime)
-      }
-      const handleEnded = () => {
-        if (isMountedRef.current) {
-          setIsEnd(true)
-          stopMicrophoneUsage()
-          processRecordedAudio()
-        }
-      }
-
-      audio.addEventListener('loadedmetadata', handleLoadedMetadata)
-      audio.addEventListener('timeupdate', handleTimeUpdate)
-      audio.addEventListener('ended', handleEnded)
-
-      return () => {
-        isMountedRef.current = false
-        audio.removeEventListener('loadedmetadata', handleLoadedMetadata)
-        audio.removeEventListener('timeupdate', handleTimeUpdate)
-        audio.removeEventListener('ended', handleEnded)
-        resetRecording()
-      }
-    }
-  }, [stopMicrophoneUsage, processRecordedAudio, resetRecording])
-
-  const formatTime = (time: number) => {
-    const minutes = Math.floor(time / 60)
-    const seconds = Math.floor(time % 60)
-    return `${minutes}:${seconds.toString().padStart(2, '0')}`
-  }
-
-  const handleProgressChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newTime = (Number(e.target.value) / 100) * duration
-    if (audioRef.current) {
-      audioRef.current.currentTime = newTime
-    }
-  }
+  const handleAudioEnded = useCallback(() => {
+    setIsEnd(true)
+    stopMicrophoneUsage()
+    processRecordedAudio()
+  }, [stopMicrophoneUsage, processRecordedAudio])
 
   return (
     <div className="flex flex-col h-full">
@@ -171,26 +130,11 @@ export default function MusciRecordContent({
           )}
         </Button>
       </div>
-      <div className="mb-4">
-        <input
-          type="range"
-          min="0"
-          max="100"
-          value={(currentTime / duration) * 100 || 0}
-          onChange={handleProgressChange}
-          className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer progress-bg-orange"
-          style={{
-            background: `linear-gradient(to right, #FFB74D 0%, #FFB74D ${
-              (currentTime / duration) * 100
-            }%, #FFF3DF ${(currentTime / duration) * 100}%, #FFF3DF 100%)`,
-          }}
-        />
-        <div className="flex justify-between text-sm text-gray-500 mt-0.5">
-          <span>{formatTime(currentTime)}</span>
-          <span>{formatTime(duration)}</span>
-        </div>
-      </div>
-      <audio ref={audioRef} src={audioSrc} />
+      <AudioPlayer
+        ref={audioPlayerRef}
+        audioSrc={audioSrc}
+        onEnded={handleAudioEnded}
+      />
 
       <div className="text-center">
         <Button
@@ -202,7 +146,7 @@ export default function MusciRecordContent({
                 ? 'bg-[#FFAF25]'
                 : 'bg-[#A5A5A5]'
           }`}
-          onClick={isEnd && !isRecording ? handleCancel : undefined}
+          onClick={isEnd && !isRecording ? handleComplete : undefined}
           disabled={isEnd && !isRecording ? false : true}
         >
           완료
