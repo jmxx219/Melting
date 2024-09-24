@@ -1,15 +1,23 @@
 import { SongPlay } from '@/types/songPlay'
-import { Heart, Pause, Play } from 'lucide-react'
+import { Heart, Pause, Play, SkipBack, SkipForward } from 'lucide-react'
 import { ScrollArea } from '../ui/scroll-area'
 import AudioPlayer, { AudioPlayerHandle } from './AudioPlayer'
-import { useCallback, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { Button } from '../ui/button'
 
-type Props = {
+type MusicPlayProps = {
   song: SongPlay
+  isAlbumPlay?: boolean
+  onNext?: () => void
+  onPrev?: () => void
 }
 
-export default function MusicPlayContent({ song }: Props) {
+export default function MusicPlayContent({
+  song,
+  isAlbumPlay = false,
+  onNext,
+  onPrev,
+}: MusicPlayProps) {
   const lyricsLines = song.lyrics.split('\n')
   const audioPlayerRef = useRef<AudioPlayerHandle>(null)
   const [isPlaying, setIsPlaying] = useState(false)
@@ -26,8 +34,27 @@ export default function MusicPlayContent({ song }: Props) {
   }, [isPlaying])
 
   const handleAudioEnd = useCallback(() => {
-    setIsPlaying(false)
-  }, [])
+    if (isAlbumPlay && onNext) {
+      onNext()
+      // 다음 곡으로 넘어간 후 자동 재생
+      setTimeout(() => {
+        if (audioPlayerRef.current) {
+          audioPlayerRef.current.play()
+          setIsPlaying(true)
+        }
+      }, 0)
+    } else {
+      setIsPlaying(false)
+    }
+  }, [isAlbumPlay, onNext])
+
+  // 곡이 변경될 때마다 자동 재생
+  useEffect(() => {
+    if (audioPlayerRef.current && isPlaying) {
+      audioPlayerRef.current.play()
+    }
+  }, [song, isPlaying])
+
   return (
     <div className="flex flex-col h-full">
       <div className="flex-1 py-5">
@@ -60,10 +87,21 @@ export default function MusicPlayContent({ song }: Props) {
         />
       </div>
       <div className="py-5 flex justify-center items-center">
+        {isAlbumPlay && (
+          <Button
+            type="button"
+            size={'icon'}
+            variant="ghost"
+            className="w-17 h-17 rounded-full me-5"
+            onClick={onPrev}
+          >
+            <SkipBack className="w-full h-full p-5" fill="#000000" />
+          </Button>
+        )}
         <Button
           type="button"
           size={'icon'}
-          className="w-20 h-20 bg-[#FFAF25] rounded-full"
+          className="w-17 h-17 bg-[#FFAF25] rounded-full"
           onClick={togglePlayPause}
         >
           {isPlaying ? (
@@ -72,6 +110,17 @@ export default function MusicPlayContent({ song }: Props) {
             <Play className="w-full h-full p-5" fill="#000000" />
           )}
         </Button>
+        {isAlbumPlay && (
+          <Button
+            type="button"
+            size={'icon'}
+            variant="ghost"
+            className="w-17 h-17 rounded-full ms-5"
+            onClick={onNext}
+          >
+            <SkipForward className="w-full h-full p-5" fill="#000000" />
+          </Button>
+        )}
       </div>
     </div>
   )
