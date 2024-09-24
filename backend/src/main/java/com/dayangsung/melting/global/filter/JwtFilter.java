@@ -2,9 +2,6 @@ package com.dayangsung.melting.global.filter;
 
 import java.io.IOException;
 
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import com.dayangsung.melting.global.util.CookieUtil;
@@ -14,17 +11,13 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
 
+@RequiredArgsConstructor
 public class JwtFilter extends OncePerRequestFilter {
 
 	private final JwtUtil jwtUtil;
 	private final CookieUtil cookieUtil;
-
-	public JwtFilter(JwtUtil jwtUtil, CookieUtil cookieUtil) {
-
-		this.jwtUtil = jwtUtil;
-		this.cookieUtil = cookieUtil;
-	}
 
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
@@ -39,19 +32,14 @@ public class JwtFilter extends OncePerRequestFilter {
 		}
 
 		if (jwtUtil.signatureValidate(accessToken) && jwtUtil.isExpired(accessToken)) {
-			accessToken = jwtUtil.reissueToken(request, response, refreshToken);
+			accessToken = jwtUtil.reissueToken(request, response, accessToken);
 			if (accessToken == null) {
+				cookieUtil.deleteJwtCookies(request, response);
 				filterChain.doFilter(request, response);
+				return;
 			}
 			cookieUtil.updateCookie(request, response, "access_token", accessToken);
 		}
-
-		Authentication authentication = new UsernamePasswordAuthenticationToken(
-			jwtUtil.getEmail(accessToken),
-			null,
-			null);
-		SecurityContextHolder.getContext().setAuthentication(authentication);
-
 		filterChain.doFilter(request, response);
 	}
 }

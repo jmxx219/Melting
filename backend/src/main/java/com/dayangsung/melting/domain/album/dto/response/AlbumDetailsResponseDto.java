@@ -19,18 +19,18 @@ public record AlbumDetailsResponseDto(
 	String albumCoverImage,
 	String albumName,
 	String nickname,
-	Long albumLiked,
+	Integer albumLiked,
 	AlbumCategory category,
 	List<AlbumGenre> genres,
 	String albumDescription
 ) {
-	public static AlbumDetailsResponseDto of(Album album) {
+	public static AlbumDetailsResponseDto of(Album album, Integer likedCount) {
 		return AlbumDetailsResponseDto.builder()
 				.albumId(album.getId())
 				.albumCoverImage(album.getAlbumCoverImage())
 				.albumName(album.getAlbumName())
 				.nickname(album.getMember().getNickname())
-				.albumLiked(album.getLikedCount())
+				.albumLiked(likedCount)
 				.category(album.getCategory())
 				.genres(album.getGenres())
 				.albumDescription(album.getAlbumDescription())
