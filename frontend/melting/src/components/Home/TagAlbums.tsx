@@ -62,6 +62,7 @@ export default function TagAlbum() {
       // 태그가 선택되면 API를 호출하여 해당 앨범 목록을 가져옴 (isLoading)
       // fetchAlbumsByTag(selectedTag).then(setAlbums);
       setAlbums(mockup)
+      setIsLoading(false)
     }
   }, [selectedTag])
 
