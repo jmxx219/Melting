@@ -6,6 +6,8 @@ import MusicSelect from '@/pages/Music/MusicSelect'
 import MusciMain from '@/pages/Music/MusicMain'
 import MusciRecord from '@/pages/Music/MusicRecord'
 import { AlbumProvider } from '@/contexts/AlbumContext'
+import MusicPlayList from '@/pages/Music/MusicPlay'
+import MusicPlay from '@/pages/Music/MusicPlay'
 // import HomePage from '@/pages/Home/Home'
 
 const AlbumRegist = React.lazy(() => import('@/pages/Album/AlbumRegist'))
@@ -39,6 +41,7 @@ export default function AppRoutes() {
           <Route path="/music" element={<MusciMain />} />
           <Route path="/music/list" element={<MusicSelect />} />
           <Route path="/music/record" element={<MusciRecord />} />
+          <Route path="/music/play" element={<MusicPlay />} />
         </Routes>
       </Suspense>
     </Router>
