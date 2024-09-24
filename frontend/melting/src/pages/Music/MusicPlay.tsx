@@ -14,6 +14,7 @@ export default function MusicPlay({}: Props) {
     songId: 1,
     songTitle: 'Blueming',
     artist: '아이유',
+    nickname: '노원핵주먹',
     albumCoverImgUrl: 'https://github.com/shadcn.png',
     lyrics:
       'dsadsd\n dasdasdada\n dasdasdas\n dsadsd\n dasdasdada\n dasdasdas dsadsd\n dasdasdada\n dasdasdasdsadsd\n dasdasdada\n dasdasdasdsadsd\n dasdasdada\n dasdasdasdsadsd\n dasdasdada\n dasdasdasdsadsd\n dasdasdada\n dasdasdasdsadsd\n dasdasdada\n dasdasdasdsadsd\n dasdasdada\n dasdasdasdsadsd\n dasdasdada\n dasdasdasdsadsd\n dasdasdada\n dasdasdasdsadsd\n dasdasdada\n dasdasdasdsadsd\n dasdasdada\n dasdasdasdsadsd\n dasdasdada\n dasdasdasdsadsd\n dasdasdada\n dasdasdasdsadsd\n dasdasdada\n dasdasdasdsadsd\n dasdasdada\n dasdasdasdsadsd\n dasdasdada\n dasdasdas ',
@@ -30,7 +31,7 @@ export default function MusicPlay({}: Props) {
     <Layout
       Header={
         <MusicPlayerHeader
-          artist={song.artist}
+          artist={`${song.nickname} Original by ${song.artist}`}
           songTitle={song.songTitle}
           onClose={onCloe}
         />
