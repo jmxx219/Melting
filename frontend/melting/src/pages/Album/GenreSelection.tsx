@@ -1,6 +1,6 @@
 import GenreSelection from '@/components/Album/GenreSelection'
-import DefaultHeader from '@/components/layout/DefaultHeader'
-import Layout from '@/components/layout/Layout'
+import DefaultHeader from '@/components/Layout/DefaultHeader'
+import Layout from '@/components/Layout'
 import { ChevronLeft } from 'lucide-react'
 
 export default function GenreSelectionPage() {

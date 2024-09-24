@@ -1,5 +1,5 @@
 import { ReactNode } from 'react'
-import DefaultHeader from '@/components/layout/DefaultHeader'
+import DefaultHeader from '@/components/Layout/DefaultHeader'
 import Footer from './Footer'
 import Logo from './Logo'
 
