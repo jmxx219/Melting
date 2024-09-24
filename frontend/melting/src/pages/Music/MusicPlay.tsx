@@ -1,4 +1,4 @@
-import Layout from '@/components/Layout/Layout'
+import Layout from '@/components/Layout'
 import MusicPlayerHeader from '@/components/Layout/MusicPlayerHeader'
 import MusicPlayContent from '@/components/Music/MusicPlayContent'
 import { SongPlay } from '@/types/songPlay'

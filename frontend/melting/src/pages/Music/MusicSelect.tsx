@@ -1,5 +1,5 @@
 import DefaultHeader from '@/components/Layout/DefaultHeader'
-import Layout from '@/components/Layout/Layout'
+import Layout from '@/components/Layout'
 import MusicSelectList from '@/components/Music/MusicSelectList'
 import { ChevronLeft } from 'lucide-react'
 import { useLocation, useNavigate } from 'react-router-dom'
