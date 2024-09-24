@@ -1,8 +1,5 @@
 package com.dayangsung.melting.global.config;
 
-import org.redisson.Redisson;
-import org.redisson.api.RedissonClient;
-import org.redisson.config.Config;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
@@ -29,7 +26,7 @@ public class RedisConfig {
 	@Value("${spring.data.redis.port}")
 	private int port;
 
-	private static final String REDISSON_HOST_PREFIX = "rediss://";
+	// private static final String REDISSON_HOST_PREFIX = "rediss://";
 
 	@Bean
 	public RedisConnectionFactory redisConnectionFactory() {
@@ -60,12 +57,12 @@ public class RedisConfig {
 			.build();
 	}
 
-	@Bean
-	public RedissonClient redissonClient() {
-		Config config = new Config();
-		config.useSingleServer()
-			.setAddress(REDISSON_HOST_PREFIX + host + ":" + port);
-
-		return Redisson.create(config);
-	}
+	// @Bean
+	// public RedissonClient redissonClient() {
+	// 	Config config = new Config();
+	// 	config.useSingleServer()
+	// 		.setAddress(REDISSON_HOST_PREFIX + host + ":" + port);
+	//
+	// 	return Redisson.create(config);
+	// }
 }
