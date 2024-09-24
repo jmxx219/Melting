@@ -1,33 +1,26 @@
 package com.dayangsung.melting.domain.member.dto.response;
 
-import com.dayangsung.melting.domain.song.entity.Song;
-import com.dayangsung.melting.domain.song.enums.SongType;
+import java.util.List;
+
+import com.dayangsung.melting.domain.originalsong.entity.OriginalSong;
+import com.dayangsung.melting.domain.song.dto.MypageSongListDto;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import lombok.Builder;
 
 @Builder
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public record MemberSongResponseDto(
-	Long songId,
 	String songTitle,
 	String artist,
-	String albumCoverImage,
-	Integer likedCount,
-	@Enumerated(EnumType.STRING)
-	SongType songType
+	List<MypageSongListDto> songList
 ) {
-	public static MemberSongResponseDto of(Song song, String albumCoverImage, Integer likedCount) {
+	public static MemberSongResponseDto of(OriginalSong originalSong, List<MypageSongListDto> songList) {
 		return MemberSongResponseDto.builder()
-			.songId(song.getId())
-			.songTitle(song.getOriginalSong().getTitle())
-			.artist(song.getOriginalSong().getArtist())
-			.albumCoverImage(albumCoverImage)
-			.likedCount(likedCount)
-			.songType(song.getSongType())
+			.songTitle(originalSong.getTitle())
+			.artist(originalSong.getArtist())
+			.songList(songList)
 			.build();
 	}
 }
