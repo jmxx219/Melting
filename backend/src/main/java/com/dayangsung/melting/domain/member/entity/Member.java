@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.dayangsung.melting.domain.auth.enums.ProviderType;
+import com.dayangsung.melting.domain.likes.entity.LikesAlbum;
+import com.dayangsung.melting.domain.likes.entity.LikesSong;
 import com.dayangsung.melting.domain.comment.entity.Comment;
 import com.dayangsung.melting.domain.member.enums.Gender;
 import com.dayangsung.melting.global.entity.BaseEntity;
@@ -45,6 +47,12 @@ public class Member extends BaseEntity {
 	private ProviderType provider;
 
 	private boolean isDeleted;
+
+	@OneToMany(mappedBy = "member")
+	private List<LikesAlbum> likesAlbums = new ArrayList<>();
+
+	@OneToMany(mappedBy = "member")
+	private List<LikesSong> likesSongs = new ArrayList<>();
 
 	@OneToMany(mappedBy = "member")
 	private List<Comment> comments = new ArrayList<>();
