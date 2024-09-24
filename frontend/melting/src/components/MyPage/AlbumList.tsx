@@ -56,8 +56,6 @@ export default function AlbumList({ sortOption, viewType }: AlbumListProps) {
 
   return (
     <div>
-      {viewType === 'my' ? '내가 등록한 ' : '좋아요한 '}
-      앨범 리스트 ({sortOption === 'date' ? '최신순' : '인기순'})<div></div>
       <div className="album-list">
         {albums.map((album) => (
           <MyAlbum key={album.id} album={album} viewType={viewType} />
