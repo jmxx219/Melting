@@ -29,7 +29,8 @@ public class RedisConfig {
 	@Value("${spring.data.redis.port}")
 	private int port;
 
-	private static final String REDISSON_HOST_PREFIX = "rediss://";
+	@Value("${spring.data.redis.redisson-prefix}")
+	private String redissonPrefix;
 
 	@Bean
 	public RedisConnectionFactory redisConnectionFactory() {
@@ -64,7 +65,7 @@ public class RedisConfig {
 	public RedissonClient redissonClient() {
 		Config config = new Config();
 		config.useSingleServer()
-			.setAddress(REDISSON_HOST_PREFIX + host + ":" + port);
+			.setAddress(redissonPrefix + host + ":" + port);
 
 		return Redisson.create(config);
 	}
