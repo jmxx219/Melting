@@ -2,7 +2,8 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 import { BestAlbum } from '@/types/album'
-import Play from '../icon/Play'
+// import Play from '../Icon/Play'
+import { Play } from 'lucide-react'
 
 interface AlbumProps {
   album: BestAlbum
@@ -29,9 +30,12 @@ export default function Album({ album }: AlbumProps) {
           onClick={handlePlayClick}
           onMouseEnter={() => setIsHovered(true)}
           onMouseLeave={() => setIsHovered(false)}
-          className={`absolute top-1 right-1 rounded-full shadow-md transition-colors duration-200 `}
+          className={`absolute top-2 right-2 rounded-full  transition-colors duration-200 `}
         >
-          <Play fill={isHovered ? '#ffaf25' : '#ffffff'} />
+          <Play
+            className="text-white shadow-2xl"
+            fill={isHovered ? '#ffaf25' : '#ffffff'}
+          />
         </button>
       </div>
       <div className="mt-2 text-left">
