@@ -4,10 +4,10 @@ import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-public record VoiceCreateResponse(
+public record VoiceCreateResponseDto(
 	Long voiceId
 ) {
-	public static VoiceCreateResponse of(Long voiceId) {
-		return new VoiceCreateResponse(voiceId);
+	public static VoiceCreateResponseDto of(Long voiceId) {
+		return new VoiceCreateResponseDto(voiceId);
 	}
 }
