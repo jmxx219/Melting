@@ -1,6 +1,6 @@
-import Layout from '@/components/layout/Layout'
 import AlbumForm from '@/components/Album/AlbumForm'
-import TitleHeader from '@/components/layout/TitleHeader'
+import Layout from '@/components/Layout'
+import TitleHeader from '@/components/Layout/TitleHeader'
 
 export default function AlbumRegist() {
   return (

@@ -1,5 +1,5 @@
-import Layout from '@/components/layout/Layout'
-import MusicPlayerHeader from '@/components/layout/MusicPlayerHeader'
+import Layout from '@/components/Layout'
+import MusicPlayerHeader from '@/components/Layout/MusicPlayerHeader'
 import MusicPlayContent from '@/components/Music/MusicPlayContent'
 import { SongPlay } from '@/types/songPlay'
 import { useCallback, useState } from 'react'

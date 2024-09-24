@@ -100,7 +100,7 @@ export default function AlbumForm() {
             value={albumName}
             onChange={(e) => setAlbumName(e.target.value)}
             className={`${albumName ? 'border-primary-400' : ''}`}
-            autoComplete="false"
+            autoComplete="off"
             spellCheck="false"
           />
           <div className="h-5">
@@ -127,7 +127,7 @@ export default function AlbumForm() {
             className={`min-h-[100px] ${albumIntro ? 'border-primary-400' : ''}`}
             placeholder={`앨범에 대한 소개를 입력해주세요.\n입력하지 않으면 AI가 자동으로 생성합니다.`}
             onChange={(e) => setAlbumIntro(e.target.value)}
-            autoComplete="false"
+            autoComplete="off"
             spellCheck="false"
           ></Textarea>
           <p
@@ -147,7 +147,7 @@ export default function AlbumForm() {
         <Label htmlFor="hashtag" className="font-semibold">
           해시태그<span className="text-primary-400 ml-1">*</span>
         </Label>
-        <HashtagSelector />
+        <HashtagSelector useAlbumContextFlag={true} maxHashtags={5} />
       </div>
       <div>
         <Label htmlFor="hashtag" className="font-semibold">
