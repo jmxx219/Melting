@@ -1,5 +1,5 @@
 import { Button } from '@/components/ui/button'
-import MusicNote from '@/components/icon/MusicNote'
+import MusicNote from '@/components/Icon/MusicNote'
 
 interface ToggleMusicButtonProps {
   isSelected: boolean
