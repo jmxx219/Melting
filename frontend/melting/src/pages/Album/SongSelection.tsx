@@ -1,6 +1,6 @@
 import SongSearch from '@/components/Album/SongSearch'
 import DefaultHeader from '@/components/Layout/DefaultHeader'
-import Layout from '@/components/Layout/Layout'
+import Layout from '@/components/Layout'
 import { ChevronLeft } from 'lucide-react'
 
 export default function SongSelectionPage() {

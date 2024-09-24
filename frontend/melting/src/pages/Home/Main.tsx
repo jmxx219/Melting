@@ -1,6 +1,6 @@
 import Main from '@/components/Home/Main'
 import DefaultHeader from '@/components/Layout/DefaultHeader'
-import Layout from '@/components/Layout/Layout'
+import Layout from '@/components/Layout'
 import Logo from '@/components/Layout/Logo'
 
 export default function MainPage() {

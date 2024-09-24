@@ -1,5 +1,5 @@
 import DefaultHeader from '@/components/Layout/DefaultHeader'
-import Layout from '@/components/Layout/Layout'
+import Layout from '@/components/Layout'
 import { ChevronLeft } from 'lucide-react'
 import ProfileEditForm from '@/components/MyPage/ProfileEditForm'
 
