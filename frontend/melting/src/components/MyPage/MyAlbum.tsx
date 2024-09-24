@@ -36,7 +36,6 @@ export default function MyAlbum({ album, viewType }: MyAlbumProps) {
   const navigate = useNavigate()
   const [isLiked, setIsLiked] = useState(album.isLiked)
   const [isPublic, setIsPublic] = useState(album.isPublic)
-  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
 
   const goToAlbumDetail = () => {
     navigate(`/album/${album.id}`)
@@ -61,17 +60,11 @@ export default function MyAlbum({ album, viewType }: MyAlbumProps) {
 
   const openDeleteModal = (e: React.MouseEvent) => {
     e.stopPropagation()
-    setIsDeleteModalOpen(true)
-  }
-
-  const closeDeleteModal = () => {
-    setIsDeleteModalOpen(false)
   }
 
   const deleteAlbum = () => {
     // TODO: 앨범 삭제 API 호출
     console.log('앨범 삭제: ', album.id)
-    setIsDeleteModalOpen(false)
 
     if (viewType === 'my') {
       navigate('/mypage/my')
@@ -126,7 +119,6 @@ export default function MyAlbum({ album, viewType }: MyAlbumProps) {
                   <AlertDialogCancel
                     onClick={(e) => {
                       e.stopPropagation()
-                      closeDeleteModal()
                     }}
                   >
                     취소
