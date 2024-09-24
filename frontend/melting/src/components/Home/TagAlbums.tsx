@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useState } from 'react'
 
 import { BestAlbum } from '@/types/album'
 import Album from '../Community/Album'
@@ -23,7 +23,7 @@ import {
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
 import HashtagButton from '../Button/HashtagButton'
-import { HashtagSelector } from './HashtagSelector'
+import HashtagSelector from '@/components/Album/HashtagSelector'
 import { AlertDialogCancel } from '@radix-ui/react-alert-dialog'
 
 const mockup: BestAlbum[] = [
