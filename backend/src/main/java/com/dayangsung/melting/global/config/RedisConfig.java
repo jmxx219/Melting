@@ -65,7 +65,6 @@ public class RedisConfig {
 	@Bean
 	public RedissonClient redissonClient() {
 		Config config = new Config();
-		config.setTransportMode(TransportMode.EPOLL);
 		config.useSingleServer()
 			.setSslEnableEndpointIdentification(false)
 			.setAddress(redissonPrefix + host + ":" + port);
