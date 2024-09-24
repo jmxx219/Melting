@@ -9,11 +9,11 @@ export default function MyPageSelect() {
   const navigate = useNavigate()
 
   const handleRegisteredSongs = () => {
-    navigate('/mypage/my-albums') // 내가 등록한 한 곡 & 앨범 페이지 경로
+    navigate('/mypage/my') // 내가 등록한 한 곡 & 앨범 페이지 경로
   }
 
   const handleLikedSongs = () => {
-    navigate('/mypage/liked-albums') // 좋아요 한 곡 & 앨범 페이지 경로
+    navigate('/mypage/liked') // 좋아요 한 곡 & 앨범 페이지 경로
   }
 
   const handleProfileEdit = () => {

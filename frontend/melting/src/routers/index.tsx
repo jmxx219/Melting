@@ -45,8 +45,8 @@ export default function AppRoutes() {
           <Route path="/music/record" element={<MusciRecord />} />
           <Route path="/mypage" element={<MyPageMain />} />
           <Route path="/mypage/profile/edit" element={<ProfileEdit />} />
-          <Route path="/mypage/my-albums" element={<MyAlbumsAndSongs />} />
-          <Route path="/mypage/liked-albums" element={<LikedAlbumsAndSongs />} />
+          <Route path="/mypage/my" element={<MyAlbumsAndSongs />} />
+          <Route path="/mypage/liked" element={<LikedAlbumsAndSongs />} />
         </Routes>
       </Suspense>
     </Router>
