@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { Switch } from '@/components/ui/switch'
 import Heart from '@/components/icon/Heart'
 import { X } from 'lucide-react'
+import { formatLikeCount } from '@/utils/numberUtil'
 import {
   AlertDialog,
   AlertDialogTrigger,
@@ -28,9 +29,10 @@ interface AlbumData {
 
 interface MyAlbumProps {
   album: AlbumData
+  viewType: 'my' | 'liked'
 }
 
-export default function MyAlbum({ album }: MyAlbumProps) {
+export default function MyAlbum({ album, viewType }: MyAlbumProps) {
   const navigate = useNavigate()
   const [isLiked, setIsLiked] = useState(album.isLiked)
   const [isPublic, setIsPublic] = useState(album.isPublic)
@@ -43,12 +45,12 @@ export default function MyAlbum({ album }: MyAlbumProps) {
   const toggleLike = (e: React.MouseEvent) => {
     e.stopPropagation()
     setIsLiked(!isLiked)
-    // 좋아요 상태 업데이트 API 호출
+    // TODO: 좋아요 상태 업데이트 API 호출
   }
 
   const handleSwitchChange = (checked: boolean) => {
     setIsPublic(checked)
-    // 공개/비공개 상태 업데이트 API 호출
+    // TODO: 공개/비공개 상태 업데이트 API 호출
   }
 
   const openDeleteModal = (e: React.MouseEvent) => {
@@ -61,9 +63,15 @@ export default function MyAlbum({ album }: MyAlbumProps) {
   }
 
   const deleteAlbum = () => {
-    // 앨범 삭제 API 호출
-    console.log('앨범 삭제됨', album.id)
+    // TODO: 앨범 삭제 API 호출
+    console.log('앨범 삭제: ', album.id)
     setIsDeleteModalOpen(false)
+
+    if (viewType === 'my') {
+      navigate('/mypage/my')
+    } else if (viewType === 'liked') {
+      navigate('/mypage/liked')
+    }
   }
 
   const truncateText = (text: string, maxLength: number) => {
@@ -71,10 +79,7 @@ export default function MyAlbum({ album }: MyAlbumProps) {
   }
 
   return (
-    <div
-      className="relative flex mb-4 cursor-pointer hover:bg-gray-100"
-      onClick={goToAlbumDetail}
-    >
+    <div className="relative flex mb-4" onClick={goToAlbumDetail}>
       <img
         src={album.coverImage}
         alt={album.albumName}
@@ -85,43 +90,45 @@ export default function MyAlbum({ album }: MyAlbumProps) {
         <div className="flex justify-between items-center font-bold text-base relative">
           <span>{truncateText(album.albumName, 18)}</span>
 
-          <AlertDialog>
-            <AlertDialogTrigger asChild>
-              <button
-                onClick={openDeleteModal}
-                className="focus:outline-none ml-4"
-              >
-                <X size={22} className="text-primary-400" />
-              </button>
-            </AlertDialogTrigger>
-            <AlertDialogContent>
-              <AlertDialogHeader>
-                <AlertDialogTitle>앨범 삭제</AlertDialogTitle>
-                <AlertDialogDescription>
-                  정말로 이 앨범을 삭제하시겠습니까? 이 작업은 되돌릴 수
-                  없습니다.
-                </AlertDialogDescription>
-              </AlertDialogHeader>
-              <AlertDialogFooter>
-                <AlertDialogCancel
-                  onClick={(e) => {
-                    e.stopPropagation()
-                    closeDeleteModal()
-                  }}
+          {viewType === 'my' && (
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <button
+                  onClick={openDeleteModal}
+                  className="focus:outline-none ml-4"
                 >
-                  취소
-                </AlertDialogCancel>
-                <AlertDialogAction
-                  onClick={(e) => {
-                    e.stopPropagation()
-                    deleteAlbum()
-                  }}
-                >
-                  삭제
-                </AlertDialogAction>
-              </AlertDialogFooter>
-            </AlertDialogContent>
-          </AlertDialog>
+                  <X size={22} className="text-primary-400" />
+                </button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>앨범 삭제</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    정말로 이 앨범을 삭제하시겠습니까? 이 작업은 되돌릴 수
+                    없습니다.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      closeDeleteModal()
+                    }}
+                  >
+                    취소
+                  </AlertDialogCancel>
+                  <AlertDialogAction
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      deleteAlbum()
+                    }}
+                  >
+                    삭제
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+          )}
         </div>
 
         <div className="text-sm">{truncateText(album.artistName, 18)}</div>
@@ -132,22 +139,28 @@ export default function MyAlbum({ album }: MyAlbumProps) {
               fillOpacity={isLiked ? 1 : 0.4}
             />
           </button>
-          <span>{album.likeCount.toLocaleString()}</span>
+          <span>
+            {viewType === 'my'
+              ? album.likeCount.toLocaleString()
+              : formatLikeCount(album.likeCount)}
+          </span>
         </div>
 
         <div className="flex justify-between items-center text-sm text-gray-400">
           <span>{album.releaseDate}</span>
 
-          <div className="flex items-center space-x-2">
-            <Switch
-              id={`album-${album.id}-switch`}
-              checked={isPublic}
-              onCheckedChange={handleSwitchChange}
-              onClick={(e) => e.stopPropagation()}
-              className={`rounded-full border-2 transition-colors z-0
+          {viewType === 'my' && (
+            <div className="flex items-center space-x-2">
+              <Switch
+                id={`album-${album.id}-switch`}
+                checked={isPublic}
+                onCheckedChange={handleSwitchChange}
+                onClick={(e) => e.stopPropagation()}
+                className={`rounded-full border-2 transition-colors z-0
                 ${isPublic ? 'bg-primary-400' : 'bg-gray-200'}`}
-            ></Switch>
-          </div>
+              ></Switch>
+            </div>
+          )}
         </div>
       </div>
     </div>

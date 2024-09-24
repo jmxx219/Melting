@@ -60,7 +60,7 @@ export default function AlbumList({ sortOption, viewType }: AlbumListProps) {
       앨범 리스트 ({sortOption === 'date' ? '최신순' : '인기순'})<div></div>
       <div className="album-list">
         {albums.map((album) => (
-          <MyAlbum key={album.id} album={album} />
+          <MyAlbum key={album.id} album={album} viewType={viewType} />
         ))}
       </div>
     </div>
