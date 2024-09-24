@@ -26,6 +26,8 @@ public class RedisConfig {
 	@Value("${spring.data.redis.port}")
 	private int port;
 
+	// private static final String REDISSON_HOST_PREFIX = "rediss://";
+
 	@Bean
 	public RedisConnectionFactory redisConnectionFactory() {
 		return new LettuceConnectionFactory(host, port);
@@ -54,4 +56,13 @@ public class RedisConfig {
 			.cacheDefaults(redisCacheConfiguration)
 			.build();
 	}
+
+	// @Bean
+	// public RedissonClient redissonClient() {
+	// 	Config config = new Config();
+	// 	config.useSingleServer()
+	// 		.setAddress(REDISSON_HOST_PREFIX + host + ":" + port);
+	//
+	// 	return Redisson.create(config);
+	// }
 }

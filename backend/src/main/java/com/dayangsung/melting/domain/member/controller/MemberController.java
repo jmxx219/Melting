@@ -41,12 +41,8 @@ public class MemberController {
 	}
 
 	@GetMapping("/nickname-check")
-	public ApiResponse<Void> validateNickname(@RequestParam String nickname) {
-		if (memberService.validateNickname(nickname)) {
-			return ApiResponse.ok(null);
-		} else {
-			return ApiResponse.error(DUPLICATE_NICKNAME.getErrorMessage());
-		}
+	public ApiResponse<Boolean> validateNickname(@RequestParam String nickname) {
+		return ApiResponse.ok(memberService.validateNickname(nickname));
 	}
 
 	@PatchMapping("/init")

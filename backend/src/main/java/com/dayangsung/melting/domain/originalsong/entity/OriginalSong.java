@@ -1,9 +1,12 @@
 package com.dayangsung.melting.domain.originalsong.entity;
 
+import com.dayangsung.melting.domain.member.enums.Gender;
 import com.dayangsung.melting.global.entity.BaseEntity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -26,23 +29,25 @@ public class OriginalSong extends BaseEntity {
 
 	private String artist;
 
+	@Enumerated(EnumType.STRING)
+	private Gender artistGender;
+
 	private String coverImageUrl;
 
 	private String mrUrl;
 
-	private int lengthInSeconds;
+	private String voiceUrl;
 
 	@Column(nullable = false, columnDefinition = "TEXT")
 	private String lyrics;
 
 	@Builder
-	public OriginalSong(String title, String artist, String coverImageUrl, String mrUrl, int lengthInSeconds,
-		String lyrics) {
+	public OriginalSong(String title, String artist, Gender artistGender, String coverImageUrl, String mrUrl, String voiceUrl, String lyrics) {
 		this.title = title;
 		this.artist = artist;
+		this.artistGender = artistGender;
 		this.coverImageUrl = coverImageUrl;
 		this.mrUrl = mrUrl;
-		this.lengthInSeconds = lengthInSeconds;
 		this.lyrics = lyrics;
 	}
 }
