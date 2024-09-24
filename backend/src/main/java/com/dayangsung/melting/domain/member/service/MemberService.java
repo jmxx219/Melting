@@ -1,6 +1,7 @@
 package com.dayangsung.melting.domain.member.service;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
@@ -13,6 +14,8 @@ import com.dayangsung.melting.domain.member.dto.response.MemberSongResponseDto;
 import com.dayangsung.melting.domain.member.entity.Member;
 import com.dayangsung.melting.domain.member.enums.Gender;
 import com.dayangsung.melting.domain.member.repository.MemberRepository;
+import com.dayangsung.melting.domain.originalsong.entity.OriginalSong;
+import com.dayangsung.melting.domain.song.dto.MypageSongListDto;
 import com.dayangsung.melting.domain.song.entity.Song;
 import com.dayangsung.melting.domain.song.repository.SongRepository;
 import com.dayangsung.melting.global.common.service.AwsS3Service;
@@ -85,14 +88,30 @@ public class MemberService {
 	}
 
 	public List<MemberSongResponseDto> getMemberSongs(Long memberId) {
-		List<Song> membersongs = songRepository.findByMemberIdAndIsDeletedFalse(memberId);
-		return membersongs.stream()
-			.map(song -> MemberSongResponseDto.of(
-				song,
-				song.getAlbum() != null ? song.getAlbum().getAlbumCoverImage() :
-					awsS3Service.getDefaultSongCoverImageUrl(),
-				likesService.getSongLikesCount(song.getId())
-			))
+		List<Song> memberSongs = songRepository.findByMemberIdAndIsDeletedFalse(memberId);
+
+		Map<OriginalSong, List<Song>> groupedSongs = memberSongs.stream()
+			.collect(Collectors.groupingBy(Song::getOriginalSong));
+
+		return groupedSongs.entrySet().stream()
+			.map(entry -> {
+				OriginalSong originalSong = entry.getKey();
+				List<Song> songs = entry.getValue();
+
+				List<MypageSongListDto> songList = songs.stream()
+					.map(song -> MypageSongListDto.builder()
+						.songId(song.getId())
+						.albumCoverImageUrl(song.getAlbum() != null ? song.getAlbum().getAlbumCoverImage() :
+							awsS3Service.getDefaultSongCoverImageUrl())
+						.songType(song.getSongType())
+						.likeCount(likesService.getSongLikesCount(song.getId()))
+						.isLiked(likesService.isLikedBySongAndMember(song.getId(), memberId))
+						.build())
+					.collect(Collectors.toList());
+
+				return MemberSongResponseDto.of(originalSong, songList);
+			})
 			.collect(Collectors.toList());
+
 	}
 }
