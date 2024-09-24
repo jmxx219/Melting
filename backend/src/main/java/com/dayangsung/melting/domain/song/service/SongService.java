@@ -1,6 +1,7 @@
 package com.dayangsung.melting.domain.song.service;
 
-import org.springframework.data.redis.core.RedisTemplate;
+// import org.springframework.data.redis.core.RedisTemplate;
+
 import org.springframework.stereotype.Service;
 
 import com.dayangsung.melting.domain.likes.service.LikesService;
@@ -20,9 +21,9 @@ public class SongService {
 	private final SongRepository songRepository;
 	private final AwsS3Service awsS3Service;
 	private final LikesService likesService;
-	private final RedisTemplate<String, Object> redisTemplate;
+	// private final RedisTemplate<String, Object> redisTemplate;
 
-	private static final String STREAMING_COUNT_KEY = "song:streaming:counts";
+	// private static final String STREAMING_COUNT_KEY = "song:streaming:counts";
 
 	public SongDetailsResponseDto getSongDetails(Long songId) {
 		Song song = songRepository.findById(songId).orElseThrow(RuntimeException::new);
