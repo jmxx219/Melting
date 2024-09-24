@@ -4,14 +4,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.dayangsung.melting.domain.album.enums.AlbumCategory;
+import com.dayangsung.melting.domain.comment.entity.Comment;
 import com.dayangsung.melting.domain.hashtag.entity.AlbumGenre;
 import com.dayangsung.melting.domain.hashtag.entity.AlbumHashtag;
+import com.dayangsung.melting.domain.likes.entity.LikesAlbum;
 import com.dayangsung.melting.domain.member.entity.Member;
 import com.dayangsung.melting.domain.song.entity.Song;
 import com.dayangsung.melting.global.entity.BaseEntity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -46,6 +50,7 @@ public class Album extends BaseEntity {
 
 	// 유형
 	@Column(nullable = false)
+	@Enumerated(EnumType.STRING)
 	private AlbumCategory category;
 
 	// 앨범 소개
@@ -55,10 +60,6 @@ public class Album extends BaseEntity {
 	// 앨범 커버 이미지
 	@Column(nullable = false)
 	private String albumCoverImage;
-
-	// 좋아요 수
-	@Column(nullable = false)
-	private Long likedCount;
 
 	// 공개 여부
 	@Column(nullable = false)
@@ -80,16 +81,26 @@ public class Album extends BaseEntity {
 	@OneToMany(mappedBy = "album")
 	private List<AlbumGenre> genres = new ArrayList<>();
 
+	@OneToMany(mappedBy = "album")
+	private List<LikesAlbum> likesAlbums = new ArrayList<>();
+
+	@OneToMany(mappedBy = "album")
+	private List<Comment> comments = new ArrayList<>();
+
 	@Builder
-	public Album(Member member, String albumName, AlbumCategory category, String albumDescription, String albumCoverImage) {
+	public Album(Member member, String albumName, String albumDescription, String albumCoverImage) {
 		this.member = member;
 		this.albumName = albumName;
-		this.category = category;
 		this.albumDescription = albumDescription;
 		this.albumCoverImage = albumCoverImage;
-		this.likedCount = 0L;
 		this.isPublic = false;
 		this.isDeleted = false;
+		this.setCategory();
+	}
+
+	private void setCategory() {
+		int songCount = this.songs.size();
+		this.category = AlbumCategory.getCategoryBySongCount(songCount);
 	}
 
 	public void updateAlbumName(String albumName) {
