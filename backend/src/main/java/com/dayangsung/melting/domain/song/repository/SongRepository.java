@@ -7,5 +7,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import com.dayangsung.melting.domain.song.entity.Song;
 
 public interface SongRepository extends JpaRepository<Song, Long> {
-	List<Song> findByMemberId(Long memberId);
+	List<Song> findByMemberIdAndIsDeletedFalse(Long memberId);
 }
