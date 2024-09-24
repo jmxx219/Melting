@@ -29,7 +29,7 @@ public class RedisConfig {
 	@Value("${spring.data.redis.port}")
 	private int port;
 
-	private static final String REDISSON_HOST_PREFIX = "redis://";
+	private static final String REDISSON_HOST_PREFIX = "rediss://";
 
 	@Bean
 	public RedisConnectionFactory redisConnectionFactory() {

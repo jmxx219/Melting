@@ -25,7 +25,7 @@ public class DistributedLockAspect {
 	private final DistributedLockTransaction distributedLockTransaction;
 
 	@Around("@annotation(com.dayangsung.melting.global.redisson.DistributedLock)")
-	public Object DistributedLock(ProceedingJoinPoint joinPoint) throws Throwable {
+	public Object distributedLock(ProceedingJoinPoint joinPoint) throws Throwable {
 		MethodSignature signature = (MethodSignature)joinPoint.getSignature();
 		Method method = signature.getMethod();
 		DistributedLock distributedLock = method.getAnnotation(DistributedLock.class);
