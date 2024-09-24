@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Switch } from '@/components/ui/switch'
-import Heart from '@/components/icon/Heart'
+import Heart from '@/components/Icon/Heart'
 import { X, Play } from 'lucide-react'
 import { formatLikeCount } from '@/utils/numberUtil'
 import {
