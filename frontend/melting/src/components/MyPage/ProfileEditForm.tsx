@@ -79,7 +79,7 @@ export default function ProfileEditForm() {
               accept="image/*"
               className="hidden"
               onChange={handleImageUpload}
-              autoComplete="false"
+              autoComplete="off"
               spellCheck="false"
             />
           </div>
@@ -91,7 +91,7 @@ export default function ProfileEditForm() {
               onChange={(e) => setNickname(e.target.value)}
               className={`mt-4 border-b-2 ${!isNicknameValid && nickname ? 'border-b-status-warning' : ''} ${nickname ? 'text-black' : ''} ${isNicknameValid ? 'border-b-primary-400' : ''}`}
               maxLength={20}
-              autoComplete="false"
+              autoComplete="off"
               spellCheck="false"
             />
             <div className="h-5">
