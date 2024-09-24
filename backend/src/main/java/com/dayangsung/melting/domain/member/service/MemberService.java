@@ -89,7 +89,8 @@ public class MemberService {
 		return membersongs.stream()
 			.map(song -> MemberSongResponseDto.of(
 				song,
-				song.getAlbum().getAlbumCoverImage(),
+				song.getAlbum() != null ? song.getAlbum().getAlbumCoverImage() :
+					awsS3Service.getDefaultSongCoverImageUrl(),
 				likesService.getSongLikesCount(song.getId())
 			))
 			.collect(Collectors.toList());

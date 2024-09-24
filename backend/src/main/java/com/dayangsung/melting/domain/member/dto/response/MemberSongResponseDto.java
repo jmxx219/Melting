@@ -27,6 +27,7 @@ public record MemberSongResponseDto(
 			.artist(song.getOriginalSong().getArtist())
 			.albumCoverImage(albumCoverImage)
 			.likedCount(likedCount)
+			.songType(song.getSongType())
 			.build();
 	}
 }
