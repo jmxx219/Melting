@@ -2,6 +2,8 @@ package com.dayangsung.melting.domain.member.controller;
 
 import static com.dayangsung.melting.global.common.response.enums.ErrorMessage.*;
 
+import java.util.List;
+
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -16,10 +18,12 @@ import com.dayangsung.melting.domain.auth.dto.CustomOAuth2User;
 import com.dayangsung.melting.domain.member.dto.request.MemberInitRequestDto;
 import com.dayangsung.melting.domain.member.dto.request.MemberUpdateRequestDto;
 import com.dayangsung.melting.domain.member.dto.response.MemberResponseDto;
+import com.dayangsung.melting.domain.member.dto.response.MemberSongResponseDto;
 import com.dayangsung.melting.domain.member.enums.Gender;
 import com.dayangsung.melting.domain.member.service.MemberService;
 import com.dayangsung.melting.global.common.response.ApiResponse;
 
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -79,11 +83,11 @@ public class MemberController {
 		return ApiResponse.ok(null);
 	}
 
-	// @Operation(summary = "사용자가 생성한 곡 목록")
-	// @GetMapping("/me/songs")
-	// public ApiResponse<List<MemberSongResponseDto>> getMemberSongs(
-	// 	@AuthenticationPrincipal CustomOAuth2User customOAuth2User) {
-	// 	List<MemberSongResponseDto> memberSongResponseDto = memberService.getMemberSongs(customOAuth2User.getId());
-	// 	return ApiResponse.ok(memberSongResponseDto);
-	// }
+	@Operation(summary = "사용자가 생성한 곡 목록")
+	@GetMapping("/me/songs")
+	public ApiResponse<List<MemberSongResponseDto>> getMemberSongs() {
+		// @AuthenticationPrincipal CustomOAuth2User customOAuth2User) {
+		List<MemberSongResponseDto> memberSongResponseDto = memberService.getMemberSongs(1L);
+		return ApiResponse.ok(memberSongResponseDto);
+	}
 }

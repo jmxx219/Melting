@@ -1,13 +1,19 @@
 package com.dayangsung.melting.domain.member.service;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.dayangsung.melting.domain.likes.service.LikesService;
 import com.dayangsung.melting.domain.member.dto.response.MemberResponseDto;
+import com.dayangsung.melting.domain.member.dto.response.MemberSongResponseDto;
 import com.dayangsung.melting.domain.member.entity.Member;
 import com.dayangsung.melting.domain.member.enums.Gender;
 import com.dayangsung.melting.domain.member.repository.MemberRepository;
+import com.dayangsung.melting.domain.song.entity.Song;
 import com.dayangsung.melting.domain.song.repository.SongRepository;
 import com.dayangsung.melting.global.common.service.AwsS3Service;
 import com.dayangsung.melting.global.util.CookieUtil;
@@ -26,6 +32,7 @@ public class MemberService {
 	private final AwsS3Service awsS3Service;
 	private final MemberRepository memberRepository;
 	private final SongRepository songRepository;
+	private final LikesService likesService;
 
 	public Boolean validateNickname(String nickname) {
 		return !memberRepository.existsByNickname(nickname);
@@ -77,13 +84,14 @@ public class MemberService {
 		cookieUtil.deleteJwtCookies(request, response);
 	}
 
-	// public List<MemberSongResponseDto> getMemberSongs(Long memberId) {
-	// 	List<Song> membersongs = songRepository.findByMemberId(memberId);
-	// 	return membersongs.stream()
-	// 		.map(song -> MemberSongResponseDto.of(
-	// 			song.getAlbum().getAlbumCoverImage(),
-	// 			song.getLikedCount()
-	// 		))
-	// 		.collect(Collectors.toList());
-	// }
+	public List<MemberSongResponseDto> getMemberSongs(Long memberId) {
+		List<Song> membersongs = songRepository.findByMemberIdAndIsDeletedFalse(memberId);
+		return membersongs.stream()
+			.map(song -> MemberSongResponseDto.of(
+				song,
+				song.getAlbum().getAlbumCoverImage(),
+				likesService.getSongLikesCount(song.getId())
+			))
+			.collect(Collectors.toList());
+	}
 }
