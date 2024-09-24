@@ -8,7 +8,6 @@ import com.dayangsung.melting.domain.song.dto.response.SongDetailsResponseDto;
 import com.dayangsung.melting.domain.song.entity.Song;
 import com.dayangsung.melting.domain.song.repository.SongRepository;
 import com.dayangsung.melting.global.common.service.AwsS3Service;
-import com.dayangsung.melting.global.redisson.DistributedLock;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -31,16 +30,16 @@ public class SongService {
 		if (song.getAlbum() != null) {
 			albumCoverImage = song.getAlbum().getAlbumCoverImage();
 		}
-		incrementStreamingCount(songId);
+		// incrementStreamingCount(songId);
 		return SongDetailsResponseDto.of(song, albumCoverImage, likesService.getSongLikesCount(songId));
 
 	}
 
 	// Todo : 트랜잭션 적용 필요
-	@DistributedLock(value = "#songId")
-	public void incrementStreamingCount(Long songId) {
-		String key = STREAMING_COUNT_KEY;
-		Double streamingCount = redisTemplate.opsForZSet().incrementScore(key, songId.toString(), 1);
-		log.info("Incremented streaming count for song {}: {}", songId, streamingCount);
-	}
+	// @DistributedLock(value = "#songId")
+	// public void incrementStreamingCount(Long songId) {
+	// 	String key = STREAMING_COUNT_KEY;
+	// 	Double streamingCount = redisTemplate.opsForZSet().incrementScore(key, songId.toString(), 1);
+	// 	log.info("Incremented streaming count for song {}: {}", songId, streamingCount);
+	// }
 }
