@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Switch } from '@/components/ui/switch'
 import Heart from '@/components/icon/Heart'
-import { X } from 'lucide-react'
+import { X, Play } from 'lucide-react'
 import { formatLikeCount } from '@/utils/numberUtil'
 import {
   AlertDialog,
@@ -40,6 +40,12 @@ export default function MyAlbum({ album, viewType }: MyAlbumProps) {
 
   const goToAlbumDetail = () => {
     navigate(`/album/${album.id}`)
+  }
+
+  const goToPlayAlbum = (e: React.MouseEvent) => {
+    e.stopPropagation()
+    // TODO: 앨범 재생 화면으로 이동
+    navigate(`/album/${album.id}/play`)
   }
 
   const toggleLike = (e: React.MouseEvent) => {
@@ -80,15 +86,23 @@ export default function MyAlbum({ album, viewType }: MyAlbumProps) {
 
   return (
     <div className="relative flex mb-4" onClick={goToAlbumDetail}>
-      <img
-        src={album.coverImage}
-        alt={album.albumName}
-        className="w-24 h-24 mr-4 rounded-lg"
-      />
+      <div className="relative mr-2 w-24 h-24 flex-shrink-0">
+        <img
+          src={album.coverImage}
+          alt={album.albumName}
+          className="absolute inset-0 w-full h-full rounded-lg object-cover"
+        />
+        <button
+          onClick={goToPlayAlbum}
+          className="absolute top-1 right-1 p-1 rounded-full shadow-lg"
+        >
+          <Play size={26} className="text-white fill-white" />
+        </button>
+      </div>
 
       <div className="flex flex-col justify-between w-full p-1">
         <div className="flex justify-between items-center font-bold text-base relative">
-          <span>{truncateText(album.albumName, 18)}</span>
+          <span>{truncateText(album.albumName, 20)}</span>
 
           {viewType === 'my' && (
             <AlertDialog>
@@ -131,7 +145,7 @@ export default function MyAlbum({ album, viewType }: MyAlbumProps) {
           )}
         </div>
 
-        <div className="text-sm">{truncateText(album.artistName, 18)}</div>
+        <div className="text-sm">{truncateText(album.artistName, 20)}</div>
         <div className="flex items-center space-x-2 text-sm">
           <button onClick={toggleLike} className="focus:outline-none z-0">
             <Heart

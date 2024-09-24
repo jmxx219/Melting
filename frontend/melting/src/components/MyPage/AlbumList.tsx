@@ -33,7 +33,7 @@ export default function AlbumList({ sortOption, viewType }: AlbumListProps) {
     {
       id: 2,
       coverImage:
-        'https://image.bugsm.co.kr/album/images/200/2499/249930.jpg?version=20211216015917.0',
+        'https://image.bugsm.co.kr/album/images/200/40955/4095501.jpg?version=20240307012526.0',
       albumName: '좋은 날 Cover',
       artistName: '노원핵주먹',
       isLiked: false,
@@ -44,7 +44,7 @@ export default function AlbumList({ sortOption, viewType }: AlbumListProps) {
     {
       id: 3,
       coverImage:
-        'https://upload.wikimedia.org/wikipedia/ko/b/b6/IU_Palette_final.jpg',
+        'https://image.bugsm.co.kr/album/images/200/40955/4095501.jpg?version=20240307012526.0',
       albumName: 'Palette Cover',
       artistName: '노원핵주먹',
       isLiked: true,
