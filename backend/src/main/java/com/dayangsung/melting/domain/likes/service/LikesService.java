@@ -1,5 +1,7 @@
 package com.dayangsung.melting.domain.likes.service;
 
+import java.util.Optional;
+
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -97,5 +99,10 @@ public class LikesService {
 		likesSongRepository.save(likesSong);
 
 		return songLikesCount != null ? songLikesCount.intValue() : 0;
+	}
+	
+	public boolean isLikedBySongAndMember(Long songId, Long memberId) {
+		Optional<LikesSong> likesSong = likesSongRepository.findLikesSongBySongIdAndMemberId(songId, memberId);
+		return likesSong.isPresent() && likesSong.get().isStatus();
 	}
 }
