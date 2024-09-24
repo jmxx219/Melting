@@ -3,11 +3,12 @@ import HotAlbum from './HotAlbums'
 import Intro from './Intro'
 import MonthlyAlbum from './MonthlyAlbums'
 import SteadyAlbum from './SteadyAlbums'
+import TagAlbum from './TagAlbums'
 
 export default function Main() {
   return (
-    <div>
-      <div>
+    <div className="">
+      <div className="text-left">
         <Greeting />
       </div>
       <div>
@@ -23,7 +24,9 @@ export default function Main() {
         <div>
           <MonthlyAlbum />
         </div>
-        <div>태그별 앨범 (비회원은 못봄)</div>
+        <div>
+          <TagAlbum />
+        </div>
       </div>
     </div>
   )
