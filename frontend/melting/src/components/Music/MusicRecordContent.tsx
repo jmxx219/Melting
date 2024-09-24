@@ -1,8 +1,8 @@
 import { Mic, RotateCcw } from 'lucide-react'
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useRef, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { Button } from '../ui/button'
 import { ScrollArea } from '../ui/scroll-area'
-import { useNavigate } from 'react-router-dom'
 import AudioPlayer, { AudioPlayerHandle } from './AudioPlayer'
 
 interface MusciRecordProps {

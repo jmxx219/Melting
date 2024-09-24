@@ -2,8 +2,7 @@ import Layout from '@/components/layout/Layout'
 import MusicPlayerHeader from '@/components/layout/MusicPlayerHeader'
 import MusicPlayContent from '@/components/Music/MusicPlayContent'
 import { SongPlay } from '@/types/songPlay'
-import { useState } from 'react'
-import { useLocation, useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 
 type Props = {}
 
