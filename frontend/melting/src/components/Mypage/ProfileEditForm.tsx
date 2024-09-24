@@ -79,6 +79,8 @@ export default function ProfileEditForm() {
               accept="image/*"
               className="hidden"
               onChange={handleImageUpload}
+              autoComplete="false"
+              spellCheck="false"
             />
           </div>
         </div>
@@ -89,6 +91,8 @@ export default function ProfileEditForm() {
               onChange={(e) => setNickname(e.target.value)}
               className={`mt-4 border-b-2 ${!isNicknameValid && nickname ? 'border-b-status-warning' : ''} ${nickname ? 'text-black' : ''} ${isNicknameValid ? 'border-b-primary-400' : ''}`}
               maxLength={20}
+              autoComplete="false"
+              spellCheck="false"
             />
             <div className="h-5">
               <span
@@ -118,8 +122,7 @@ export default function ProfileEditForm() {
           onClick={handleSubmit}
           conditions={[!isFormValid]}
           text={'수정하기'}
-        >
-        </SubmitButton>
+        ></SubmitButton>
       </div>
     </div>
   )
