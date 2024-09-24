@@ -1,5 +1,5 @@
 import Layout from '@/components/layout/Layout'
-import MusicPlayerHeader from '@/components/layout/MusicPlayerHeader'
+import MusicRecordrHeader from '@/components/layout/MusicRecordrHeader'
 import MusicRecordContent from '@/components/Music/MusicRecordContent'
 import { Song } from '@/types/song'
 
@@ -47,12 +47,13 @@ export default function MusicRecord() {
   return (
     <Layout
       Header={
-        <MusicPlayerHeader artist={song.artist} songTitle={song.songTitle} />
+        <MusicRecordrHeader artist={song.artist} songTitle={song.songTitle} />
       }
       children={
         <MusicRecordContent lyrics={song.lyrics} audioSrc={song.audioSrc} />
       }
       showFooter={false}
+      isHidden={true}
     ></Layout>
   )
 }
