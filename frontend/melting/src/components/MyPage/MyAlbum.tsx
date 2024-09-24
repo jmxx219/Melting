@@ -86,6 +86,7 @@ export default function MyAlbum({ album, viewType }: MyAlbumProps) {
           className="absolute inset-0 w-full h-full rounded-lg object-cover"
         />
         <button
+          type="button"
           onClick={goToPlayAlbum}
           className="absolute top-1 right-1 p-1 rounded-full shadow-lg"
         >
@@ -101,6 +102,7 @@ export default function MyAlbum({ album, viewType }: MyAlbumProps) {
             <AlertDialog>
               <AlertDialogTrigger asChild>
                 <button
+                  type="button"
                   onClick={openDeleteModal}
                   className="focus:outline-none ml-4"
                 >
@@ -139,7 +141,11 @@ export default function MyAlbum({ album, viewType }: MyAlbumProps) {
 
         <div className="text-sm">{truncateText(album.artistName, 20)}</div>
         <div className="flex items-center space-x-2 text-sm">
-          <button onClick={toggleLike} className="focus:outline-none z-0">
+          <button
+            type="button"
+            onClick={toggleLike}
+            className="focus:outline-none z-0"
+          >
             <Heart
               fill={isLiked ? '#FFAF25' : '#ADADAD'}
               fillOpacity={isLiked ? 1 : 0.4}
