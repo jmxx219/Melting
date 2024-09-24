@@ -1,11 +1,11 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { ArrowRight, User } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { useNavigate } from 'react-router-dom'
 
 export default function MyPageSelect() {
-  const [profileImage, setProfileImage] = useState<string | null>(null)
+  const [profileImage] = useState<string | null>(null)
   const navigate = useNavigate()
 
   const handleRegisteredSongs = () => {
@@ -45,7 +45,7 @@ export default function MyPageSelect() {
           variant={'outline'}
           className="w-full h-12 rounded-2xl mt-4 text-left border-2 border-primary-400 text-black"
           onClick={handleRegisteredSongs}
-          >
+        >
           <div className="flex justify-between items-center w-full px-2">
             <span>내가 등록한 한 곡 & 앨범</span>
             <ArrowRight className="w-5 h-5" />
@@ -54,17 +54,17 @@ export default function MyPageSelect() {
         <Button
           className="w-full h-12 rounded-2xl mt-4 text-left bg-primary-400 text-white"
           onClick={handleLikedSongs}
-          >
+        >
           <div className="flex justify-between items-center w-full px-2">
             <span>좋아요 한 곡 & 앨범</span>
             <ArrowRight className="w-5 h-5" />
           </div>
         </Button>
       </div>
-      
+
       <div className="flex flex-col w-full">
         <Button
-          className="w-full justify-between h-12 rounded-2xl text-primary-400 bg-transparent text-left" 
+          className="w-full justify-between h-12 rounded-2xl text-primary-400 bg-transparent text-left"
           onClick={handleProfileEdit}
         >
           회원 정보 수정
@@ -85,7 +85,5 @@ export default function MyPageSelect() {
         </Button>
       </div>
     </div>
-
-
   )
 }
