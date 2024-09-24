@@ -12,9 +12,10 @@ interface AlbumProps {
 export default function Album({ album }: AlbumProps) {
   const navigate = useNavigate()
   const [isHovered, setIsHovered] = useState(false)
+  const albumId = album.albumId
 
   const handlePlayClick = () => {
-    navigate(`/album/${album.albumId}/streaming`)
+    navigate(`/album/play`, { state: albumId })
   }
 
   return (
