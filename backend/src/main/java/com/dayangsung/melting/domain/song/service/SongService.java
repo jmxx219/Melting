@@ -31,12 +31,9 @@ public class SongService {
 		if (song.getAlbum() != null) {
 			albumCoverImage = song.getAlbum().getAlbumCoverImage();
 		}
-		//Todo: 스트리밍수 redis 추가 필요
+		incrementStreamingCount(songId);
 		return SongDetailsResponseDto.of(song, albumCoverImage, likesService.getSongLikesCount(songId));
 
-		incrementStreamingCount(songId);
-
-		return SongDetailsResponseDto.of(song, albumCoverImage);
 	}
 
 	// Todo : 트랜잭션 적용 필요
@@ -45,6 +42,5 @@ public class SongService {
 		String key = STREAMING_COUNT_KEY;
 		Double streamingCount = redisTemplate.opsForZSet().incrementScore(key, songId.toString(), 1);
 		log.info("Incremented streaming count for song {}: {}", songId, streamingCount);
-
 	}
 }
