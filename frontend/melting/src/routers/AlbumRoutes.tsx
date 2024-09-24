@@ -8,16 +8,16 @@ const GenreSelection = React.lazy(() => import('@/pages/Album/GenreSelection'))
 
 const Loading = () => <div>Loading...</div>
 
-const AlbumRoutes = () => (
-  <AlbumProvider>
-    <Suspense fallback={<Loading />}>
-      <Routes>
-        <Route path="create" element={<AlbumRegist />} />
-        <Route path="create/genre-selection" element={<GenreSelection />} />
-        <Route path="create/song-selection" element={<SongSelection />} />
-      </Routes>
-    </Suspense>
-  </AlbumProvider>
-)
-
-export default AlbumRoutes
+export default function AlbumRoutes() {
+  return (
+    <AlbumProvider>
+      <Suspense fallback={<Loading />}>
+        <Routes>
+          <Route path="create" element={<AlbumRegist />} />
+          <Route path="create/genre-selection" element={<GenreSelection />} />
+          <Route path="create/song-selection" element={<SongSelection />} />
+        </Routes>
+      </Suspense>
+    </AlbumProvider>
+  )
+}

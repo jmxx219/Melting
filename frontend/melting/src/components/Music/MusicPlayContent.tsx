@@ -61,6 +61,7 @@ export default function MusicPlayContent({ song }: Props) {
       </div>
       <div className="py-5 flex justify-center items-center">
         <Button
+          type="button"
           size={'icon'}
           className="w-20 h-20 bg-[#FFAF25] rounded-full"
           onClick={togglePlayPause}

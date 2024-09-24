@@ -4,13 +4,13 @@ import MyPageMain from '@/pages/MyPage/MyPageMain'
 import ProfileEdit from '@/pages/MyPage/ProfileEdit'
 import { Route, Routes } from 'react-router-dom'
 
-const MyPageRoutes = () => (
-  <Routes>
-    <Route index element={<MyPageMain />} />
-    <Route path="profile/edit" element={<ProfileEdit />} />
-    <Route path="my" element={<MyAlbumsAndSongs />} />
-    <Route path="liked" element={<LikedAlbumsAndSongs />} />
-  </Routes>
-)
-
-export default MyPageRoutes
+export default function MyPageRoutes() {
+  return (
+    <Routes>
+      <Route index element={<MyPageMain />} />
+      <Route path="profile/edit" element={<ProfileEdit />} />
+      <Route path="my" element={<MyAlbumsAndSongs />} />
+      <Route path="liked" element={<LikedAlbumsAndSongs />} />
+    </Routes>
+  )
+}
