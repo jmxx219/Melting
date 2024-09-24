@@ -7,7 +7,6 @@ import com.dayangsung.melting.domain.member.entity.Member;
 import com.dayangsung.melting.domain.originalsong.entity.OriginalSong;
 import com.dayangsung.melting.domain.voice.entity.Voice;
 
-@Repository
 public interface VoiceRepository extends JpaRepository<Voice, Long> {
 	boolean existsByMemberAndOriginalSong(Member member, OriginalSong originalSong);
 }

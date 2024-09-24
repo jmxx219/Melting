@@ -44,10 +44,10 @@ public class Voice extends BaseEntity {
 	private String voiceUrl;
 
 	@Builder
-	public Voice(Member member, OriginalSong originalSong, boolean isTrained, String voiceUrl) {
+	public Voice(Member member, OriginalSong originalSong, String voiceUrl) {
 		this.member = member;
 		this.originalSong = originalSong;
-		this.isTrained = isTrained;
+		this.isTrained = false;
 		this.voiceUrl = voiceUrl;
 	}
 
