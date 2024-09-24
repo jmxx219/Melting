@@ -1,6 +1,6 @@
 // src/components/Album/HashtagSelector.tsx
 
-import React, { useState, useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import { useAlbumContext } from '@/contexts/AlbumContext'
 import {
   AlertDialog,
