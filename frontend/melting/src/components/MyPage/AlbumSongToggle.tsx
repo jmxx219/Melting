@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import AlbumList from '@/components/MyPage/AlbumList'
-import SongList from '@/components/MyPage/SongList'
+import MySongList from '@/components/MyPage/MySongList'
+import LikedSongList from '@/components/MyPage/LikedSongList'
 import SortDropdown from '@/components/MyPage/SortDropdown'
 
 interface AlbumSongToggleProps {
@@ -37,8 +38,10 @@ export default function AlbumSongToggle({ viewType }: AlbumSongToggleProps) {
       <div>
         {selectedTab === 'album' ? (
           <AlbumList sortOption={sortOption} viewType={viewType} />
+        ) : viewType === 'my' ? (
+          <MySongList sortOption={sortOption} />
         ) : (
-          <SongList sortOption={sortOption} viewType={viewType} />
+          <LikedSongList sortOption={sortOption} />
         )}
       </div>
     </div>
