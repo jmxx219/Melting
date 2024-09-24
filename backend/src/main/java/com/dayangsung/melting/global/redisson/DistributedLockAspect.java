@@ -43,7 +43,7 @@ public class DistributedLockAspect {
 		try {
 
 			boolean lockable = rLock.tryLock(distributedLock.waitTime(), distributedLock.leaseTime(),
-				TimeUnit.MICROSECONDS);
+				distributedLock.timeUnit());
 
 			if (!lockable) {
 				log.info("Fail to occupy lock={}", key);
