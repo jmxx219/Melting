@@ -43,7 +43,7 @@ public class AwsS3Service {
 	}
 
 	public String uploadAlbumCoverImage(MultipartFile albumCoverImage, Long albumId) {
-		return uploadImage(albumCoverImage, "/image/generated_album", albumId);
+		return uploadImage(albumCoverImage, "/image/album", albumId);
 	}
 
 	public String uploadSong(MultipartFile song, Long songId) {
@@ -51,7 +51,7 @@ public class AwsS3Service {
 			throw new RuntimeException();
 		}
 		try {
-			return uploadFileToS3(song, "/audio/generated_song", songId);
+			return uploadFileToS3(song, "/audio/song", songId);
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
@@ -91,7 +91,7 @@ public class AwsS3Service {
 	}
 
 	public String getDefaultSongCoverImageUrl() {
-		return CLOUDFRONTURL + "/image/generated_album_cover/default_song_cover.png";
+		return CLOUDFRONTURL + "/image/album_cover/default_song_cover.png";
 	}
 
 	public String getOriginalSongMrUrl(Long originalSongId) {
