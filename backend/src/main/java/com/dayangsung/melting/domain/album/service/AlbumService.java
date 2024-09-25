@@ -36,7 +36,8 @@ public class AlbumService {
 	// 커뮤니티 메인에서 사용. sort 파라미터에 따라 앨범 목록을 정렬하여 반환하는 메서드
 	public List<AlbumMainResponseDto> getAlbumsSorted(AlbumSortType sort) {
 		List<Album> albums = switch (sort) {
-			case POPULAR -> albumRepository.findByIsPublicTrueAndIsDeletedFalseOrderByLikedCountDesc();
+			// TODO: 좋아요 순 정렬 추가
+			case POPULAR -> albumRepository.findByIsPublicTrueAndIsDeletedFalse();
 			case LATEST -> albumRepository.findByIsPublicTrueAndIsDeletedFalseOrderByCreatedAtDesc();
 			default -> throw new IllegalArgumentException(INVALID_SORT_CRITERIA.getErrorMessage());
 		};
@@ -88,8 +89,7 @@ public class AlbumService {
 
 	public AlbumDetailsResponseDto getAlbumDetails(Long albumId) {
 		// 앨범 조회
-		Album album = albumRepository.findById(albumId)
-			.orElseThrow(() -> new NotFoundException(ALBUM_NOT_FOUND.getErrorMessage()));
+		Album album = albumRepository.findByIdAndIsDeletedFalse(albumId);
 
 		// 앨범 데이터를 DTO로 변환
 		return AlbumDetailsResponseDto.of(album);
@@ -144,7 +144,6 @@ public class AlbumService {
 			throw new IllegalArgumentException(ALBUM_COVER_IMAGE_BLANK_ERROR.getErrorMessage());
 		}
 
-		// TODO: Song에서 이미 처리하고 있는 부분인지 확인
 		// 곡 목록 유효성 검사
 		List<Song> songs = albumCreateRequestDto.songs();
 		if (songs == null || songs.isEmpty()) {
@@ -159,6 +158,13 @@ public class AlbumService {
 			.albumDescription(albumCreateRequestDto.albumDescription())
 			.albumCoverImage(albumCreateRequestDto.albumCoverImage())
 			.build();
+
+		// 곡 추가
+		for (int i = 0; i < songs.size(); i++) {
+			// 앨범에 곡 추가
+			// TODO: isTitle 고려
+			album.addSong(songs.get(i), i + 1, i == 0); // 첫 번째 곡을 타이틀 곡으로 설정
+		}
 
 		// 앨범 저장
 		Album savedAlbum = albumRepository.save(album);

@@ -11,11 +11,14 @@ import io.lettuce.core.dynamic.annotation.Param;
 
 public interface AlbumRepository extends JpaRepository<Album, Long> {
 
+	Album findByIdAndIsDeletedFalse(Long albumId);
+
 	// 공개되어 있고 삭제되지 않은 앨범 최신순 정렬
 	List<Album> findByIsPublicTrueAndIsDeletedFalseOrderByCreatedAtDesc();
 
+	// TODO: 좋아요순 추가
 	// 공개되어 있고 삭제되지 않은 앨범 좋아요순 정렬
-	List<Album> findByIsPublicTrueAndIsDeletedFalseOrderByLikedCountDesc();
+	List<Album> findByIsPublicTrueAndIsDeletedFalse();
 
 	// 키워드로 앨범 이름 검색하여 앨범 조회
 	@Query("SELECT a FROM Album a WHERE a.albumName LIKE %:keyword% AND a.isPublic = true AND a.isDeleted = false")
