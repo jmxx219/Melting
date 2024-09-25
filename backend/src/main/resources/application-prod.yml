@@ -48,7 +48,7 @@ spring:
     redis:
       host: redis
       port: 6379
-      redisson-prefix: rediss://
+      redisson-prefix: redis://
   servlet:
     multipart:
       max-file-size: 20MB
