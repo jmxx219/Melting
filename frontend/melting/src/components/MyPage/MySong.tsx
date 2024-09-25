@@ -104,6 +104,7 @@ export default function MySong({
                 </div>
                 <div className="flex space-x-2">
                   <button
+                    type="button"
                     className={`w-8 h-8 rounded-full flex items-center justify-center ${
                       track.songType === 'melting' || isPossibleAiCover
                         ? 'bg-primary-400'
@@ -119,6 +120,7 @@ export default function MySong({
                     <Mic className="h-5 w-5 text-white" />
                   </button>
                   <button
+                    type="button"
                     className="w-8 h-8 rounded-full bg-primary-400 flex items-center justify-center"
                     onClick={() => goToPlaySong(track.songId)}
                   >
