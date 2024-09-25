@@ -4,7 +4,7 @@ interface LikedSongListProps {
   sortOption: 'date' | 'popularity'
 }
 
-export default function LikedSongList({ sortOption }: LikedSongListProps) {
+export default function LikedSongList({}: LikedSongListProps) {
   const songs = [
     {
       song_id: 1,

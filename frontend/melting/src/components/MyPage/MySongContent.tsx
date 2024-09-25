@@ -36,12 +36,12 @@ export default function MySongContent({
 
   const goToPlaySong = (songId: number) => {
     // TODO: 곡 재생 화면으로 이동
-    navigate(`/music/play`)
+    navigate(`/music/play/${songId}`)
   }
 
   const goToRecordSong = (songId: number) => {
     // TODO: 곡 녹음 화면으로 이동
-    navigate(`/music/record`)
+    navigate(`/music/record/${songId}`)
   }
 
   const toggleLike = (trackId: number) => {

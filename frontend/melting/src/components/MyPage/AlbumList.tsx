@@ -17,7 +17,7 @@ interface AlbumListProps {
   viewType: 'my' | 'liked'
 }
 
-export default function AlbumList({ sortOption, viewType }: AlbumListProps) {
+export default function AlbumList({ viewType }: AlbumListProps) {
   const [albums] = useState<AlbumData[]>([
     {
       id: 1,
