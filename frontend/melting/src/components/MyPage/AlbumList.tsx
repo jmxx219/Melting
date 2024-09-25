@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import MyAlbum from '@/components/MyPage/MyAlbum'
+import MyAlbumContent from '@/components/MyPage/MyAlbumContent'
 
 interface AlbumData {
   id: number
@@ -58,7 +58,7 @@ export default function AlbumList({ sortOption, viewType }: AlbumListProps) {
     <div>
       <div className="album-list">
         {albums.map((album) => (
-          <MyAlbum key={album.id} album={album} viewType={viewType} />
+          <MyAlbumContent key={album.id} album={album} viewType={viewType} />
         ))}
       </div>
     </div>

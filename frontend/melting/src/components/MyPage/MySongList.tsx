@@ -1,4 +1,4 @@
-import MySong from '@/components/MyPage/MySong'
+import MySongContent from '@/components/MyPage/MySongContent'
 
 interface AlbumSongToggleProps {
   sortOption: 'date' | 'popularity'
@@ -52,7 +52,7 @@ export default function MySongList({ sortOption }: AlbumSongToggleProps) {
   return (
     <div>
       {data.originalSong.map((song) => (
-        <MySong
+        <MySongContent
           key={song.originalSongId}
           originalSong={song}
           isPossibleAiCover={data.isPossibleAiCover}
