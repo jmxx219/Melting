@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.dayangsung.melting.domain.auth.dto.CustomOAuth2User;
+import com.dayangsung.melting.domain.auth.CustomOAuth2User;
 import com.dayangsung.melting.domain.voice.dto.request.VoiceCreateRequestDto;
 import com.dayangsung.melting.domain.voice.dto.response.VoiceCreateResponseDto;
 import com.dayangsung.melting.domain.voice.service.VoiceService;
