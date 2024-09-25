@@ -11,15 +11,17 @@ import lombok.Builder;
 @Builder
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public record AlbumMainResponseDto(
-		String albumCoverImage,
-		String albumName,
-		String nickname
+	Long id,
+	String albumCoverImage,
+	String albumName,
+	String nickname
 ) {
 	public static AlbumMainResponseDto of(Album album) {
 		return AlbumMainResponseDto.builder()
-				.albumCoverImage(album.getAlbumCoverImage())
-				.albumName(album.getAlbumName())
-				.nickname(album.getMember().getNickname())
-				.build();
+			.id(album.getId())
+			.albumCoverImage(album.getAlbumCoverImage())
+			.albumName(album.getAlbumName())
+			.nickname(album.getMember().getNickname())
+			.build();
 	}
 }
