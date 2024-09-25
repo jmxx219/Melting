@@ -1,11 +1,11 @@
 package com.dayangsung.melting.domain.song.service;
 
-// import org.springframework.data.redis.core.RedisTemplate;
-
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import com.dayangsung.melting.domain.likes.service.LikesService;
+import com.dayangsung.melting.domain.member.entity.Member;
+import com.dayangsung.melting.domain.member.repository.MemberRepository;
 import com.dayangsung.melting.domain.song.dto.response.SongDetailsResponseDto;
 import com.dayangsung.melting.domain.song.entity.Song;
 import com.dayangsung.melting.domain.song.repository.SongRepository;
@@ -26,15 +26,20 @@ public class SongService {
 	private final RedisTemplate<String, Object> redisTemplate;
 
 	private static final String STREAMING_COUNT_KEY = "song:streaming:counts";
+	private final MemberRepository memberRepository;
 
-	public SongDetailsResponseDto getSongDetails(Long songId) {
+	public SongDetailsResponseDto getSongDetails(Long songId, Long memberId) {
 		Song song = songRepository.findById(songId).orElseThrow(RuntimeException::new);
+		Member member = memberRepository.findById(memberId).orElseThrow(RuntimeException::new);
+
 		String albumCoverImage = awsS3Service.getDefaultSongCoverImageUrl();
 		if (song.getAlbum() != null) {
 			albumCoverImage = song.getAlbum().getAlbumCoverImage();
 		}
-		incrementStreamingCount(songId);
-		return SongDetailsResponseDto.of(song, albumCoverImage, likesService.getSongLikesCount(songId));
+		incrementStreamingCount(song.getId());
+
+		boolean isLiked = likesService.isLikedBySongAndMember(song.getId(), member.getId());
+		return SongDetailsResponseDto.of(song, albumCoverImage, isLiked, likesService.getSongLikesCount(song.getId()));
 
 	}
 
