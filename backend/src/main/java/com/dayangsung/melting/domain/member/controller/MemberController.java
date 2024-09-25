@@ -2,8 +2,6 @@ package com.dayangsung.melting.domain.member.controller;
 
 import static com.dayangsung.melting.global.common.response.enums.ErrorMessage.*;
 
-import java.util.List;
-
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -85,9 +83,9 @@ public class MemberController {
 
 	@Operation(summary = "사용자가 생성한 곡 목록")
 	@GetMapping("/me/songs")
-	public ApiResponse<List<MemberSongResponseDto>> getMemberSongs(
+	public ApiResponse<MemberSongResponseDto> getMemberSongs(
 		@AuthenticationPrincipal CustomOAuth2User customOAuth2User) {
-		List<MemberSongResponseDto> memberSongResponseDto = memberService.getMemberSongs(customOAuth2User.getId());
+		MemberSongResponseDto memberSongResponseDto = memberService.getMemberSongs(customOAuth2User.getId());
 		return ApiResponse.ok(memberSongResponseDto);
 	}
 }

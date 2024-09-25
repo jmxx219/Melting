@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.dayangsung.melting.domain.likes.service.LikesService;
+import com.dayangsung.melting.domain.member.dto.SongListDto;
 import com.dayangsung.melting.domain.member.dto.response.MemberResponseDto;
 import com.dayangsung.melting.domain.member.dto.response.MemberSongResponseDto;
 import com.dayangsung.melting.domain.member.entity.Member;
@@ -87,18 +88,20 @@ public class MemberService {
 		cookieUtil.deleteJwtCookies(request, response);
 	}
 
-	public List<MemberSongResponseDto> getMemberSongs(Long memberId) {
-		List<Song> memberSongs = songRepository.findByMemberIdAndIsDeletedFalse(memberId);
+	public MemberSongResponseDto getMemberSongs(Long memberId) {
+		Member member = memberRepository.findById(memberId).orElseThrow(RuntimeException::new);
+
+		List<Song> memberSongs = songRepository.findByMemberIdAndIsDeletedFalse(member.getId());
 
 		Map<OriginalSong, List<Song>> groupedSongs = memberSongs.stream()
 			.collect(Collectors.groupingBy(Song::getOriginalSong));
 
-		return groupedSongs.entrySet().stream()
+		List<SongListDto> mySongList = groupedSongs.entrySet().stream()
 			.map(entry -> {
 				OriginalSong originalSong = entry.getKey();
 				List<Song> songs = entry.getValue();
 
-				List<SongMypageDto> songList = songs.stream()
+				List<SongMypageDto> songMypageDtoList = songs.stream()
 					.map(song -> SongMypageDto.builder()
 						.songId(song.getId())
 						.albumCoverImageUrl(song.getAlbum() != null ? song.getAlbum().getAlbumCoverImage() :
@@ -109,9 +112,12 @@ public class MemberService {
 						.build())
 					.collect(Collectors.toList());
 
-				return MemberSongResponseDto.of(originalSong, songList);
+				return SongListDto.of(originalSong, songMypageDtoList);
 			})
 			.collect(Collectors.toList());
 
+		boolean isPossibleAiCover = member.getCoverCount() >= 3;
+
+		return MemberSongResponseDto.of(mySongList, isPossibleAiCover);
 	}
 }
