@@ -8,7 +8,7 @@ import lombok.Builder;
 
 @Builder
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-public record MypageSongListDto(
+public record SongMypageDto(
 	Long songId,
 	String albumCoverImageUrl,
 	SongType songType,
