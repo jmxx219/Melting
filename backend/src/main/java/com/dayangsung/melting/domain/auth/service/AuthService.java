@@ -18,7 +18,6 @@ import com.dayangsung.melting.domain.auth.dto.response.OAuth2Response;
 import com.dayangsung.melting.domain.auth.enums.ProviderType;
 import com.dayangsung.melting.domain.member.entity.Member;
 import com.dayangsung.melting.domain.member.repository.MemberRepository;
-import com.dayangsung.melting.global.common.dto.TokenResponseDto;
 import com.dayangsung.melting.global.util.CookieUtil;
 import com.dayangsung.melting.global.util.JwtUtil;
 import com.dayangsung.melting.global.util.RedisUtil;
