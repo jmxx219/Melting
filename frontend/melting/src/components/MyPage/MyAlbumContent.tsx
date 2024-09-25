@@ -32,7 +32,7 @@ interface MyAlbumProps {
   viewType: 'my' | 'liked'
 }
 
-export default function MyAlbum({ album, viewType }: MyAlbumProps) {
+export default function MyAlbumContent({ album, viewType }: MyAlbumProps) {
   const navigate = useNavigate()
   const [isLiked, setIsLiked] = useState(album.isLiked)
   const [isPublic, setIsPublic] = useState(album.isPublic)
