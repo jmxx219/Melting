@@ -100,7 +100,7 @@ public class LikesService {
 
 		return songLikesCount != null ? songLikesCount.intValue() : 0;
 	}
-	
+
 	public boolean isLikedBySongAndMember(Long songId, Long memberId) {
 		Optional<LikesSong> likesSong = likesSongRepository.findLikesSongBySongIdAndMemberId(songId, memberId);
 		return likesSong.isPresent() && likesSong.get().isStatus();

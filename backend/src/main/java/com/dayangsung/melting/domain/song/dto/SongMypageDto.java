@@ -1,13 +1,10 @@
 package com.dayangsung.melting.domain.song.dto;
 
 import com.dayangsung.melting.domain.song.enums.SongType;
-import com.fasterxml.jackson.databind.PropertyNamingStrategies;
-import com.fasterxml.jackson.databind.annotation.JsonNaming;
 
 import lombok.Builder;
 
 @Builder
-@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public record SongMypageDto(
 	Long songId,
 	String albumCoverImageUrl,
