@@ -20,7 +20,6 @@ import com.dayangsung.melting.domain.auth.service.AuthService;
 import com.dayangsung.melting.global.filter.JwtFilter;
 import com.dayangsung.melting.global.handler.LoginFailureHandler;
 import com.dayangsung.melting.global.handler.LoginSuccessHandler;
-import com.dayangsung.melting.global.util.CookieUtil;
 import com.dayangsung.melting.global.util.JwtUtil;
 
 import lombok.RequiredArgsConstructor;
@@ -51,7 +50,7 @@ public class SecurityConfig {
 					.authorizationRequestRepository(httpCookieOAuth2AuthorizationRequestRepository)
 				)
 				.redirectionEndpoint(redirection -> redirection
-					.baseUri("/oauth2/login/code/*"))
+					.baseUri("/oauth2/login/code/**"))
 				.userInfoEndpoint((userInfoEndpointConfig) -> userInfoEndpointConfig
 					.userService(authService))
 				.successHandler(loginSuccessHandler)
@@ -62,8 +61,7 @@ public class SecurityConfig {
 						"/swagger-ui/**",
 						"/v3/api-docs/**",
 						"/api/v1/members/nickname-check",
-						"/api/v1/members/init",
-						"/oauth2/login/code/*"
+						"/api/v1/members/init"
 					)
 					.permitAll()
 					.anyRequest()
