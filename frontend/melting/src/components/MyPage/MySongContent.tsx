@@ -27,7 +27,7 @@ interface MySongProps {
   isPossibleAiCover: boolean
 }
 
-export default function MySong({
+export default function MySongContent({
   originalSong,
   isPossibleAiCover,
 }: MySongProps) {

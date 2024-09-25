@@ -1,4 +1,4 @@
-import LikedSong from '@/components/MyPage/LikedSong'
+import LikedSongContent from '@/components/MyPage/LikedSongContent'
 
 interface LikedSongListProps {
   sortOption: 'date' | 'popularity'
@@ -21,7 +21,7 @@ export default function LikedSongList({ sortOption }: LikedSongListProps) {
   return (
     <div>
       {songs.map((song) => (
-        <LikedSong key={song.song_id} song={song} />
+        <LikedSongContent key={song.song_id} song={song} />
       ))}
     </div>
   )

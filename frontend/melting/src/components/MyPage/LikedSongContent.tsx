@@ -11,7 +11,7 @@ interface LikedSongProps {
   }
 }
 
-export default function LikedSong({ song }: LikedSongProps) {
+export default function LikedSongContent({ song }: LikedSongProps) {
   return (
     <div className="flex items-center mb-4 p-2 border rounded-lg">
       <img
