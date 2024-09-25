@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import Heart from '@/components/icon/Heart'
+import Heart from '@/components/Icon/Heart'
 import { Play, Crown } from 'lucide-react'
 
 interface LikedSongProps {
