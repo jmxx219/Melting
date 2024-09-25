@@ -1,34 +1,75 @@
+import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
+import Heart from '@/components/icon/Heart'
+import { Play } from 'lucide-react'
+
 interface LikedSongProps {
   song: {
-    song_id: number
-    album_cover_img_url: string
+    songId: number
+    albumCoverImgUrl: string
     artist: string
-    song_title: string
+    songTitle: string
     nickname: string
-    execution_time: string
-    like_count: number
+    executionTime: string
+    likeCount: number
     isLiked: boolean
   }
+  hasProfileImage: boolean
 }
 
-export default function LikedSongContent({ song }: LikedSongProps) {
-  return (
-    <div className="flex items-center mb-4 p-2 border rounded-lg">
-      <img
-        src={song.album_cover_img_url}
-        alt={song.song_title}
-        className="w-16 h-16 mr-4 object-cover rounded-lg"
-      />
+export default function LikedSongContent({
+  song,
+  hasProfileImage,
+}: LikedSongProps) {
+  const navigate = useNavigate()
+  const [isLiked, setIsLiked] = useState(song.isLiked)
 
-      <div className="flex-1">
-        <div className="font-bold">{song.song_title}</div>
-        <div className="text-sm text-gray-500">
-          {song.artist} / {song.nickname}
+  const toggleLike = () => {
+    setIsLiked(!isLiked)
+    // TODO: 좋아요 상태 업데이트 API 호출
+  }
+
+  const goToPlaySong = (songId: number) => {
+    // TODO: 곡 재생 화면으로 이동
+    navigate(`/music/play/${songId}`)
+  }
+
+  const truncateText = (text: string, maxLength: number) => {
+    return text.length > maxLength ? text.slice(0, maxLength) + '...' : text
+  }
+
+  return (
+    <div className="flex items-center mb-4 gap-3">
+      {hasProfileImage && (
+        <img
+          src={song.albumCoverImgUrl}
+          alt={song.songTitle}
+          className="w-12 h-12 object-cover rounded-full"
+        />
+      )}
+
+      <div className="flex-1 flex flex-col justify-around h-12">
+        <div className="font-bold text-sm">
+          {truncateText(song.songTitle, 13)}
         </div>
-        <div className="text-xs text-gray-400">{song.execution_time}</div>
+        <div className="text-xs text-gray-500">{song.nickname}</div>
       </div>
 
-      <div className="text-sm">좋아요: {song.like_count.toLocaleString()}</div>
+      <div className="text-sm flex items-center w-14">
+        <button type="button" onClick={() => toggleLike()}>
+          <Heart fill={'#FFAF25'} fillOpacity={1} />
+        </button>
+        <div className="ml-1">
+          {song.likeCount > 999 ? '999+' : song.likeCount.toLocaleString()}
+        </div>
+      </div>
+
+      <div className="text-xs flex items-center w-12 text-gray-400">
+        <button type="button" onClick={() => goToPlaySong(song.songId)}>
+          <Play size={20} className="text-primary-400 fill-primary-400" />
+        </button>
+        <div className="ml-1">{song.executionTime}</div>
+      </div>
     </div>
   )
 }
