@@ -17,29 +17,19 @@ import lombok.RequiredArgsConstructor;
 public class JwtFilter extends OncePerRequestFilter {
 
 	private final JwtUtil jwtUtil;
-	private final CookieUtil cookieUtil;
 
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
 		FilterChain filterChain) throws ServletException, IOException {
 
-		String accessToken = cookieUtil.getCookie(request, "access_token");
-		String refreshToken = cookieUtil.getCookie(request, "refresh_token");
+		String accessToken = CookieUtil.getCookieValue(request, "access_token");
+		String refreshToken = CookieUtil.getCookieValue(request, "refresh_token");
 
 		if (accessToken == null && refreshToken == null) {
 			filterChain.doFilter(request, response);
 			return;
 		}
 
-		if (jwtUtil.signatureValidate(accessToken) && jwtUtil.isExpired(accessToken)) {
-			accessToken = jwtUtil.reissueToken(request, response, accessToken);
-			if (accessToken == null) {
-				cookieUtil.deleteJwtCookies(request, response);
-				filterChain.doFilter(request, response);
-				return;
-			}
-			cookieUtil.updateCookie(request, response, "access_token", accessToken);
-		}
 		filterChain.doFilter(request, response);
 	}
 }
