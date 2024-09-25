@@ -21,7 +21,6 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 public class MemberService {
 
-	private final CookieUtil cookieUtil;
 	private final AwsS3Service awsS3Service;
 	private final MemberRepository memberRepository;
 
@@ -72,6 +71,7 @@ public class MemberService {
 	}
 
 	public void logout(HttpServletRequest request, HttpServletResponse response) {
-		cookieUtil.deleteJwtCookies(request, response);
+		CookieUtil.deleteCookie(request, response, "access_token");
+		CookieUtil.deleteCookie(request, response, "refresh_token");
 	}
 }

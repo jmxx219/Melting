@@ -1,4 +1,4 @@
-package com.dayangsung.melting.domain.auth.dto;
+package com.dayangsung.melting.domain.auth;
 
 import java.util.Collection;
 import java.util.List;

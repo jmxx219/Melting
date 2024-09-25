@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.dayangsung.melting.domain.auth.dto.CustomOAuth2User;
+import com.dayangsung.melting.domain.auth.CustomOAuth2User;
 import com.dayangsung.melting.domain.member.dto.request.MemberInitRequestDto;
 import com.dayangsung.melting.domain.member.dto.request.MemberUpdateRequestDto;
 import com.dayangsung.melting.domain.member.dto.response.MemberResponseDto;
