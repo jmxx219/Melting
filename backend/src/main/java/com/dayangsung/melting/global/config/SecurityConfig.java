@@ -63,7 +63,7 @@ public class SecurityConfig {
 						"/v3/api-docs/**",
 						"/api/v1/members/nickname-check",
 						"/api/v1/members/init",
-						"/api/v1/members/oauth2/authorization/**"
+						"/oauth2/login/code/*"
 					)
 					.permitAll()
 					.anyRequest()
