@@ -72,7 +72,7 @@ public class AlbumController {
 	// 앨범 생성
 	@PostMapping
 	public ApiResponse<AlbumUpdateResponseDto> createAlbum(
-			@Valid @RequestBody AlbumCreateRequestDto albumCreateRequestDto) {
+		@Valid @RequestBody AlbumCreateRequestDto albumCreateRequestDto) {
 		AlbumUpdateResponseDto albumUpdateResponseDto = albumService.createAlbum(albumCreateRequestDto);
 		return ApiResponse.ok(albumUpdateResponseDto);
 	}
