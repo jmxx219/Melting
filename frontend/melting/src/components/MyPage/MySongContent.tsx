@@ -36,7 +36,7 @@ export default function MySongContent({
 
   const goToPlaySong = (songId: number) => {
     // TODO: 곡 재생 화면으로 이동
-    navigate(`/music/play/${songId}`)
+    navigate(`/music/play/`, { state: songId })
   }
 
   const goToRecordSong = (songId: number) => {

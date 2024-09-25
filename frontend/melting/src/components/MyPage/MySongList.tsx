@@ -6,7 +6,7 @@ interface AlbumSongToggleProps {
 
 export default function MySongList({}: AlbumSongToggleProps) {
   const data = {
-    originalSong: [
+    mySongList: [
       {
         originalSongId: 1,
         artist: '아이유',
@@ -51,7 +51,7 @@ export default function MySongList({}: AlbumSongToggleProps) {
 
   return (
     <div>
-      {data.originalSong.map((song) => (
+      {data.mySongList.map((song) => (
         <MySongContent
           key={song.originalSongId}
           originalSong={song}
