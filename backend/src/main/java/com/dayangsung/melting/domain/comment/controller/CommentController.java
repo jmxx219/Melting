@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.dayangsung.melting.domain.auth.dto.CustomOAuth2User;
+import com.dayangsung.melting.domain.auth.CustomOAuth2User;
 import com.dayangsung.melting.domain.comment.dto.request.CommentRequestDto;
 import com.dayangsung.melting.domain.comment.dto.response.CommentResponseDto;
 import com.dayangsung.melting.domain.comment.service.CommentService;

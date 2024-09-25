@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.dayangsung.melting.domain.auth.dto.CustomOAuth2User;
+import com.dayangsung.melting.domain.auth.CustomOAuth2User;
 import com.dayangsung.melting.domain.likes.service.LikesService;
 import com.dayangsung.melting.global.common.response.ApiResponse;
 
