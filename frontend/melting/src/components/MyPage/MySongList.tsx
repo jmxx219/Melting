@@ -4,7 +4,7 @@ interface AlbumSongToggleProps {
   sortOption: 'date' | 'popularity'
 }
 
-export default function MySongList({ sortOption }: AlbumSongToggleProps) {
+export default function MySongList({}: AlbumSongToggleProps) {
   const data = {
     originalSong: [
       {
