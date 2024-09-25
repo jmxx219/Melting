@@ -49,13 +49,15 @@ public class LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 		CookieUtil.setCookie(response, "access_token", accessToken, 60 * 30);
 		CookieUtil.setCookie(response, "refresh_token", refreshToken, 60 * 30);
 
-		redisUtil.saveRefreshToken(accessToken, refreshToken);
-		String determinedTargetUrl = determineTargetUrl(request, response, authentication);
+		redisUtil.saveAccessToken(email, accessToken);
+		redisUtil.saveRefreshToken(email, refreshToken);
 		clearAuthenticationAttributes(request, response);
-		Member member = memberRepository.findByEmail(email).orElse(null);
-		if (member == null) {
+		String determinedTargetUrl = determineTargetUrl(request, response, authentication);
+		Member member = memberRepository.findByEmail(email).orElseThrow(RuntimeException::new);
+		if (member.getGender() == null || member.getNickname() == null) {
 			determinedTargetUrl += "/api/v1/members/init";
 		}
+		log.debug(determinedTargetUrl);
 		response.sendRedirect(determinedTargetUrl);
 	}
 
