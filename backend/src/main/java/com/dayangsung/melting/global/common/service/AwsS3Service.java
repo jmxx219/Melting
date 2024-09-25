@@ -3,6 +3,8 @@ package com.dayangsung.melting.global.common.service;
 import static com.dayangsung.melting.global.common.response.enums.ErrorMessage.*;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
@@ -15,7 +17,6 @@ import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.AmazonS3Exception;
 import com.amazonaws.services.s3.model.DeleteObjectRequest;
 import com.amazonaws.services.s3.model.ObjectMetadata;
-import com.amazonaws.services.s3.model.S3Object;
 
 import lombok.RequiredArgsConstructor;
 
@@ -29,7 +30,7 @@ public class AwsS3Service {
 	private static final String CLOUDFRONTURL = "https://d35fpwscei7sb8.cloudfront.net";
 	private static final String MP3EXTENSION = ".mp3";
 
-	public String uploadFileToS3(MultipartFile multipartFile, String bucketFolderPath, Long id) throws IOException {
+	public String uploadFileToS3(MultipartFile multipartFile, String bucketFolderPath, String id) throws IOException {
 		String originalFilename = multipartFile.getOriginalFilename();
 		String extension = originalFilename.substring(originalFilename.lastIndexOf("."));
 		String s3FileName = id + extension;
@@ -42,6 +43,20 @@ public class AwsS3Service {
 		return CLOUDFRONTURL + bucketFolderPath + "/" + s3FileName;
 	}
 
+	public String uploadVoice(MultipartFile voice, Long memberId, Long originalSongId) {
+		String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"));
+		String id = String.format("m%d_os%d_%s", memberId, originalSongId, timestamp);
+
+		if (voice.isEmpty() || Objects.isNull(voice.getOriginalFilename())) {
+			throw new RuntimeException();
+		}
+		try {
+			return uploadFileToS3(voice, "/audio/member_voice", id);
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
 	public String uploadAlbumCoverImage(MultipartFile albumCoverImage, Long albumId) {
 		return uploadImage(albumCoverImage, "/image/generated_album", albumId);
 	}
@@ -51,7 +66,7 @@ public class AwsS3Service {
 			throw new RuntimeException();
 		}
 		try {
-			return uploadFileToS3(song, "/audio/generated_song", songId);
+			return uploadFileToS3(song, "/audio/generated_song", songId.toString());
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
@@ -63,7 +78,7 @@ public class AwsS3Service {
 		}
 		validateImageFileExtension(image.getOriginalFilename());
 		try {
-			return this.uploadFileToS3(image, bucketFolderPath, id);
+			return this.uploadFileToS3(image, bucketFolderPath, id.toString());
 		} catch (IOException e) {
 			throw new RuntimeException();
 		}

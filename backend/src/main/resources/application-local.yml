@@ -40,4 +40,3 @@ logging:
       dayangsung:
         melting: debug
     web: debug
-
