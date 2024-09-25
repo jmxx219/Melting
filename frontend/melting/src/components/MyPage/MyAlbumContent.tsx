@@ -44,7 +44,7 @@ export default function MyAlbumContent({ album, viewType }: MyAlbumProps) {
   const goToPlayAlbum = (e: React.MouseEvent) => {
     e.stopPropagation()
     // TODO: 앨범 재생 화면으로 이동
-    navigate(`/album/${album.id}/play`)
+    navigate(`/album//play`, { state: album.id })
   }
 
   const toggleLike = (e: React.MouseEvent) => {
