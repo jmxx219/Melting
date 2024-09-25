@@ -13,6 +13,8 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import com.dayangsung.melting.domain.auth.CustomOAuth2User;
 import com.dayangsung.melting.domain.auth.repository.HttpCookieOAuth2AuthorizationRequestRepository;
+import com.dayangsung.melting.domain.member.entity.Member;
+import com.dayangsung.melting.domain.member.repository.MemberRepository;
 import com.dayangsung.melting.global.util.CookieUtil;
 import com.dayangsung.melting.global.util.JwtUtil;
 import com.dayangsung.melting.global.util.RedisUtil;
@@ -31,6 +33,7 @@ public class LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 	private final JwtUtil jwtUtil;
 	private final HttpCookieOAuth2AuthorizationRequestRepository httpCookieOAuth2AuthorizationRequestRepository;
 	private final RedisUtil redisUtil;
+	private final MemberRepository memberRepository;
 
 	@Transactional
 	@Override
@@ -49,6 +52,10 @@ public class LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 		redisUtil.saveRefreshToken(accessToken, refreshToken);
 		String determinedTargetUrl = determineTargetUrl(request, response, authentication);
 		clearAuthenticationAttributes(request, response);
+		Member member = memberRepository.findByEmail(email).orElse(null);
+		if (member == null) {
+			determinedTargetUrl += "/api/v1/members/init";
+		}
 		response.sendRedirect(determinedTargetUrl);
 	}
 
