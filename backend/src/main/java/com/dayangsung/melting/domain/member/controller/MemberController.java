@@ -47,8 +47,8 @@ public class MemberController {
 
 	@PatchMapping("/init")
 	public ApiResponse<MemberResponseDto> initMemberInfo(
-		@RequestPart(required = false) MultipartFile multipartFile,
-		@RequestBody MemberInitRequestDto memberInitRequestDto,
+		@RequestPart MultipartFile multipartFile,
+		@RequestPart MemberInitRequestDto memberInitRequestDto,
 		@AuthenticationPrincipal CustomOAuth2User customOAuth2User) {
 		MemberResponseDto memberResponseDto =
 			memberService.initMemberInfo(multipartFile,
@@ -61,7 +61,7 @@ public class MemberController {
 	@PatchMapping
 	public ApiResponse<MemberResponseDto> updateMemberInfo(
 		@RequestPart MultipartFile multipartFile,
-		@RequestBody MemberUpdateRequestDto memberUpdateRequestDto,
+		@RequestPart MemberUpdateRequestDto memberUpdateRequestDto,
 		@AuthenticationPrincipal CustomOAuth2User customOAuth2User) {
 		if (multipartFile.isEmpty() && memberUpdateRequestDto.nickName().isEmpty()) {
 			return ApiResponse.error(MEMBER_BAD_REQUEST.getErrorMessage());
