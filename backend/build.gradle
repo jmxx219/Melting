@@ -44,6 +44,8 @@ dependencies {
     testImplementation 'org.springframework.security:spring-security-test'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
     // OpenAI
+    implementation 'io.github.flashvayne:chatgpt-spring-boot-starter:1.0.4'
+    implementation 'org.springframework.boot:spring-boot-starter-tomcat'
     implementation 'org.springframework.boot:spring-boot-starter-webflux'
     implementation 'com.fasterxml.jackson.core:jackson-databind'
     implementation 'com.amazonaws:aws-java-sdk-s3'
