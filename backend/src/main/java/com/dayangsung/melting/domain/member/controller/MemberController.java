@@ -5,7 +5,6 @@ import static com.dayangsung.melting.global.common.enums.ErrorMessage.*;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
@@ -48,11 +47,11 @@ public class MemberController {
 	@PatchMapping("/init")
 	public ApiResponse<MemberResponseDto> initMemberInfo(
 		@RequestPart(required = false) MultipartFile multipartFile,
-		@RequestBody MemberInitRequestDto memberInitRequestDto,
+		@RequestPart MemberInitRequestDto memberInitRequestDto,
 		@AuthenticationPrincipal CustomOAuth2User customOAuth2User) {
 		MemberResponseDto memberResponseDto =
 			memberService.initMemberInfo(multipartFile,
-				memberInitRequestDto.nickName(),
+				memberInitRequestDto.nickname(),
 				Gender.valueOf(memberInitRequestDto.gender()),
 				customOAuth2User.getId());
 		return ApiResponse.ok(memberResponseDto);
@@ -61,7 +60,7 @@ public class MemberController {
 	@PatchMapping
 	public ApiResponse<MemberResponseDto> updateMemberInfo(
 		@RequestPart MultipartFile multipartFile,
-		@RequestBody MemberUpdateRequestDto memberUpdateRequestDto,
+		@RequestPart MemberUpdateRequestDto memberUpdateRequestDto,
 		@AuthenticationPrincipal CustomOAuth2User customOAuth2User) {
 		if (multipartFile.isEmpty() && memberUpdateRequestDto.nickName().isEmpty()) {
 			return ApiResponse.error(MEMBER_BAD_REQUEST.getErrorMessage());

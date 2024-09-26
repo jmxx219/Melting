@@ -29,12 +29,12 @@ public class SongService {
 
 	public SongDetailsResponseDto getSongDetails(Long songId) {
 		Song song = songRepository.findById(songId).orElseThrow(RuntimeException::new);
-		String albumCoverImage = awsS3Service.getDefaultSongCoverImageUrl();
+		String albumCoverImageUrl = awsS3Service.getDefaultSongCoverImageUrl();
 		if (song.getAlbum() != null) {
-			albumCoverImage = song.getAlbum().getAlbumCoverImage();
+			albumCoverImageUrl = song.getAlbum().getAlbumCoverImageUrl();
 		}
 		incrementStreamingCount(songId);
-		return SongDetailsResponseDto.of(song, albumCoverImage, likesService.getSongLikesCount(songId));
+		return SongDetailsResponseDto.of(song, likesService.getSongLikesCount(songId));
 
 	}
 
