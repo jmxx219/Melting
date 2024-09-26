@@ -93,4 +93,13 @@ public class AlbumController {
 		return ApiResponse.ok(updatedAlbumDto);
 	}
 
+	// 생성형 AI를 통해 배경 사진을 만듦
+	@PostMapping("/{albumId}/covers")
+	public ApiResponse<String> createAiBackground(@PathVariable Long albumId,
+		@RequestBody AiCoverImageRequestDto aiCoverImageRequestDto) throws IOException {
+		List<Song> songs = aiCoverImageRequestDto.songs();
+		String url = albumCoverImageService.createAiCoverImage(albumId, songs);
+		return ApiResponse.ok(url);
+	}
+
 }
