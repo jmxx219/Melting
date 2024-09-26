@@ -46,7 +46,7 @@ public class SecurityConfig {
 			.addFilterBefore(new JwtFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class)
 			.oauth2Login(oauth2 -> oauth2
 				.authorizationEndpoint(authorization -> authorization
-					.baseUri("/oauth2/authorization")
+					.baseUri("/oauth2/authorize")
 					.authorizationRequestRepository(httpCookieOAuth2AuthorizationRequestRepository)
 				)
 				.redirectionEndpoint(redirection -> redirection
