@@ -16,4 +16,24 @@ export interface BestAlbum {
   albumCoverImage: string
 }
 
-export interface AlbumDetail {}
+export interface AlbumDetail {
+  albumTop: AlbumDetailInfo
+  albumId: number
+  genre: string[]
+  tracks: Song[]
+  albumDescription: string
+}
+
+export interface AlbumDetailInfo {
+  albumCoverImage: string
+  albumName: string
+  like: number
+  commentCnt: number
+  isLike: boolean
+  nickname: string
+  profileImage: string
+  createDate: string
+  genres: string[]
+  type: string
+  description: string
+}
