@@ -56,10 +56,10 @@ public interface CookieUtil {
 	static void setCookie(HttpServletResponse response,
 		String cookieName, String cookieContents, int maxAge) {
 		Cookie cookie = new Cookie(cookieName, cookieContents);
-		cookie.setSecure(true);
+		// cookie.setSecure(true);
 		cookie.setHttpOnly(true);
 		cookie.setMaxAge(maxAge);
-		cookie.setAttribute("SameSite", "None");
+		// cookie.setAttribute("SameSite", "None");
 		cookie.setPath("/");
 		response.addCookie(cookie);
 	}
