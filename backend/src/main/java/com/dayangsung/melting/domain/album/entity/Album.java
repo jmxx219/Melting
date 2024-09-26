@@ -99,6 +99,10 @@ public class Album extends BaseEntity {
 		this.category = AlbumCategory.getCategoryBySongCount(songCount);
 	}
 
+	public void setAiAlbumCoverImage(String albumCoverImage) {
+		this.albumCoverImage = albumCoverImage;
+	}
+
 	public void updateAlbumName(String albumName) {
 		this.albumName = albumName;
 	}
