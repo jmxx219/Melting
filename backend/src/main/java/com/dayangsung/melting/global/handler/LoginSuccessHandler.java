@@ -51,14 +51,15 @@ public class LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
 		redisUtil.saveAccessToken(email, accessToken);
 		redisUtil.saveRefreshToken(email, refreshToken);
-		clearAuthenticationAttributes(request, response);
 		String determinedTargetUrl = determineTargetUrl(request, response, authentication);
 		Member member = memberRepository.findByEmail(email).orElseThrow(RuntimeException::new);
 		if (member.getGender() == null || member.getNickname() == null) {
-			determinedTargetUrl += "/api/v1/members/init";
+			determinedTargetUrl += "?init=false";
+		} else {
+			determinedTargetUrl += "?init=true";
 		}
-		log.debug(determinedTargetUrl);
-		response.sendRedirect(determinedTargetUrl);
+		clearAuthenticationAttributes(request, response);
+		getRedirectStrategy().sendRedirect(request, response, determinedTargetUrl);
 	}
 
 	protected String determineTargetUrl(HttpServletRequest request, HttpServletResponse response,

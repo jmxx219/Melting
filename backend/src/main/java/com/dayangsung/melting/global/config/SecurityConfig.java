@@ -46,7 +46,7 @@ public class SecurityConfig {
 			.addFilterBefore(new JwtFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class)
 			.oauth2Login(oauth2 -> oauth2
 				.authorizationEndpoint(authorization -> authorization
-					.baseUri("/oauth2/authorize")
+					.baseUri("/oauth2/authorize/**")
 					.authorizationRequestRepository(httpCookieOAuth2AuthorizationRequestRepository)
 				)
 				.redirectionEndpoint(redirection -> redirection
@@ -64,7 +64,7 @@ public class SecurityConfig {
 	CorsConfigurationSource corsConfigurationSource() {
 		CorsConfiguration configuration = new CorsConfiguration();
 
-		configuration.setAllowedOrigins(List.of("http://localhost:3000", "https://j11a701.p.ssafy.io"));
+		configuration.setAllowedOrigins(List.of("https://localhost:5173", "http://localhost:5173", "https://j11a701.p.ssafy.io"));
 		configuration.setAllowedMethods(Collections.singletonList("*"));
 		configuration.setAllowCredentials(true);
 		configuration.setAllowedHeaders(List.of("Authorization", "Set-Cookie", "Content-Type"));
