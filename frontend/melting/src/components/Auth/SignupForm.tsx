@@ -18,11 +18,12 @@ const isValidNickname = (nickname: string): boolean => {
 }
 
 // 닉네임 중복 체크 함수 (실제로는 API 호출이 필요)
-const checkNicknameDuplicate = async (nickname: string): Promise<boolean> => {
+const checkNicknameDuplicate = async (nickname: string) => {
   // 여기에 실제 API 호출 로직 구현
   console.log(nickname)
   const response = await validateNickname(nickname)
-  return response.body
+  console.log(response)
+  // return response.body
 }
 
 export default function SignupForm() {
@@ -41,7 +42,7 @@ export default function SignupForm() {
         : true
 
       setIsNicknameValid(nicknameValid)
-      setIsNicknameDuplicate(nicknameDuplicate)
+      setIsNicknameDuplicate(true)
       setIsFormValid(nicknameValid && !nicknameDuplicate && !!gender)
     }
 
