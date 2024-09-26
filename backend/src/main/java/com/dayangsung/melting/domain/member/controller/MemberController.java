@@ -35,10 +35,12 @@ import lombok.extern.slf4j.Slf4j;
 public class MemberController {
 
 	private final MemberService memberService;
+	private final MemberRepository memberRepository;
+	private final AlbumService albumService;
 
 	@GetMapping
 	public ApiResponse<MemberResponseDto> getMemberInfo(
-		@AuthenticationPrincipal CustomOAuth2User customOAuth2User) {
+			@AuthenticationPrincipal CustomOAuth2User customOAuth2User) {
 		MemberResponseDto memberResponseDto = memberService.getMemberInfo(customOAuth2User.getId());
 		return ApiResponse.ok(memberResponseDto);
 	}
@@ -54,29 +56,29 @@ public class MemberController {
 
 	@PatchMapping("/init")
 	public ApiResponse<MemberResponseDto> initMemberInfo(
-		@RequestPart MultipartFile multipartFile,
-		@RequestBody MemberInitRequestDto memberInitRequestDto,
-		@AuthenticationPrincipal CustomOAuth2User customOAuth2User) {
+			@RequestPart MultipartFile multipartFile,
+			@RequestBody MemberInitRequestDto memberInitRequestDto,
+			@AuthenticationPrincipal CustomOAuth2User customOAuth2User) {
 		MemberResponseDto memberResponseDto =
-			memberService.initMemberInfo(multipartFile,
-				memberInitRequestDto.nickName(),
-				Gender.valueOf(memberInitRequestDto.gender()),
-				customOAuth2User.getId());
+				memberService.initMemberInfo(multipartFile,
+						memberInitRequestDto.nickName(),
+						Gender.valueOf(memberInitRequestDto.gender()),
+						customOAuth2User.getId());
 		return ApiResponse.ok(memberResponseDto);
 	}
 
 	@PatchMapping
 	public ApiResponse<MemberResponseDto> updateMemberInfo(
-		@RequestPart MultipartFile multipartFile,
-		@RequestBody MemberUpdateRequestDto memberUpdateRequestDto,
-		@AuthenticationPrincipal CustomOAuth2User customOAuth2User) {
+			@RequestPart MultipartFile multipartFile,
+			@RequestBody MemberUpdateRequestDto memberUpdateRequestDto,
+			@AuthenticationPrincipal CustomOAuth2User customOAuth2User) {
 		if (multipartFile.isEmpty() && memberUpdateRequestDto.nickName().isEmpty()) {
 			return ApiResponse.error(MEMBER_BAD_REQUEST.getErrorMessage());
 		}
 		MemberResponseDto memberResponseDto = memberService.updateMemberInfo(
-			multipartFile,
-			memberUpdateRequestDto.nickName(),
-			customOAuth2User.getId());
+				multipartFile,
+				memberUpdateRequestDto.nickName(),
+				customOAuth2User.getId());
 		return ApiResponse.ok(memberResponseDto);
 	}
 
