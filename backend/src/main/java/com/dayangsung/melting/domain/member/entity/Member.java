@@ -39,7 +39,7 @@ public class Member extends BaseEntity {
 	@Enumerated(EnumType.STRING)
 	private Gender gender;
 
-	private String profileImageExtension;
+	private String profileImageUrl;
 
 	private String nickname;
 
@@ -67,14 +67,14 @@ public class Member extends BaseEntity {
 		this.coverCount = 0;
 	}
 
-	public void initMember(Gender gender, String profileImageExtension, String nickname) {
+	public void initMember(Gender gender, String profileImageUrl, String nickname) {
 		this.gender = gender;
-		this.profileImageExtension = profileImageExtension;
+		this.profileImageUrl = profileImageUrl;
 		this.nickname = nickname;
 	}
 
-	public void updateMember(String profileImageExtension, String nickname) {
-		this.profileImageExtension = profileImageExtension;
+	public void updateMember(String profileImageUrl, String nickname) {
+		this.profileImageUrl = profileImageUrl;
 		this.nickname = nickname;
 	}
 
@@ -82,8 +82,8 @@ public class Member extends BaseEntity {
 		this.nickname = nickname;
 	}
 
-	public void updateProfileImageExtension(String profileImageExtension) {
-		this.profileImageExtension = profileImageExtension;
+	public void updateProfileImageUrl(String profileImageUrl) {
+		this.profileImageUrl = profileImageUrl;
 	}
 
 	public void increaseCoverCount() {
