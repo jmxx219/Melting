@@ -1,8 +1,15 @@
 import { SongPlay } from '@/types/songPlay'
-import { Heart, Pause, Play, SkipBack, SkipForward } from 'lucide-react'
+import {
+  Heart,
+  LoaderCircle,
+  Pause,
+  Play,
+  SkipBack,
+  SkipForward,
+} from 'lucide-react'
 import { ScrollArea } from '../ui/scroll-area'
 import AudioPlayer, { AudioPlayerHandle } from './AudioPlayer'
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useRef, useState, useEffect } from 'react'
 import { Button } from '../ui/button'
 
 type MusicPlayProps = {
@@ -18,9 +25,21 @@ export default function MusicPlayContent({
   onNext,
   onPrev,
 }: MusicPlayProps) {
-  const lyricsLines = song.lyrics.split('\n')
+  const [lyricsLines, setLyricsLines] = useState<string[]>([])
+  const [isLoading, setIsLoading] = useState(true)
   const audioPlayerRef = useRef<AudioPlayerHandle>(null)
   const [isPlaying, setIsPlaying] = useState(false)
+
+  useEffect(() => {
+    setIsLoading(true)
+    // 가사 로딩을 시뮬레이션하기 위해 setTimeout 사용
+    const timer = setTimeout(() => {
+      setLyricsLines(song.lyrics.split('\n'))
+      setIsLoading(false)
+    }, 500) // 500ms 후에 가사 표시
+
+    return () => clearTimeout(timer)
+  }, [song])
 
   const togglePlayPause = useCallback(() => {
     if (audioPlayerRef.current) {
@@ -36,7 +55,6 @@ export default function MusicPlayContent({
   const handleAudioEnd = useCallback(() => {
     if (isAlbumPlay && onNext) {
       onNext()
-      // 다음 곡으로 넘어간 후 자동 재생
       setTimeout(() => {
         if (audioPlayerRef.current) {
           audioPlayerRef.current.play()
@@ -48,7 +66,6 @@ export default function MusicPlayContent({
     }
   }, [isAlbumPlay, onNext])
 
-  // 곡이 변경될 때마다 자동 재생
   useEffect(() => {
     if (audioPlayerRef.current && isPlaying) {
       audioPlayerRef.current.play()
@@ -68,15 +85,21 @@ export default function MusicPlayContent({
           <span className="text-sm text-gray-600">{song.like}</span>
         </div>
       </div>
-      <ScrollArea className="py-3">
-        <div className="px-4 py-2">
-          {lyricsLines.map((line, index) => (
-            <div key={index} className="text-[#A5A5A5] text-center my-1">
-              {line}
+      <div className="flex-1 flex justify-center items-center overflow-hidden">
+        {isLoading ? (
+          <LoaderCircle className="animate-spin w-12 h-12 text-gray-500" />
+        ) : (
+          <ScrollArea className="w-full h-full py-3">
+            <div className="px-4 py-2">
+              {lyricsLines.map((line, index) => (
+                <div key={index} className="text-[#A5A5A5] text-center my-1">
+                  {line}
+                </div>
+              ))}
             </div>
-          ))}
-        </div>
-      </ScrollArea>
+          </ScrollArea>
+        )}
+      </div>
       <div className="py-3">
         <AudioPlayer
           ref={audioPlayerRef}
