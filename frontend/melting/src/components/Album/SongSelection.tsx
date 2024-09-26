@@ -48,6 +48,17 @@ export default function SongSelection() {
     items.splice(result.destination.index, 0, reorderedItem)
 
     setSelectedSongs(items)
+    if (titleSongIndex !== null) {
+      const titleSong = selectedSongs.find(
+        (song) => song.songId === titleSongIndex,
+      )
+      if (titleSong) {
+        const newIndex = items.findIndex(
+          (song) => song.songId === titleSong.songId,
+        )
+        setTitleSongIndex(items[newIndex].songId)
+      }
+    }
   }
 
   return (
