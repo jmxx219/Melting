@@ -1,6 +1,6 @@
 package com.dayangsung.melting.domain.album.service;
 
-import static com.dayangsung.melting.global.common.response.enums.ErrorMessage.*;
+import static com.dayangsung.melting.global.common.enums.ErrorMessage.*;
 
 import java.util.List;
 import java.util.function.Supplier;
@@ -9,14 +9,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.webjars.NotFoundException;
 
-import com.dayangsung.melting.domain.album.dto.request.AlbumCreateRequestDto;
-import com.dayangsung.melting.domain.album.dto.request.AlbumUpdateRequestDto;
-import com.dayangsung.melting.domain.album.dto.response.AlbumDetailsResponseDto;
-import com.dayangsung.melting.domain.album.dto.response.AlbumMainResponseDto;
-import com.dayangsung.melting.domain.album.dto.response.AlbumSearchResponseDto;
-import com.dayangsung.melting.domain.album.dto.response.AlbumUpdateResponseDto;
 import com.dayangsung.melting.domain.album.entity.Album;
-import com.dayangsung.melting.domain.album.enums.AlbumSortType;
+import com.dayangsung.melting.global.common.enums.SortType;
 import com.dayangsung.melting.domain.album.repository.AlbumRepository;
 import com.dayangsung.melting.domain.likes.service.LikesService;
 import com.dayangsung.melting.global.util.RedisUtil;
@@ -38,7 +32,7 @@ public class AlbumService {
 	}
 
 	// 커뮤니티 메인에서 사용. sort 파라미터에 따라 앨범 목록을 정렬하여 반환하는 메서드
-	public List<AlbumMainResponseDto> getAlbumsSorted(AlbumSortType sort) {
+	public List<AlbumMainResponseDto> getAlbumsSorted(SortType sort) {
 		List<Album> albums = switch (sort) {
 			case POPULAR -> redisUtil.getTop5AlbumLikes();
 			case LATEST -> albumRepository.findByIsPublicTrueAndIsDeletedFalseOrderByCreatedAtDesc();
