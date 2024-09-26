@@ -59,6 +59,7 @@ public interface CookieUtil {
 		cookie.setSecure(true);
 		cookie.setHttpOnly(true);
 		cookie.setMaxAge(maxAge);
+		cookie.setAttribute("SameSite", "None");
 		cookie.setPath("/");
 		response.addCookie(cookie);
 	}
