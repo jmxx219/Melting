@@ -15,3 +15,5 @@ export interface BestAlbum {
   nickname: string
   albumCoverImage: string
 }
+
+export interface AlbumDetail {}
