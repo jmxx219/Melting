@@ -9,7 +9,9 @@ import com.dayangsung.melting.global.util.CookieUtil;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Component
 public class HttpCookieOAuth2AuthorizationRequestRepository
 	implements AuthorizationRequestRepository<OAuth2AuthorizationRequest> {
@@ -31,10 +33,12 @@ public class HttpCookieOAuth2AuthorizationRequestRepository
 		HttpServletRequest request,
 		HttpServletResponse response) {
 		if (authorizationRequest == null) {
+			log.error("authorization request is null");
 			CookieUtil.deleteCookie(request, response, OAUTH2_AUTHORIZATION_REQUEST_COOKIE_NAME);
 			CookieUtil.deleteCookie(request, response, REDIRECT_URL_PARAM_COOKIE_NAME);
 			return;
 		}
+		log.debug("saveAuthorizationRequest: {}", authorizationRequest);
 		CookieUtil.setCookie(
 			response,
 			OAUTH2_AUTHORIZATION_REQUEST_COOKIE_NAME,
