@@ -54,6 +54,8 @@ public class LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 		String determinedTargetUrl = determineTargetUrl(request, response, authentication);
 		Member member = memberRepository.findByEmail(email).orElseThrow(RuntimeException::new);
 		if (member.getGender() == null || member.getNickname() == null) {
+			determinedTargetUrl += "?init=false";
+		} else {
 			determinedTargetUrl += "?init=true";
 		}
 		clearAuthenticationAttributes(request, response);
