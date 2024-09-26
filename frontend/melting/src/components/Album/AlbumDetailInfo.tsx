@@ -1,5 +1,5 @@
-import { AlbumDetailInfo } from '@/types/album'
-import { ChevronDown, ChevronUp, Pencil, Play } from 'lucide-react'
+import { AlbumDetailInfoType } from '@/types/album'
+import { Pencil, Play, X } from 'lucide-react'
 import { useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import Heart from '../Icon/Heart'
@@ -7,9 +7,18 @@ import Comment from '../Icon/Comment'
 import { Avatar, AvatarImage } from '../ui/avatar'
 import HashtagButton from '../Button/HashtagButton'
 import { Button } from '../ui/button'
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '../ui/alert-dialog'
 
 interface AlbumDetailProps {
-  albumInfo: AlbumDetailInfo
+  albumInfo: AlbumDetailInfoType
   albumId: number
 }
 
@@ -112,9 +121,21 @@ export default function AlbumDetailTop({
               전체보기
             </Button>
           )}
-          {/* {showModal && (
-
-          )} */}
+          <AlertDialog open={showModal} onOpenChange={setShowModal}>
+            <AlertDialogContent className="max-h-[80vh] overflow-y-auto scrollbar-hide">
+              <AlertDialogHeader>
+                <AlertDialogTitle className='flex justify-between'>
+                  <div>앨범 소개</div>
+                  <div>
+                    <X onClick={() => setShowModal(false)} />
+                  </div>
+                </AlertDialogTitle>
+                <AlertDialogDescription className="whitespace-pre-wrap">
+                  {albumInfo.description}
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+            </AlertDialogContent>
+          </AlertDialog>
         </div>
       </div>
     </div>

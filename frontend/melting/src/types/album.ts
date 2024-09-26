@@ -17,14 +17,14 @@ export interface BestAlbum {
 }
 
 export interface AlbumDetail {
-  albumTop: AlbumDetailInfo
+  albumTop: AlbumDetailInfoType
   albumId: number
   genre: string[]
   tracks: Song[]
   albumDescription: string
 }
 
-export interface AlbumDetailInfo {
+export interface AlbumDetailInfoType {
   albumCoverImage: string
   albumName: string
   like: number
