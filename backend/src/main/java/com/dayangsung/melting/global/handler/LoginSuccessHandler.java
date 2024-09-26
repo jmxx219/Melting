@@ -59,7 +59,7 @@ public class LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 			determinedTargetUrl += "?init=true";
 		}
 		clearAuthenticationAttributes(request, response);
-		response.sendRedirect(determinedTargetUrl);
+		getRedirectStrategy().sendRedirect(request, response, determinedTargetUrl);
 	}
 
 	protected String determineTargetUrl(HttpServletRequest request, HttpServletResponse response,
