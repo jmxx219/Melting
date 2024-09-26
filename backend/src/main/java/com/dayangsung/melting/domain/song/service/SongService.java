@@ -34,7 +34,7 @@ public class SongService {
 			albumCoverImageUrl = song.getAlbum().getAlbumCoverImageUrl();
 		}
 		incrementStreamingCount(songId);
-		return SongDetailsResponseDto.of(song, likesService.getSongLikesCount(songId));
+		return SongDetailsResponseDto.of(song, albumCoverImageUrl, likesService.getSongLikesCount(songId));
 
 	}
 

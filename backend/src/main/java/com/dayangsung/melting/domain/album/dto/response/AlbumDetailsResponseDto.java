@@ -15,7 +15,7 @@ import com.dayangsung.melting.domain.song.entity.Song;
 import lombok.Builder;
 
 @Builder
-public record AlbumDetailResponseDto(
+public record AlbumDetailsResponseDto(
 	String albumName,
 	String albumCreatorNickname,
 	String albumCreatorProfileImageUrl,
@@ -30,17 +30,17 @@ public record AlbumDetailResponseDto(
 	Boolean isLiked,
 	Integer likesCount
 ) {
-	public static AlbumDetailResponseDto of(Album album, Member member,
+	public static AlbumDetailsResponseDto of(Album album, Member member,
 		Boolean isLiked, Integer albumLikesCount, Map<Long, Integer> songLikesCounts, List<Song> songs,
-		Long commentCount) {
-		return AlbumDetailResponseDto.builder()
+		Long commentCount, String defaultAlbumCoverImageUrl) {
+		return AlbumDetailsResponseDto.builder()
 			.albumName(album.getAlbumName())
 			.albumCreatorNickname(member.getNickname())
 			.albumCreatorProfileImageUrl(member.getProfileImageUrl())
 			.albumDescription(album.getAlbumDescription())
 			.createdAt(album.getCreatedAt())
 			.songs(songs.stream()
-				.map(song -> SongDetailsResponseDto.of(song, songLikesCounts.get(song.getId())))
+				.map(song -> SongDetailsResponseDto.of(song, defaultAlbumCoverImageUrl, songLikesCounts.get(song.getId())))
 				.collect(Collectors.toList()))
 			.hashtags(album.getHashtags().stream()
 				.map(albumHashtag -> albumHashtag.getHashtag().getContent())
