@@ -32,7 +32,7 @@ public class MemberService {
 	public MemberResponseDto initMemberInfo(MultipartFile profileImage, String nickname, Gender gender, Long memberId) {
 		String profileImageUrl = awsS3Service.getDefaultProfileImageUrl();
 		if (!profileImage.isEmpty()) {
-			profileImageUrl = awsS3Service.uploadProfileImage(profileImage, memberId, null);
+			profileImageUrl = awsS3Service.uploadProfileImage(profileImage, memberId);
 		}
 		Member member = memberRepository.findById(memberId)
 			.orElseThrow(RuntimeException::new);
@@ -50,18 +50,14 @@ public class MemberService {
 	@Transactional
 	public MemberResponseDto updateMemberInfo(MultipartFile multipartFile, String nickname, Long memberId) {
 		Member member = memberRepository.findById(memberId).orElseThrow(RuntimeException::new);
-		String newFileName = multipartFile.getOriginalFilename();
 		if (nickname == null) {
-			String extension = newFileName.substring(newFileName.lastIndexOf(".") + 1).toLowerCase();
-			member.updateProfileImageExtension(extension);
-			awsS3Service.uploadProfileImage(multipartFile, memberId,
-				member.getProfileImageExtension());
+			String profileImageUrl = awsS3Service.uploadProfileImage(multipartFile, memberId);
+			member.updateProfileImageUrl(profileImageUrl);
 		} else {
 			if (multipartFile.isEmpty()) {
 				member.updateNickname(nickname);
 			} else {
-				String profileImageUrl = awsS3Service.uploadProfileImage(multipartFile, memberId,
-					member.getProfileImageExtension());
+				String profileImageUrl = awsS3Service.uploadProfileImage(multipartFile, memberId);
 				member.updateMember(profileImageUrl, nickname);
 			}
 		}
