@@ -10,6 +10,7 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { ArrowRight, Camera, User } from 'lucide-react'
+import { validateNickname } from '@/apis/userApi.ts'
 
 const isValidNickname = (nickname: string): boolean => {
   const regex = /^[가-힣a-zA-Z0-9]{2,20}$/
@@ -20,7 +21,8 @@ const isValidNickname = (nickname: string): boolean => {
 const checkNicknameDuplicate = async (nickname: string): Promise<boolean> => {
   // 여기에 실제 API 호출 로직 구현
   console.log(nickname)
-  return new Promise((resolve) => setTimeout(() => resolve(false), 1000))
+  const response = await validateNickname(nickname)
+  return response.body
 }
 
 export default function SignupForm() {
