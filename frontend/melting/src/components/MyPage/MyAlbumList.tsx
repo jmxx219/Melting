@@ -12,12 +12,12 @@ interface AlbumData {
   isPublic: boolean
 }
 
-interface AlbumListProps {
+interface MyAlbumListProps {
   sortOption: 'date' | 'popularity'
   viewType: 'my' | 'liked'
 }
 
-export default function AlbumList({ viewType }: AlbumListProps) {
+export default function MyAlbumList({ viewType }: MyAlbumListProps) {
   const [albums] = useState<AlbumData[]>([
     {
       id: 1,
