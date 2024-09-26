@@ -1,0 +1,42 @@
+spring:
+  application:
+    name: melting
+
+  config:
+    import: application-secret.yml
+
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/melting
+    username: postgres
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        format_sql: true
+    show-sql: true
+    defer-datasource-initialization: true
+
+  mvc:
+    problem details:
+      enabled: true
+
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      redisson-prefix: redis://
+
+  servlet:
+    multipart:
+      max-file-size: 20MB
+      max-request-size: 20MB
+
+logging:
+  level:
+    com:
+      dayangsung:
+        melting: debug
+    web: debug
