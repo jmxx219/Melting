@@ -1,22 +1,11 @@
-import { LoginResponse } from '@/types/auth'
+const VITE_API_BASE_URL = import.meta.env.VITE_API_BASE_URL
+const VITE_LOCAL_URL = import.meta.env.VITE_LOCAL_URL
+const VITE_API_MEMBERS_PATH = import.meta.env.VITE_API_MEMBERS_PATH
 
-// 소셜 로그인으로 구현
-export const login = async (
-  email: string,
-  password: string,
-): Promise<LoginResponse> => {
-  // 실제 API 호출을 여기에 구현합니다.
-  console.log(password)
-  // 지금은 더미 응답을 반환합니다.
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      resolve({
-        accessToken: 'dummy_token',
-        user: {
-          id: '1',
-          email: email,
-        },
-      })
-    }, 1000)
-  })
+export default function login(provider: 'kakao' | 'google') {
+  window.location.href = `${VITE_API_BASE_URL}/oauth2/authorize/${provider}?redirect_url=${VITE_LOCAL_URL}/login/callback`
 }
+
+// export function reissue() {}
+
+// export function logout() {}
