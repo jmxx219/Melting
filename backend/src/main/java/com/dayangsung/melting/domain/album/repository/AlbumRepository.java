@@ -11,6 +11,9 @@ import io.lettuce.core.dynamic.annotation.Param;
 
 public interface AlbumRepository extends JpaRepository<Album, Long> {
 
+	// 회원 앨범 리스트 조회
+	List<Album> findAllByMemberId(@Param("memberId") Long memberId);
+
 	Album findByIdAndIsDeletedFalse(Long albumId);
 
 	// 공개되어 있고 삭제되지 않은 앨범 최신순 정렬
