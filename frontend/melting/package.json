@@ -32,6 +32,7 @@
     "react-beautiful-dnd": "^13.1.1",
     "react-dom": "^18.3.1",
     "react-router-dom": "^6.26.2",
+    "swagger-typescript-api": "^13.0.22",
     "tailwind-merge": "^2.5.2",
     "tailwindcss-animate": "^1.0.7"
   },
