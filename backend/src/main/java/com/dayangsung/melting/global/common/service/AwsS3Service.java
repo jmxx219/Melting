@@ -2,8 +2,10 @@ package com.dayangsung.melting.global.common.service;
 
 import static com.dayangsung.melting.global.common.response.enums.ErrorMessage.*;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Base64;
 import java.util.List;
 import java.util.Objects;
 
@@ -15,7 +17,7 @@ import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.AmazonS3Exception;
 import com.amazonaws.services.s3.model.DeleteObjectRequest;
 import com.amazonaws.services.s3.model.ObjectMetadata;
-import com.amazonaws.services.s3.model.S3Object;
+import com.amazonaws.services.s3.model.PutObjectRequest;
 
 import lombok.RequiredArgsConstructor;
 
@@ -119,4 +121,16 @@ public class AwsS3Service {
 	public void deleteFile(String fileName, String bucketFolderPath) {
 		amazonS3.deleteObject(new DeleteObjectRequest(bucket + bucketFolderPath, fileName));
 	}
+
+	public String uploadBase64ImageToS3(String base64Image, String fileName) {
+		byte[] imageBytes = Base64.getDecoder().decode(base64Image);
+		ByteArrayInputStream inputStream = new ByteArrayInputStream(imageBytes);
+		ObjectMetadata metadata = new ObjectMetadata();
+		metadata.setContentLength(imageBytes.length);
+		metadata.setContentType("image/png");
+
+		amazonS3.putObject(new PutObjectRequest(bucket, fileName, inputStream, metadata));
+		return amazonS3.getUrl(bucket, fileName).toString();
+	}
+
 }
