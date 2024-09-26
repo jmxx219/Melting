@@ -1,4 +1,4 @@
-import SongContent from '@/components/MyPage/SongContent'
+import SongContent from '@/components/Common/SongContent'
 
 interface LikedSongListProps {
   sortOption: 'date' | 'popularity'
