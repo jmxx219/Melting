@@ -1,5 +1,6 @@
 package com.dayangsung.melting.domain.album.controller;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -16,12 +17,16 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.dayangsung.melting.domain.album.dto.request.AlbumCreateRequestDto;
 import com.dayangsung.melting.domain.album.dto.request.AlbumUpdateRequestDto;
+import com.dayangsung.melting.domain.album.dto.request.openai.AiCoverImageRequestDto;
 import com.dayangsung.melting.domain.album.dto.response.AlbumDetailsResponseDto;
 import com.dayangsung.melting.domain.album.dto.response.AlbumMainResponseDto;
 import com.dayangsung.melting.domain.album.dto.response.AlbumSearchResponseDto;
 import com.dayangsung.melting.domain.album.dto.response.AlbumUpdateResponseDto;
 import com.dayangsung.melting.domain.album.enums.AlbumSortType;
+import com.dayangsung.melting.domain.album.service.AlbumCoverImageService;
+import com.dayangsung.melting.domain.album.service.AlbumDescriptionService;
 import com.dayangsung.melting.domain.album.service.AlbumService;
+import com.dayangsung.melting.domain.song.entity.Song;
 import com.dayangsung.melting.global.common.response.ApiResponse;
 
 import jakarta.validation.Valid;
@@ -33,11 +38,13 @@ import lombok.RequiredArgsConstructor;
 public class AlbumController {
 
 	private final AlbumService albumService;
+	private final AlbumCoverImageService albumCoverImageService;
+	private final AlbumDescriptionService albumDescriptionService;
 
 	// 커뮤니티 메인 페이지에 보여지는 앨범 조회, 기본값은 최신순
 	@GetMapping
 	public ApiResponse<List<AlbumMainResponseDto>> getAlbumsInCommunityMainPage(
-		@RequestParam(value = "sort", defaultValue = "LATEST") AlbumSortType sort) {
+			@RequestParam(value = "sort", defaultValue = "LATEST") AlbumSortType sort) {
 		List<AlbumMainResponseDto> albumMainResponseDtoList = albumService.getAlbumsSorted(sort);
 		return ApiResponse.ok(albumMainResponseDtoList);
 	}
@@ -45,12 +52,12 @@ public class AlbumController {
 	// 키워드 검색을 통한 앨범 조회
 	@GetMapping("/search")
 	public ApiResponse<List<AlbumSearchResponseDto>> searchAlbumsByKeyword(
-		@RequestParam(value = "keyword") String keyword,
-		@RequestParam(value = "type") List<String> types) {
+			@RequestParam(value = "keyword") String keyword,
+			@RequestParam(value = "type") List<String> types) {
 
 		Set<AlbumSearchResponseDto> result = new HashSet<>();
 
-		// TODO: 최소 하나 선택 되도록 예외 처리 (프론트에 물어 보기)
+		// TODO: 최소 하나 선택 되도록 처리 (프론트에 물어 보기)
 
 		// 각 type에 따른 검색 수행
 		if (types.contains("album")) {
@@ -72,7 +79,7 @@ public class AlbumController {
 	// 앨범 생성
 	@PostMapping
 	public ApiResponse<AlbumUpdateResponseDto> createAlbum(
-		@Valid @RequestBody AlbumCreateRequestDto albumCreateRequestDto) {
+			@Valid @RequestBody AlbumCreateRequestDto albumCreateRequestDto) {
 		AlbumUpdateResponseDto albumUpdateResponseDto = albumService.createAlbum(albumCreateRequestDto);
 		return ApiResponse.ok(albumUpdateResponseDto);
 	}
@@ -87,8 +94,8 @@ public class AlbumController {
 	// 앨범 수정
 	@PatchMapping("/{albumId}")
 	public ApiResponse<AlbumUpdateResponseDto> updateAlbum(
-		@PathVariable Long albumId,
-		@RequestBody AlbumUpdateRequestDto albumUpdateRequestDto) {
+			@PathVariable Long albumId,
+			@RequestBody AlbumUpdateRequestDto albumUpdateRequestDto) {
 		AlbumUpdateResponseDto updatedAlbumDto = albumService.updateAlbum(albumId, albumUpdateRequestDto);
 		return ApiResponse.ok(updatedAlbumDto);
 	}
@@ -96,10 +103,19 @@ public class AlbumController {
 	// 생성형 AI를 통해 배경 사진을 만듦
 	@PostMapping("/{albumId}/covers")
 	public ApiResponse<String> createAiBackground(@PathVariable Long albumId,
-		@RequestBody AiCoverImageRequestDto aiCoverImageRequestDto) throws IOException {
+			@RequestBody AiCoverImageRequestDto aiCoverImageRequestDto) throws IOException {
 		List<Song> songs = aiCoverImageRequestDto.songs();
 		String url = albumCoverImageService.createAiCoverImage(albumId, songs);
 		return ApiResponse.ok(url);
 	}
+
+	// @PostMapping("/{albumId}/descriptions")
+	// public ApiResponse<String> createAiDescription(
+	// 	@PathVariable Long albumId,
+	// 	@RequestBody AiDescriptionRequestDto aiDescriptionRequestDto) throws IOException {
+	//
+	// 	String url = albumDescriptionService.createAiDescription(albumId, aiDescriptionRequestDto);
+	// 	return ApiResponse.ok(url);
+	// }
 
 }
