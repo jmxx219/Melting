@@ -18,7 +18,9 @@ import com.dayangsung.melting.domain.album.dto.response.AlbumUpdateResponseDto;
 import com.dayangsung.melting.domain.album.entity.Album;
 import com.dayangsung.melting.domain.album.enums.AlbumSortType;
 import com.dayangsung.melting.domain.album.repository.AlbumRepository;
-import com.dayangsung.melting.domain.song.entity.Song;
+import com.dayangsung.melting.domain.member.dto.response.MemberAlbumResponseDto;
+import com.dayangsung.melting.domain.member.entity.Member;
+import com.dayangsung.melting.domain.member.repository.MemberRepository;
 
 import lombok.RequiredArgsConstructor;
 
@@ -27,10 +29,18 @@ import lombok.RequiredArgsConstructor;
 public class AlbumService {
 
 	private final AlbumRepository albumRepository;
+	private final MemberRepository memberRepository;
 
 	// 모든 앨범 조회
 	public List<AlbumSearchResponseDto> getAllAlbums() {
 		return getAlbumsBy(albumRepository::findAll);
+	}
+
+	// 특정 유저의 모든 앨범 조회
+	public MemberAlbumResponseDto getAllAlbumsByNickname(Long memberId) {
+		List<Album> albums = albumRepository.findAllByMemberId(memberId);
+		Member member = memberRepository.getReferenceById(memberId);
+		return MemberAlbumResponseDto.of(member, albums);
 	}
 
 	// 커뮤니티 메인에서 사용. sort 파라미터에 따라 앨범 목록을 정렬하여 반환하는 메서드
@@ -44,8 +54,8 @@ public class AlbumService {
 
 		// 앨범을 DTO로 변환하여 반환
 		return albums.stream()
-			.map(AlbumMainResponseDto::of)
-			.toList();
+				.map(AlbumMainResponseDto::of)
+				.toList();
 	}
 
 	// 앨범명 검색을 통한 앨범 조회
@@ -83,8 +93,8 @@ public class AlbumService {
 	private List<AlbumSearchResponseDto> getAlbumsBy(Supplier<List<Album>> albumSupplier) {
 		List<Album> albums = albumSupplier.get();
 		return albums.stream()
-			.map(AlbumSearchResponseDto::of)
-			.toList();
+				.map(AlbumSearchResponseDto::of)
+				.toList();
 	}
 
 	public AlbumDetailsResponseDto getAlbumDetails(Long albumId) {
@@ -99,7 +109,7 @@ public class AlbumService {
 	public AlbumUpdateResponseDto updateAlbum(Long albumId, AlbumUpdateRequestDto albumUpdateRequestDto) {
 		// 앨범 조회
 		Album album = albumRepository.findById(albumId)
-			.orElseThrow(() -> new NotFoundException(ALBUM_NOT_FOUND.getErrorMessage()));
+				.orElseThrow(() -> new NotFoundException(ALBUM_NOT_FOUND.getErrorMessage()));
 
 		// DTO에서 받은 정보로 앨범 업데이트
 		String newAlbumName = albumUpdateRequestDto.albumName();
@@ -132,20 +142,20 @@ public class AlbumService {
 
 		// 앨범 설명 유효성 검사
 		if (albumCreateRequestDto.albumDescription() == null || albumCreateRequestDto.albumDescription()
-			.trim()
-			.isEmpty()) {
+				.trim()
+				.isEmpty()) {
 			// TODO: AI 소개 생성
 		}
 
 		// 앨범 커버 이미지 유효성 검사
 		if (albumCreateRequestDto.albumCoverImage() == null || albumCreateRequestDto.albumCoverImage()
-			.trim()
-			.isEmpty()) {
+				.trim()
+				.isEmpty()) {
 			throw new IllegalArgumentException(ALBUM_COVER_IMAGE_BLANK_ERROR.getErrorMessage());
 		}
 
 		// 곡 목록 유효성 검사
-		List<Song> songs = albumCreateRequestDto.songs();
+		List<Long> songs = albumCreateRequestDto.songs();
 		if (songs == null || songs.isEmpty()) {
 			throw new IllegalArgumentException(ALBUM_SONGS_EMPTY_ERROR.getErrorMessage());
 		} else if (10 <= songs.size()) {
@@ -154,17 +164,12 @@ public class AlbumService {
 
 		// 앨범 객체 생성
 		Album album = Album.builder()
-			.albumName(albumCreateRequestDto.albumName())
-			.albumDescription(albumCreateRequestDto.albumDescription())
-			.albumCoverImage(albumCreateRequestDto.albumCoverImage())
-			.build();
+				.albumName(albumCreateRequestDto.albumName())
+				.albumDescription(albumCreateRequestDto.albumDescription())
+				.albumCoverImage(albumCreateRequestDto.albumCoverImage())
+				.build();
 
-		// 곡 추가
-		for (int i = 0; i < songs.size(); i++) {
-			// 앨범에 곡 추가
-			// TODO: isTitle 고려
-			album.addSong(songs.get(i), i + 1, i == 0); // 첫 번째 곡을 타이틀 곡으로 설정
-		}
+		// TODO: isTitle 고려
 
 		// 앨범 저장
 		Album savedAlbum = albumRepository.save(album);
