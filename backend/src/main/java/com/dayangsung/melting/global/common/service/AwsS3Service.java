@@ -1,6 +1,6 @@
 package com.dayangsung.melting.global.common.service;
 
-import static com.dayangsung.melting.global.common.response.enums.ErrorMessage.*;
+import static com.dayangsung.melting.global.common.enums.ErrorMessage.*;
 
 import java.io.IOException;
 import java.time.LocalDateTime;

@@ -1,4 +1,4 @@
-package com.dayangsung.melting.global.common.response.enums;
+package com.dayangsung.melting.global.common.enums;
 
 import lombok.Getter;
 
