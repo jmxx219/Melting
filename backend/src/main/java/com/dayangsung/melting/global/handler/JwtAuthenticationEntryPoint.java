@@ -9,7 +9,6 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.stereotype.Component;
 
-import com.dayangsung.melting.global.common.response.ApiResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -30,10 +29,19 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
 		response.setContentType(MediaType.APPLICATION_JSON_VALUE);
 		response.setCharacterEncoding("UTF-8");
 
+		ObjectMapper objectMapper = new ObjectMapper();
+
+		Map<String, Object> data = new HashMap<>();
+		Map<String, Object> error = new HashMap<>();
+		error.put("status", HttpServletResponse.SC_UNAUTHORIZED);
+		error.put("message", ex.getMessage());
+		error.put("path", request.getServletPath());
+		data.put("error", error);
+		data.put("error-message", "Unauthorized - TOKEN_NOT_EXIST");
 		try {
-			response.getWriter().write(
-				"Unauthorized - TOKEN_NOT_EXIST"
-			);
+			response.getWriter().write(objectMapper.writeValueAsString(
+				data
+			));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
