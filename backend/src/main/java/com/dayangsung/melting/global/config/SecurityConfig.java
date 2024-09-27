@@ -45,6 +45,9 @@ public class SecurityConfig {
 			.csrf(AbstractHttpConfigurer::disable)
 			.formLogin(AbstractHttpConfigurer::disable)
 			.httpBasic(AbstractHttpConfigurer::disable)
+			.exceptionHandling((exceptions) -> exceptions
+				.authenticationEntryPoint(new JwtAuthenticationEntryPoint())
+				.accessDeniedHandler(new JwtAccessDeniedHandler()))
 			.addFilterBefore(new JwtFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class)
 			.oauth2Login(oauth2 -> oauth2
 				.authorizationEndpoint(authorization -> authorization
@@ -70,11 +73,7 @@ public class SecurityConfig {
 			)
 			.sessionManagement(session -> session
 				.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-			)
-			.exceptionHandling((exceptions) -> exceptions
-				.authenticationEntryPoint(new JwtAuthenticationEntryPoint()) // 인증 실패 핸들링
-				.accessDeniedHandler(new JwtAccessDeniedHandler())); // 인가 실패 핸들링
-
+			);
 
 		return http.build();
 	}
