@@ -43,6 +43,7 @@ public class MemberService {
 
 	@Transactional
 	public MemberResponseDto initMemberInfo(MultipartFile profileImage, String nickname, Gender gender, String email) {
+		log.debug("member service nickname {}", nickname);
 		String profileImageUrl = awsS3Service.getDefaultProfileImageUrl();
 		Member member = memberRepository.findByEmail(email).orElseThrow(RuntimeException::new);
 		if (!profileImage.isEmpty()) {

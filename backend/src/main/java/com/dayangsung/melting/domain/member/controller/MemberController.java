@@ -51,6 +51,7 @@ public class MemberController {
 		@RequestPart MultipartFile multipartFile,
 		@RequestPart MemberInitRequestDto memberInitRequestDto,
 		@AuthenticationPrincipal CustomOAuth2User customOAuth2User) {
+		log.debug("member service nickname {}", memberInitRequestDto.nickname());
 		MemberResponseDto memberResponseDto =
 			memberService.initMemberInfo(multipartFile,
 				memberInitRequestDto.nickname(),
