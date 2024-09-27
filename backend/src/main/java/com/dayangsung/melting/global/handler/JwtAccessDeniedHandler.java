@@ -29,12 +29,10 @@ public class JwtAccessDeniedHandler implements AccessDeniedHandler {
 		response.setContentType(MediaType.APPLICATION_JSON_VALUE);
 		response.setCharacterEncoding("UTF-8");
 
-		ObjectMapper objectMapper = new ObjectMapper();
-
 		try {
-			response.getWriter().write(objectMapper.writeValueAsString(
+			response.getWriter().write(
 				"forbidden"
-			));
+			);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
