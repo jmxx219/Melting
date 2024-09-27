@@ -5,17 +5,6 @@ import Heart from '@/components/Icon/Heart'
 import { X, Play } from 'lucide-react'
 import { formatLikeCount } from '@/utils/numberUtil'
 import ConfirmDialog from '@/components/Common/ConfirmDialog'
-// import {
-//   AlertDialog,
-//   AlertDialogTrigger,
-//   AlertDialogContent,
-//   AlertDialogHeader,
-//   AlertDialogFooter,
-//   AlertDialogCancel,
-//   AlertDialogAction,
-//   AlertDialogTitle,
-//   AlertDialogDescription,
-// } from '@/components/ui/alert-dialog'
 
 interface AlbumData {
   id: number
