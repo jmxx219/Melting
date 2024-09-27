@@ -37,8 +37,8 @@ public class MemberController {
 
 	@GetMapping
 	public ApiResponse<MemberResponseDto> getMemberInfo(
-		@AuthenticationPrincipal CustomOAuth2User customOAuth2User) {
-		MemberResponseDto memberResponseDto = memberService.getMemberInfo(customOAuth2User.getId());
+		@AuthenticationPrincipal String email) {
+		MemberResponseDto memberResponseDto = memberService.getMemberInfo(email);
 		return ApiResponse.ok(memberResponseDto);
 	}
 
@@ -51,12 +51,12 @@ public class MemberController {
 	public ApiResponse<MemberResponseDto> initMemberInfo(
 		@RequestPart MultipartFile multipartFile,
 		@RequestPart MemberInitRequestDto memberInitRequestDto,
-		@AuthenticationPrincipal CustomOAuth2User customOAuth2User) {
+		@AuthenticationPrincipal String email) {
 		MemberResponseDto memberResponseDto =
 			memberService.initMemberInfo(multipartFile,
 				memberInitRequestDto.nickName(),
 				Gender.valueOf(memberInitRequestDto.gender().toUpperCase()),
-				customOAuth2User.getId());
+				email);
 		return ApiResponse.ok(memberResponseDto);
 	}
 
@@ -64,14 +64,14 @@ public class MemberController {
 	public ApiResponse<MemberResponseDto> updateMemberInfo(
 		@RequestPart MultipartFile multipartFile,
 		@RequestPart MemberUpdateRequestDto memberUpdateRequestDto,
-		@AuthenticationPrincipal CustomOAuth2User customOAuth2User) {
+		@AuthenticationPrincipal String email) {
 		if (multipartFile.isEmpty() && memberUpdateRequestDto.nickName().isEmpty()) {
 			return ApiResponse.error(MEMBER_BAD_REQUEST.getErrorMessage());
 		}
 		MemberResponseDto memberResponseDto = memberService.updateMemberInfo(
 			multipartFile,
 			memberUpdateRequestDto.nickName(),
-			customOAuth2User.getId());
+			email);
 		return ApiResponse.ok(memberResponseDto);
 	}
 
