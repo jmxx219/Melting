@@ -126,6 +126,7 @@ export default function AlbumForm() {
             id="albumDetail"
             className={`min-h-[100px] ${albumIntro ? 'border-primary-400' : ''}`}
             placeholder={`앨범에 대한 소개를 입력해주세요.\n입력하지 않으면 AI가 자동으로 생성합니다.`}
+            value={albumIntro}
             onChange={(e) => setAlbumIntro(e.target.value)}
             autoComplete="off"
             spellCheck="false"
