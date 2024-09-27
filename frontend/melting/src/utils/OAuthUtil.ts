@@ -1,8 +1,21 @@
 import { useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 
+const VITE_API_BASE_URL = import.meta.env.VITE_API_BASE_URL
+const VITE_LOCAL_URL = import.meta.env.VITE_LOCAL_URL
+
 export default function OAuthRedirectHandler() {
   const navigate = useNavigate()
+
+  useEffect(() => {
+    fetch(
+      `${VITE_API_BASE_URL}/oauth2/authorize/${'kakao'}?redirect_url=${VITE_LOCAL_URL}/login/callback`,
+      {
+        mode: 'no-cors',
+        // "credentials": "include"
+      },
+    )
+  }, [])
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search)
