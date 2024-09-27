@@ -70,7 +70,7 @@ public class SecurityConfig {
 		configuration.setAllowedHeaders(List.of("Authorization", "Set-Cookie", "Content-Type"));
 		configuration.setMaxAge(3600L);
 
-		configuration.setExposedHeaders(List.of("Authorization", "Set-Cookie"));
+		configuration.setExposedHeaders(List.of("Authorization", "Set-Cookie", "Content-Type"));
 
 		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
 		source.registerCorsConfiguration("/**", configuration);
