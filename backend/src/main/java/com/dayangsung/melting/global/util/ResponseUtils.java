@@ -32,12 +32,12 @@ public class ResponseUtils {
 	 */
 
 	public static ApiResponse<Void> error(String status, String message) {
-		return error("error", message);
+		return error(status, null, message);
 	}
 
-	public static <T> ApiResponse<T> error(T data, String message) {
+	public static <T> ApiResponse<T> error(String status, T data, String message) {
 		return ApiResponse.<T>builder()
-			.status("error")
+			.status(status)
 			.data(data)
 			.build();
 	}
