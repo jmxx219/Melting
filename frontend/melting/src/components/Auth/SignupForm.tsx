@@ -78,7 +78,7 @@ export default function SignupForm() {
     if (isFormValid) {
       try {
         const memberInitRequestDto: MemberInitRequestDto = {
-          nick_name: nickname,
+          nickname: nickname,
           gender: gender as 'MALE' | 'FEMALE',
         }
 

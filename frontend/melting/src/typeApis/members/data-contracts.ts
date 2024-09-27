@@ -31,7 +31,7 @@ export interface ApiResponseString {
 }
 
 export interface MemberInitRequestDto {
-  nick_name?: string
+  nickname?: string
   gender?: string
 }
 
