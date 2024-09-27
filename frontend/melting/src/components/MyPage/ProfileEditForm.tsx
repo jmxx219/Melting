@@ -1,8 +1,7 @@
 import { useState, useEffect } from 'react'
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import SubmitButton from '@/components/Button/SubmitButton'
 import { Input } from '@/components/ui/input'
-import { Camera, User } from 'lucide-react'
+import ProfileImage from '@/components/Common/ProfileImage'
 
 const isValidNickname = (nickname: string): boolean => {
   const regex = /^[가-힣a-zA-Z0-9]{2,20}$/
@@ -60,29 +59,13 @@ export default function ProfileEditForm() {
     <div className="px-8 py-10 flex flex-col">
       <div>
         <div className="flex justify-center mb-16">
-          <div className="relative">
-            <Avatar className="w-40 h-40 ">
-              <AvatarImage src={profileImage || ''} alt="Profile" />
-              <AvatarFallback>
-                <User className="w-12 h-12 text-gray-400" />
-              </AvatarFallback>
-            </Avatar>
-            <label
-              htmlFor="profile-upload"
-              className="absolute bottom-2 right-2 bg-white border-b border-gray rounded-full p-2 cursor-pointer"
-            >
-              <Camera className="w-6 h-6 text-black" />
-            </label>
-            <input
-              id="profile-upload"
-              type="file"
-              accept="image/*"
-              className="hidden"
-              onChange={handleImageUpload}
-              autoComplete="off"
-              spellCheck="false"
-            />
-          </div>
+          <ProfileImage
+            profileImage={profileImage}
+            avatarSize="w-40 h-40"
+            userIconSize="w-12 h-12"
+            withUpload={true}
+            onImageUpload={handleImageUpload}
+          />
         </div>
         <div className="space-y-6 mb-14">
           <div className="relative">
