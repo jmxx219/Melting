@@ -60,11 +60,12 @@ public class AuthService extends DefaultOAuth2UserService {
 				.email(member.getEmail())
 				.provider(member.getProvider())
 				.build();
+		log.debug("customOAuth2User info: {}, {}, {}",
+			customOAuth2User.getId(), customOAuth2User.getName(), customOAuth2User.getProvider());
 
 		Authentication authentication =
-			new UsernamePasswordAuthenticationToken(customOAuth2User,null,null);
+			new UsernamePasswordAuthenticationToken(customOAuth2User,null);
 		SecurityContextHolder.getContext().setAuthentication(authentication);
-
 		return customOAuth2User;
 	}
 
