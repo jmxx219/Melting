@@ -1,12 +1,12 @@
-import { AlbumDetailInfo } from '@/types/album'
-import AlbumDetailTop from './AlbumDetailTop'
+import { AlbumDetailInfoType } from '@/types/album'
+import AlbumDetailInfo from './AlbumDetailInfo'
 
 type AlbumDetailProps = {
   albumId: number
 }
 
 export default function AlbumDetail({ albumId }: AlbumDetailProps) {
-  const album: { albumInfo: AlbumDetailInfo; hashtags: string[] } = {
+  const album: { albumInfo: AlbumDetailInfoType; hashtags: string[] } = {
     albumInfo: {
       albumCoverImage: '/images/mockup/album3.png',
       albumName: 'Band Aid',
@@ -25,7 +25,7 @@ export default function AlbumDetail({ albumId }: AlbumDetailProps) {
   }
   return (
     <div>
-      {<AlbumDetailTop albumInfo={album.albumInfo} albumId={albumId} />}
+      {<AlbumDetailInfo albumInfo={album.albumInfo} albumId={albumId} />}
     </div>
   )
 }
