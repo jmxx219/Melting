@@ -5,7 +5,6 @@ import static com.dayangsung.melting.global.common.response.enums.ErrorMessage.*
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
@@ -54,7 +53,7 @@ public class MemberController {
 		@AuthenticationPrincipal CustomOAuth2User customOAuth2User) {
 		MemberResponseDto memberResponseDto =
 			memberService.initMemberInfo(multipartFile,
-				memberInitRequestDto.nickName(),
+				memberInitRequestDto.nickname(),
 				Gender.valueOf(memberInitRequestDto.gender().toUpperCase()),
 				customOAuth2User.getName());
 		return ApiResponse.ok(memberResponseDto);
