@@ -18,6 +18,8 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import com.dayangsung.melting.domain.auth.repository.HttpCookieOAuth2AuthorizationRequestRepository;
 import com.dayangsung.melting.domain.auth.service.AuthService;
 import com.dayangsung.melting.global.filter.JwtFilter;
+import com.dayangsung.melting.global.handler.JwtAccessDeniedHandler;
+import com.dayangsung.melting.global.handler.JwtAuthenticationEntryPoint;
 import com.dayangsung.melting.global.handler.LoginFailureHandler;
 import com.dayangsung.melting.global.handler.LoginSuccessHandler;
 import com.dayangsung.melting.global.util.JwtUtil;
@@ -67,7 +69,12 @@ public class SecurityConfig {
 					.authenticated()
 			)
 			.sessionManagement(session -> session
-				.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+				.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+			)
+			.exceptionHandling((exceptions) -> exceptions
+				.authenticationEntryPoint(new JwtAuthenticationEntryPoint()) // 인증 실패 핸들링
+				.accessDeniedHandler(new JwtAccessDeniedHandler())); // 인가 실패 핸들링
+
 
 		return http.build();
 	}

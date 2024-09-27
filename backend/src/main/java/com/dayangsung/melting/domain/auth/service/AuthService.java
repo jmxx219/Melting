@@ -1,9 +1,6 @@
 package com.dayangsung.melting.domain.auth.service;
 
 import org.springframework.http.HttpStatus;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
@@ -54,19 +51,11 @@ public class AuthService extends DefaultOAuth2UserService {
 		Member member = insertMemberIfNotExist(oAuth2Response);
 		log.debug("member info: {}, {}, {}", member.getId(), member.getEmail(), member.getProvider());
 
-		CustomOAuth2User customOAuth2User =
-			CustomOAuth2User.builder()
+		return CustomOAuth2User.builder()
 				.id(member.getId())
 				.email(member.getEmail())
 				.provider(member.getProvider())
 				.build();
-		log.debug("customOAuth2User info: {}, {}, {}",
-			customOAuth2User.getId(), customOAuth2User.getName(), customOAuth2User.getProvider());
-
-		Authentication authentication =
-			new UsernamePasswordAuthenticationToken(customOAuth2User,null);
-		SecurityContextHolder.getContext().setAuthentication(authentication);
-		return customOAuth2User;
 	}
 
 	private Member insertMemberIfNotExist(OAuth2Response oAuth2Response) {
