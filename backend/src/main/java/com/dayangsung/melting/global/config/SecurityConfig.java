@@ -55,6 +55,19 @@ public class SecurityConfig {
 					.userService(authService))
 				.successHandler(loginSuccessHandler)
 				.failureHandler(loginFailureHandler))
+			.authorizeHttpRequests(authorize ->
+				authorize
+					.requestMatchers(
+						"/swagger-ui/**",
+						"/v3/api-docs/**",
+						"/api/v1/members/nickname-check",
+						"/api/v1/members/init",
+						"/oauth2/authorize/**"
+					)
+					.permitAll()
+					.anyRequest()
+					.authenticated())
+
 			.sessionManagement(session -> session
 				.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
