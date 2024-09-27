@@ -35,6 +35,7 @@ export default function ProfileEditForm() {
           nickname={nickname}
           setNickname={setNickname}
           onValidate={handleFormValidation}
+          isShowInfo={true}
         />
         <SubmitButton
           className={`w-full h-12 rounded-2xl mt-6 text-left ${isFormValid ? 'bg-primary-400 text-white' : 'bg-gray text-black'} `}

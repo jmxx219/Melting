@@ -1,5 +1,4 @@
 import { useState, useEffect, useCallback } from 'react'
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import {
@@ -9,7 +8,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-import { ArrowRight, Camera, User } from 'lucide-react'
+import { ArrowRight } from 'lucide-react'
 // import { validateNickname } from '@/apis/userApi.ts'
 import {
   InitMemberInfoPayload,
@@ -17,6 +16,7 @@ import {
 } from '@/typeApis/members/data-contracts.ts'
 import { validateNickname, initMemberInfo } from '@/apis/testApi.ts'
 import ProfileImage from '@/components/Common/ProfileImage.tsx'
+import NicknameInput from '@/components/Common/NicknameInput.tsx'
 
 const isValidNickname = (nickname: string): boolean => {
   const regex = /^[가-힣a-zA-Z0-9]{2,20}$/
@@ -110,38 +110,12 @@ export default function SignupForm() {
           />
         </div>
         <div className="space-y-6 mb-14">
-          <div className="relative">
-            <Input
-              placeholder="닉네임을 입력해주세요"
-              value={nickname}
-              onChange={(e) => setNickname(e.target.value)}
-              className={`mt-4 border-b-2 ${
-                !isNicknameValid && nickname ? 'border-b-status-warning' : ''
-              } ${nickname ? 'text-black' : ''} ${
-                isNicknameValid && !isNicknameDuplicate
-                  ? 'border-b-primary-400'
-                  : ''
-              }`}
-              maxLength={20}
-            />
-            <div className="h-5">
-              <span
-                className={`absolute right-2 bottom-0 text-xs ${nickname.length <= 20 && nickname.length > 0 ? 'text-primary-400' : 'text-gray'} ${nickname.length > 20 ? 'text-status-warning' : ''} `}
-              >
-                {nickname.length}/20
-              </span>
-              {!isValidNickname(nickname) && nickname && (
-                <p className="text-status-warning text-xs mt-1">
-                  닉네임은 2-20자의 한글, 영문, 숫자만 가능합니다.
-                </p>
-              )}
-              {isValidNickname(nickname) && isNicknameDuplicate && (
-                <p className="text-status-warning text-xs mt-1">
-                  이미 사용 중인 닉네임입니다.
-                </p>
-              )}
-            </div>
-          </div>
+          <NicknameInput
+            nickname={nickname}
+            setNickname={setNickname}
+            onValidate={(isValid) => setIsFormValid(isValid && !!gender)}
+            isShowInfo={false}
+          />
 
           <Select onValueChange={setGender}>
             <SelectTrigger

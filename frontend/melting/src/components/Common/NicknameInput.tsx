@@ -1,10 +1,12 @@
 import { Input } from '@/components/ui/input'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
+import { validateNickname } from '@/apis/testApi.ts'
 
 interface NicknameInputProps {
   nickname: string
   setNickname: (value: string) => void
   onValidate: (isValid: boolean) => void
+  isShowInfo: boolean
 }
 
 const isValidNickname = (nickname: string): boolean => {
@@ -12,40 +14,65 @@ const isValidNickname = (nickname: string): boolean => {
   return regex.test(nickname)
 }
 
-const checkNicknameDuplicate = async (nickname: string): Promise<boolean> => {
-  // TODO: 닉네임 중복 체크 API 호출
-  console.log(nickname)
-  return new Promise((resolve) => setTimeout(() => resolve(false), 1000))
-}
-
 export default function NicknameInput({
   nickname,
   setNickname,
   onValidate,
+  isShowInfo,
 }: NicknameInputProps) {
   const [isNicknameValid, setIsNicknameValid] = useState(false)
   const [isNicknameDuplicate, setIsNicknameDuplicate] = useState(false)
 
+  const checkNickname = useCallback(async (value: string) => {
+    if (isValidNickname(value)) {
+      try {
+        const response = await validateNickname(value)
+        console.log(nickname)
+        setIsNicknameDuplicate(!response.data) // API 응답이 false면 중복
+        setIsNicknameValid(response.data ?? false)
+        return !response.data // true면 중복이 아니고 false면 중복
+      } catch (error) {
+        console.error('닉네임 검증 중 오류 발생:', error)
+        setIsNicknameDuplicate(true)
+        setIsNicknameValid(false)
+        return true
+      }
+    } else {
+      setIsNicknameValid(false)
+      setIsNicknameDuplicate(false)
+      return true
+    }
+  }, [])
+
   useEffect(() => {
     const validateNickname = async () => {
       const nicknameValid = isValidNickname(nickname)
-      const nicknameDuplicate = nicknameValid
-        ? await checkNicknameDuplicate(nickname)
-        : true
+      let nicknameDuplicate = true
+
+      if (nicknameValid) {
+        nicknameDuplicate = await checkNickname(nickname)
+      }
 
       setIsNicknameValid(nicknameValid)
       setIsNicknameDuplicate(nicknameDuplicate)
 
+      // nickname이 유효하고 중복이 아닐 경우에만 true
       onValidate(nicknameValid && !nicknameDuplicate)
     }
+    const timer = setTimeout(() => {
+      if (nickname) {
+        validateNickname()
+      }
+    }, 300) // 300ms 디바운스
 
-    validateNickname()
-  }, [nickname, onValidate])
+    return () => clearTimeout(timer)
+  }, [nickname, checkNickname, onValidate])
 
   return (
-    <div className="space-y-6 mb-14">
+    <>
       <div className="relative">
         <Input
+          placeholder="닉네임을 입력해주세요"
           value={nickname}
           onChange={(e) => setNickname(e.target.value)}
           className={`mt-4 border-b-2 ${
@@ -79,10 +106,11 @@ export default function NicknameInput({
           )}
         </div>
       </div>
-
-      <div className="text-xs text-gray">
-        닉네임은 영어, 한글, 숫자 포함 20글자까지 가능해요
-      </div>
-    </div>
+      {isShowInfo && (
+        <div className="text-xs text-gray">
+          닉네임은 영어, 한글, 숫자 포함 20글자까지 가능해요
+        </div>
+      )}
+    </>
   )
 }
