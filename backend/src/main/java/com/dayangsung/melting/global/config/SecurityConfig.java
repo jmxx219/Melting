@@ -60,14 +60,12 @@ public class SecurityConfig {
 					.requestMatchers(
 						"/swagger-ui/**",
 						"/v3/api-docs/**",
-						"/api/v1/members/nickname-check",
-						"/api/v1/members/init",
 						"/oauth2/authorize/**"
 					)
 					.permitAll()
 					.anyRequest()
-					.authenticated())
-
+					.authenticated()
+			)
 			.sessionManagement(session -> session
 				.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
