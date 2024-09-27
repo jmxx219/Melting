@@ -40,7 +40,7 @@ public class JwtAccessDeniedHandler implements AccessDeniedHandler {
 
 		try {
 			response.getWriter().write(objectMapper.writeValueAsString(
-				ResponseUtils.error(null, "Forbidden")
+				ResponseUtils.error("error", "Forbidden")
 			));
 		} catch (IOException e) {
 			e.printStackTrace();

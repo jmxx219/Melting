@@ -39,6 +39,7 @@ public class ResponseUtils {
 		return ApiResponse.<T>builder()
 			.status(status)
 			.data(data)
+			.errorMessage(message)
 			.build();
 	}
 }
