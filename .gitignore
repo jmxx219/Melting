@@ -127,3 +127,15 @@ key.js
 
 # End of https://www.toptal.com/developers/gitignore/api/windows,eclipse,java
 .DS_Store
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+frontend/melting/vite.config.ts
