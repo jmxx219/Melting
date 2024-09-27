@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import SubmitButton from '@/components/Button/SubmitButton'
 import ProfileImage from '@/components/Common/ProfileImage'
 import NicknameInput from '@/components/Common/NicknameInput'

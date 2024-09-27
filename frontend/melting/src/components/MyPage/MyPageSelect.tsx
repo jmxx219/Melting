@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { ArrowRight, User } from 'lucide-react'
+import { ArrowRight } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { useNavigate } from 'react-router-dom'
 import ProfileImage from '@/components/Common/ProfileImage'
