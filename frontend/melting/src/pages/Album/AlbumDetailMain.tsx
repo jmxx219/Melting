@@ -1,13 +1,13 @@
-import AlbumDetail from '@/components/Album/AlbumDetail'
+import AlbumDetail from '@/components/Album/Detail/AlbumDetail'
 import Layout from '@/components/Layout'
 import DefaultHeader from '@/components/Layout/DefaultHeader'
 import { ChevronLeft } from 'lucide-react'
-import { useLocation, useNavigate } from 'react-router-dom'
+import { useLocation } from 'react-router-dom'
 
 export default function AlbumDetailMain() {
   const location = useLocation()
   const { albumId } = location.state || {}
-  const navigate = useNavigate()
+  // const navigate = useNavigate()
   return (
     <Layout
       Header={

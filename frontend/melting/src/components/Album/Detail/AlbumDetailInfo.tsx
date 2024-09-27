@@ -2,20 +2,17 @@ import { AlbumDetailInfoType } from '@/types/album'
 import { Pencil, Play, X } from 'lucide-react'
 import { useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import Heart from '../Icon/Heart'
-import Comment from '../Icon/Comment'
-import { Avatar, AvatarImage } from '../ui/avatar'
-import HashtagButton from '../Button/HashtagButton'
-import { Button } from '../ui/button'
+import Comment from '../../Icon/Comment'
+import Heart from '../../Icon/Heart'
 import {
   AlertDialog,
-  AlertDialogAction,
   AlertDialogContent,
   AlertDialogDescription,
-  AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from '../ui/alert-dialog'
+} from '../../ui/alert-dialog'
+import { Button } from '../../ui/button'
+import AlbumUserProfile from './AlbumUserProfile'
 
 interface AlbumDetailProps {
   albumInfo: AlbumDetailInfoType
@@ -40,7 +37,7 @@ export default function AlbumDetailTop({
 
   return (
     <div className="flex flex-col">
-      <div className="w-[250px] h-full self-center" id="album-top-left">
+      <div className="w-[250px] h-full self-center">
         <div className="relative">
           <img
             src={albumInfo.albumCoverImage}
@@ -63,7 +60,6 @@ export default function AlbumDetailTop({
       </div>
       <div className="flex-col mt-2" id="album-info">
         <div className="text-2xl font-bold">{albumInfo.albumName}</div>
-
         <div className="mt-2 flex space-x-5 text-sm justify-between">
           <div>{albumInfo.createDate}</div>
           <div className="flex">
@@ -76,15 +72,10 @@ export default function AlbumDetailTop({
             ))}
           </div>
         </div>
-
-        <div className="flex items-center mt-2">
-          <Avatar className="h-8 w-8">
-            <AvatarImage src={albumInfo.profileImage} />
-          </Avatar>
-          <div className="flex-grow px-2">
-            <h3 className="text-base font-semibold">{albumInfo.nickname}</h3>
-          </div>
-        </div>
+        <AlbumUserProfile
+          nickname={albumInfo.nickname}
+          profileImage={albumInfo.profileImage}
+        />
       </div>
       <div className="mt-2 flex">
         <div className="flex flex-1 justify-start items-center">
@@ -98,17 +89,22 @@ export default function AlbumDetailTop({
         </div>
         <div className="flex flex-1 items-center">
           <button type="button" className="focus:outline-nonez-0">
-            <Comment />
+            <Comment fill={'none'} />
           </button>
           <h3 className="px-1 text-base truncate">{albumInfo.commentCnt}</h3>
         </div>
       </div>
-      <div className="mt-2" id="album-description">
+      <div className="mt-10" id="album-description">
         <div className="flex justify-between mt-2 items-center">
           <div className="text-xl font-semibold">앨범 소개</div>
           <div>
             <Pencil width={15} height={15}></Pencil>
           </div>
+        </div>
+        <div className="flex text-[#A5A5A5] space-x-3">
+          {albumInfo.hashtags.map((tag, index) => (
+            <div key={index}>{`#${tag}`}</div>
+          ))}
         </div>
         <div className="flex flex-col justify-center items-center mt-2">
           <p className="w-full text-sm text-gray-700">{truncatedDescription}</p>
@@ -118,13 +114,13 @@ export default function AlbumDetailTop({
               className="text-black"
               onClick={() => setShowModal(true)}
             >
-              전체보기
+              더보기
             </Button>
           )}
           <AlertDialog open={showModal} onOpenChange={setShowModal}>
             <AlertDialogContent className="max-h-[80vh] overflow-y-auto scrollbar-hide">
               <AlertDialogHeader>
-                <AlertDialogTitle className='flex justify-between'>
+                <AlertDialogTitle className="flex justify-between">
                   <div>앨범 소개</div>
                   <div>
                     <X onClick={() => setShowModal(false)} />
