@@ -53,12 +53,12 @@ export const AlbumProvider = ({ children }: AlbumProviderProps) => {
   const [selectedCover, setSelectedCover] = useState<string | null>(null)
 
   useEffect(() => {
-    if (selectedSongs.length > 0) {
-      setTitleSongIndex(selectedSongs[0].songId) // 첫 번째 곡의 songId로 설정
-    } else {
+    if (selectedSongs.length > 0 && titleSongIndex === null) {
+      setTitleSongIndex(selectedSongs[0].songId) // 첫 번째 곡의 songId로 설정, 오직 titleSongIndex가 null일 때만
+    } else if (selectedSongs.length === 0) {
       setTitleSongIndex(null) // 곡이 없으면 null로 설정
     }
-  }, [selectedSongs])
+  }, [selectedSongs, titleSongIndex])
 
   return (
     <AlbumContext.Provider
