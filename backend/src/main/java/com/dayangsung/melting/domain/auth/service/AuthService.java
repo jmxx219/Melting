@@ -52,6 +52,7 @@ public class AuthService extends DefaultOAuth2UserService {
 			return null;
 		}
 		Member member = insertMemberIfNotExist(oAuth2Response);
+		log.debug("member info: {}, {}, {}", member.getId(), member.getEmail(), member.getProvider());
 
 		CustomOAuth2User customOAuth2User =
 			CustomOAuth2User.builder()
@@ -68,14 +69,12 @@ public class AuthService extends DefaultOAuth2UserService {
 	}
 
 	private Member insertMemberIfNotExist(OAuth2Response oAuth2Response) {
-		memberRepository.findByEmail(oAuth2Response.getEmail())
+		return memberRepository.findByEmail(oAuth2Response.getEmail())
 			.orElseGet(() -> memberRepository.save(
 				Member.builder()
 					.provider(oAuth2Response.getProvider())
 					.email(oAuth2Response.getEmail())
 					.build()));
-		return memberRepository.findByEmail(oAuth2Response.getEmail())
-			.orElseThrow(RuntimeException::new);
 	}
 
 	public String reissueToken(HttpServletRequest request, HttpServletResponse response) {
