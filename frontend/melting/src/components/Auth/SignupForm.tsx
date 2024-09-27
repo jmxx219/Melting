@@ -1,4 +1,6 @@
 import { useState, useEffect, useCallback } from 'react'
+import { useNavigate } from 'react-router-dom'
+
 import { Button } from '@/components/ui/button'
 import {
   Select,
@@ -7,7 +9,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-import { ArrowRight } from 'lucide-react'
+import { ArrowRight, X } from 'lucide-react'
 import {
   InitMemberInfoPayload,
   MemberInitRequestDto,
@@ -15,6 +17,7 @@ import {
 import { validateNickname, initMemberInfo } from '@/apis/userApi.ts'
 import ProfileImage from '@/components/Common/ProfileImage.tsx'
 import NicknameInput from '@/components/Common/NicknameInput.tsx'
+import AlertModal from '@/components/Common/AlertModal.tsx'
 
 const isValidNickname = (nickname: string): boolean => {
   const regex = /^[가-힣a-zA-Z0-9]{2,20}$/
@@ -22,6 +25,10 @@ const isValidNickname = (nickname: string): boolean => {
 }
 
 export default function SignupForm() {
+  const navigate = useNavigate()
+  const [isDialogOpen, setIsDialogOpen] = useState(false)
+  const [dialogMessage, setDialogMessage] = useState('')
+
   const [profileImage, setProfileImage] = useState<string | null>(null)
   const [profileImageFile, setProfileImageFile] = useState<File | null>(null)
   const [nickname, setNickname] = useState('')
@@ -82,8 +89,13 @@ export default function SignupForm() {
 
         const response = await initMemberInfo(payload)
         console.log('회원 정보 초기화 성공:', response)
+        navigate('/main')
       } catch (error) {
         console.error('회원 정보 초기화 중 오류 발생:', error)
+        setDialogMessage(
+          '회원 정보 초기화 중 오류가 발생했습니다. 다시 시도해주세요.',
+        )
+        setIsDialogOpen(true)
       }
     }
   }
@@ -138,6 +150,14 @@ export default function SignupForm() {
           </div>
         </Button>
       </div>
+      {isDialogOpen && (
+        <AlertModal
+          title={'회원가입 오류'}
+          description={dialogMessage}
+          triggerText={<X size={22} className="text-primary-400" />}
+          triggerClassName="ml-4"
+        />
+      )}
     </div>
   )
 }
