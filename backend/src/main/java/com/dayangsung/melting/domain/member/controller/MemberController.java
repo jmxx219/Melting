@@ -16,10 +16,12 @@ import com.dayangsung.melting.domain.auth.CustomOAuth2User;
 import com.dayangsung.melting.domain.member.dto.request.MemberInitRequestDto;
 import com.dayangsung.melting.domain.member.dto.request.MemberUpdateRequestDto;
 import com.dayangsung.melting.domain.member.dto.response.MemberResponseDto;
+import com.dayangsung.melting.domain.member.dto.response.MemberSongResponseDto;
 import com.dayangsung.melting.domain.member.enums.Gender;
 import com.dayangsung.melting.domain.member.service.MemberService;
 import com.dayangsung.melting.global.common.response.ApiResponse;
 
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -35,8 +37,8 @@ public class MemberController {
 
 	@GetMapping
 	public ApiResponse<MemberResponseDto> getMemberInfo(
-		@AuthenticationPrincipal CustomOAuth2User customOAuth2User) {
-		MemberResponseDto memberResponseDto = memberService.getMemberInfo(customOAuth2User.getId());
+		@AuthenticationPrincipal String email) {
+		MemberResponseDto memberResponseDto = memberService.getMemberInfo(email);
 		return ApiResponse.ok(memberResponseDto);
 	}
 
@@ -49,12 +51,12 @@ public class MemberController {
 	public ApiResponse<MemberResponseDto> initMemberInfo(
 		@RequestPart MultipartFile multipartFile,
 		@RequestPart MemberInitRequestDto memberInitRequestDto,
-		@AuthenticationPrincipal CustomOAuth2User customOAuth2User) {
+		@AuthenticationPrincipal String email) {
 		MemberResponseDto memberResponseDto =
 			memberService.initMemberInfo(multipartFile,
 				memberInitRequestDto.nickName(),
-				Gender.valueOf(memberInitRequestDto.gender()),
-				customOAuth2User.getId());
+				Gender.valueOf(memberInitRequestDto.gender().toUpperCase()),
+				email);
 		return ApiResponse.ok(memberResponseDto);
 	}
 
@@ -62,14 +64,14 @@ public class MemberController {
 	public ApiResponse<MemberResponseDto> updateMemberInfo(
 		@RequestPart MultipartFile multipartFile,
 		@RequestPart MemberUpdateRequestDto memberUpdateRequestDto,
-		@AuthenticationPrincipal CustomOAuth2User customOAuth2User) {
+		@AuthenticationPrincipal String email) {
 		if (multipartFile.isEmpty() && memberUpdateRequestDto.nickName().isEmpty()) {
 			return ApiResponse.error(MEMBER_BAD_REQUEST.getErrorMessage());
 		}
 		MemberResponseDto memberResponseDto = memberService.updateMemberInfo(
 			multipartFile,
 			memberUpdateRequestDto.nickName(),
-			customOAuth2User.getId());
+			email);
 		return ApiResponse.ok(memberResponseDto);
 	}
 
@@ -77,5 +79,13 @@ public class MemberController {
 	public ApiResponse<Void> logout(HttpServletRequest request, HttpServletResponse response) {
 		memberService.logout(request, response);
 		return ApiResponse.ok(null);
+	}
+
+	@Operation(summary = "사용자가 생성한 곡 목록")
+	@GetMapping("/me/songs")
+	public ApiResponse<MemberSongResponseDto> getMemberSongs(
+		@AuthenticationPrincipal CustomOAuth2User customOAuth2User) {
+		MemberSongResponseDto memberSongResponseDto = memberService.getMemberSongs(customOAuth2User.getId());
+		return ApiResponse.ok(memberSongResponseDto);
 	}
 }

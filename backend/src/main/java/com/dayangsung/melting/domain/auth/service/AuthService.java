@@ -1,9 +1,6 @@
 package com.dayangsung.melting.domain.auth.service;
 
 import org.springframework.http.HttpStatus;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
@@ -52,30 +49,22 @@ public class AuthService extends DefaultOAuth2UserService {
 			return null;
 		}
 		Member member = insertMemberIfNotExist(oAuth2Response);
+		log.debug("member info: {}, {}, {}", member.getId(), member.getEmail(), member.getProvider());
 
-		CustomOAuth2User customOAuth2User =
-			CustomOAuth2User.builder()
+		return CustomOAuth2User.builder()
 				.id(member.getId())
 				.email(member.getEmail())
 				.provider(member.getProvider())
 				.build();
-
-		Authentication authentication =
-			new UsernamePasswordAuthenticationToken(customOAuth2User,null,null);
-		SecurityContextHolder.getContext().setAuthentication(authentication);
-
-		return customOAuth2User;
 	}
 
 	private Member insertMemberIfNotExist(OAuth2Response oAuth2Response) {
-		memberRepository.findByEmail(oAuth2Response.getEmail())
+		return memberRepository.findByEmail(oAuth2Response.getEmail())
 			.orElseGet(() -> memberRepository.save(
 				Member.builder()
 					.provider(oAuth2Response.getProvider())
 					.email(oAuth2Response.getEmail())
 					.build()));
-		return memberRepository.findByEmail(oAuth2Response.getEmail())
-			.orElseThrow(RuntimeException::new);
 	}
 
 	public String reissueToken(HttpServletRequest request, HttpServletResponse response) {
