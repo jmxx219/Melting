@@ -1,50 +1,73 @@
-import { Api as MemberApi } from '@/typeApis/members/Api'
-import { InitMemberInfoPayload } from '@/typeApis/members/data-contracts.ts'
+import axios from 'axios'
+import {
+  InitMemberInfoPayload,
+  InitMemberInfoData,
+  InitMemberInfoError,
+  ValidateNicknameData,
+  ValidateNicknameError,
+  LogoutData,
+  LogoutError,
+} from '@/types/user'
 
 const VITE_API_BASE_URL = import.meta.env.VITE_API_BASE_URL
-// API 인스턴스 생성
-const memberApi = new MemberApi({
-  // baseUrl: 'http://j11a701.p.ssafy.io:8080', // 실제 서버 주소로 변경해주세요
-  baseURL: VITE_API_BASE_URL,
-})
+const VITE_API_MEMBERS_PATH = import.meta.env.VITE_API_MEMBERS_PATH
+const BASE_URL = `${VITE_API_BASE_URL}${VITE_API_MEMBERS_PATH}`
 
-// 각 API 함수 구현
-export const reissueToken = async () => {
+export const initMemberInfo = async (
+  payload: InitMemberInfoPayload,
+): Promise<InitMemberInfoData | InitMemberInfoError> => {
   try {
-    const response = await memberApi.reissue()
+    const frm = new FormData()
+
+    // multipartFile이 있을 경우에만 추가
+    if (payload.multipartFile) {
+      frm.append('multipartFile', payload.multipartFile)
+    }
+
+    // memberInitRequestDto를 FormData에 추가
+    frm.append(
+      'memberInitRequestDto',
+      new Blob([JSON.stringify(payload.memberInitRequestDto)], {
+        type: 'application/json',
+      }),
+    )
+
+    const response = await axios.patch(`${BASE_URL}/init`, frm, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+      withCredentials: true,
+    })
+
     return response.data
   } catch (error) {
-    console.error('Token reissue failed:', error)
-    throw error
-  }
-}
-
-export const initMemberInfo = async (payload: InitMemberInfoPayload) => {
-  try {
-    const response = await memberApi.initMemberInfo(payload)
-    return response.data
-  } catch (error) {
-    console.error('Init member info failed:', error)
+    console.error('회원 정보 초기화 오류:', error)
     throw error
   }
 }
 
 export const validateNickname = async (nickname: string) => {
   try {
-    const response = await memberApi.validateNickname({ nickname })
+    const response = await axios.get<ValidateNicknameData>(
+      `${BASE_URL}/nickname-check`,
+      {
+        params: { nickname },
+        withCredentials: true,
+      },
+    )
     return response.data
-  } catch (error) {
-    console.error('Nickname validation failed:', error)
-    throw error
+  } catch (error: any) {
+    throw error.response?.data as ValidateNicknameError
   }
 }
 
 export const logout = async () => {
   try {
-    const response = await memberApi.logout()
+    const response = await axios.get<LogoutData>(`${BASE_URL}/logout`, {
+      withCredentials: true,
+    })
     return response.data
-  } catch (error) {
-    console.error('Logout failed:', error)
-    throw error
+  } catch (error: any) {
+    throw error.response?.data as LogoutError
   }
 }

@@ -1,6 +1,5 @@
 import { useState, useEffect, useCallback } from 'react'
 import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
 import {
   Select,
   SelectContent,
@@ -9,12 +8,11 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { ArrowRight } from 'lucide-react'
-// import { validateNickname } from '@/apis/userApi.ts'
 import {
   InitMemberInfoPayload,
   MemberInitRequestDto,
 } from '@/typeApis/members/data-contracts.ts'
-import { validateNickname, initMemberInfo } from '@/apis/testApi.ts'
+import { validateNickname, initMemberInfo } from '@/apis/userApi.ts'
 import ProfileImage from '@/components/Common/ProfileImage.tsx'
 import NicknameInput from '@/components/Common/NicknameInput.tsx'
 
