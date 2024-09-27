@@ -64,7 +64,7 @@ export type ReissueError = ErrorResponse
 
 export interface InitMemberInfoPayload {
   /** @format binary */
-  multipartFile: File
+  multipartFile?: File | null
   memberInitRequestDto?: MemberInitRequestDto
 }
 
