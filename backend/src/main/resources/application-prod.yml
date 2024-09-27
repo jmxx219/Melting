@@ -55,6 +55,9 @@ spring:
       max-request-size: 20MB
   jwt:
     secret: ${JWT_SECRET}
+  sql:
+    init:
+      mode: always
 
 logging:
   level:
