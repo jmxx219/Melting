@@ -55,7 +55,7 @@ public class MemberController {
 		MemberResponseDto memberResponseDto =
 			memberService.initMemberInfo(multipartFile,
 				memberInitRequestDto.nickName(),
-				Gender.valueOf(memberInitRequestDto.gender()),
+				Gender.valueOf(memberInitRequestDto.gender().toUpperCase()),
 				customOAuth2User.getId());
 		return ApiResponse.ok(memberResponseDto);
 	}
