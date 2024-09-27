@@ -9,7 +9,7 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.stereotype.Component;
 
-import com.dayangsung.melting.global.util.ResponseUtils;
+import com.dayangsung.melting.global.common.response.ApiResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -41,7 +41,7 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
 
 		try {
 			response.getWriter().write(objectMapper.writeValueAsString(
-				ResponseUtils.error("error", "Unauthorized - TOKEN_NOT_EXIST")
+				ApiResponse.error("Unauthorized - TOKEN_NOT_EXIST")
 			));
 		} catch (IOException e) {
 			e.printStackTrace();

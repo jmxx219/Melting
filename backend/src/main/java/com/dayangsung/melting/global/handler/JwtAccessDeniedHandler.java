@@ -9,7 +9,7 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.stereotype.Component;
 
-import com.dayangsung.melting.global.util.ResponseUtils;
+import com.dayangsung.melting.global.common.response.ApiResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -40,7 +40,7 @@ public class JwtAccessDeniedHandler implements AccessDeniedHandler {
 
 		try {
 			response.getWriter().write(objectMapper.writeValueAsString(
-				ResponseUtils.error("error", "Forbidden")
+				ApiResponse.error("forbidden")
 			));
 		} catch (IOException e) {
 			e.printStackTrace();
