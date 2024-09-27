@@ -1,17 +1,12 @@
 package com.dayangsung.melting.domain.hashtag.entity;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.Column;
-import jakarta.persistence.OneToMany;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -29,6 +24,4 @@ public class Hashtag {
 	@Column(nullable = false, length = 50)
 	private String content;
 
-	@OneToMany(mappedBy = "hashtag")
-	private List<AlbumHashtag> albumHashtags = new ArrayList<>();
 }
