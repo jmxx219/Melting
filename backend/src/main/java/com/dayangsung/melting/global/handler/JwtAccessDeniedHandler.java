@@ -31,16 +31,9 @@ public class JwtAccessDeniedHandler implements AccessDeniedHandler {
 
 		ObjectMapper objectMapper = new ObjectMapper();
 
-		Map<String, Object> data = new HashMap<>();
-		Map<String, Object> error = new HashMap<>();
-		error.put("status", HttpServletResponse.SC_FORBIDDEN);
-		error.put("message", ex.getMessage());
-		error.put("path", request.getServletPath());
-		data.put("error", error);
-
 		try {
 			response.getWriter().write(objectMapper.writeValueAsString(
-				ApiResponse.error("forbidden")
+				"forbidden"
 			));
 		} catch (IOException e) {
 			e.printStackTrace();
