@@ -1,6 +1,6 @@
 import { Input } from '@/components/ui/input'
 import { useState, useEffect, useCallback } from 'react'
-import { validateNickname } from '@/apis/testApi.ts'
+import { validateNickname } from '@/apis/userApi.ts'
 
 interface NicknameInputProps {
   nickname: string
@@ -27,7 +27,6 @@ export default function NicknameInput({
     if (isValidNickname(value)) {
       try {
         const response = await validateNickname(value)
-        console.log(nickname)
         setIsNicknameDuplicate(!response.data) // API 응답이 false면 중복
         setIsNicknameValid(response.data ?? false)
         return !response.data // true면 중복이 아니고 false면 중복
