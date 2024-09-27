@@ -1,8 +1,8 @@
 import { useState } from 'react'
-import { ArrowRight } from 'lucide-react'
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import { ArrowRight, User } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { useNavigate } from 'react-router-dom'
-import ProfileImage from '@/components/Common/ProfileImage'
 
 export default function MyPageSelect() {
   const [profileImage] = useState<string | null>(null)
@@ -21,21 +21,22 @@ export default function MyPageSelect() {
   }
 
   const handleLogout = () => {
-    // TODO: 로그아웃
+    // 로그아웃
   }
 
   const handleAccountDelete = () => {
-    // TODO: 회원 탈퇴
+    // 회원 탈퇴
   }
 
   return (
     <div className="px-4 py-10 flex flex-col">
       <div className="flex flex-col items-center mb-8">
-        <ProfileImage
-          profileImage={profileImage}
-          avatarSize="w-32 h-32"
-          userIconSize="w-12 h-12"
-        />
+        <Avatar className="w-32 h-32">
+          <AvatarImage src={profileImage || ''} alt="Profile" />
+          <AvatarFallback>
+            <User className="w-12 h-12 text-gray-400" />
+          </AvatarFallback>
+        </Avatar>
         <div className="text-xl font-bold mt-6">노원핵주먹</div>
       </div>
 
