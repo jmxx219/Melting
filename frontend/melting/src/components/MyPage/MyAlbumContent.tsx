@@ -4,17 +4,7 @@ import { Switch } from '@/components/ui/switch'
 import Heart from '@/components/Icon/Heart'
 import { X, Play } from 'lucide-react'
 import { formatLikeCount } from '@/utils/numberUtil'
-import {
-  AlertDialog,
-  AlertDialogTrigger,
-  AlertDialogContent,
-  AlertDialogHeader,
-  AlertDialogFooter,
-  AlertDialogCancel,
-  AlertDialogAction,
-  AlertDialogTitle,
-  AlertDialogDescription,
-} from '@/components/ui/alert-dialog'
+import ConfirmDialog from '@/components/Common/ConfirmDialog'
 
 interface AlbumData {
   id: number
@@ -57,11 +47,6 @@ export default function MyAlbumContent({ album, viewType }: MyAlbumProps) {
     setIsPublic(checked)
     // TODO: 공개/비공개 상태 업데이트 API 호출
   }
-
-  const openDeleteModal = (e: React.MouseEvent) => {
-    e.stopPropagation()
-  }
-
   const deleteAlbum = () => {
     // TODO: 앨범 삭제 API 호출
     console.log('앨범 삭제: ', album.id)
@@ -99,43 +84,13 @@ export default function MyAlbumContent({ album, viewType }: MyAlbumProps) {
           <span>{truncateText(album.albumName, 20)}</span>
 
           {viewType === 'my' && (
-            <AlertDialog>
-              <AlertDialogTrigger asChild>
-                <button
-                  type="button"
-                  onClick={openDeleteModal}
-                  className="focus:outline-none ml-4"
-                >
-                  <X size={22} className="text-primary-400" />
-                </button>
-              </AlertDialogTrigger>
-              <AlertDialogContent>
-                <AlertDialogHeader>
-                  <AlertDialogTitle>앨범 삭제</AlertDialogTitle>
-                  <AlertDialogDescription>
-                    정말로 이 앨범을 삭제하시겠습니까? 이 작업은 되돌릴 수
-                    없습니다.
-                  </AlertDialogDescription>
-                </AlertDialogHeader>
-                <AlertDialogFooter>
-                  <AlertDialogCancel
-                    onClick={(e) => {
-                      e.stopPropagation()
-                    }}
-                  >
-                    취소
-                  </AlertDialogCancel>
-                  <AlertDialogAction
-                    onClick={(e) => {
-                      e.stopPropagation()
-                      deleteAlbum()
-                    }}
-                  >
-                    삭제
-                  </AlertDialogAction>
-                </AlertDialogFooter>
-              </AlertDialogContent>
-            </AlertDialog>
+            <ConfirmDialog
+              title="앨범 삭제"
+              description="정말로 이 앨범을 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다."
+              onConfirm={deleteAlbum}
+              triggerText={<X size={22} className="text-primary-400" />}
+              triggerClassName="ml-4"
+            />
           )}
         </div>
 
