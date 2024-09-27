@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import Heart from '@/components/Icon/Heart'
-import { Mic, Play, LoaderCircle } from 'lucide-react'
+import { Mic, Play } from 'lucide-react'
 import {
   Accordion,
   AccordionContent,
@@ -15,7 +15,6 @@ interface Track {
   songType: string
   likeCount: number
   isLiked: boolean
-  isDone: boolean
 }
 
 interface MySongProps {
@@ -75,24 +74,14 @@ export default function MySongContent({
             {tracks.map((track, index) => (
               <div
                 key={track.songId}
-                className={`flex justify-between items-center mb-2 ${
-                  track.isDone ? '' : 'text-gray-400'
-                }`}
+                className="flex justify-between items-center mb-2"
               >
                 <div className="flex items-center">
-                  <div className="w-10 h-10 items-center mr-4">
-                    {track.isDone === true ? (
-                      <img
-                        src={track.albumCoverImgUrl}
-                        alt={`Track ${index + 1}`}
-                        className="w-10 h-10 rounded-full object-cover"
-                      />
-                    ) : (
-                      <div className="h-full flex items-center flex-col justify-center">
-                        <LoaderCircle className="animate-spin w-8 h-8 text-primary-400" />
-                      </div>
-                    )}
-                  </div>
+                  <img
+                    src={track.albumCoverImgUrl}
+                    alt={`Track ${index + 1}`}
+                    className="w-10 h-10 mr-4 rounded-full object-cover"
+                  />
                   <div className="text-base w-16">
                     {track.songType === 'melting' ? '멜팅' : 'AI 커버'}
                   </div>
@@ -101,14 +90,11 @@ export default function MySongContent({
                     <button
                       type="button"
                       className="focus:outline-none z-0"
-                      onClick={() => track.isDone && toggleLike(track.songId)}
-                      disabled={!track.isDone}
+                      onClick={() => toggleLike(track.songId)}
                     >
                       <Heart
-                        fill={
-                          track.isLiked && track.isDone ? '#FFAF25' : '#ADADAD'
-                        }
-                        fillOpacity={track.isLiked && track.isDone ? 1 : 0.4}
+                        fill={track.isLiked ? '#FFAF25' : '#ADADAD'}
+                        fillOpacity={track.isLiked ? 1 : 0.4}
                       />
                     </button>
                     <span className="w-12 text-center">
@@ -120,8 +106,7 @@ export default function MySongContent({
                   <button
                     type="button"
                     className={`w-8 h-8 rounded-full flex items-center justify-center ${
-                      (track.songType === 'melting' || isPossibleAiCover) &&
-                      track.isDone
+                      track.songType === 'melting' || isPossibleAiCover
                         ? 'bg-primary-400'
                         : 'bg-gray-200'
                     }`}
@@ -130,18 +115,14 @@ export default function MySongContent({
                         goToRecordSong(track.songId)
                       }
                     }}
-                    disabled={!track.isDone}
                   >
                     {' '}
                     <Mic className="h-5 w-5 text-white" />
                   </button>
                   <button
                     type="button"
-                    className={`w-8 h-8 rounded-full flex items-center justify-center ${
-                      track.isDone ? 'bg-primary-400' : 'bg-gray-200'
-                    }`}
+                    className="w-8 h-8 rounded-full bg-primary-400 flex items-center justify-center"
                     onClick={() => goToPlaySong(track.songId)}
-                    disabled={!track.isDone}
                   >
                     <Play className="h-5 w-5 text-white fill-white" />
                   </button>

@@ -19,7 +19,6 @@ export default function MySongList({}: AlbumSongToggleProps) {
             songType: 'melting',
             likeCount: 12345678,
             isLiked: true,
-            isDone: true,
           },
           {
             songId: 2,
@@ -28,7 +27,6 @@ export default function MySongList({}: AlbumSongToggleProps) {
             songType: 'AICover',
             likeCount: 12345,
             isLiked: false,
-            isDone: false,
           },
         ],
       },
@@ -43,13 +41,12 @@ export default function MySongList({}: AlbumSongToggleProps) {
               'https://image.bugsm.co.kr/album/images/200/40955/4095501.jpg?version=20240307012526.0',
             songType: 'AICover',
             likeCount: 67890,
-            isLiked: false,
-            isDone: true,
+            isLiked: true,
           },
         ],
       },
     ],
-    isPossibleAiCover: true, // AI 커버 가능 여부
+    isPossibleAiCover: false, // AI 커버 가능 여부
   }
 
   return (
