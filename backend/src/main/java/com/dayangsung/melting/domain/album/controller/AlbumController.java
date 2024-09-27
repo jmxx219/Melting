@@ -22,6 +22,8 @@ import com.dayangsung.melting.domain.album.dto.response.AlbumSearchResponseDto;
 import com.dayangsung.melting.domain.album.dto.response.AlbumUpdateResponseDto;
 import com.dayangsung.melting.domain.album.enums.AlbumSortType;
 import com.dayangsung.melting.domain.album.service.AlbumService;
+import com.dayangsung.melting.domain.genre.dto.response.GenreResponseDto;
+import com.dayangsung.melting.domain.genre.service.GenreService;
 import com.dayangsung.melting.global.common.response.ApiResponse;
 
 import jakarta.validation.Valid;
@@ -33,11 +35,12 @@ import lombok.RequiredArgsConstructor;
 public class AlbumController {
 
 	private final AlbumService albumService;
+	private final GenreService genreService;
 
 	// 커뮤니티 메인 페이지에 보여지는 앨범 조회, 기본값은 최신순
 	@GetMapping
 	public ApiResponse<List<AlbumMainResponseDto>> getAlbumsInCommunityMainPage(
-		@RequestParam(value = "sort", defaultValue = "latest") AlbumSortType sort) {
+			@RequestParam(value = "sort", defaultValue = "latest") AlbumSortType sort) {
 		List<AlbumMainResponseDto> albumMainResponseDtoList = albumService.getAlbumsSorted(sort);
 		return ApiResponse.ok(albumMainResponseDtoList);
 	}
@@ -45,8 +48,8 @@ public class AlbumController {
 	// 키워드 검색을 통한 앨범 조회
 	@GetMapping("/search")
 	public ApiResponse<List<AlbumSearchResponseDto>> searchAlbumsByKeyword(
-		@RequestParam(value = "keyword") String keyword,
-		@RequestParam(value = "type") List<String> types) {
+			@RequestParam(value = "keyword") String keyword,
+			@RequestParam(value = "type") List<String> types) {
 
 		Set<AlbumSearchResponseDto> result = new HashSet<>();
 
@@ -87,10 +90,17 @@ public class AlbumController {
 	// 앨범 수정
 	@PatchMapping("/{albumId}")
 	public ApiResponse<AlbumUpdateResponseDto> updateAlbum(
-		@PathVariable Long albumId,
-		@RequestBody AlbumUpdateRequestDto albumUpdateRequestDto) {
+			@PathVariable Long albumId,
+			@RequestBody AlbumUpdateRequestDto albumUpdateRequestDto) {
 		AlbumUpdateResponseDto updatedAlbumDto = albumService.updateAlbum(albumId, albumUpdateRequestDto);
 		return ApiResponse.ok(updatedAlbumDto);
+	}
+
+	// 장르 전체 조회
+	@GetMapping("/genres")
+	public ApiResponse<List<GenreResponseDto>> getAllGenres() {
+		List<GenreResponseDto> genres = genreService.getAllGenres();
+		return ApiResponse.ok(genres);
 	}
 
 }
