@@ -32,16 +32,9 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
 
 		ObjectMapper objectMapper = new ObjectMapper();
 
-		Map<String, Object> data = new HashMap<>();
-		Map<String, Object> error = new HashMap<>();
-		error.put("status", HttpServletResponse.SC_UNAUTHORIZED);
-		error.put("message", ex.getMessage());
-		error.put("path", request.getServletPath());
-		data.put("error", error);
-
 		try {
 			response.getWriter().write(objectMapper.writeValueAsString(
-				ApiResponse.error("Unauthorized - TOKEN_NOT_EXIST")
+				"Unauthorized - TOKEN_NOT_EXIST"
 			));
 		} catch (IOException e) {
 			e.printStackTrace();
