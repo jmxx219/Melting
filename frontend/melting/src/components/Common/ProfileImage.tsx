@@ -6,7 +6,7 @@ interface ProfileImageProps {
   avatarSize: string
   userIconSize: string
   withUpload?: boolean
-  onImageUpload?: (image: string) => void
+  onImageUpload?: (image: string, file?: File) => void
 }
 
 export default function ProfileImage({
@@ -22,7 +22,7 @@ export default function ProfileImage({
       const reader = new FileReader()
       reader.onloadend = () => {
         if (onImageUpload && typeof reader.result === 'string') {
-          onImageUpload(reader.result)
+          onImageUpload(reader.result, file)
         }
       }
       reader.readAsDataURL(file)
