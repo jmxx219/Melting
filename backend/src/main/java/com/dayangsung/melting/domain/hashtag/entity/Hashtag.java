@@ -23,4 +23,8 @@ public class Hashtag {
 
 	@Column(nullable = false, length = 50)
 	private String content;
+
+	public Hashtag(String content) {
+		this.content = content;
+	}
 }

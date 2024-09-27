@@ -55,4 +55,8 @@ public class Comment extends BaseEntity {
 	public void deleteComment() {
 		this.isDeleted = true;
 	}
+
+	public void setAlbum(Album album) {
+		this.album = album;
+	}
 }

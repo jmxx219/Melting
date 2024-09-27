@@ -14,10 +14,10 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Getter
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class AlbumGenre {
@@ -27,6 +27,7 @@ public class AlbumGenre {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
+	@Setter
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "album_id", nullable = false)
 	private Album album;
@@ -35,4 +36,9 @@ public class AlbumGenre {
 	@JoinColumn(name = "genre_id", nullable = false)
 	private Genre genre;
 
+	@Builder
+	public AlbumGenre(Album album, Genre genre) {
+		this.album = album;
+		this.genre = genre;
+	}
 }
