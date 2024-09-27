@@ -29,38 +29,37 @@ public class MemberService {
 	}
 
 	@Transactional
-	public MemberResponseDto initMemberInfo(MultipartFile profileImage, String nickname, Gender gender, Long memberId) {
+	public MemberResponseDto initMemberInfo(MultipartFile profileImage, String nickname, Gender gender, String email) {
 		String profileImageUrl = awsS3Service.getDefaultProfileImageUrl();
+		Member member = memberRepository.findByEmail(email).orElseThrow(RuntimeException::new);
 		if (!profileImage.isEmpty()) {
-			profileImageUrl = awsS3Service.uploadProfileImage(profileImage, memberId, null);
+			profileImageUrl = awsS3Service.uploadProfileImage(profileImage, member.getId(), null);
 		}
-		Member member = memberRepository.findById(memberId)
-			.orElseThrow(RuntimeException::new);
 		member.initMember(gender, profileImageUrl, nickname);
 		memberRepository.save(member);
 		return MemberResponseDto.of(member);
 	}
 
-	public MemberResponseDto getMemberInfo(Long memberId) {
-		Member member = memberRepository.findById(memberId)
+	public MemberResponseDto getMemberInfo(String email) {
+		Member member = memberRepository.findByEmail(email)
 			.orElseThrow(RuntimeException::new);
 		return MemberResponseDto.of(member);
 	}
 
 	@Transactional
-	public MemberResponseDto updateMemberInfo(MultipartFile multipartFile, String nickname, Long memberId) {
-		Member member = memberRepository.findById(memberId).orElseThrow(RuntimeException::new);
+	public MemberResponseDto updateMemberInfo(MultipartFile multipartFile, String nickname, String email) {
+		Member member = memberRepository.findByEmail(email).orElseThrow(RuntimeException::new);
 		String newFileName = multipartFile.getOriginalFilename();
 		if (nickname == null) {
 			String extension = newFileName.substring(newFileName.lastIndexOf(".") + 1).toLowerCase();
 			member.updateProfileImageExtension(extension);
-			awsS3Service.uploadProfileImage(multipartFile, memberId,
+			awsS3Service.uploadProfileImage(multipartFile, member.getId(),
 				member.getProfileImageExtension());
 		} else {
 			if (multipartFile.isEmpty()) {
 				member.updateNickname(nickname);
 			} else {
-				String profileImageUrl = awsS3Service.uploadProfileImage(multipartFile, memberId,
+				String profileImageUrl = awsS3Service.uploadProfileImage(multipartFile, member.getId(),
 					member.getProfileImageExtension());
 				member.updateMember(profileImageUrl, nickname);
 			}
