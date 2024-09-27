@@ -78,14 +78,47 @@ public class Album extends BaseEntity {
 	private List<Comment> comments = new ArrayList<>();
 
 	@Builder
-	public Album(Member member, String albumName, AlbumCategory category,
-		String albumDescription, String albumCoverImageUrl) {
+	public Album(Member member, String albumName,
+		AlbumCategory category,	String albumDescription) {
 		this.member = member;
 		this.albumName = albumName;
 		this.category = category;
 		this.albumDescription = albumDescription;
-		this.albumCoverImageUrl = albumCoverImageUrl;
 		this.isPublic = false;
 		this.isDeleted = false;
+	}
+
+	public void updateAlbumCoverImageUrl(String albumCoverImageUrl) {
+		this.albumCoverImageUrl = albumCoverImageUrl;
+	}
+
+	public void addSong(Song song) {
+		songs.add(song);
+		song.setAlbum(this);
+	}
+
+	public void addHashtag(AlbumHashtag hashtag) {
+		hashtags.add(hashtag);
+		hashtag.setAlbum(this);
+	}
+
+	public void removeHashtag(AlbumHashtag hashtag) {
+		hashtags.remove(hashtag);
+		hashtag.setAlbum(null);
+	}
+
+	public void addGenre(AlbumGenre genre) {
+		genres.add(genre);
+		genre.setAlbum(this);
+	}
+
+	public void addAlbumLikes(LikesAlbum albumLikes) {
+		likesAlbums.add(albumLikes);
+		albumLikes.setAlbum(this);
+	}
+
+	public void addComment(Comment comment) {
+		comments.add(comment);
+		comment.setAlbum(this);
 	}
 }

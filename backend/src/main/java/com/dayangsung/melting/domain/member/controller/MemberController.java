@@ -46,7 +46,7 @@ public class MemberController {
 
 	@PatchMapping("/init")
 	public ApiResponse<MemberResponseDto> initMemberInfo(
-		@RequestPart(required = false) MultipartFile multipartFile,
+		@RequestPart MultipartFile multipartFile,
 		@RequestPart MemberInitRequestDto memberInitRequestDto,
 		@AuthenticationPrincipal CustomOAuth2User customOAuth2User) {
 		MemberResponseDto memberResponseDto =

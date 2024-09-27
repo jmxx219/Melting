@@ -1,7 +1,6 @@
 package com.dayangsung.melting.domain.hashtag.entity;
 
 import com.dayangsung.melting.domain.album.entity.Album;
-import com.dayangsung.melting.domain.genre.entity.Genre;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -15,10 +14,10 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Getter
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class AlbumHashtag {
@@ -28,6 +27,7 @@ public class AlbumHashtag {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
+	@Setter
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "album_id", nullable = false)
 	private Album album;
@@ -36,4 +36,9 @@ public class AlbumHashtag {
 	@JoinColumn(name = "hashtag_id", nullable = false)
 	private Hashtag hashtag;
 
+	@Builder
+	public AlbumHashtag(Album album, Hashtag hashtag) {
+		this.album = album;
+		this.hashtag = hashtag;
+	}
 }

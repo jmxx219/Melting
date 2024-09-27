@@ -26,6 +26,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Getter
 @Entity
@@ -46,6 +47,7 @@ public class Song extends BaseEntity {
 	@JoinColumn(name = "member_id")
 	private Member member;
 
+	@Setter
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "album_id")
 	private Album album;
@@ -57,8 +59,10 @@ public class Song extends BaseEntity {
 	@Column(nullable = false)
 	private String songUrl;
 
+	@Setter
 	private Integer trackNumber;
 
+	@Setter
 	private Boolean isTitle;
 
 	@OneToMany(mappedBy = "song")
@@ -74,12 +78,6 @@ public class Song extends BaseEntity {
 		this.songUrl = songUrl;
 		this.trackNumber = null;
 		this.isTitle = null;
-	}
-
-	public void setAlbum(Album album, Integer trackNumber, Boolean isTitle) {
-		this.album = album;
-		this.trackNumber = trackNumber;
-		this.isTitle = isTitle;
 	}
 
 	public void removeFromAlbum() {
