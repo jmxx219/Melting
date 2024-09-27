@@ -6,7 +6,7 @@ interface ProfileImageProps {
   avatarSize: string
   userIconSize: string
   withUpload?: boolean
-  onImageUpload?: (event: React.ChangeEvent<HTMLInputElement>) => void
+  onImageUpload?: (image: string) => void
 }
 
 export default function ProfileImage({
@@ -16,6 +16,18 @@ export default function ProfileImage({
   withUpload = false,
   onImageUpload,
 }: ProfileImageProps) {
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0]
+    if (file) {
+      const reader = new FileReader()
+      reader.onloadend = () => {
+        if (onImageUpload && typeof reader.result === 'string') {
+          onImageUpload(reader.result)
+        }
+      }
+      reader.readAsDataURL(file)
+    }
+  }
   return (
     <div className="relative flex flex-col items-center">
       <Avatar className={avatarSize}>
@@ -37,7 +49,7 @@ export default function ProfileImage({
             type="file"
             accept="image/*"
             className="hidden"
-            onChange={onImageUpload}
+            onChange={handleFileChange}
             autoComplete="off"
             spellCheck="false"
           />

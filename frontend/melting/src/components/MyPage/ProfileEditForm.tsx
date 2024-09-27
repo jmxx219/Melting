@@ -8,17 +8,6 @@ export default function ProfileEditForm() {
   const [nickname, setNickname] = useState('노원핵주먹')
   const [isFormValid, setIsFormValid] = useState(false)
 
-  const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0]
-    if (file) {
-      const reader = new FileReader()
-      reader.onloadend = () => {
-        setProfileImage(reader.result as string)
-      }
-      reader.readAsDataURL(file)
-    }
-  }
-
   const handleSubmit = () => {
     if (isFormValid) {
       // TODO: 회원정보 수정 API 호출
@@ -30,10 +19,6 @@ export default function ProfileEditForm() {
     setIsFormValid(isValid)
   }
 
-  useEffect(() => {
-    console.log('isFormValid has changed:', isFormValid)
-  }, [isFormValid])
-
   return (
     <div className="px-8 py-10 flex flex-col">
       <div>
@@ -43,7 +28,7 @@ export default function ProfileEditForm() {
             avatarSize="w-40 h-40"
             userIconSize="w-12 h-12"
             withUpload={true}
-            onImageUpload={handleImageUpload}
+            onImageUpload={setProfileImage}
           />
         </div>
         <NicknameInput
