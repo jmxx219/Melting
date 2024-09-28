@@ -1,3 +1,5 @@
+import { MemberUpdateRequestDto } from '@/typeApis/data-contracts.ts'
+
 export interface user {
   id: number
   socialType: string
@@ -77,3 +79,17 @@ export type ValidateNicknameError = ErrorResponse
 export type LogoutData = ApiResponseVoid
 
 export type LogoutError = ErrorResponse
+
+export type GetMemberInfoData = ApiResponseMemberResponseDto
+
+export type GetMemberInfoError = ErrorResponse
+
+export interface UpdateMemberInfoPayload {
+  /** @format binary */
+  multipartFile: File
+  memberUpdateRequestDto: MemberUpdateRequestDto
+}
+
+export type UpdateMemberInfoData = ApiResponseMemberResponseDto
+
+export type UpdateMemberInfoError = ErrorResponse
