@@ -53,7 +53,6 @@ public class Album extends BaseEntity {
 	@Size(min = 50, max = 1000)
 	private String albumDescription;
 
-	@Column(nullable = false)
 	private String albumCoverImageUrl;
 
 	@Column(nullable = false)
@@ -79,7 +78,7 @@ public class Album extends BaseEntity {
 
 	@Builder
 	public Album(Member member, String albumName,
-		AlbumCategory category,	String albumDescription) {
+		AlbumCategory category, String albumDescription) {
 		this.member = member;
 		this.albumName = albumName;
 		this.category = category;

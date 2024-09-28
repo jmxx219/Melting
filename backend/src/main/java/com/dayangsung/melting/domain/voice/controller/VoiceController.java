@@ -32,10 +32,10 @@ public class VoiceController {
 	@PostMapping(value = "/me/voices", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
 	public ApiResponse<VoiceCreateResponseDto> addVoice(
 		@ModelAttribute VoiceCreateRequestDto voiceCreateRequestDto,
-		@AuthenticationPrincipal CustomOAuth2User customOAuth2User) throws IOException {
+		@AuthenticationPrincipal String email) throws IOException {
 		Long originalSongId = voiceCreateRequestDto.originalSongId();
 		MultipartFile voiceFile = voiceCreateRequestDto.voiceFile();
-		VoiceCreateResponseDto response = voiceService.addVoice(originalSongId, voiceFile, customOAuth2User.getId());
+		VoiceCreateResponseDto response = voiceService.addVoice(originalSongId, voiceFile, email);
 		return ApiResponse.ok(response);
 	}
 

@@ -51,21 +51,21 @@ public class AlbumService {
 
 	@Transactional
 	public AlbumDetailsResponseDto createAlbum(AlbumCreateRequestDto albumCreateRequestDto,
-		MultipartFile albumCoverImage, Long memberId) {
-		Member member = memberRepository.findById(memberId)
+		MultipartFile albumCoverImage, String email) {
+		Member member = memberRepository.findByEmail(email)
 			.orElseThrow(() -> new BusinessException(ErrorMessage.MEMBER_NOT_FOUND));
 
 		int songCount = albumCreateRequestDto.songs().size();
-		Album album = Album.builder()
+		Album album = albumRepository.save(Album.builder()
 			.member(member)
 			.albumName(albumCreateRequestDto.albumName())
 			.albumDescription(albumCreateRequestDto.albumDescription())
-			.category(AlbumCategory.getCategoryBySongCount(songCount))
-			.build();
+			.category(AlbumCategory.findCategoryBySongCount(songCount))
+			.build());
 
 		List<SongDetailsResponseDto> songs = new ArrayList<>();
 		for (int trackNumber = 1; trackNumber <= songCount; trackNumber++) {
-			Long songId = albumCreateRequestDto.songs().get(trackNumber);
+			Long songId = albumCreateRequestDto.songs().get(trackNumber - 1);
 			Song song = songRepository.findById(songId)
 				.orElseThrow(() -> new BusinessException(ErrorMessage.SONG_NOT_FOUND));
 			song.setTrackNumber(trackNumber);
@@ -97,7 +97,7 @@ public class AlbumService {
 		album = albumRepository.save(album);
 
 		return AlbumDetailsResponseDto.of(album, member,
-			likesAlbumRepository.existsLikesAlbumByAlbumIdAndMemberId(album.getId(), memberId),
+			likesAlbumRepository.existsLikesAlbumByAlbumIdAndMemberId(album.getId(), member.getId()),
 			likesService.getAlbumLikesCount(album.getId()), songs, 0L);
 	}
 

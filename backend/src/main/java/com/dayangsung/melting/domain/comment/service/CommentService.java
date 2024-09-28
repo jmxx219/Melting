@@ -41,9 +41,9 @@ public class CommentService {
 			.collect(Collectors.toList());
 	}
 
-	public CommentResponseDto writeComment(Long albumId, Long memberId, String content) {
+	public CommentResponseDto writeComment(Long albumId, String email, String content) {
 		Album album = albumRepository.getReferenceById(albumId);
-		Member member = memberRepository.getReferenceById(memberId);
+		Member member = memberRepository.findByEmail(email).orElseThrow(RuntimeException::new);
 		Comment comment = commentRepository.save(
 			Comment.builder()
 				.album(album)
@@ -57,8 +57,8 @@ public class CommentService {
 		);
 	}
 
-	// 아래 memberId들은 추후 메소드 시큐리티 적용할 때 사용할 예정
-	public CommentResponseDto modifyComment(Long commentId, Long memberId, String content) {
+	// 아래 email들은 추후 메소드 시큐리티 적용할 때 사용할 예정
+	public CommentResponseDto modifyComment(Long commentId, String email, String content) {
 		Comment comment = commentRepository.getReferenceById(commentId);
 		comment.modifyContent(content);
 		commentRepository.save(comment);
@@ -69,7 +69,7 @@ public class CommentService {
 		);
 	}
 
-	public CommentResponseDto deleteComment(Long commentId, Long memberId) {
+	public CommentResponseDto deleteComment(Long commentId, String email) {
 		Comment comment = commentRepository.getReferenceById(commentId);
 		comment.deleteComment();
 		commentRepository.save(comment);

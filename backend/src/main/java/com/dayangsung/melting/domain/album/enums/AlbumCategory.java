@@ -14,10 +14,10 @@ public enum AlbumCategory {
 	private final String category;
 	private final List<Integer> albumSizeList;
 
-	public static AlbumCategory getCategoryBySongCount(int songCount) {
+	public static AlbumCategory findCategoryBySongCount(int songCount) {
 		return Arrays.stream(AlbumCategory.values())
 			.filter(category -> category.albumSizeList.contains(songCount))
-			.findFirst()
+			.findAny()
 			.orElseThrow(() -> new IllegalArgumentException("올바르지 않은 곡 개수입니다."));
 	}
 }
