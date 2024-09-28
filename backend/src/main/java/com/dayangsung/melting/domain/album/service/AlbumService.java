@@ -4,12 +4,16 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.dayangsung.melting.domain.album.dto.request.AlbumCreateRequestDto;
 import com.dayangsung.melting.domain.album.dto.response.AlbumDetailsResponseDto;
+import com.dayangsung.melting.domain.album.dto.response.AlbumSearchResponseDto;
 import com.dayangsung.melting.domain.album.entity.Album;
 import com.dayangsung.melting.domain.album.enums.AlbumCategory;
 import com.dayangsung.melting.domain.album.repository.AlbumRepository;
@@ -125,11 +129,15 @@ public class AlbumService {
 			likesService.getAlbumLikesCount(album.getId()), songDetails, album.getComments().size());
 	}
 
+	public Page<AlbumSearchResponseDto> searchAlbum(int page, int size) {
+		Pageable pageable = PageRequest.of(page, size);
+		return albumRepository.findAllByOrderByCreatedAtDesc(pageable).map(AlbumSearchResponseDto::of);
+	}
+
 	private List<SongDetailsResponseDto> getSongDetails(Album album) {
 		return album.getSongs().stream()
 			.map(song -> SongDetailsResponseDto.of(song, album.getAlbumCoverImageUrl(),
 				likesService.getSongLikesCount(song.getId())))
 			.toList();
 	}
-
 }
