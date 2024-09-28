@@ -14,7 +14,7 @@ import {
   InitMemberInfoPayload,
   MemberInitRequestDto,
 } from '@/typeApis/members/data-contracts.ts'
-import { validateNickname, initMemberInfo } from '@/apis/userApi.ts'
+import { userApi } from '@/apis/userApi'
 import ProfileImage from '@/components/Common/ProfileImage.tsx'
 import NicknameInput from '@/components/Common/NicknameInput.tsx'
 import AlertModal from '@/components/Common/AlertModal.tsx'
@@ -40,7 +40,7 @@ export default function SignupForm() {
   const checkNickname = useCallback(async (value: string) => {
     if (isValidNickname(value)) {
       try {
-        const response = await validateNickname(value)
+        const response = await userApi.validateNickname(value)
         console.log(nickname)
         setIsNicknameDuplicate(!response.data) // API 응답이 false면 중복
         setIsNicknameValid(response.data ?? false)
@@ -87,7 +87,7 @@ export default function SignupForm() {
           memberInitRequestDto: memberInitRequestDto,
         }
 
-        const response = await initMemberInfo(payload)
+        const response = await userApi.initMemberInfo(payload)
         console.log('회원 정보 초기화 성공:', response)
         navigate('/main')
       } catch (error) {
