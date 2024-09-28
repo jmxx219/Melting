@@ -2,7 +2,6 @@ package com.dayangsung.melting.domain.album.dto.response;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import com.dayangsung.melting.domain.album.entity.Album;
 import com.dayangsung.melting.domain.album.enums.AlbumCategory;
@@ -25,12 +24,12 @@ public record AlbumDetailsResponseDto(
 	List<String> hashtags,
 	List<String> genres,
 	List<CommentResponseDto> comments,
-	Long commentCount,
+	Integer commentCount,
 	Boolean isLiked,
 	Integer likesCount
 ) {
 	public static AlbumDetailsResponseDto of(Album album, Member member,
-		Boolean isLiked, Integer albumLikesCount, List<SongDetailsResponseDto> songs, Long commentCount) {
+		Boolean isLiked, Integer albumLikesCount, List<SongDetailsResponseDto> songs, Integer commentCount) {
 		return AlbumDetailsResponseDto.builder()
 			.albumId(album.getId())
 			.albumName(album.getAlbumName())
@@ -42,10 +41,14 @@ public record AlbumDetailsResponseDto(
 			.songs(songs)
 			.hashtags(album.getHashtags().stream()
 				.map(albumHashtag -> albumHashtag.getHashtag().getContent())
-				.collect(Collectors.toList()))
+				.toList())
 			.genres(album.getGenres().stream()
 				.map(albumGenre -> albumGenre.getGenre().getContent())
-				.collect(Collectors.toList()))
+				.toList())
+			.comments(album.getComments().stream()
+				.map(comment -> CommentResponseDto.of(comment, comment.getMember().getProfileImageUrl(),
+					comment.getMember().getNickname()))
+				.toList())
 			.commentCount(commentCount)
 			.isLiked(isLiked)
 			.likesCount(albumLikesCount)

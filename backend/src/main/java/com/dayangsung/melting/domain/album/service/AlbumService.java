@@ -33,7 +33,9 @@ import com.dayangsung.melting.global.common.service.AwsS3Service;
 import com.dayangsung.melting.global.exception.BusinessException;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class AlbumService {
@@ -98,7 +100,21 @@ public class AlbumService {
 
 		return AlbumDetailsResponseDto.of(album, member,
 			likesAlbumRepository.existsLikesAlbumByAlbumIdAndMemberId(album.getId(), member.getId()),
-			likesService.getAlbumLikesCount(album.getId()), songs, 0L);
+			likesService.getAlbumLikesCount(album.getId()), songs, 0);
 	}
 
+	public AlbumDetailsResponseDto getAlbumDetails(Long albumId) {
+		Album album = albumRepository.findById(albumId)
+			.orElseThrow(() -> new BusinessException(ErrorMessage.ALBUM_NOT_FOUND));
+		Member member = memberRepository.findById(album.getMember().getId())
+			.orElseThrow(() -> new BusinessException(ErrorMessage.MEMBER_NOT_FOUND));
+		List<SongDetailsResponseDto> songDetails = album.getSongs().stream()
+			.map(song -> SongDetailsResponseDto.of(song, album.getAlbumCoverImageUrl(),
+				likesService.getSongLikesCount(song.getId())))
+			.toList();
+
+		return AlbumDetailsResponseDto.of(album, member,
+			likesAlbumRepository.existsLikesAlbumByAlbumIdAndMemberId(album.getId(), member.getId()),
+			likesService.getAlbumLikesCount(album.getId()), songDetails, album.getComments().size());
+	}
 }
