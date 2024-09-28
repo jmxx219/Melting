@@ -14,6 +14,7 @@ import lombok.Builder;
 
 @Builder
 public record AlbumDetailsResponseDto(
+	Long albumId,
 	String albumName,
 	String albumCreatorNickname,
 	String albumCreatorProfileImageUrl,
@@ -31,10 +32,12 @@ public record AlbumDetailsResponseDto(
 	public static AlbumDetailsResponseDto of(Album album, Member member,
 		Boolean isLiked, Integer albumLikesCount, List<SongDetailsResponseDto> songs, Long commentCount) {
 		return AlbumDetailsResponseDto.builder()
+			.albumId(album.getId())
 			.albumName(album.getAlbumName())
 			.albumCreatorNickname(member.getNickname())
 			.albumCreatorProfileImageUrl(member.getProfileImageUrl())
 			.albumDescription(album.getAlbumDescription())
+			.category(album.getCategory())
 			.createdAt(album.getCreatedAt())
 			.songs(songs)
 			.hashtags(album.getHashtags().stream()

@@ -65,6 +65,8 @@ public class Song extends BaseEntity {
 	@Setter
 	private Boolean isTitle;
 
+	private boolean isDeleted;
+
 	@OneToMany(mappedBy = "song")
 	private List<LikesSong> likesSongs = new ArrayList<>();
 
@@ -78,11 +80,16 @@ public class Song extends BaseEntity {
 		this.songUrl = songUrl;
 		this.trackNumber = null;
 		this.isTitle = null;
+		this.isDeleted = false;
 	}
 
 	public void removeFromAlbum() {
 		this.album = null;
 		this.trackNumber = null;
 		this.isTitle = null;
+	}
+
+	public void removeSong() {
+		this.isDeleted = true;
 	}
 }

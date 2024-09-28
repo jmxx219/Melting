@@ -18,6 +18,8 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import com.dayangsung.melting.domain.auth.repository.HttpCookieOAuth2AuthorizationRequestRepository;
 import com.dayangsung.melting.domain.auth.service.AuthService;
 import com.dayangsung.melting.global.filter.JwtFilter;
+import com.dayangsung.melting.global.handler.JwtAccessDeniedHandler;
+import com.dayangsung.melting.global.handler.JwtAuthenticationEntryPoint;
 import com.dayangsung.melting.global.handler.LoginFailureHandler;
 import com.dayangsung.melting.global.handler.LoginSuccessHandler;
 import com.dayangsung.melting.global.util.JwtUtil;
@@ -36,13 +38,17 @@ public class SecurityConfig {
 
 	@Bean
 	public SecurityFilterChain filterChain(HttpSecurity http,
-		HttpCookieOAuth2AuthorizationRequestRepository httpCookieOAuth2AuthorizationRequestRepository) throws Exception {
+		HttpCookieOAuth2AuthorizationRequestRepository httpCookieOAuth2AuthorizationRequestRepository) throws
+		Exception {
 
 		http
 			.cors(cors -> cors.configurationSource(corsConfigurationSource()))
 			.csrf(AbstractHttpConfigurer::disable)
 			.formLogin(AbstractHttpConfigurer::disable)
 			.httpBasic(AbstractHttpConfigurer::disable)
+			.exceptionHandling((exceptions) -> exceptions
+				.authenticationEntryPoint(new JwtAuthenticationEntryPoint())
+				.accessDeniedHandler(new JwtAccessDeniedHandler()))
 			.addFilterBefore(new JwtFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class)
 			.oauth2Login(oauth2 -> oauth2
 				.authorizationEndpoint(authorization -> authorization
@@ -55,8 +61,21 @@ public class SecurityConfig {
 					.userService(authService))
 				.successHandler(loginSuccessHandler)
 				.failureHandler(loginFailureHandler))
+			.authorizeHttpRequests(authorize ->
+				authorize
+					.requestMatchers(
+						"/swagger-ui/**",
+						"/v3/api-docs/**",
+						"/oauth2/**",
+						"/api/v1/albums/**"
+					)
+					.permitAll()
+					.anyRequest()
+					.authenticated()
+			)
 			.sessionManagement(session -> session
-				.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+				.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+			);
 
 		return http.build();
 	}
@@ -64,13 +83,14 @@ public class SecurityConfig {
 	CorsConfigurationSource corsConfigurationSource() {
 		CorsConfiguration configuration = new CorsConfiguration();
 
-		configuration.setAllowedOrigins(List.of("https://localhost:5173", "http://localhost:5173", "https://j11a701.p.ssafy.io"));
+		configuration.setAllowedOrigins(
+			List.of("https://localhost:5173", "http://localhost:5173", "https://j11a701.p.ssafy.io"));
 		configuration.setAllowedMethods(Collections.singletonList("*"));
 		configuration.setAllowCredentials(true);
 		configuration.setAllowedHeaders(List.of("Authorization", "Set-Cookie", "Content-Type"));
 		configuration.setMaxAge(3600L);
 
-		configuration.setExposedHeaders(List.of("Authorization", "Set-Cookie"));
+		configuration.setExposedHeaders(List.of("Authorization", "Set-Cookie", "Content-Type"));
 
 		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
 		source.registerCorsConfiguration("/**", configuration);

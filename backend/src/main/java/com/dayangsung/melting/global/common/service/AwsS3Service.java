@@ -60,7 +60,7 @@ public class AwsS3Service {
 	}
 
 	public String uploadAlbumCoverImage(MultipartFile albumCoverImage, Long albumId) {
-		return uploadImage(albumCoverImage, "/image/generated_album", albumId);
+		return uploadImage(albumCoverImage, "/image/generated_album_cover", albumId);
 	}
 
 	public String uploadSong(MultipartFile song, Long songId) {
