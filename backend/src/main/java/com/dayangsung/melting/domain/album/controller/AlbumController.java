@@ -32,10 +32,10 @@ public class AlbumController {
 
 	@GetMapping
 	public ApiResponse<Page<AlbumSearchResponseDto>> searchAlbum(
+		@RequestParam(defaultValue = "0") int sort,
 		@RequestParam(defaultValue = "0") int page,
 		@RequestParam(defaultValue = "10") int size) {
-
-		Page<AlbumSearchResponseDto> albumPage = albumService.searchAlbum(page, size);
+		Page<AlbumSearchResponseDto> albumPage = albumService.searchAlbum(sort, page, size);
 		return ApiResponse.ok(albumPage);
 	}
 
