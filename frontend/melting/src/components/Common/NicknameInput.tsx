@@ -1,6 +1,6 @@
 import { Input } from '@/components/ui/input'
 import { useState, useEffect, useCallback } from 'react'
-import { validateNickname } from '@/apis/userApi.ts'
+import { userApi } from '@/apis/userApi.ts'
 
 interface NicknameInputProps {
   nickname: string
@@ -26,18 +26,15 @@ export default function NicknameInput({
   const checkNickname = useCallback(async (value: string) => {
     if (isValidNickname(value)) {
       try {
-        const response = await validateNickname(value)
+        const response = await userApi.validateNickname(value)
         setIsNicknameDuplicate(!response.data) // API 응답이 false면 중복
-        setIsNicknameValid(response.data ?? false)
         return !response.data // true면 중복이 아니고 false면 중복
       } catch (error) {
         console.error('닉네임 검증 중 오류 발생:', error)
         setIsNicknameDuplicate(true)
-        setIsNicknameValid(false)
         return true
       }
     } else {
-      setIsNicknameValid(false)
       setIsNicknameDuplicate(false)
       return true
     }
@@ -46,18 +43,19 @@ export default function NicknameInput({
   useEffect(() => {
     const validateNickname = async () => {
       const nicknameValid = isValidNickname(nickname)
-      let nicknameDuplicate = true
+      setIsNicknameValid(nicknameValid)
 
       if (nicknameValid) {
-        nicknameDuplicate = await checkNickname(nickname)
+        const nicknameDuplicate = await checkNickname(nickname)
+        setIsNicknameDuplicate(nicknameDuplicate)
+        // 닉네임이 유효하고 중복이 아닐 경우에만 true
+        onValidate(nicknameValid && !nicknameDuplicate)
+      } else {
+        setIsNicknameDuplicate(false)
+        onValidate(false)
       }
-
-      setIsNicknameValid(nicknameValid)
-      setIsNicknameDuplicate(nicknameDuplicate)
-
-      // nickname이 유효하고 중복이 아닐 경우에만 true
-      onValidate(nicknameValid && !nicknameDuplicate)
     }
+
     const timer = setTimeout(() => {
       if (nickname) {
         validateNickname()
@@ -93,12 +91,12 @@ export default function NicknameInput({
           >
             {nickname.length}/20
           </span>
-          {!isNicknameValid && nickname && (
+          {!isNicknameValid && nickname.length > 0 && (
             <p className="text-status-warning text-xs mt-1">
               닉네임은 2-20자의 한글, 영문, 숫자만 가능합니다.
             </p>
           )}
-          {isNicknameDuplicate && (
+          {isNicknameValid && isNicknameDuplicate && (
             <p className="text-status-warning text-xs mt-1">
               이미 사용 중인 닉네임입니다.
             </p>
