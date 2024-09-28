@@ -2,14 +2,17 @@ package com.dayangsung.melting.domain.album.controller;
 
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.dayangsung.melting.domain.album.dto.request.AlbumCreateRequestDto;
+import com.dayangsung.melting.domain.album.dto.request.AlbumUpdateRequestDto;
 import com.dayangsung.melting.domain.album.dto.response.AlbumDetailsResponseDto;
 import com.dayangsung.melting.domain.album.service.AlbumService;
 import com.dayangsung.melting.domain.auth.CustomOAuth2User;
@@ -38,6 +41,14 @@ public class AlbumController {
 	public ApiResponse<AlbumDetailsResponseDto> getAlbumDetails(@PathVariable Long albumId) {
 		AlbumDetailsResponseDto albumDetailsResponseDto =
 			albumService.getAlbumDetails(albumId);
+		return ApiResponse.ok(albumDetailsResponseDto);
+	}
+
+	@PatchMapping("/{albumId}")
+	public ApiResponse<AlbumDetailsResponseDto> updateAlbumDescription(@PathVariable Long albumId,
+		@RequestBody AlbumUpdateRequestDto albumUpdateRequestDto) {
+		AlbumDetailsResponseDto albumDetailsResponseDto = albumService.updateAlbumDescription(albumId,
+			albumUpdateRequestDto.description());
 		return ApiResponse.ok(albumDetailsResponseDto);
 	}
 

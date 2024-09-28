@@ -106,15 +106,30 @@ public class AlbumService {
 	public AlbumDetailsResponseDto getAlbumDetails(Long albumId) {
 		Album album = albumRepository.findById(albumId)
 			.orElseThrow(() -> new BusinessException(ErrorMessage.ALBUM_NOT_FOUND));
-		Member member = memberRepository.findById(album.getMember().getId())
-			.orElseThrow(() -> new BusinessException(ErrorMessage.MEMBER_NOT_FOUND));
-		List<SongDetailsResponseDto> songDetails = album.getSongs().stream()
+		List<SongDetailsResponseDto> songDetails = getSongDetails(album);
+
+		return AlbumDetailsResponseDto.of(album, album.getMember(),
+			likesAlbumRepository.existsLikesAlbumByAlbumIdAndMemberId(album.getId(), album.getMember().getId()),
+			likesService.getAlbumLikesCount(album.getId()), songDetails, album.getComments().size());
+	}
+
+	public AlbumDetailsResponseDto updateAlbumDescription(Long albumId, String description) {
+		Album album = albumRepository.findById(albumId)
+			.orElseThrow(() -> new BusinessException(ErrorMessage.ALBUM_NOT_FOUND));
+		album.updateAlbumDescription(description);
+		albumRepository.save(album);
+		List<SongDetailsResponseDto> songDetails = getSongDetails(album);
+
+		return AlbumDetailsResponseDto.of(album, album.getMember(),
+			likesAlbumRepository.existsLikesAlbumByAlbumIdAndMemberId(album.getId(), album.getMember().getId()),
+			likesService.getAlbumLikesCount(album.getId()), songDetails, album.getComments().size());
+	}
+
+	private List<SongDetailsResponseDto> getSongDetails(Album album) {
+		return album.getSongs().stream()
 			.map(song -> SongDetailsResponseDto.of(song, album.getAlbumCoverImageUrl(),
 				likesService.getSongLikesCount(song.getId())))
 			.toList();
-
-		return AlbumDetailsResponseDto.of(album, member,
-			likesAlbumRepository.existsLikesAlbumByAlbumIdAndMemberId(album.getId(), member.getId()),
-			likesService.getAlbumLikesCount(album.getId()), songDetails, album.getComments().size());
 	}
+
 }

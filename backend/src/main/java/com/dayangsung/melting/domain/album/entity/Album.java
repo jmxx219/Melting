@@ -91,6 +91,10 @@ public class Album extends BaseEntity {
 		this.albumCoverImageUrl = albumCoverImageUrl;
 	}
 
+	public void updateAlbumDescription(String albumDescription) {
+		this.albumDescription = albumDescription;
+	}
+
 	public void addSong(Song song) {
 		songs.add(song);
 		song.setAlbum(this);
