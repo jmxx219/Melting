@@ -8,7 +8,11 @@ import {
   LogoutData,
   LogoutError,
 } from '@/types/user'
-import { handleApiError } from '@/utils/errorUtils'
+import { handleApiError } from '@/utils/errorUtil.ts'
+import {
+  GetMemberInfoData,
+  GetMemberInfoError,
+} from '@/typeApis/data-contracts.ts'
 
 const axiosInstance = createAxiosInstance('members')
 
@@ -64,6 +68,15 @@ export const userApi = {
       return response.data
     } catch (error) {
       throw handleApiError<LogoutError>(error)
+    }
+  },
+
+  getMemberInfo: async (): Promise<GetMemberInfoData | GetMemberInfoError> => {
+    try {
+      const response = await axiosInstance.get<GetMemberInfoData>('')
+      return response.data
+    } catch (error) {
+      throw handleApiError<GetMemberInfoError>(error)
     }
   },
 }
