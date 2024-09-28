@@ -26,7 +26,7 @@ public record AlbumDetailsResponseDto(
 	List<CommentResponseDto> comments,
 	Integer commentCount,
 	Boolean isLiked,
-	Integer likesCount
+	Integer likedCount
 ) {
 	public static AlbumDetailsResponseDto of(Album album, Member member,
 		Boolean isLiked, Integer albumLikesCount, List<SongDetailsResponseDto> songs, Integer commentCount) {
@@ -51,7 +51,7 @@ public record AlbumDetailsResponseDto(
 				.toList())
 			.commentCount(commentCount)
 			.isLiked(isLiked)
-			.likesCount(albumLikesCount)
+			.likedCount(albumLikesCount)
 			.build();
 	}
 }

@@ -129,9 +129,13 @@ public class AlbumService {
 			likesService.getAlbumLikesCount(album.getId()), songDetails, album.getComments().size());
 	}
 
-	public Page<AlbumSearchResponseDto> searchAlbum(int page, int size) {
+	public Page<AlbumSearchResponseDto> searchAlbum(int sort, int page, int size) {
 		Pageable pageable = PageRequest.of(page, size);
-		return albumRepository.findAllByOrderByCreatedAtDesc(pageable).map(AlbumSearchResponseDto::of);
+		if (sort == 1) {
+			return albumRepository.findAllByOrderByLikesCountDesc(pageable).map(AlbumSearchResponseDto::of);
+		} else {
+			return albumRepository.findAllByOrderByCreatedAtDesc(pageable).map(AlbumSearchResponseDto::of);
+		}
 	}
 
 	private List<SongDetailsResponseDto> getSongDetails(Album album) {
