@@ -1,5 +1,3 @@
-import { MemberUpdateRequestDto } from '@/typeApis/data-contracts.ts'
-
 export interface user {
   id: number
   socialType: string
@@ -7,6 +5,10 @@ export interface user {
   nickname: string
   gender: string
   profileImage: string
+}
+
+export interface MemberUpdateRequestDto {
+  nickname?: string
 }
 
 export interface ErrorResponse {
