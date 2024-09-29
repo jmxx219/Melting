@@ -85,4 +85,10 @@ public class AlbumController {
 		Page<AlbumSearchResponseDto> albumSearchPage = albumService.searchAlbum(page, size, keyword, options);
 		return ApiResponse.ok(albumSearchPage);
 	}
+
+	@PatchMapping("/{albumId}/toggle")
+	public ApiResponse<Boolean> toggleIsPublic(@PathVariable Long albumId) {
+		Boolean toggledIsPublic = albumService.toggleIsPublic(albumId);
+		return ApiResponse.ok(toggledIsPublic);
+	}
 }
