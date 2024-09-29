@@ -17,7 +17,9 @@ public enum ErrorMessage {
 	ALBUM_NAME_BLANK_ERROR("앨범 이름은 비어있을 수 없습니다."),
 	ALBUM_COVER_IMAGE_BLANK_ERROR("앨범 커버 이미지가 비어있습니다."),
 	ALBUM_SONGS_EMPTY_ERROR("앨범에는 최소 1개의 곡이 필요합니다."),
-	;
+
+	// Song
+	INVALID_FILE_TYPE("올파르지 않은 파일 형식입니다.");
 
 	private final String errorMessage;
 
