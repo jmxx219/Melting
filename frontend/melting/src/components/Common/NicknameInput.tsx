@@ -24,18 +24,19 @@ export default function NicknameInput({
   const [isNicknameDuplicate, setIsNicknameDuplicate] = useState(false)
 
   const checkNickname = useCallback(async (value: string) => {
-    if (isValidNickname(value)) {
-      try {
-        const response = await userApi.validateNickname(value)
-        setIsNicknameDuplicate(!response.data) // API 응답이 false면 중복
-        return !response.data // true면 중복이 아니고 false면 중복
-      } catch (error) {
-        console.error('닉네임 검증 중 오류 발생:', error)
-        setIsNicknameDuplicate(true)
-        return true
-      }
-    } else {
+    if (!isValidNickname(value)) {
       setIsNicknameDuplicate(false)
+      return true // 닉네임이 유효하지 않으면 바로 true 반환
+    }
+
+    try {
+      const response = await userApi.validateNickname(value)
+      const isDuplicate = !response.data // API 응답이 false면 중복
+      setIsNicknameDuplicate(isDuplicate)
+      return isDuplicate
+    } catch (error) {
+      console.error('닉네임 검증 중 오류 발생:', error)
+      setIsNicknameDuplicate(true) // 오류 발생 시 중복으로 간주
       return true
     }
   }, [])
