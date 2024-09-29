@@ -40,3 +40,6 @@ logging:
       dayangsung:
         melting: debug
     web: debug
+
+fastapi:
+  baseUrl: http://localhost:8000
