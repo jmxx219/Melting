@@ -7,6 +7,7 @@ import MusicRoutes from './MusicRoutes'
 import MyPageRoutes from './MyPageRoutes'
 import MainPage from '@/pages/Home/Main'
 import OAuthRedirectHandler from '@/utils/OAuthUtil.ts'
+import CommunityMainPage from '@/pages/Community/CommunityMain.tsx'
 
 const Loading = () => <div>Loading...</div>
 
@@ -19,9 +20,9 @@ export default function AppRoutes() {
           <Route path="/login" element={<LoginPage />} />
           <Route path="/login/callback" element={<OAuthRedirectHandler />} />
           <Route path="/signup" element={<SignupPage />} />
-
           <Route path="/album/*" element={<AlbumRoutes />} />
           <Route path="/music/*" element={<MusicRoutes />} />
+          <Route path="/community" element={<CommunityMainPage />} />
           <Route path="/mypage/*" element={<MyPageRoutes />} />
         </Routes>
       </Suspense>
