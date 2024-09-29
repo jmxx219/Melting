@@ -105,11 +105,6 @@ public class Album extends BaseEntity {
 		hashtag.setAlbum(this);
 	}
 
-	public void removeHashtag(AlbumHashtag hashtag) {
-		hashtags.remove(hashtag);
-		hashtag.setAlbum(null);
-	}
-
 	public void addGenre(AlbumGenre genre) {
 		genres.add(genre);
 		genre.setAlbum(this);
@@ -123,5 +118,9 @@ public class Album extends BaseEntity {
 	public void addComment(Comment comment) {
 		comments.add(comment);
 		comment.setAlbum(this);
+	}
+
+	public void deleteAlbum() {
+		this.isDeleted = true;
 	}
 }

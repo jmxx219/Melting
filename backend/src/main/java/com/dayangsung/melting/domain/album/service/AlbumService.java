@@ -190,4 +190,15 @@ public class AlbumService {
 				likesService.getSongLikesCount(song.getId())))
 			.toList();
 	}
+
+	public void deleteAlbum(Long albumId) {
+		Album album = albumRepository.findById(albumId)
+			.orElseThrow(() -> new BusinessException(ErrorMessage.ALBUM_NOT_FOUND));
+		for (Song song : album.getSongs()) {
+			song.setAlbum(null);
+		}
+		likesService.deleteAlbumLikesOnRedis(albumId);
+		album.deleteAlbum();
+		albumRepository.save(album);
+	}
 }

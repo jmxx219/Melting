@@ -35,7 +35,7 @@ public class LikesService {
 	}
 
 	@Transactional
-	public Integer addAlbumLikes(Long albumId, Long memberId) {
+	public Integer increaseAlbumLikes(Long albumId, Long memberId) {
 		LikesAlbum likesAlbum = likesAlbumRepository
 			.findLikesAlbumByAlbumIdAndMemberId(albumId, memberId).orElseGet(() ->
 				LikesAlbum.builder()
@@ -53,7 +53,7 @@ public class LikesService {
 	}
 
 	@Transactional
-	public Integer deleteAlbumLikes(Long albumId, Long memberId) {
+	public Integer decreaseAlbumLikes(Long albumId, Long memberId) {
 		LikesAlbum likesAlbum = likesAlbumRepository
 			.findLikesAlbumByAlbumIdAndMemberId(albumId, memberId)
 			.orElseThrow(RuntimeException::new);
@@ -71,7 +71,7 @@ public class LikesService {
 	}
 
 	@Transactional
-	public Integer addSongLikes(Long songId, Long memberId) {
+	public Integer increaseSongLikes(Long songId, Long memberId) {
 		LikesSong likesSong = likesSongRepository
 			.findLikesSongBySongIdAndMemberId(songId, memberId).orElseGet(() ->
 				LikesSong.builder()
@@ -89,7 +89,7 @@ public class LikesService {
 	}
 
 	@Transactional
-	public Integer deleteSongLikes(Long songId, Long memberId) {
+	public Integer decreaseSongLikes(Long songId, Long memberId) {
 		LikesSong likesSong = likesSongRepository
 			.findLikesSongBySongIdAndMemberId(songId, memberId)
 			.orElseThrow(RuntimeException::new);
@@ -104,5 +104,9 @@ public class LikesService {
 	public boolean isLikedBySongAndMember(Long songId, Long memberId) {
 		Optional<LikesSong> likesSong = likesSongRepository.findLikesSongBySongIdAndMemberId(songId, memberId);
 		return likesSong.isPresent() && likesSong.get().isStatus();
+	}
+
+	public void deleteAlbumLikesOnRedis(Long albumId) {
+		redisTemplate.opsForZSet().remove("song_likes", albumId);
 	}
 }

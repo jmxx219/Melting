@@ -30,14 +30,14 @@ public class LikesController {
 	@PostMapping("/albums/{albumId}/likes")
 	public ApiResponse<Integer> addAlbumLikes(@PathVariable Long albumId,
 		@AuthenticationPrincipal CustomOAuth2User customOAuth2User) {
-		Integer albumLikesCount = likesService.addAlbumLikes(albumId, customOAuth2User.getId());
+		Integer albumLikesCount = likesService.increaseAlbumLikes(albumId, customOAuth2User.getId());
 		return ApiResponse.ok(albumLikesCount);
 	}
 
 	@DeleteMapping("/albums/{albumId}/likes")
 	public ApiResponse<Integer> deleteAlbumLikes(@PathVariable Long albumId,
 		@AuthenticationPrincipal CustomOAuth2User customOAuth2User) {
-		Integer albumLikesCount = likesService.deleteAlbumLikes(albumId, customOAuth2User.getId());
+		Integer albumLikesCount = likesService.decreaseAlbumLikes(albumId, customOAuth2User.getId());
 		return ApiResponse.ok(albumLikesCount);
 	}
 
@@ -50,14 +50,14 @@ public class LikesController {
 	@PostMapping("/songs/{songId}/likes")
 	public ApiResponse<Integer> addSongLikes(@PathVariable Long songId,
 		@AuthenticationPrincipal CustomOAuth2User customOAuth2User) {
-		Integer songLikesCount = likesService.addSongLikes(songId, customOAuth2User.getId());
+		Integer songLikesCount = likesService.increaseSongLikes(songId, customOAuth2User.getId());
 		return ApiResponse.ok(songLikesCount);
 	}
 
 	@DeleteMapping("/songs/{songId}/likes")
 	public ApiResponse<Integer> deleteSongLikes(@PathVariable Long songId,
 		@AuthenticationPrincipal CustomOAuth2User customOAuth2User) {
-		Integer songLikesCount = likesService.deleteSongLikes(songId, customOAuth2User.getId());
+		Integer songLikesCount = likesService.decreaseSongLikes(songId, customOAuth2User.getId());
 		return ApiResponse.ok(songLikesCount);
 	}
 }
