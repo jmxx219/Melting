@@ -1,13 +1,13 @@
-import LoginPage from '@/pages/Login/Login'
-import SignupPage from '@/pages/Login/Signup'
 import { Suspense } from 'react'
 import { Route, BrowserRouter as Router, Routes } from 'react-router-dom'
+import MainPage from '@/pages/Home/Main'
+import LoginPage from '@/pages/Login/Login'
+import SignupPage from '@/pages/Login/Signup'
+import CommunityMainPage from '@/pages/Community/CommunityMain.tsx'
 import AlbumRoutes from './AlbumRoutes'
 import MusicRoutes from './MusicRoutes'
 import MyPageRoutes from './MyPageRoutes'
-import MainPage from '@/pages/Home/Main'
 import OAuthRedirectHandler from '@/utils/OAuthUtil.ts'
-import CommunityMainPage from '@/pages/Community/CommunityMain.tsx'
 
 const Loading = () => <div>Loading...</div>
 
