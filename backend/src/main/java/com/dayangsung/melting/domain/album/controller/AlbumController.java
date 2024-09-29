@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.data.domain.Page;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -66,6 +67,12 @@ public class AlbumController {
 		AlbumDetailsResponseDto albumDetailsResponseDto = albumService.updateAlbumDescription(albumId,
 			albumUpdateRequestDto.description());
 		return ApiResponse.ok(albumDetailsResponseDto);
+	}
+
+	@DeleteMapping("/{albumId}")
+	public ApiResponse<Void> deleteAlbum(@PathVariable Long albumId) {
+		albumService.deleteAlbum(albumId);
+		return ApiResponse.ok(null);
 	}
 
 	@GetMapping("/search")
