@@ -16,7 +16,7 @@ export interface BestAlbum {
   albumCoverImage: string
 }
 
-export interface AlbumDetail {
+export interface AlbumDetailType {
   albumInfo: AlbumDetailInfoType
   albumId: number
   songs: AlbumSongType[]
