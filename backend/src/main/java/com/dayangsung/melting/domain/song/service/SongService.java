@@ -70,6 +70,10 @@ public class SongService {
 
 		OriginalSong originalSong = originalSongRepository.findById(originalSongId).orElseThrow(RuntimeException::new);
 		Member member = memberRepository.findById(memberId).orElseThrow(RuntimeException::new);
+
+		member.increaseCoverCount();
+		memberRepository.save(member);
+
 		Song song = Song.builder()
 			.originalSong(originalSong)
 			.member(member)
