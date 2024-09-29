@@ -2,12 +2,26 @@ package com.dayangsung.melting.domain.song.service;
 
 // import org.springframework.data.redis.core.RedisTemplate;
 
+import java.util.concurrent.CompletableFuture;
+
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.http.MediaType;
+import org.springframework.http.client.MultipartBodyBuilder;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.reactive.function.BodyInserters;
+import org.springframework.web.reactive.function.client.WebClient;
 
 import com.dayangsung.melting.domain.likes.service.LikesService;
+import com.dayangsung.melting.domain.member.entity.Member;
+import com.dayangsung.melting.domain.member.repository.MemberRepository;
+import com.dayangsung.melting.domain.originalsong.entity.OriginalSong;
+import com.dayangsung.melting.domain.originalsong.repository.OriginalSongRepository;
 import com.dayangsung.melting.domain.song.dto.response.SongDetailsResponseDto;
 import com.dayangsung.melting.domain.song.entity.Song;
+import com.dayangsung.melting.domain.song.enums.SongType;
 import com.dayangsung.melting.domain.song.repository.SongRepository;
 import com.dayangsung.melting.global.common.service.AwsS3Service;
 import com.dayangsung.melting.global.redisson.DistributedLock;
@@ -26,6 +40,9 @@ public class SongService {
 	private final RedisTemplate<String, Object> redisTemplate;
 
 	private static final String STREAMING_COUNT_KEY = "song:streaming:counts";
+	private final OriginalSongRepository originalSongRepository;
+	private final MemberRepository memberRepository;
+	private final WebClient webClient;
 
 	public SongDetailsResponseDto getSongDetails(Long songId) {
 		Song song = songRepository.findById(songId).orElseThrow(RuntimeException::new);
@@ -44,5 +61,46 @@ public class SongService {
 		String key = STREAMING_COUNT_KEY;
 		Double streamingCount = redisTemplate.opsForZSet().incrementScore(key, songId.toString(), 1);
 		log.info("Incremented streaming count for song {}: {}", songId, streamingCount);
+	}
+
+	@Async
+	@Transactional
+	public CompletableFuture<Void> createMeltingSong(
+		Long memberId, Long originalSongId, MultipartFile voiceFile) {
+
+		OriginalSong originalSong = originalSongRepository.findById(originalSongId).orElseThrow(RuntimeException::new);
+		Member member = memberRepository.findById(memberId).orElseThrow(RuntimeException::new);
+		Song song = Song.builder()
+			.originalSong(originalSong)
+			.member(member)
+			.songType(SongType.MELTING)
+			.songUrl("")
+			.build();
+
+		Song savedSong = songRepository.save(song);
+
+		log.info("Created new Song with ID: {}", savedSong.getId());
+
+		MultipartBodyBuilder builder = new MultipartBodyBuilder();
+		builder.part("voice_file", voiceFile.getResource());
+		builder.part("song_id", savedSong.getId().toString());
+		builder.part("original_song_mr_url", originalSong.getMrUrl());
+
+		return webClient.post()
+			.uri(uriBuilder -> uriBuilder
+				.path("/api/rvc-ai/{memberId}/melting")
+				.build(memberId))
+			.contentType(MediaType.MULTIPART_FORM_DATA)
+			.body(BodyInserters.fromMultipartData(builder.build()))
+			.retrieve()
+			.bodyToMono(Void.class)
+			.toFuture();
+	}
+
+	@Transactional
+	public void updateSongUrl(String songId, String songUrl) {
+		Song song = songRepository.findById(Long.parseLong(songId)).orElseThrow(RuntimeException::new);
+		song.updateSongUrl(songUrl);
+		songRepository.save(song);
 	}
 }
