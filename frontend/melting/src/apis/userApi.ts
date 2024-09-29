@@ -9,10 +9,7 @@ import {
   LogoutError,
 } from '@/types/user'
 import { handleApiError } from '@/utils/errorUtil.ts'
-import {
-  GetMemberInfoData,
-  GetMemberInfoError,
-} from '@/typeApis/data-contracts.ts'
+import { GetMemberInfoData, GetMemberInfoError } from '@/types/user.ts'
 
 const axiosInstance = createAxiosInstance('members')
 
