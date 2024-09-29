@@ -50,6 +50,9 @@ public class CommentService {
 				.member(member)
 				.content(content)
 				.build());
+		if (!album.getComments().contains(comment)) {
+			album.addComment(comment);
+		}
 		return CommentResponseDto.of(
 			comment,
 			comment.getMember().getProfileImageUrl(),

@@ -6,6 +6,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.dayangsung.melting.domain.album.entity.Album;
 import com.dayangsung.melting.domain.album.repository.AlbumRepository;
 import com.dayangsung.melting.domain.likes.entity.LikesAlbum;
 import com.dayangsung.melting.domain.likes.entity.LikesSong;
@@ -13,6 +14,8 @@ import com.dayangsung.melting.domain.likes.repository.LikesAlbumRepository;
 import com.dayangsung.melting.domain.likes.repository.LikesSongRepository;
 import com.dayangsung.melting.domain.member.repository.MemberRepository;
 import com.dayangsung.melting.domain.song.repository.SongRepository;
+import com.dayangsung.melting.global.common.enums.ErrorMessage;
+import com.dayangsung.melting.global.exception.BusinessException;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -36,6 +39,8 @@ public class LikesService {
 
 	@Transactional
 	public Integer increaseAlbumLikes(Long albumId, Long memberId) {
+		Album album = albumRepository.findById(albumId)
+			.orElseThrow(() -> new BusinessException(ErrorMessage.ALBUM_NOT_FOUND));
 		LikesAlbum likesAlbum = likesAlbumRepository
 			.findLikesAlbumByAlbumIdAndMemberId(albumId, memberId).orElseGet(() ->
 				LikesAlbum.builder()
@@ -44,7 +49,9 @@ public class LikesService {
 					.member(memberRepository.findById(memberId)
 						.orElseThrow(RuntimeException::new))
 					.build());
-
+		if (!album.getLikesAlbums().contains(likesAlbum)) {
+			album.addAlbumLikes(likesAlbum);
+		}
 		Double albumLikesCount = redisTemplate.opsForZSet().incrementScore("album_likes", albumId, 1);
 		likesAlbum.updateStatus(true);
 		likesAlbumRepository.save(likesAlbum);
