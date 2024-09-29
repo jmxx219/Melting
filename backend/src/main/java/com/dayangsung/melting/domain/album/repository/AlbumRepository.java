@@ -10,21 +10,21 @@ import com.dayangsung.melting.domain.album.entity.Album;
 
 public interface AlbumRepository extends JpaRepository<Album, Long> {
 
-	@Query("SELECT a FROM Album a WHERE a.isDeleted = false ORDER BY a.createdAt DESC")
+	@Query("SELECT a FROM Album a WHERE a.isDeleted = false AND a.isPublic = true ORDER BY a.createdAt DESC")
 	Page<Album> findAllByOrderByCreatedAtDesc(Pageable pageable);
 
-	@Query("SELECT a FROM Album a LEFT JOIN a.likesAlbums la WHERE a.isDeleted = false GROUP BY a.id ORDER BY COUNT(la) DESC")
+	@Query("SELECT a FROM Album a LEFT JOIN a.likesAlbums la WHERE a.isDeleted = false AND a.isPublic = true GROUP BY a.id ORDER BY COUNT(la) DESC")
 	Page<Album> findAllByOrderByLikesCountDesc(Pageable pageable);
 
-	@Query("SELECT a FROM Album a WHERE a.isDeleted = false AND a.albumName LIKE %:keyword%")
+	@Query("SELECT a FROM Album a WHERE a.isDeleted = false AND a.isPublic = true AND a.albumName LIKE %:keyword%")
 	Page<Album> findByAlbumNameContaining(@Param("keyword") String keyword, Pageable pageable);
 
-	@Query("SELECT a FROM Album a JOIN a.songs s JOIN s.originalSong o WHERE a.isDeleted = false AND o.title LIKE %:keyword%")
+	@Query("SELECT a FROM Album a JOIN a.songs s JOIN s.originalSong o WHERE a.isDeleted = false AND a.isPublic = true AND o.title LIKE %:keyword%")
 	Page<Album> findBySongTitleContaining(@Param("keyword") String keyword, Pageable pageable);
 
-	@Query("SELECT DISTINCT a FROM Album a JOIN a.hashtags ah JOIN ah.hashtag h WHERE a.isDeleted = false AND h.content LIKE %:keyword%")
+	@Query("SELECT DISTINCT a FROM Album a JOIN a.hashtags ah JOIN ah.hashtag h WHERE a.isDeleted = false AND a.isPublic = true AND h.content LIKE %:keyword%")
 	Page<Album> findByHashtagContentContaining(@Param("keyword") String keyword, Pageable pageable);
 
-	@Query("SELECT DISTINCT a FROM Album a JOIN a.genres ag JOIN ag.genre g WHERE a.isDeleted = false AND g.content LIKE %:keyword%")
+	@Query("SELECT DISTINCT a FROM Album a JOIN a.genres ag JOIN ag.genre g WHERE a.isDeleted = false AND a.isPublic = true AND g.content LIKE %:keyword%")
 	Page<Album> findByGenreNameContaining(@Param("keyword") String keyword, Pageable pageable);
 }

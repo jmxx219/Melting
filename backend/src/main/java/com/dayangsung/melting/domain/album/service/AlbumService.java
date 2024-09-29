@@ -201,4 +201,12 @@ public class AlbumService {
 		album.deleteAlbum();
 		albumRepository.save(album);
 	}
+
+	public Boolean toggleIsPublic(Long albumId) {
+		Album album = albumRepository.findById(albumId)
+			.orElseThrow(() -> new BusinessException(ErrorMessage.ALBUM_NOT_FOUND));
+		Boolean toggledIsPublic = album.toggleIsPublic();
+		albumRepository.save(album);
+		return toggledIsPublic;
+	}
 }

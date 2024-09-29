@@ -120,6 +120,10 @@ public class Album extends BaseEntity {
 		comment.setAlbum(this);
 	}
 
+	public Boolean toggleIsPublic() {
+		return this.isPublic = !this.isPublic;
+	}
+
 	public void deleteAlbum() {
 		this.isDeleted = true;
 	}
