@@ -2,7 +2,7 @@ import AlbumComment from '@/components/Album/Detail/AlbumComment'
 import AlbumDetailInfo from '@/components/Album/Detail/AlbumDetailInfo'
 import { Button } from '@/components/ui/button'
 import {
-  AlbumDetail
+  AlbumDetailType
 } from '@/types/album'
 import { Clock4 } from 'lucide-react'
 import React from 'react'
@@ -13,7 +13,7 @@ type AlbumDetailProps = {
 }
 
 export default function AlbumDetail({ albumId }: AlbumDetailProps) {
-  const album: AlbumDetail = {
+  const album: AlbumDetailType = {
     albumId,
     albumInfo: {
       albumCoverImage: '/images/mockup/album3.png',
