@@ -1,4 +1,4 @@
-import { MemberUpdateRequestDto } from '@/typeApis/data-contracts.ts'
+import { ApiResponseString, ErrorResponse } from '@/types/globalType.ts'
 
 export interface user {
   id: number
@@ -7,27 +7,6 @@ export interface user {
   nickname: string
   gender: string
   profileImage: string
-}
-
-export interface ErrorResponse {
-  errorMessage?:
-    | 'MEMBER_NOT_FOUND'
-    | 'DUPLICATE_NICKNAME'
-    | 'INCORRECT_IMAGE_EXTENSION'
-    | 'MEMBER_BAD_REQUEST'
-    | 'ALBUM_NOT_FOUND'
-    | 'INVALID_SORT_CRITERIA'
-    | 'INVALID_SONG_COUNT'
-    | 'SEARCH_QUERY_TOO_SHORT'
-    | 'ALBUM_NAME_BLANK_ERROR'
-    | 'ALBUM_COVER_IMAGE_BLANK_ERROR'
-    | 'ALBUM_SONGS_EMPTY_ERROR'
-}
-
-export interface ApiResponseString {
-  status?: string
-  data?: string
-  errorMessage?: string
 }
 
 export interface MemberInitRequestDto {
@@ -58,6 +37,12 @@ export interface ApiResponseVoid {
   errorMessage?: string
 }
 
+export interface ApiResponseMemberResponseDto {
+  status?: string
+  data?: MemberResponseDto
+  errorMessage?: string
+}
+
 export type ReissueData = ApiResponseString
 
 export type ReissueError = ErrorResponse
@@ -83,6 +68,10 @@ export type LogoutError = ErrorResponse
 export type GetMemberInfoData = ApiResponseMemberResponseDto
 
 export type GetMemberInfoError = ErrorResponse
+
+export interface MemberUpdateRequestDto {
+  nickname?: string
+}
 
 export interface UpdateMemberInfoPayload {
   /** @format binary */
