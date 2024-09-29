@@ -1,10 +1,9 @@
-import axios from 'axios'
 import { ReissueData, ReissueError } from '@/types/user'
+import { createAxiosInstance } from '@/apis/axiosInstance.ts'
 
 const VITE_LOCAL_URL = import.meta.env.VITE_LOCAL_URL
 const VITE_API_BASE_URL = import.meta.env.VITE_API_BASE_URL
-const VITE_API_MEMBERS_PATH = import.meta.env.VITE_API_MEMBERS_PATH
-const BASE_URL = `${VITE_API_BASE_URL}${VITE_API_MEMBERS_PATH}`
+const axiosInstance = createAxiosInstance('members')
 
 export default function login(provider: 'kakao' | 'google') {
   // window.location.href = `${VITE_API_BASE_URL}/oauth2/authorize/${provider}?redirect_url=${VITE_LOCAL_URL}/login/callback`
@@ -15,10 +14,7 @@ export default function login(provider: 'kakao' | 'google') {
 
 export const reissue = async (params?: any): Promise<ReissueData> => {
   try {
-    const response = await axios.post<ReissueData>(
-      `${BASE_URL}/reissue`,
-      params,
-    )
+    const response = await axiosInstance.post<ReissueData>(`/reissue`, params)
     return response.data // 응답 데이터 반환
   } catch (error: any) {
     console.error('Token reissue error:', error)
