@@ -10,6 +10,7 @@ public enum ErrorMessage {
 	MEMBER_BAD_REQUEST("잘못된 요청입니다."),
 
 	SONG_NOT_FOUND("존재하지 않는 생성곡입니다."),
+	SONG_ALREADY_INCLUDED("이미 다른 앨범에 포함되어 있는 곡입니다."),
 
 	GENRE_NOT_FOUND("장르를 찾을 수 없습니다."),
 	// ALBUM

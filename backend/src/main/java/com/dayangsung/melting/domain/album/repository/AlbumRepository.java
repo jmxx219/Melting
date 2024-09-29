@@ -19,12 +19,12 @@ public interface AlbumRepository extends JpaRepository<Album, Long> {
 	@Query("SELECT a FROM Album a WHERE a.isDeleted = false AND a.isPublic = true AND a.albumName LIKE %:keyword%")
 	Page<Album> findByAlbumNameContaining(@Param("keyword") String keyword, Pageable pageable);
 
-	@Query("SELECT a FROM Album a JOIN a.songs s JOIN s.originalSong o WHERE a.isDeleted = false AND a.isPublic = true AND o.title LIKE %:keyword%")
+	@Query("SELECT a FROM Album a JOIN a.songs s WHERE a.isDeleted = false AND a.isPublic = true AND s.originalSong.title LIKE %:keyword%")
 	Page<Album> findBySongTitleContaining(@Param("keyword") String keyword, Pageable pageable);
 
-	@Query("SELECT DISTINCT a FROM Album a JOIN a.hashtags ah JOIN ah.hashtag h WHERE a.isDeleted = false AND a.isPublic = true AND h.content LIKE %:keyword%")
+	@Query("SELECT a FROM Album a JOIN a.hashtags ah WHERE a.isDeleted = false AND a.isPublic = true AND ah.hashtag.content LIKE %:keyword%")
 	Page<Album> findByHashtagContentContaining(@Param("keyword") String keyword, Pageable pageable);
-
-	@Query("SELECT DISTINCT a FROM Album a JOIN a.genres ag JOIN ag.genre g WHERE a.isDeleted = false AND a.isPublic = true AND g.content LIKE %:keyword%")
+	
+	@Query("SELECT a FROM Album a JOIN a.genres ag WHERE a.isDeleted = false AND a.isPublic = true AND ag.genre.content LIKE %:keyword%")
 	Page<Album> findByGenreNameContaining(@Param("keyword") String keyword, Pageable pageable);
 }

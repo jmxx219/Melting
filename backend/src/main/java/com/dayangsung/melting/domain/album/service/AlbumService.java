@@ -78,6 +78,9 @@ public class AlbumService {
 			Long songId = albumCreateRequestDto.songs().get(trackNumber - 1);
 			Song song = songRepository.findById(songId)
 				.orElseThrow(() -> new BusinessException(ErrorMessage.SONG_NOT_FOUND));
+			if (song.getAlbum() != null) {
+				throw new BusinessException(ErrorMessage.SONG_ALREADY_INCLUDED);
+			}
 			song.setTrackNumber(trackNumber);
 			song.setIsTitle(Objects.equals(albumCreateRequestDto.titleSongId(), song.getId()));
 			songRepository.save(song);
@@ -195,7 +198,7 @@ public class AlbumService {
 		Album album = albumRepository.findById(albumId)
 			.orElseThrow(() -> new BusinessException(ErrorMessage.ALBUM_NOT_FOUND));
 		for (Song song : album.getSongs()) {
-			song.setAlbum(null);
+			song.removeFromAlbum();
 		}
 		likesService.deleteAlbumLikesOnRedis(albumId);
 		album.deleteAlbum();
