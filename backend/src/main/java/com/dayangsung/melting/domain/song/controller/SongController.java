@@ -5,6 +5,7 @@ import java.util.concurrent.CompletableFuture;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Async;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.dayangsung.melting.domain.auth.CustomOAuth2User;
 import com.dayangsung.melting.domain.song.dto.request.MeltingSongCreateRequestDto;
 import com.dayangsung.melting.domain.song.dto.response.SongDetailsResponseDto;
 import com.dayangsung.melting.domain.song.service.SongService;
@@ -34,8 +36,8 @@ public class SongController {
 	@PostMapping(value = "/melting", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
 	@Async
 	public CompletableFuture<ResponseEntity<ApiResponse<Void>>> createMeltingSong(
-		@ModelAttribute MeltingSongCreateRequestDto meltingSongCreateRequestDto) {
-		// @AuthenticationPrincipal CustomOAuth2User customOAuth2User) throws Exception {
+		@ModelAttribute MeltingSongCreateRequestDto meltingSongCreateRequestDto,
+		@AuthenticationPrincipal CustomOAuth2User customOAuth2User) throws Exception {
 
 		Long originalSongId = meltingSongCreateRequestDto.originalSongId();
 		MultipartFile voiceFile = meltingSongCreateRequestDto.voiceFile();
@@ -46,7 +48,7 @@ public class SongController {
 		// 	);
 		// }
 
-		return songService.createMeltingSong(1L, originalSongId, voiceFile)
+		return songService.createMeltingSong(customOAuth2User.getId(), originalSongId, voiceFile)
 			.thenApply(result -> ResponseEntity.ok(ApiResponse.ok(result)));
 	}
 
