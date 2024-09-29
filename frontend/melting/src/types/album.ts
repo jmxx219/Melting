@@ -17,11 +17,11 @@ export interface BestAlbum {
 }
 
 export interface AlbumDetail {
-  albumTop: AlbumDetailInfoType
+  albumInfo: AlbumDetailInfoType
   albumId: number
-  genre: string[]
-  tracks: Song[]
-  albumDescription: string
+  songs: AlbumSongType[]
+  comments: AlbumCommentType[]
+  commentCnt: number
 }
 
 export interface AlbumDetailInfoType {
