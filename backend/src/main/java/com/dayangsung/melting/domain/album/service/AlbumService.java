@@ -1,10 +1,14 @@
 package com.dayangsung.melting.domain.album.service;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -129,13 +133,55 @@ public class AlbumService {
 			likesService.getAlbumLikesCount(album.getId()), songDetails, album.getComments().size());
 	}
 
-	public Page<AlbumSearchResponseDto> searchAlbum(int sort, int page, int size) {
+	public Page<AlbumSearchResponseDto> getAlbums(int sort, int page, int size) {
 		Pageable pageable = PageRequest.of(page, size);
 		if (sort == 1) {
 			return albumRepository.findAllByOrderByLikesCountDesc(pageable).map(AlbumSearchResponseDto::of);
 		} else {
 			return albumRepository.findAllByOrderByCreatedAtDesc(pageable).map(AlbumSearchResponseDto::of);
 		}
+	}
+
+	public Page<AlbumSearchResponseDto> searchAlbum(int page, int size, String keyword, List<String> options) {
+		Set<Album> searchResultSet = new HashSet<>();
+		if (keyword == null || keyword.isEmpty()) {
+			return this.getAlbums(0, page, size);
+		}
+		if (options.size() == 1 && options.getFirst().equals("all")) {
+			options = Arrays.asList("albumName", "songTitle", "hashtag", "genre");
+		}
+		log.debug("options: {}", options);
+		for (String option : options) {
+			switch (option) {
+				case "albumName":
+					searchResultSet.addAll(
+						albumRepository.findByAlbumNameContaining(keyword, Pageable.unpaged()).getContent());
+					break;
+				case "songTitle":
+					searchResultSet.addAll(
+						albumRepository.findBySongTitleContaining(keyword, Pageable.unpaged()).getContent());
+					break;
+				case "hashtag":
+					searchResultSet.addAll(
+						albumRepository.findByHashtagContentContaining(keyword, Pageable.unpaged()).getContent());
+					break;
+				case "genre":
+					searchResultSet.addAll(
+						albumRepository.findByGenreNameContaining(keyword, Pageable.unpaged()).getContent());
+					break;
+			}
+		}
+
+		List<Album> searchResultList = new ArrayList<>(searchResultSet);
+		int start = Math.min(page * size, searchResultList.size());
+		int end = Math.min((page + 1) * size, searchResultList.size());
+		List<Album> paginatedList = searchResultList.subList(start, end);
+
+		List<AlbumSearchResponseDto> albumSearchResponse = paginatedList.stream()
+			.map(AlbumSearchResponseDto::of)
+			.toList();
+
+		return new PageImpl<>(albumSearchResponse, PageRequest.of(page, size), searchResultList.size());
 	}
 
 	private List<SongDetailsResponseDto> getSongDetails(Album album) {

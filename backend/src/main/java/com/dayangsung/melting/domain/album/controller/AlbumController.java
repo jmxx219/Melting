@@ -1,5 +1,7 @@
 package com.dayangsung.melting.domain.album.controller;
 
+import java.util.List;
+
 import org.springframework.data.domain.Page;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,7 +24,9 @@ import com.dayangsung.melting.domain.auth.CustomOAuth2User;
 import com.dayangsung.melting.global.common.response.ApiResponse;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/albums")
@@ -31,12 +35,12 @@ public class AlbumController {
 	private final AlbumService albumService;
 
 	@GetMapping
-	public ApiResponse<Page<AlbumSearchResponseDto>> searchAlbum(
+	public ApiResponse<Page<AlbumSearchResponseDto>> getAlbums(
 		@RequestParam(defaultValue = "0") int sort,
 		@RequestParam(defaultValue = "0") int page,
 		@RequestParam(defaultValue = "10") int size) {
-		Page<AlbumSearchResponseDto> albumPage = albumService.searchAlbum(sort, page, size);
-		return ApiResponse.ok(albumPage);
+		Page<AlbumSearchResponseDto> albumSearchPage = albumService.getAlbums(sort, page, size);
+		return ApiResponse.ok(albumSearchPage);
 	}
 
 	@PostMapping
@@ -64,4 +68,14 @@ public class AlbumController {
 		return ApiResponse.ok(albumDetailsResponseDto);
 	}
 
+	@GetMapping("/search")
+	public ApiResponse<Page<AlbumSearchResponseDto>> searchAlbums(
+		@RequestParam(defaultValue = "0") int page,
+		@RequestParam(defaultValue = "10") int size,
+		@RequestParam(required = false) String keyword,
+		@RequestParam List<String> options
+	) {
+		Page<AlbumSearchResponseDto> albumSearchPage = albumService.searchAlbum(page, size, keyword, options);
+		return ApiResponse.ok(albumSearchPage);
+	}
 }
