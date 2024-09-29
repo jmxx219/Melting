@@ -12,10 +12,15 @@ import org.springframework.data.redis.cache.RedisCacheManager;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.listener.PatternTopic;
+import org.springframework.data.redis.listener.RedisMessageListenerContainer;
+import org.springframework.data.redis.listener.adapter.MessageListenerAdapter;
 import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.RedisSerializationContext;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
+
+import com.dayangsung.melting.domain.song.service.SongResultReceiver;
 
 @EnableCaching
 @Configuration
@@ -67,5 +72,19 @@ public class RedisConfig {
 			.setSslEnableEndpointIdentification(false);
 
 		return Redisson.create(config);
+	}
+
+	@Bean
+	public RedisMessageListenerContainer container(RedisConnectionFactory connectionFactory,
+		MessageListenerAdapter listenerAdapter) {
+		RedisMessageListenerContainer container = new RedisMessageListenerContainer();
+		container.setConnectionFactory(connectionFactory);
+		container.addMessageListener(listenerAdapter, new PatternTopic("song_results"));
+		return container;
+	}
+
+	@Bean
+	public MessageListenerAdapter listenerAdapter(SongResultReceiver receiver) {
+		return new MessageListenerAdapter(receiver, "receiveMessage");
 	}
 }
