@@ -1,15 +1,14 @@
 package com.dayangsung.melting.domain.originalsong.service;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.dayangsung.melting.domain.originalsong.dto.response.OriginalSongResponseDto;
 import com.dayangsung.melting.domain.originalsong.dto.response.OriginalSongSearchResponseDto;
 import com.dayangsung.melting.domain.originalsong.entity.OriginalSong;
 import com.dayangsung.melting.domain.originalsong.repository.OriginalSongRepository;
-import com.dayangsung.melting.global.common.service.AwsS3Service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,12 +20,10 @@ public class OriginalSongService {
 
 	private final OriginalSongRepository originalSongRepository;
 
-	public List<OriginalSongSearchResponseDto> getSearchList(String keyword) {
-
-		List<OriginalSong> originalSongList = originalSongRepository.findByKeyword(keyword);
-		return originalSongList.stream()
-			.map(OriginalSongSearchResponseDto::of)
-			.collect(Collectors.toList());
+	public Page<OriginalSongSearchResponseDto> getSearchPage(String keyword, int page, int size) {
+		Pageable pageable = PageRequest.of(page, size);
+		Page<OriginalSong> originalSongPage = originalSongRepository.findByKeyword(keyword, pageable);
+		return originalSongPage.map(OriginalSongSearchResponseDto::of);
 	}
 
 	public OriginalSongResponseDto getOriginalSongInfo(Long originalSongId) {
