@@ -1,13 +1,15 @@
-// import { useUserContext } from '@/contexts/UserContext';
+import { useUserInfo } from '@/hooks/useUserInfo'
 
-const Greeting = () => {
-  //   const { nickname } = useUserContext();
-  const nickname = '쏠랑쏠랑'
+export default function Greeting() {
+  const { data: userInfo } = useUserInfo()
+  if (!userInfo || !userInfo.data) {
+    return <div className="flex text-2xl font-bold">로딩 중...</div>
+  }
+
   return (
     <div className="flex text-2xl font-bold">
-      <div className="text-primary-400">{nickname}</div>님, 안녕하세요
+      <div className="text-primary-400">{userInfo.data.nickname}</div>님,
+      안녕하세요
     </div>
   )
 }
-
-export default Greeting
