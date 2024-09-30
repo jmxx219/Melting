@@ -26,7 +26,12 @@ export default function AlbumCommentList({
           댓글 {commentCnt > 1000 ? '999+' : comments.length}
         </div>
         {commentCnt > 5 ? (
-          <Button variant={'ghost'} className="p-0" onClick={totalShowHandle}>
+          <Button
+            type="button"
+            variant={'ghost'}
+            className="p-0"
+            onClick={totalShowHandle}
+          >
             전체보기
           </Button>
         ) : (
