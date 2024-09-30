@@ -14,7 +14,8 @@ public record SongDetailsResponseDto(
 	String albumCoverImageUrl,
 	boolean isLiked,
 	Integer likedCount,
-	String songUrl
+	String songUrl,
+	String lyrics
 ) {
 	public static SongDetailsResponseDto of(Song song, String albumCoverImageUrl, boolean isLiked, Integer likedCount) {
 		return SongDetailsResponseDto.builder()
@@ -26,6 +27,7 @@ public record SongDetailsResponseDto(
 			.isLiked(isLiked)
 			.likedCount(likedCount)
 			.songUrl(song.getSongUrl())
+			.lyrics(song.getOriginalSong().getLyrics())
 			.build();
 	}
 
