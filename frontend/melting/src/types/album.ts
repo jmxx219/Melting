@@ -16,12 +16,12 @@ export interface BestAlbum {
   albumCoverImage: string
 }
 
-export interface AlbumDetail {
-  albumTop: AlbumDetailInfoType
+export interface AlbumDetailType {
+  albumInfo: AlbumDetailInfoType
   albumId: number
-  genre: string[]
-  tracks: Song[]
-  albumDescription: string
+  songs: AlbumSongType[]
+  comments: AlbumCommentType[]
+  commentCnt: number
 }
 
 export interface AlbumDetailInfoType {

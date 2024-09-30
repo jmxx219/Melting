@@ -1,26 +1,18 @@
-import {
-  AlbumCommentType,
-  AlbumDetailInfoType,
-  AlbumSongType,
-} from '@/types/album'
+import AlbumComment from '@/components/Album/Detail/AlbumComment'
 import SongContent from '@/components/Common/SongContent'
 import AlbumDetailInfo from '@/components/Album/Detail/AlbumDetailInfo'
-import AlbumComment from '@/components/Album/Detail/AlbumComment'
-import React from 'react'
 import { Button } from '@/components/ui/button'
+import { AlbumDetailType } from '@/types/album'
 import { Clock4 } from 'lucide-react'
+import React from 'react'
 
 type AlbumDetailProps = {
   albumId: number
 }
 
 export default function AlbumDetail({ albumId }: AlbumDetailProps) {
-  const album: {
-    albumInfo: AlbumDetailInfoType
-    songs: AlbumSongType[]
-    comments: AlbumCommentType[]
-    commentCnt: number
-  } = {
+  const album: AlbumDetailType = {
+    albumId,
     albumInfo: {
       albumCoverImage: '/images/mockup/album3.png',
       albumName: 'Band Aid',
