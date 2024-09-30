@@ -1,10 +1,10 @@
 import AlbumComment from '@/components/Album/Detail/AlbumComment'
-import SongContent from '@/components/Common/SongContent'
 import AlbumDetailInfo from '@/components/Album/Detail/AlbumDetailInfo'
 import { Button } from '@/components/ui/button'
 import { AlbumDetailType } from '@/types/album'
-import { Clock4 } from 'lucide-react'
 import React from 'react'
+import AlbumSong from './AlbumSong'
+import AlbumCommentList from './AlbumCommentList'
 
 type AlbumDetailProps = {
   albumId: number
@@ -75,51 +75,14 @@ export default function AlbumDetail({ albumId }: AlbumDetailProps) {
       <div>
         {<AlbumDetailInfo albumInfo={album.albumInfo} albumId={albumId} />}
       </div>
-      <div id="album-song" className="mt-10">
-        <div className="flex items-center gap-3 text-gray-400 border-b-2 py-3 mb-3">
-          <div className="w-6 h-6 flex items-center justify-center text-base">
-            #
-          </div>
-          <div className="flex-1">
-            <div className="font-bold text-sm flex items-center">제목</div>
-          </div>
-          <div className="flex justify-center items-center">
-            <Clock4 width={18} height={18} />
-          </div>
-        </div>
-        {album.songs.map((song, index) => (
-          <SongContent
-            key={song.songId}
-            song={song}
-            hasProfileImage={false}
-            isTitle={song.isTitle}
-            songOrder={index + 1}
-          />
-        ))}
+      <div>
+        <AlbumSong songs={album.songs} />
       </div>
-      <div id="album-comment" className="mt-10">
-        <div className="flex justify-between items-center">
-          <div className="text-xl font-semibold">
-            댓글 {album.commentCnt > 1000 ? '999+' : album.comments.length}
-          </div>
-          {album.commentCnt > 5 ? (
-            <Button variant={'ghost'} className="p-0">
-              전체보기
-            </Button>
-          ) : (
-            <></>
-          )}
-        </div>
-        <div className="mt-2">
-          {album.comments.map((comment, index) => (
-            <React.Fragment key={index}>
-              <AlbumComment comment={comment} />
-              {index < album.comments.length - 1 && (
-                <hr className="my-2 border-t border-gray-200" />
-              )}
-            </React.Fragment>
-          ))}
-        </div>
+      <div>
+        <AlbumCommentList
+          commentCnt={album.commentCnt}
+          comments={album.comments}
+        />
       </div>
     </div>
   )
