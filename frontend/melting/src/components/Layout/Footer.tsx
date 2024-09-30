@@ -20,7 +20,7 @@ interface NavItem {
 const navItems: NavItem[] = [
   { icon: <MusicAlbum />, name: 'album', href: '/album/create' },
   { icon: <MusicNote />, name: 'music', href: '/music' },
-  { icon: <Home />, name: 'home', href: '/' },
+  { icon: <Home />, name: 'home', href: '/main' },
   { icon: <Hash />, name: 'community', href: '*' },
   { icon: <User />, name: 'user', href: '/mypage' },
 ]
