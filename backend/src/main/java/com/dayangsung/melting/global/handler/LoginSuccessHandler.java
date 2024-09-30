@@ -47,16 +47,16 @@ public class LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 		String refreshToken = jwtUtil.createRefreshToken(email);
 
 		CookieUtil.setCookie(response, "access_token", accessToken, 60 * 30);
-		CookieUtil.setCookie(response, "refresh_token", refreshToken, 60 * 30);
+		CookieUtil.setCookie(response, "refresh_token", refreshToken, 60 * 60 * 24 * 7);
 
 		redisUtil.saveAccessToken(email, accessToken);
 		redisUtil.saveRefreshToken(email, refreshToken);
 		String determinedTargetUrl = determineTargetUrl(request, response, authentication);
 		Member member = memberRepository.findByEmail(email).orElseThrow(RuntimeException::new);
 		if (member.getGender() == null || member.getNickname() == null) {
-			determinedTargetUrl += "?init=false" + "?refreshToken=" + refreshToken;
+			determinedTargetUrl += "?init=false";
 		} else {
-			determinedTargetUrl += "?init=true" + "?refreshToken=" + refreshToken;
+			determinedTargetUrl += "?init=true";
 		}
 		clearAuthenticationAttributes(request, response);
 		getRedirectStrategy().sendRedirect(request, response, determinedTargetUrl);
