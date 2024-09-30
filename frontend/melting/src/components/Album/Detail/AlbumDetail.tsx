@@ -3,7 +3,7 @@ import {
   AlbumDetailInfoType,
   AlbumSongType,
 } from '@/types/album'
-import SongContent from '../../MyPage/SongContent'
+import SongContent from '@/components/Common/SongContent'
 import AlbumDetailInfo from '@/components/Album/Detail/AlbumDetailInfo'
 import AlbumComment from '@/components/Album/Detail/AlbumComment'
 import React from 'react'
