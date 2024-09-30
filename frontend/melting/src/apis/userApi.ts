@@ -1,18 +1,19 @@
-import { createAxiosInstance } from './axiosInstance'
+import {
+  createAxiosInstance,
+  createApi,
+  ApiResponse,
+  CustomError,
+} from './axiosInstance'
 import {
   InitMemberInfoPayload,
   InitMemberInfoData,
-  InitMemberInfoError,
   ValidateNicknameData,
-  ValidateNicknameError,
   LogoutData,
-  LogoutError,
   GetMemberInfoData,
-  GetMemberInfoError,
 } from '@/types/user'
-import { handleApiError } from '@/utils/errorUtil'
 
 const instance = createAxiosInstance('members')
+const api = createApi<ApiResponse>(instance)
 
 export const userApi = {
   initMemberInfo: async (
@@ -30,7 +31,7 @@ export const userApi = {
     )
 
     try {
-      const response = await instance.patch<InitMemberInfoData>('/init', frm, {
+      const response = await api.patch<InitMemberInfoData>('/init', frm, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
@@ -38,39 +39,37 @@ export const userApi = {
       return response.data
     } catch (error) {
       console.error('회원 정보 초기화 오류:', error)
-      throw handleApiError<InitMemberInfoError>(error)
+      throw error as CustomError
     }
   },
 
   validateNickname: async (nickname: string): Promise<ValidateNicknameData> => {
     try {
-      const response = await instance.get<ValidateNicknameData>(
-        '/nickname-check',
-        {
-          params: { nickname },
-        },
+      const response = await api.get<ValidateNicknameData>(
+        `/nickname-check?nickname=${nickname}`,
       )
       return response.data
     } catch (error) {
-      throw handleApiError<ValidateNicknameError>(error)
+      throw error as CustomError
     }
   },
 
   logout: async (): Promise<LogoutData> => {
     try {
-      const response = await instance.get<LogoutData>('/logout')
+      const response = await api.get<LogoutData>('/logout')
       return response.data
     } catch (error) {
-      throw handleApiError<LogoutError>(error)
+      throw error as CustomError
     }
   },
 
   getMemberInfo: async (): Promise<GetMemberInfoData> => {
     try {
-      const response = await instance.get<GetMemberInfoData>('')
+      const response = await api.get<GetMemberInfoData>('')
+      console.log(response.data)
       return response.data
     } catch (error) {
-      throw handleApiError<GetMemberInfoError>(error)
+      throw error as CustomError
     }
   },
 }
