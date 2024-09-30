@@ -19,7 +19,6 @@ import lombok.Setter;
 @Entity
 @Getter
 @NoArgsConstructor
-@AllArgsConstructor
 public class AlbumHashtag {
 
 	@Id

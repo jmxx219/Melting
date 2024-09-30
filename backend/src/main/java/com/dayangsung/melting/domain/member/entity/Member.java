@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.dayangsung.melting.domain.auth.enums.ProviderType;
 import com.dayangsung.melting.domain.comment.entity.Comment;
+import com.dayangsung.melting.domain.hashtag.entity.MemberHashtag;
 import com.dayangsung.melting.domain.likes.entity.LikesAlbum;
 import com.dayangsung.melting.domain.likes.entity.LikesSong;
 import com.dayangsung.melting.domain.member.enums.Gender;
@@ -57,6 +58,9 @@ public class Member extends BaseEntity {
 	@OneToMany(mappedBy = "member")
 	private List<Comment> comments = new ArrayList<>();
 
+	@OneToMany(mappedBy = "member")
+	private List<MemberHashtag> memberHashtags = new ArrayList<>();
+
 	private int coverCount;
 
 	@Builder
@@ -88,5 +92,13 @@ public class Member extends BaseEntity {
 
 	public void increaseCoverCount() {
 		this.coverCount++;
+	}
+
+	public void addMemberHashtag(MemberHashtag memberHashtag) {
+		this.memberHashtags.add(memberHashtag);
+	}
+
+	public void deleteMemberHashtag(MemberHashtag memberHashtag) {
+		this.memberHashtags.remove(memberHashtag);
 	}
 }

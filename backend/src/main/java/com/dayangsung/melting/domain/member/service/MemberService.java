@@ -8,6 +8,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.dayangsung.melting.domain.hashtag.entity.Hashtag;
+import com.dayangsung.melting.domain.hashtag.entity.MemberHashtag;
+import com.dayangsung.melting.domain.hashtag.service.HashtagService;
 import com.dayangsung.melting.domain.likes.service.LikesService;
 import com.dayangsung.melting.domain.member.dto.SongListDto;
 import com.dayangsung.melting.domain.member.dto.response.MemberResponseDto;
@@ -19,7 +22,9 @@ import com.dayangsung.melting.domain.originalsong.entity.OriginalSong;
 import com.dayangsung.melting.domain.song.dto.SongMypageDto;
 import com.dayangsung.melting.domain.song.entity.Song;
 import com.dayangsung.melting.domain.song.repository.SongRepository;
+import com.dayangsung.melting.global.common.enums.ErrorMessage;
 import com.dayangsung.melting.global.common.service.AwsS3Service;
+import com.dayangsung.melting.global.exception.BusinessException;
 import com.dayangsung.melting.global.util.CookieUtil;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -36,6 +41,7 @@ public class MemberService {
 	private final MemberRepository memberRepository;
 	private final SongRepository songRepository;
 	private final LikesService likesService;
+	private final HashtagService hashtagService;
 
 	public Boolean validateNickname(String nickname) {
 		return !memberRepository.existsByNickname(nickname);
@@ -115,5 +121,45 @@ public class MemberService {
 		boolean isPossibleAiCover = member.getCoverCount() >= 3;
 
 		return MemberSongResponseDto.of(mySongList, isPossibleAiCover);
+	}
+
+	public List<String> getMemberHashtags(String email) {
+		Member member = memberRepository.findByEmail(email)
+			.orElseThrow(() -> new BusinessException(ErrorMessage.MEMBER_NOT_FOUND));
+		List<MemberHashtag> memberHashtags = member.getMemberHashtags();
+		return memberHashtags.stream()
+			.map(memberHashtag -> memberHashtag.getHashtag().getContent())
+			.toList();
+	}
+
+	public List<String> addMemberHashtags(String email, String content) {
+		Member member = memberRepository.findByEmail(email)
+			.orElseThrow(() -> new BusinessException(ErrorMessage.MEMBER_NOT_FOUND));
+		List<MemberHashtag> memberHashtags = member.getMemberHashtags();
+		if (memberHashtags.size() >= 5) {
+			throw new BusinessException(ErrorMessage.MEMBER_HASHTAG_FULL);
+		}
+		hashtagService.addMemberHashtag(member, content);
+		member = memberRepository.save(member);
+
+		return member.getMemberHashtags().stream()
+			.map(memberHashtag -> memberHashtag.getHashtag().getContent())
+			.toList();
+	}
+
+	public List<String> deleteMemberHashtags(String email, String content) {
+		Member member = memberRepository.findByEmail(email)
+			.orElseThrow(() -> new BusinessException(ErrorMessage.MEMBER_NOT_FOUND));
+		List<MemberHashtag> memberHashtags = member.getMemberHashtags();
+
+		if (memberHashtags.isEmpty()) {
+			throw new BusinessException(ErrorMessage.MEMBER_HASHTAG_EMPTY);
+		}
+		hashtagService.deleteMemberHashtag(member, content);
+		member = memberRepository.save(member);
+
+		return member.getMemberHashtags().stream()
+			.map(memberHashtag -> memberHashtag.getHashtag().getContent())
+			.toList();
 	}
 }

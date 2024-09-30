@@ -9,4 +9,5 @@ import com.dayangsung.melting.domain.hashtag.entity.Hashtag;
 public interface HashtagRepository extends JpaRepository<Hashtag, Long> {
 
 	Optional<Hashtag> findByContent(String content);
+	Boolean existsByContent(String content);
 }
