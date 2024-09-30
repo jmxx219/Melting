@@ -105,5 +105,4 @@ public class LikesService {
 		Optional<LikesSong> likesSong = likesSongRepository.findLikesSongBySongIdAndMemberId(songId, memberId);
 		return likesSong.isPresent() && likesSong.get().isStatus();
 	}
-
 }

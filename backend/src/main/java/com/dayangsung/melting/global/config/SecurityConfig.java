@@ -15,10 +15,13 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+import com.dayangsung.melting.domain.auth.repository.HttpCookieOAuth2AuthorizationRequestRepository;
 import com.dayangsung.melting.domain.auth.service.AuthService;
 import com.dayangsung.melting.global.filter.JwtFilter;
+import com.dayangsung.melting.global.handler.JwtAccessDeniedHandler;
+import com.dayangsung.melting.global.handler.JwtAuthenticationEntryPoint;
+import com.dayangsung.melting.global.handler.LoginFailureHandler;
 import com.dayangsung.melting.global.handler.LoginSuccessHandler;
-import com.dayangsung.melting.global.util.CookieUtil;
 import com.dayangsung.melting.global.util.JwtUtil;
 
 import lombok.RequiredArgsConstructor;
@@ -30,33 +33,47 @@ public class SecurityConfig {
 
 	private final AuthService authService;
 	private final LoginSuccessHandler loginSuccessHandler;
+	private final LoginFailureHandler loginFailureHandler;
 	private final JwtUtil jwtUtil;
-	private final CookieUtil cookieUtil;
 
 	@Bean
-	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+	public SecurityFilterChain filterChain(HttpSecurity http,
+		HttpCookieOAuth2AuthorizationRequestRepository httpCookieOAuth2AuthorizationRequestRepository) throws Exception {
 
 		http
 			.cors(cors -> cors.configurationSource(corsConfigurationSource()))
 			.csrf(AbstractHttpConfigurer::disable)
 			.formLogin(AbstractHttpConfigurer::disable)
 			.httpBasic(AbstractHttpConfigurer::disable)
-			.addFilterBefore(new JwtFilter(jwtUtil, cookieUtil), UsernamePasswordAuthenticationFilter.class)
+			.exceptionHandling((exceptions) -> exceptions
+				.authenticationEntryPoint(new JwtAuthenticationEntryPoint())
+				.accessDeniedHandler(new JwtAccessDeniedHandler()))
+			.addFilterBefore(new JwtFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class)
 			.oauth2Login(oauth2 -> oauth2
+				.authorizationEndpoint(authorization -> authorization
+					.baseUri("/oauth2/authorize/**")
+					.authorizationRequestRepository(httpCookieOAuth2AuthorizationRequestRepository)
+				)
+				.redirectionEndpoint(redirection -> redirection
+					.baseUri("/oauth2/login/code/**"))
 				.userInfoEndpoint((userInfoEndpointConfig) -> userInfoEndpointConfig
 					.userService(authService))
-				.successHandler(loginSuccessHandler))
+				.successHandler(loginSuccessHandler)
+				.failureHandler(loginFailureHandler))
 			.authorizeHttpRequests(authorize ->
 				authorize
 					.requestMatchers(
 						"/swagger-ui/**",
-						"/v3/api-docs/**"
+						"/v3/api-docs/**",
+						"/oauth2/**"
 					)
 					.permitAll()
 					.anyRequest()
-					.authenticated())
+					.authenticated()
+			)
 			.sessionManagement(session -> session
-				.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+				.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+			);
 
 		return http.build();
 	}
@@ -64,13 +81,13 @@ public class SecurityConfig {
 	CorsConfigurationSource corsConfigurationSource() {
 		CorsConfiguration configuration = new CorsConfiguration();
 
-		configuration.setAllowedOrigins(Collections.singletonList("http://localhost:3000"));
+		configuration.setAllowedOrigins(List.of("https://localhost:5173", "http://localhost:5173", "https://j11a701.p.ssafy.io"));
 		configuration.setAllowedMethods(Collections.singletonList("*"));
 		configuration.setAllowCredentials(true);
 		configuration.setAllowedHeaders(List.of("Authorization", "Set-Cookie", "Content-Type"));
 		configuration.setMaxAge(3600L);
 
-		configuration.setExposedHeaders(List.of("Authorization", "Set-Cookie"));
+		configuration.setExposedHeaders(List.of("Authorization", "Set-Cookie", "Content-Type"));
 
 		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
 		source.registerCorsConfiguration("/**", configuration);
