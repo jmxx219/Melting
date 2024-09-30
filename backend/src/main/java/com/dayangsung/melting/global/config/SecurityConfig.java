@@ -38,7 +38,8 @@ public class SecurityConfig {
 
 	@Bean
 	public SecurityFilterChain filterChain(HttpSecurity http,
-		HttpCookieOAuth2AuthorizationRequestRepository httpCookieOAuth2AuthorizationRequestRepository) throws Exception {
+		HttpCookieOAuth2AuthorizationRequestRepository httpCookieOAuth2AuthorizationRequestRepository) throws
+		Exception {
 
 		http
 			.cors(cors -> cors.configurationSource(corsConfigurationSource()))
@@ -81,7 +82,8 @@ public class SecurityConfig {
 	CorsConfigurationSource corsConfigurationSource() {
 		CorsConfiguration configuration = new CorsConfiguration();
 
-		configuration.setAllowedOrigins(List.of("https://localhost:5173", "http://localhost:5173", "https://j11a701.p.ssafy.io"));
+		configuration.setAllowedOrigins(
+			List.of("https://localhost:5173", "http://localhost:5173", "https://j11a701.p.ssafy.io"));
 		configuration.setAllowedMethods(Collections.singletonList("*"));
 		configuration.setAllowCredentials(true);
 		configuration.setAllowedHeaders(List.of("Authorization", "Set-Cookie", "Content-Type"));

@@ -15,7 +15,6 @@ import com.dayangsung.melting.domain.comment.entity.Comment;
 import com.dayangsung.melting.domain.comment.repository.CommentRepository;
 import com.dayangsung.melting.domain.member.entity.Member;
 import com.dayangsung.melting.domain.member.repository.MemberRepository;
-import com.dayangsung.melting.global.common.service.AwsS3Service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -28,7 +27,6 @@ public class CommentService {
 	private final CommentRepository commentRepository;
 	private final AlbumRepository albumRepository;
 	private final MemberRepository memberRepository;
-	private final AwsS3Service awsS3Service;
 
 	public List<CommentResponseDto> getAllComments(Long albumId, int page, int size) {
 		Pageable pageable = PageRequest.of(page, size);
@@ -37,8 +35,7 @@ public class CommentService {
 		return commentList.stream()
 			.map(comment -> CommentResponseDto.of(
 				comment,
-				awsS3Service.getProfileImageUrl(comment.getMember().getId(),
-					comment.getMember().getProfileImageExtension()),
+				comment.getMember().getProfileImageUrl(),
 				comment.getMember().getNickname()
 			))
 			.collect(Collectors.toList());
@@ -53,10 +50,12 @@ public class CommentService {
 				.member(member)
 				.content(content)
 				.build());
+		if (!album.getComments().contains(comment)) {
+			album.addComment(comment);
+		}
 		return CommentResponseDto.of(
 			comment,
-			awsS3Service.getProfileImageUrl(comment.getMember().getId(),
-				comment.getMember().getProfileImageExtension()),
+			comment.getMember().getProfileImageUrl(),
 			comment.getMember().getNickname()
 		);
 	}
@@ -68,8 +67,7 @@ public class CommentService {
 		commentRepository.save(comment);
 		return CommentResponseDto.of(
 			comment,
-			awsS3Service.getProfileImageUrl(comment.getMember().getId(),
-				comment.getMember().getProfileImageExtension()),
+			comment.getMember().getProfileImageUrl(),
 			comment.getMember().getNickname()
 		);
 	}
@@ -80,8 +78,7 @@ public class CommentService {
 		commentRepository.save(comment);
 		return CommentResponseDto.of(
 			comment,
-			awsS3Service.getProfileImageUrl(comment.getMember().getId(),
-				comment.getMember().getProfileImageExtension()),
+			comment.getMember().getProfileImageUrl(),
 			comment.getMember().getNickname()
 		);
 	}
