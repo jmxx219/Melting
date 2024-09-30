@@ -59,12 +59,15 @@ public class Member extends BaseEntity {
 
 	private int coverCount;
 
+	private boolean aiCoverEnabled;
+
 	@Builder
 	public Member(String email, ProviderType provider) {
 		this.email = email;
 		this.provider = provider;
 		this.isDeleted = false;
 		this.coverCount = 0;
+		this.aiCoverEnabled = false;
 	}
 
 	public void initMember(Gender gender, String profileImageExtension, String nickname) {
@@ -88,5 +91,9 @@ public class Member extends BaseEntity {
 
 	public void increaseCoverCount() {
 		this.coverCount++;
+	}
+
+	public void enableAiCover() {
+		this.aiCoverEnabled = true;
 	}
 }
