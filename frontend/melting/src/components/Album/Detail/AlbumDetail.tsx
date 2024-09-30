@@ -1,10 +1,7 @@
-import AlbumComment from '@/components/Album/Detail/AlbumComment'
 import AlbumDetailInfo from '@/components/Album/Detail/AlbumDetailInfo'
-import { Button } from '@/components/ui/button'
 import { AlbumDetailType } from '@/types/album'
-import React from 'react'
-import AlbumSong from './AlbumSong'
 import AlbumCommentList from './AlbumCommentList'
+import AlbumSong from './AlbumSong'
 
 type AlbumDetailProps = {
   albumId: number

@@ -1,7 +1,6 @@
 import { AlbumDetailInfoType } from '@/types/album'
 import { Pencil, X } from 'lucide-react'
 import { useMemo, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
 import Comment from '../../Icon/Comment'
 import Heart from '../../Icon/Heart'
 import {
