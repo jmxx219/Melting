@@ -51,7 +51,8 @@ public class MemberService {
 	public MemberResponseDto initMemberInfo(MultipartFile profileImage, String nickname, Gender gender, String email) {
 		log.debug("member service nickname {}", nickname);
 		String profileImageUrl = awsS3Service.getDefaultProfileImageUrl();
-		Member member = memberRepository.findByEmail(email).orElseThrow(RuntimeException::new);
+		Member member = memberRepository.findByEmail(email)
+			.orElseThrow(() -> new BusinessException(ErrorMessage.MEMBER_NOT_FOUND));
 		if (!profileImage.isEmpty()) {
 			profileImageUrl = awsS3Service.uploadProfileImage(profileImage, member.getId());
 		}
@@ -62,13 +63,14 @@ public class MemberService {
 
 	public MemberResponseDto getMemberInfo(String email) {
 		Member member = memberRepository.findByEmail(email)
-			.orElseThrow(RuntimeException::new);
+			.orElseThrow(() -> new BusinessException(ErrorMessage.MEMBER_NOT_FOUND));
 		return MemberResponseDto.of(member);
 	}
 
 	@Transactional
 	public MemberResponseDto updateMemberInfo(MultipartFile multipartFile, String nickname, String email) {
-		Member member = memberRepository.findByEmail(email).orElseThrow(RuntimeException::new);
+		Member member = memberRepository.findByEmail(email)
+			.orElseThrow(() -> new BusinessException(ErrorMessage.MEMBER_NOT_FOUND));
 		if (nickname == null) {
 			String profileImageUrl = awsS3Service.uploadProfileImage(multipartFile, member.getId());
 			member.updateProfileImageUrl(profileImageUrl);
@@ -91,7 +93,8 @@ public class MemberService {
 	}
 
 	public MemberSongResponseDto getMemberSongs(Long memberId) {
-		Member member = memberRepository.findById(memberId).orElseThrow(RuntimeException::new);
+		Member member = memberRepository.findById(memberId)
+			.orElseThrow(() -> new BusinessException(ErrorMessage.MEMBER_NOT_FOUND));
 
 		List<Song> memberSongs = songRepository.findByMemberIdAndIsDeletedFalse(member.getId());
 
