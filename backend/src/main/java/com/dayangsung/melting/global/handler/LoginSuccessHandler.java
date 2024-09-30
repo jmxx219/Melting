@@ -54,9 +54,9 @@ public class LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 		String determinedTargetUrl = determineTargetUrl(request, response, authentication);
 		Member member = memberRepository.findByEmail(email).orElseThrow(RuntimeException::new);
 		if (member.getGender() == null || member.getNickname() == null) {
-			determinedTargetUrl += "?init=false";
+			determinedTargetUrl += "?init=false" + "?refreshToken=" + refreshToken;
 		} else {
-			determinedTargetUrl += "?init=true";
+			determinedTargetUrl += "?init=true" + "?refreshToken=" + refreshToken;
 		}
 		clearAuthenticationAttributes(request, response);
 		getRedirectStrategy().sendRedirect(request, response, determinedTargetUrl);
