@@ -48,7 +48,7 @@ public class SongController {
 		// 	);
 		// }
 
-		return songService.createMeltingSong(customOAuth2User.getId(), originalSongId, voiceFile)
+		return songService.createMeltingSong(customOAuth2User.getName(), originalSongId, voiceFile)
 			.thenApply(result -> ResponseEntity.ok(ApiResponse.ok(result)));
 	}
 

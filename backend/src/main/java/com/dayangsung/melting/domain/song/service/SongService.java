@@ -70,13 +70,13 @@ public class SongService {
 	@Async
 	@Transactional
 	public CompletableFuture<Void> createMeltingSong(
-		Long memberId, Long originalSongId, MultipartFile voiceFile) {
+		String email, Long originalSongId, MultipartFile voiceFile) {
 
 		OriginalSong originalSong = originalSongRepository.findById(originalSongId).orElseThrow(RuntimeException::new);
-		Member member = memberRepository.findById(memberId).orElseThrow(RuntimeException::new);
+		Member member = memberRepository.findByEmail(email).orElseThrow(RuntimeException::new);
 
-		member.increaseCoverCount();
-		memberRepository.save(member);
+		boolean songExists = songRepository.existsByMemberAndOriginalSongAndSongType(member, originalSong,
+			SongType.MELTING);
 
 		Song song = Song.builder()
 			.originalSong(originalSong)
@@ -94,10 +94,19 @@ public class SongService {
 		builder.part("song_id", savedSong.getId().toString());
 		builder.part("original_song_mr_url", originalSong.getMrUrl());
 
+		String endpoint;
+		if (member.getCoverCount() < 3 && !songExists) {
+			endpoint = "/api/rvc-ai/{memberId}/melting-with-training";
+			member.increaseCoverCount();
+			memberRepository.save(member);
+		} else {
+			endpoint = "/api/rvc-ai/{memberId}/melting";
+		}
+
 		return webClient.post()
 			.uri(uriBuilder -> uriBuilder
-				.path("/api/rvc-ai/{memberId}/melting")
-				.build(memberId))
+				.path(endpoint)
+				.build(member.getId()))
 			.contentType(MediaType.MULTIPART_FORM_DATA)
 			.body(BodyInserters.fromMultipartData(builder.build()))
 			.retrieve()
