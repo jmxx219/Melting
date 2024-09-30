@@ -1,10 +1,10 @@
 package com.dayangsung.melting.domain.album.controller;
 
-import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
+import org.springframework.data.domain.Page;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -12,21 +12,22 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.dayangsung.melting.domain.album.dto.request.AlbumCreateRequestDto;
 import com.dayangsung.melting.domain.album.dto.request.AlbumUpdateRequestDto;
 import com.dayangsung.melting.domain.album.dto.response.AlbumDetailsResponseDto;
-import com.dayangsung.melting.domain.album.dto.response.AlbumMainResponseDto;
 import com.dayangsung.melting.domain.album.dto.response.AlbumSearchResponseDto;
-import com.dayangsung.melting.domain.album.dto.response.AlbumUpdateResponseDto;
-import com.dayangsung.melting.domain.album.enums.AlbumSortType;
 import com.dayangsung.melting.domain.album.service.AlbumService;
+import com.dayangsung.melting.domain.auth.CustomOAuth2User;
 import com.dayangsung.melting.global.common.response.ApiResponse;
 
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/albums")
@@ -34,63 +35,60 @@ public class AlbumController {
 
 	private final AlbumService albumService;
 
-	// 커뮤니티 메인 페이지에 보여지는 앨범 조회, 기본값은 최신순
 	@GetMapping
-	public ApiResponse<List<AlbumMainResponseDto>> getAlbumsInCommunityMainPage(
-		@RequestParam(value = "sort", defaultValue = "latest") AlbumSortType sort) {
-		List<AlbumMainResponseDto> albumMainResponseDtoList = albumService.getAlbumsSorted(sort);
-		return ApiResponse.ok(albumMainResponseDtoList);
+	public ApiResponse<Page<AlbumSearchResponseDto>> getAlbums(
+		@RequestParam(defaultValue = "0") int sort,
+		@RequestParam(defaultValue = "0") int page,
+		@RequestParam(defaultValue = "10") int size) {
+		Page<AlbumSearchResponseDto> albumSearchPage = albumService.getAlbums(sort, page, size);
+		return ApiResponse.ok(albumSearchPage);
 	}
 
-	// 키워드 검색을 통한 앨범 조회
-	@GetMapping("/search")
-	public ApiResponse<List<AlbumSearchResponseDto>> searchAlbumsByKeyword(
-		@RequestParam(value = "keyword") String keyword,
-		@RequestParam(value = "type") List<String> types) {
-
-		Set<AlbumSearchResponseDto> result = new HashSet<>();
-
-		// TODO: 최소 하나 선택 되도록 예외 처리 (프론트에 물어 보기)
-
-		// 각 type에 따른 검색 수행
-		if (types.contains("album")) {
-			result.addAll(albumService.searchAlbumsByAlbumName(keyword));
-		}
-		if (types.contains("song")) {
-			result.addAll(albumService.searchAlbumsBySongName(keyword));
-		}
-		if (types.contains("hashtag")) {
-			result.addAll(albumService.searchAlbumsByHashtag(keyword));
-		}
-		if (types.contains("genre")) {
-			result.addAll(albumService.searchAlbumsByGenre(keyword));
-		}
-
-		return ApiResponse.ok(new ArrayList<>(result));
-	}
-
-	// 앨범 생성
 	@PostMapping
-	public ApiResponse<AlbumUpdateResponseDto> createAlbum(
-			@Valid @RequestBody AlbumCreateRequestDto albumCreateRequestDto) {
-		AlbumUpdateResponseDto albumUpdateResponseDto = albumService.createAlbum(albumCreateRequestDto);
-		return ApiResponse.ok(albumUpdateResponseDto);
+	public ApiResponse<AlbumDetailsResponseDto> createAlbum(
+		@RequestPart AlbumCreateRequestDto albumCreateRequestDto,
+		@RequestPart MultipartFile albumCoverImage,
+		@AuthenticationPrincipal CustomOAuth2User customOAuth2User) {
+		AlbumDetailsResponseDto albumDetailsResponseDto =
+			albumService.createAlbum(albumCreateRequestDto, albumCoverImage, customOAuth2User.getName());
+		return ApiResponse.ok(albumDetailsResponseDto);
 	}
 
-	// 앨범 상세정보 조회
 	@GetMapping("/{albumId}")
 	public ApiResponse<AlbumDetailsResponseDto> getAlbumDetails(@PathVariable Long albumId) {
-		AlbumDetailsResponseDto albumDetails = albumService.getAlbumDetails(albumId);
-		return ApiResponse.ok(albumDetails);
+		AlbumDetailsResponseDto albumDetailsResponseDto =
+			albumService.getAlbumDetails(albumId);
+		return ApiResponse.ok(albumDetailsResponseDto);
 	}
 
-	// 앨범 수정
 	@PatchMapping("/{albumId}")
-	public ApiResponse<AlbumUpdateResponseDto> updateAlbum(
-		@PathVariable Long albumId,
+	public ApiResponse<AlbumDetailsResponseDto> updateAlbumDescription(@PathVariable Long albumId,
 		@RequestBody AlbumUpdateRequestDto albumUpdateRequestDto) {
-		AlbumUpdateResponseDto updatedAlbumDto = albumService.updateAlbum(albumId, albumUpdateRequestDto);
-		return ApiResponse.ok(updatedAlbumDto);
+		AlbumDetailsResponseDto albumDetailsResponseDto = albumService.updateAlbumDescription(albumId,
+			albumUpdateRequestDto.description());
+		return ApiResponse.ok(albumDetailsResponseDto);
 	}
 
+	@DeleteMapping("/{albumId}")
+	public ApiResponse<Void> deleteAlbum(@PathVariable Long albumId) {
+		albumService.deleteAlbum(albumId);
+		return ApiResponse.ok(null);
+	}
+
+	@GetMapping("/search")
+	public ApiResponse<Page<AlbumSearchResponseDto>> searchAlbums(
+		@RequestParam(defaultValue = "0") int page,
+		@RequestParam(defaultValue = "10") int size,
+		@RequestParam(required = false) String keyword,
+		@RequestParam List<String> options
+	) {
+		Page<AlbumSearchResponseDto> albumSearchPage = albumService.searchAlbum(page, size, keyword, options);
+		return ApiResponse.ok(albumSearchPage);
+	}
+
+	@PatchMapping("/{albumId}/toggle")
+	public ApiResponse<Boolean> toggleIsPublic(@PathVariable Long albumId) {
+		Boolean toggledIsPublic = albumService.toggleIsPublic(albumId);
+		return ApiResponse.ok(toggledIsPublic);
+	}
 }

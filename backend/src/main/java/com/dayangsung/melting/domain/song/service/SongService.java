@@ -25,7 +25,9 @@ import com.dayangsung.melting.domain.song.dto.response.SongDetailsResponseDto;
 import com.dayangsung.melting.domain.song.entity.Song;
 import com.dayangsung.melting.domain.song.enums.SongType;
 import com.dayangsung.melting.domain.song.repository.SongRepository;
+import com.dayangsung.melting.global.common.enums.ErrorMessage;
 import com.dayangsung.melting.global.common.service.AwsS3Service;
+import com.dayangsung.melting.global.exception.BusinessException;
 import com.dayangsung.melting.global.redisson.DistributedLock;
 
 import lombok.RequiredArgsConstructor;
@@ -46,15 +48,20 @@ public class SongService {
 	private final MemberRepository memberRepository;
 	private final WebClient webClient;
 
-	public SongDetailsResponseDto getSongDetails(Long songId) {
-		Song song = songRepository.findById(songId).orElseThrow(RuntimeException::new);
-		String albumCoverImage = awsS3Service.getDefaultSongCoverImageUrl();
-		if (song.getAlbum() != null) {
-			albumCoverImage = song.getAlbum().getAlbumCoverImage();
-		}
-		incrementStreamingCount(songId);
-		return SongDetailsResponseDto.of(song, albumCoverImage, likesService.getSongLikesCount(songId));
+	public SongDetailsResponseDto getSongDetails(Long songId, String email) {
+		Song song = songRepository.findById(songId)
+			.orElseThrow(() -> new BusinessException(ErrorMessage.SONG_NOT_FOUND));
+		Member member = memberRepository.findByEmail(email)
+			.orElseThrow(() -> new BusinessException(ErrorMessage.MEMBER_NOT_FOUND));
 
+		String albumCoverImageUrl = awsS3Service.getDefaultSongCoverImageUrl();
+		if (song.getAlbum() != null) {
+			albumCoverImageUrl = song.getAlbum().getAlbumCoverImageUrl();
+		}
+		incrementStreamingCount(song.getId());
+
+		boolean isLiked = likesService.isLikedBySongAndMember(song.getId(), member.getId());
+		return SongDetailsResponseDto.of(song, albumCoverImageUrl, isLiked, likesService.getSongLikesCount(song.getId()));
 	}
 
 	// Todo : 트랜잭션 적용 필요
@@ -68,13 +75,13 @@ public class SongService {
 	@Async
 	@Transactional
 	public CompletableFuture<Void> createMeltingSong(
-		Long memberId, Long originalSongId, MultipartFile voiceFile) {
+		String email, Long originalSongId, MultipartFile voiceFile) {
 
 		OriginalSong originalSong = originalSongRepository.findById(originalSongId).orElseThrow(RuntimeException::new);
-		Member member = memberRepository.findById(memberId).orElseThrow(RuntimeException::new);
+		Member member = memberRepository.findByEmail(email).orElseThrow(RuntimeException::new);
 
-		member.increaseCoverCount();
-		memberRepository.save(member);
+		boolean songExists = songRepository.existsByMemberAndOriginalSongAndSongType(member, originalSong,
+			SongType.MELTING);
 
 		Song song = Song.builder()
 			.originalSong(originalSong)
@@ -92,10 +99,19 @@ public class SongService {
 		builder.part("song_id", savedSong.getId().toString());
 		builder.part("original_song_mr_url", originalSong.getMrUrl());
 
+		String endpoint;
+		if (member.getCoverCount() < 3 && !songExists) {
+			endpoint = "/api/rvc-ai/{memberId}/melting-with-training";
+			member.increaseCoverCount();
+			memberRepository.save(member);
+		} else {
+			endpoint = "/api/rvc-ai/{memberId}/melting";
+		}
+
 		return webClient.post()
 			.uri(uriBuilder -> uriBuilder
-				.path("/api/rvc-ai/{memberId}/melting")
-				.build(memberId))
+				.path(endpoint)
+				.build(member.getId()))
 			.contentType(MediaType.MULTIPART_FORM_DATA)
 			.body(BodyInserters.fromMultipartData(builder.build()))
 			.retrieve()

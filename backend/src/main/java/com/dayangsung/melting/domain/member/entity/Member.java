@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.dayangsung.melting.domain.auth.enums.ProviderType;
 import com.dayangsung.melting.domain.comment.entity.Comment;
+import com.dayangsung.melting.domain.hashtag.entity.MemberHashtag;
 import com.dayangsung.melting.domain.likes.entity.LikesAlbum;
 import com.dayangsung.melting.domain.likes.entity.LikesSong;
 import com.dayangsung.melting.domain.member.enums.Gender;
@@ -39,7 +40,7 @@ public class Member extends BaseEntity {
 	@Enumerated(EnumType.STRING)
 	private Gender gender;
 
-	private String profileImageExtension;
+	private String profileImageUrl;
 
 	private String nickname;
 
@@ -57,7 +58,12 @@ public class Member extends BaseEntity {
 	@OneToMany(mappedBy = "member")
 	private List<Comment> comments = new ArrayList<>();
 
+	@OneToMany(mappedBy = "member")
+	private List<MemberHashtag> memberHashtags = new ArrayList<>();
+
 	private int coverCount;
+
+	private boolean aiCoverEnabled;
 
 	@Builder
 	public Member(String email, ProviderType provider) {
@@ -65,16 +71,17 @@ public class Member extends BaseEntity {
 		this.provider = provider;
 		this.isDeleted = false;
 		this.coverCount = 0;
+		this.aiCoverEnabled = false;
 	}
 
-	public void initMember(Gender gender, String profileImageExtension, String nickname) {
+	public void initMember(Gender gender, String profileImageUrl, String nickname) {
 		this.gender = gender;
-		this.profileImageExtension = profileImageExtension;
+		this.profileImageUrl = profileImageUrl;
 		this.nickname = nickname;
 	}
 
-	public void updateMember(String profileImageExtension, String nickname) {
-		this.profileImageExtension = profileImageExtension;
+	public void updateMember(String profileImageUrl, String nickname) {
+		this.profileImageUrl = profileImageUrl;
 		this.nickname = nickname;
 	}
 
@@ -82,11 +89,23 @@ public class Member extends BaseEntity {
 		this.nickname = nickname;
 	}
 
-	public void updateProfileImageExtension(String profileImageExtension) {
-		this.profileImageExtension = profileImageExtension;
+	public void updateProfileImageUrl(String profileImageUrl) {
+		this.profileImageUrl = profileImageUrl;
 	}
 
 	public void increaseCoverCount() {
 		this.coverCount++;
+	}
+
+	public void addMemberHashtag(MemberHashtag memberHashtag) {
+		this.memberHashtags.add(memberHashtag);
+	}
+
+	public void deleteMemberHashtag(MemberHashtag memberHashtag) {
+		this.memberHashtags.remove(memberHashtag);
+	}
+
+	public void enableAiCover() {
+		this.aiCoverEnabled = true;
 	}
 }
