@@ -11,19 +11,19 @@ public record SongDetailsResponseDto(
 	String songTitle,
 	String nickname,
 	String artist,
-	String albumCoverImage,
+	String albumCoverImageUrl,
 	boolean isLiked,
 	Integer likedCount,
 	String songUrl,
 	String lyrics
 ) {
-	public static SongDetailsResponseDto of(Song song, String albumCoverImage, boolean isLiked, Integer likedCount) {
+	public static SongDetailsResponseDto of(Song song, String albumCoverImageUrl, boolean isLiked, Integer likedCount) {
 		return SongDetailsResponseDto.builder()
 			.songId(song.getId())
 			.songTitle(song.getOriginalSong().getTitle())
 			.nickname(song.getMember().getNickname())
 			.artist(song.getOriginalSong().getArtist())
-			.albumCoverImage(albumCoverImage)
+			.albumCoverImageUrl(albumCoverImageUrl)
 			.isLiked(isLiked)
 			.likedCount(likedCount)
 			.songUrl(song.getSongUrl())
