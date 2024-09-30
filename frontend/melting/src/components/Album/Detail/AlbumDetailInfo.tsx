@@ -1,5 +1,5 @@
 import { AlbumDetailInfoType } from '@/types/album'
-import { Pencil, Play, X } from 'lucide-react'
+import { Pencil, X } from 'lucide-react'
 import { useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import Comment from '../../Icon/Comment'
@@ -12,6 +12,7 @@ import {
   AlertDialogTitle,
 } from '../../ui/alert-dialog'
 import { Button } from '../../ui/button'
+import AlbumCover from '../AlbumCover'
 import AlbumUserProfile from './AlbumUserProfile'
 
 interface AlbumDetailProps {
@@ -23,12 +24,7 @@ export default function AlbumDetailTop({
   albumInfo,
   albumId,
 }: AlbumDetailProps) {
-  const [isHovered, setIsHovered] = useState(false)
   const [showModal, setShowModal] = useState(false)
-  const navigate = useNavigate()
-  const handlePlayClick = () => {
-    navigate(`/album/play`, { state: albumId })
-  }
 
   const truncatedDescription = useMemo(() => {
     if (albumInfo.description.length <= 100) return albumInfo.description
@@ -37,26 +33,12 @@ export default function AlbumDetailTop({
 
   return (
     <div className="flex flex-col">
-      <div className="w-[250px] h-full self-center">
-        <div className="relative">
-          <img
-            src={albumInfo.albumCoverImage}
-            alt={`${albumInfo.albumName}`}
-            className="w-full h-full object-cover rounded-lg"
-          />
-          <button
-            type="button"
-            onClick={handlePlayClick}
-            onMouseEnter={() => setIsHovered(true)}
-            onMouseLeave={() => setIsHovered(false)}
-            className={`absolute top-2 right-2 rounded-full  transition-colors duration-200 `}
-          >
-            <Play
-              className="text-white shadow-2xl"
-              fill={isHovered ? '#ffaf25' : '#ffffff'}
-            />
-          </button>
-        </div>
+      <div className="self-center">
+        <AlbumCover
+          width={250}
+          albumId={albumId}
+          src={albumInfo.albumCoverImage}
+        />
       </div>
       <div className="flex-col mt-2" id="album-info">
         <div className="text-2xl font-bold">{albumInfo.albumName}</div>
