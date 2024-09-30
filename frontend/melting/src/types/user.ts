@@ -45,7 +45,7 @@ export interface ApiResponseMemberResponseDto {
 
 export interface MemberResponseDto {
   nickname?: string
-  profile_image_url?: string
+  profileImageUrl?: string
 }
 
 export interface ApiResponseBoolean {
