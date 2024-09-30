@@ -1,7 +1,7 @@
-import { useState, useEffect } from 'react'
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import { useState, useEffect, useCallback } from 'react'
+import { useNavigate } from 'react-router-dom'
+
 import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
 import {
   Select,
   SelectContent,
@@ -9,58 +9,94 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-import { ArrowRight, Camera, User } from 'lucide-react'
+import { ArrowRight, X } from 'lucide-react'
+import {
+  InitMemberInfoPayload,
+  MemberInitRequestDto,
+} from '@/typeApis/members/data-contracts.ts'
+import { userApi } from '@/apis/userApi'
+import ProfileImage from '@/components/Common/ProfileImage.tsx'
+import NicknameInput from '@/components/Common/NicknameInput.tsx'
+import AlertModal from '@/components/Common/AlertModal.tsx'
 
 const isValidNickname = (nickname: string): boolean => {
   const regex = /^[가-힣a-zA-Z0-9]{2,20}$/
   return regex.test(nickname)
 }
 
-// 닉네임 중복 체크 함수 (실제로는 API 호출이 필요)
-const checkNicknameDuplicate = async (nickname: string): Promise<boolean> => {
-  // 여기에 실제 API 호출 로직 구현
-  console.log(nickname)
-  return new Promise((resolve) => setTimeout(() => resolve(false), 1000))
-}
-
 export default function SignupForm() {
+  const navigate = useNavigate()
+  const [isDialogOpen, setIsDialogOpen] = useState(false)
+  const [dialogMessage, setDialogMessage] = useState('')
+
   const [profileImage, setProfileImage] = useState<string | null>(null)
+  const [profileImageFile, setProfileImageFile] = useState<File | null>(null)
   const [nickname, setNickname] = useState('')
   const [gender, setGender] = useState<string | null>(null)
   const [isNicknameValid, setIsNicknameValid] = useState(false)
   const [isNicknameDuplicate, setIsNicknameDuplicate] = useState(false)
   const [isFormValid, setIsFormValid] = useState(false)
 
-  useEffect(() => {
-    const validateForm = async () => {
-      const nicknameValid = isValidNickname(nickname)
-      const nicknameDuplicate = nicknameValid
-        ? await checkNicknameDuplicate(nickname)
-        : true
-
-      setIsNicknameValid(nicknameValid)
-      setIsNicknameDuplicate(nicknameDuplicate)
-      setIsFormValid(nicknameValid && !nicknameDuplicate && !!gender)
-    }
-
-    validateForm()
-  }, [nickname, gender])
-
-  const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0]
-    if (file) {
-      const reader = new FileReader()
-      reader.onloadend = () => {
-        setProfileImage(reader.result as string)
+  const checkNickname = useCallback(async (value: string) => {
+    if (isValidNickname(value)) {
+      try {
+        const response = await userApi.validateNickname(value)
+        console.log(nickname)
+        setIsNicknameDuplicate(!response.data) // API 응답이 false면 중복
+        setIsNicknameValid(response.data ?? false)
+      } catch (error) {
+        console.error('닉네임 검증 중 오류 발생:', error)
+        setIsNicknameDuplicate(true)
+        setIsNicknameValid(false)
       }
-      reader.readAsDataURL(file)
+    } else {
+      setIsNicknameValid(false)
+      setIsNicknameDuplicate(false)
     }
+  }, [])
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (nickname) {
+        checkNickname(nickname)
+      }
+    }, 300) // 300ms 디바운스
+
+    return () => clearTimeout(timer)
+  }, [nickname, checkNickname])
+
+  useEffect(() => {
+    setIsFormValid(isNicknameValid && !isNicknameDuplicate && !!gender)
+  }, [isNicknameValid, isNicknameDuplicate, gender])
+
+  const handleImageUpload = (image: string, file?: File) => {
+    setProfileImage(image) // base64 이미지 저장
+    setProfileImageFile(file ?? null) // 파일 객체 저장
   }
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (isFormValid) {
-      // 여기에 로그인 또는 회원가입 로직 구현
-      console.log('Form submitted', { nickname, gender, profileImage })
+      try {
+        const memberInitRequestDto: MemberInitRequestDto = {
+          nickname: nickname,
+          gender: gender as 'MALE' | 'FEMALE',
+        }
+
+        const payload: InitMemberInfoPayload = {
+          multipartFile: profileImageFile || undefined,
+          memberInitRequestDto: memberInitRequestDto,
+        }
+
+        const response = await userApi.initMemberInfo(payload)
+        console.log('회원 정보 초기화 성공:', response)
+        navigate('/main')
+      } catch (error) {
+        console.error('회원 정보 초기화 중 오류 발생:', error)
+        setDialogMessage(
+          '회원 정보 초기화 중 오류가 발생했습니다. 다시 시도해주세요.',
+        )
+        setIsDialogOpen(true)
+      }
     }
   }
 
@@ -75,55 +111,21 @@ export default function SignupForm() {
       </div>
       <div>
         <div className="flex justify-center mb-16">
-          <div className="relative">
-            <Avatar className="w-40 h-40 ">
-              <AvatarImage src={profileImage || ''} alt="Profile" />
-              <AvatarFallback>
-                <User className="w-12 h-12 text-gray-400" />
-              </AvatarFallback>
-            </Avatar>
-            <label
-              htmlFor="profile-upload"
-              className="absolute bottom-2 right-2 bg-white border-b border-gray rounded-full p-2 cursor-pointer"
-            >
-              <Camera className="w-6 h-6 text-black" />
-            </label>
-            <input
-              id="profile-upload"
-              type="file"
-              accept="image/*"
-              className="hidden"
-              onChange={handleImageUpload}
-            />
-          </div>
+          <ProfileImage
+            userIconSize={'w-12 h-12'}
+            avatarSize={'w-40 h-40'}
+            profileImage={profileImage}
+            withUpload={true}
+            onImageUpload={handleImageUpload}
+          />
         </div>
         <div className="space-y-6 mb-14">
-          <div className="relative">
-            <Input
-              placeholder="닉네임을 입력해주세요"
-              value={nickname}
-              onChange={(e) => setNickname(e.target.value)}
-              className={`mt-4 border-b-2 ${!isNicknameValid && nickname ? 'border-b-status-warning' : ''} ${nickname ? 'text-black' : ''} ${isNicknameValid ? 'border-b-primary-400' : ''}`}
-              maxLength={20}
-            />
-            <div className="h-5">
-              <span
-                className={`absolute right-2 bottom-0 text-xs ${nickname.length <= 20 && nickname.length > 0 ? 'text-primary-400' : 'text-gray'} ${nickname.length > 20 ? 'text-status-warning' : ''} `}
-              >
-                {nickname.length}/20
-              </span>
-              {!isNicknameValid && nickname && (
-                <p className="text-status-warning text-xs mt-1">
-                  닉네임은 2-20자의 한글, 영문, 숫자만 가능합니다.
-                </p>
-              )}
-              {isNicknameDuplicate && (
-                <p className="text-status-warning text-xs mt-1">
-                  이미 사용 중인 닉네임입니다.
-                </p>
-              )}
-            </div>
-          </div>
+          <NicknameInput
+            nickname={nickname}
+            setNickname={setNickname}
+            onValidate={(isValid) => setIsFormValid(isValid && !!gender)}
+            isShowInfo={false}
+          />
 
           <Select onValueChange={setGender}>
             <SelectTrigger
@@ -132,8 +134,8 @@ export default function SignupForm() {
               <SelectValue placeholder="성별을 선택해주세요" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="male">남자</SelectItem>
-              <SelectItem value="female">여자</SelectItem>
+              <SelectItem value="MALE">남자</SelectItem>
+              <SelectItem value="FEMALE">여자</SelectItem>
             </SelectContent>
           </Select>
         </div>
@@ -148,6 +150,14 @@ export default function SignupForm() {
           </div>
         </Button>
       </div>
+      {isDialogOpen && (
+        <AlertModal
+          title={'회원가입 오류'}
+          description={dialogMessage}
+          triggerText={<X size={22} className="text-primary-400" />}
+          triggerClassName="ml-4"
+        />
+      )}
     </div>
   )
 }
