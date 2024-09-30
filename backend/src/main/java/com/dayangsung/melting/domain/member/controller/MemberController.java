@@ -1,10 +1,14 @@
 package com.dayangsung.melting.domain.member.controller;
 
-import static com.dayangsung.melting.global.common.response.enums.ErrorMessage.*;
+import static com.dayangsung.melting.global.common.enums.ErrorMessage.*;
+
+import java.util.List;
 
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
@@ -87,5 +91,30 @@ public class MemberController {
 		@AuthenticationPrincipal CustomOAuth2User customOAuth2User) {
 		MemberSongResponseDto memberSongResponseDto = memberService.getMemberSongs(customOAuth2User.getId());
 		return ApiResponse.ok(memberSongResponseDto);
+	}
+
+	@GetMapping("/me/hashtags")
+	public ApiResponse<List<String>> getMemberHashtags(
+		@AuthenticationPrincipal CustomOAuth2User customOAuth2User) {
+		List<String> memberHashtags = memberService.getMemberHashtags(customOAuth2User.getName());
+		return ApiResponse.ok(memberHashtags);
+	}
+
+	@PostMapping("/me/hashtags")
+	public ApiResponse<List<String>> addMemberHashtag(
+		@RequestParam String content,
+		@AuthenticationPrincipal CustomOAuth2User customOAuth2User) {
+		List<String> memberHashtags =
+			memberService.addMemberHashtags(customOAuth2User.getName(), content);
+		return ApiResponse.ok(memberHashtags);
+	}
+
+	@DeleteMapping("/me/hashtags")
+	public ApiResponse<List<String>> deleteMemberHashtag(
+		@RequestParam String content,
+		@AuthenticationPrincipal CustomOAuth2User customOAuth2User) {
+		List<String> memberHashtags =
+			memberService.deleteMemberHashtags(customOAuth2User.getName(), content);
+		return ApiResponse.ok(memberHashtags);
 	}
 }

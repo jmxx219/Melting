@@ -1,8 +1,6 @@
-package com.dayangsung.melting.domain.comment.entity;
+package com.dayangsung.melting.domain.hashtag.entity;
 
-import com.dayangsung.melting.domain.album.entity.Album;
 import com.dayangsung.melting.domain.member.entity.Member;
-import com.dayangsung.melting.global.entity.BaseEntity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -12,6 +10,8 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -20,43 +20,33 @@ import lombok.NoArgsConstructor;
 @Getter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Comment extends BaseEntity {
+@Table(
+	name="member_hashtag",
+	uniqueConstraints={
+		@UniqueConstraint(
+			name = "member_hashtag_uk",
+			columnNames={"member_id", "hashtag_id"}
+		)
+	}
+)
+public class MemberHashtag {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "comment_id")
+	@Column(name = "member_hashtag_id")
 	private Long id;
-
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "album_id")
-	private Album album;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "member_id")
 	private Member member;
 
-	@Column(length = 500)
-	private String content;
-
-	private boolean isDeleted;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "hashtag_id")
+	private Hashtag hashtag;
 
 	@Builder
-	public Comment(Album album, Member member, String content) {
-		this.album = album;
+	public MemberHashtag(Hashtag hashtag, Member member) {
+		this.hashtag = hashtag;
 		this.member = member;
-		this.content = content;
-		this.isDeleted = false;
-	}
-
-	public void modifyContent(String content) {
-		this.content = content;
-	}
-
-	public void deleteComment() {
-		this.isDeleted = true;
-	}
-
-	public void setAlbum(Album album) {
-		this.album = album;
 	}
 }

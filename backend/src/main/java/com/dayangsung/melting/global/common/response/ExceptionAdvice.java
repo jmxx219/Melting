@@ -5,7 +5,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import com.dayangsung.melting.global.common.response.enums.ErrorMessage;
+import com.dayangsung.melting.global.common.enums.ErrorMessage;
 
 import lombok.extern.slf4j.Slf4j;
 

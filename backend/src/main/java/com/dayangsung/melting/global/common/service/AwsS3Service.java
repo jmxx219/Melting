@@ -1,6 +1,6 @@
 package com.dayangsung.melting.global.common.service;
 
-import static com.dayangsung.melting.global.common.response.enums.ErrorMessage.*;
+import static com.dayangsung.melting.global.common.enums.ErrorMessage.*;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
@@ -14,9 +14,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.model.AmazonS3Exception;
 import com.amazonaws.services.s3.model.DeleteObjectRequest;
 import com.amazonaws.services.s3.model.ObjectMetadata;
+import com.dayangsung.melting.domain.member.entity.Member;
+import com.dayangsung.melting.domain.member.repository.MemberRepository;
 
 import lombok.RequiredArgsConstructor;
 
@@ -24,6 +25,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class AwsS3Service {
 
+	private final MemberRepository memberRepository;
 	@Value("${cloud.aws.s3.bucket}")
 	private String bucket;
 	private final AmazonS3 amazonS3;
@@ -32,7 +34,7 @@ public class AwsS3Service {
 
 	public String uploadFileToS3(MultipartFile multipartFile, String bucketFolderPath, String id) throws IOException {
 		String originalFilename = multipartFile.getOriginalFilename();
-		String extension = originalFilename.substring(originalFilename.lastIndexOf("."));
+		String extension = getExtension(originalFilename);
 		String s3FileName = id + extension;
 
 		ObjectMetadata metadata = new ObjectMetadata();
@@ -58,7 +60,7 @@ public class AwsS3Service {
 	}
 
 	public String uploadAlbumCoverImage(MultipartFile albumCoverImage, Long albumId) {
-		return uploadImage(albumCoverImage, "/image/generated_album", albumId);
+		return uploadImage(albumCoverImage, "/image/generated_album_cover", albumId);
 	}
 
 	public String uploadSong(MultipartFile song, Long songId) {
@@ -84,25 +86,19 @@ public class AwsS3Service {
 		}
 	}
 
-	public String uploadProfileImage(MultipartFile profileImage, Long memberId, String extension) {
-		if (extension != null) {
+	public String uploadProfileImage(MultipartFile profileImage, Long memberId) {
+		Member member = memberRepository.findById(memberId).orElseThrow(RuntimeException::new);
+		String profileImageUrl = member.getProfileImageUrl();
+		if (profileImageUrl != null) {
+			String extension = getExtension(profileImageUrl);
 			deleteFile(memberId + extension, "/image/profile");
 		}
+
 		return uploadImage(profileImage, "/image/profile", memberId);
 	}
 
 	public String getDefaultProfileImageUrl() {
 		return CLOUDFRONTURL + "/image/profile/default_image.png";
-	}
-
-	public String getProfileImageUrl(Long memberId, String extension) {
-		String profileImageUrl = CLOUDFRONTURL + "/image/profile/" + memberId + extension;
-		try {
-			amazonS3.getObject(bucket, profileImageUrl);
-			return profileImageUrl;
-		} catch (AmazonS3Exception e) {
-			return getDefaultProfileImageUrl();
-		}
 	}
 
 	public String getDefaultSongCoverImageUrl() {
@@ -118,17 +114,21 @@ public class AwsS3Service {
 	}
 
 	private void validateImageFileExtension(String filename) {
+		String extension = getExtension(filename);
+		List<String> allowedExtentionList = Arrays.asList(".jpg", ".jpeg", ".png", ".gif");
+
+		if (!allowedExtentionList.contains(extension)) {
+			throw new RuntimeException(INCORRECT_IMAGE_EXTENSION.getErrorMessage());
+		}
+	}
+
+	public String getExtension(String filename) {
 		int lastDotIndex = filename.lastIndexOf(".");
 		if (lastDotIndex == -1) {
 			throw new RuntimeException(INCORRECT_IMAGE_EXTENSION.getErrorMessage());
 		}
 
-		String extension = filename.substring(lastDotIndex + 1).toLowerCase();
-		List<String> allowedExtentionList = Arrays.asList("jpg", "jpeg", "png", "gif");
-
-		if (!allowedExtentionList.contains(extension)) {
-			throw new RuntimeException(INCORRECT_IMAGE_EXTENSION.getErrorMessage());
-		}
+		return filename.substring(lastDotIndex).toLowerCase();
 	}
 
 	public void deleteFile(String fileName, String bucketFolderPath) {
