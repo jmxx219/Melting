@@ -1,26 +1,16 @@
-import { useNavigate } from 'react-router-dom'
-
+import login from '@/apis/authApi.ts'
 import OAuthButton from './OAuthButton'
 
 export default function LoginForm() {
-  const navigate = useNavigate()
-
-  const handleKakaoLogin = () => {
-    // window.location.href = '/oauth2/authorization/kakao';
+  const handleKakaoLogin = async () => {
     console.log('카카오 로그인!')
+    await login('kakao')
   }
 
-  const handleGoogleLogin = () => {
+  const handleGoogleLogin = async () => {
     // window.location.href = '/oauth2/authorization/google';
     console.log('구글 로그인!')
-  }
-
-  // 비회원일 경우 바로 메인 화면으로 이동
-  const handleGuestLogin = () => {
-    // 비회원 상태 저장, 비회원 권한 부여 등을 처리
-    // 로컬스토리지나 상태 관리 라이브러리로 권한 관리 가능
-    localStorage.setItem('role', 'guest')
-    navigate('/') // 메인 화면으로 이동
+    await login('google')
   }
 
   return (
@@ -37,9 +27,9 @@ export default function LoginForm() {
         bgColor="bg-[#EEEEEE]"
         onClick={handleGoogleLogin}
       />
-      <button type="button" className="text-sm text-center" onClick={handleGuestLogin}>
-        로그인 없이 진행할게요
-      </button>
+      {/*<button type="button" className="text-sm text-center" onClick={handleGuestLogin}>*/}
+      {/*  로그인 없이 진행할게요*/}
+      {/*</button>*/}
     </div>
   )
 }
