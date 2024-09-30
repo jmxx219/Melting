@@ -63,7 +63,7 @@ public class SongController {
 
 		Long originalSongId = aiCoverSongCreateRequestDto.originalSongId();
 
-		return songService.createAiCoverSong(customOAuth2User.getId(), originalSongId)
+		return songService.createAiCoverSong(customOAuth2User.getName(), originalSongId)
 			.thenApply(result -> ResponseEntity.ok(ApiResponse.ok(result)));
 	}
 

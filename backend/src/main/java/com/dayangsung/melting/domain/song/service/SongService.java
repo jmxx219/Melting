@@ -61,7 +61,8 @@ public class SongService {
 		incrementStreamingCount(song.getId());
 
 		boolean isLiked = likesService.isLikedBySongAndMember(song.getId(), member.getId());
-		return SongDetailsResponseDto.of(song, albumCoverImageUrl, isLiked, likesService.getSongLikesCount(song.getId()));
+		return SongDetailsResponseDto.of(song, albumCoverImageUrl, isLiked,
+			likesService.getSongLikesCount(song.getId()));
 	}
 
 	// Todo : 트랜잭션 적용 필요
@@ -122,10 +123,14 @@ public class SongService {
 	@Async
 	@Transactional
 	public CompletableFuture<Void> createAiCoverSong(
-		Long memberId, Long originalSongId) {
+		String email, Long originalSongId) {
 
 		OriginalSong originalSong = originalSongRepository.findById(originalSongId).orElseThrow(RuntimeException::new);
-		Member member = memberRepository.findById(memberId).orElseThrow(RuntimeException::new);
+		Member member = memberRepository.findByEmail(email).orElseThrow(RuntimeException::new);
+
+		if (!member.isAiCoverEnabled()) {
+			throw new RuntimeException();
+		}
 
 		Song song = Song.builder()
 			.originalSong(originalSong)
@@ -147,7 +152,7 @@ public class SongService {
 		);
 
 		return webClient.post()
-			.uri("/api/rvc-ai/{memberId}/aicover", memberId)
+			.uri("/api/rvc-ai/{memberId}/aicover", member.getId())
 			.contentType(MediaType.APPLICATION_JSON)
 			.body(BodyInserters.fromValue(requestBody))
 			.retrieve()
