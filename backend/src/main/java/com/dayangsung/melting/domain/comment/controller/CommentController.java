@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.dayangsung.melting.domain.auth.dto.CustomOAuth2User;
 import com.dayangsung.melting.domain.comment.dto.request.CommentRequestDto;
 import com.dayangsung.melting.domain.comment.dto.response.CommentResponseDto;
 import com.dayangsung.melting.domain.comment.service.CommentService;
@@ -39,24 +38,24 @@ public class CommentController {
 
 	@PostMapping
 	public ApiResponse<CommentResponseDto> writeComment(@PathVariable Long albumId,
-		@AuthenticationPrincipal CustomOAuth2User customOAuth2User, @RequestBody CommentRequestDto commentRequestDto) {
+		@AuthenticationPrincipal String email, @RequestBody CommentRequestDto commentRequestDto) {
 		CommentResponseDto commentResponseDto =
-			commentService.writeComment(albumId, customOAuth2User.getId(), commentRequestDto.content());
+			commentService.writeComment(albumId, email, commentRequestDto.content());
 		return ApiResponse.ok(commentResponseDto);
 	}
 
 	@PatchMapping("/{commentId}")
 	public ApiResponse<CommentResponseDto> modifyComment(@PathVariable Long albumId, @PathVariable Long commentId,
-		@AuthenticationPrincipal CustomOAuth2User customOAuth2User, @RequestBody CommentRequestDto commentRequestDto) {
-		CommentResponseDto commentResponseDto = commentService.modifyComment(commentId, customOAuth2User.getId(),
+		@AuthenticationPrincipal String email, @RequestBody CommentRequestDto commentRequestDto) {
+		CommentResponseDto commentResponseDto = commentService.modifyComment(commentId, email,
 			commentRequestDto.content());
 		return ApiResponse.ok(commentResponseDto);
 	}
 
 	@DeleteMapping("/{commentId}")
 	public ApiResponse<CommentResponseDto> deleteComment(@PathVariable Long albumId, @PathVariable Long commentId,
-		@AuthenticationPrincipal CustomOAuth2User customOAuth2User) {
-		CommentResponseDto commentResponseDto = commentService.deleteComment(commentId, customOAuth2User.getId());
+		@AuthenticationPrincipal String email) {
+		CommentResponseDto commentResponseDto = commentService.deleteComment(commentId, email);
 		return ApiResponse.ok(commentResponseDto);
 	}
 }

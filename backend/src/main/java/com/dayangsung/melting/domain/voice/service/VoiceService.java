@@ -29,10 +29,10 @@ public class VoiceService {
 	private final AwsS3Service awsS3Service;
 
 	@Transactional
-	public VoiceCreateResponseDto addVoice(Long originalSongId, MultipartFile voiceFile, Long memberId) throws
+	public VoiceCreateResponseDto addVoice(Long originalSongId, MultipartFile voiceFile, String email) throws
 		IOException {
 
-		Member member = memberRepository.findById(memberId).orElseThrow(RuntimeException::new);
+		Member member = memberRepository.findByEmail(email).orElseThrow(RuntimeException::new);
 		OriginalSong originalSong = originalSongRepository.findById(originalSongId)
 			.orElseThrow(RuntimeException::new);
 
