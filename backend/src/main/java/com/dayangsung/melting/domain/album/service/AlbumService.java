@@ -1,174 +1,215 @@
 package com.dayangsung.melting.domain.album.service;
 
-import static com.dayangsung.melting.global.common.response.enums.ErrorMessage.*;
-
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
-import java.util.function.Supplier;
+import java.util.Objects;
+import java.util.Set;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.webjars.NotFoundException;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.dayangsung.melting.domain.album.dto.request.AlbumCreateRequestDto;
-import com.dayangsung.melting.domain.album.dto.request.AlbumUpdateRequestDto;
 import com.dayangsung.melting.domain.album.dto.response.AlbumDetailsResponseDto;
-import com.dayangsung.melting.domain.album.dto.response.AlbumMainResponseDto;
 import com.dayangsung.melting.domain.album.dto.response.AlbumSearchResponseDto;
-import com.dayangsung.melting.domain.album.dto.response.AlbumUpdateResponseDto;
 import com.dayangsung.melting.domain.album.entity.Album;
-import com.dayangsung.melting.domain.album.enums.AlbumSortType;
+import com.dayangsung.melting.domain.album.enums.AlbumCategory;
 import com.dayangsung.melting.domain.album.repository.AlbumRepository;
+import com.dayangsung.melting.domain.genre.entity.AlbumGenre;
+import com.dayangsung.melting.domain.genre.entity.Genre;
+import com.dayangsung.melting.domain.genre.repository.AlbumGenreRepository;
+import com.dayangsung.melting.domain.genre.repository.GenreRepository;
+import com.dayangsung.melting.domain.hashtag.entity.AlbumHashtag;
+import com.dayangsung.melting.domain.hashtag.entity.Hashtag;
+import com.dayangsung.melting.domain.hashtag.repository.AlbumHashtagRepository;
+import com.dayangsung.melting.domain.hashtag.repository.HashtagRepository;
+import com.dayangsung.melting.domain.likes.repository.LikesAlbumRepository;
 import com.dayangsung.melting.domain.likes.service.LikesService;
-import com.dayangsung.melting.global.util.RedisUtil;
+import com.dayangsung.melting.domain.member.entity.Member;
+import com.dayangsung.melting.domain.member.repository.MemberRepository;
+import com.dayangsung.melting.domain.song.dto.response.SongDetailsResponseDto;
 import com.dayangsung.melting.domain.song.entity.Song;
+import com.dayangsung.melting.domain.song.repository.SongRepository;
+import com.dayangsung.melting.global.common.enums.ErrorMessage;
+import com.dayangsung.melting.global.common.service.AwsS3Service;
+import com.dayangsung.melting.global.exception.BusinessException;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class AlbumService {
 
+	private final MemberRepository memberRepository;
 	private final AlbumRepository albumRepository;
+	private final SongRepository songRepository;
+	private final GenreRepository genreRepository;
+	private final AlbumGenreRepository albumGenreRepository;
+	private final HashtagRepository hashtagRepository;
+	private final AlbumHashtagRepository albumHashtagRepository;
+	private final LikesAlbumRepository likesAlbumRepository;
 	private final LikesService likesService;
-	private final RedisUtil redisUtil;
+	private final AwsS3Service awsS3Service;
 
-	// 모든 앨범 조회
-	public List<AlbumSearchResponseDto> getAllAlbums() {
-		return getAlbumsBy(albumRepository::findAll);
-	}
+	@Transactional
+	public AlbumDetailsResponseDto createAlbum(AlbumCreateRequestDto albumCreateRequestDto,
+		MultipartFile albumCoverImage, String email) {
+		Member member = memberRepository.findByEmail(email)
+			.orElseThrow(() -> new BusinessException(ErrorMessage.MEMBER_NOT_FOUND));
 
-	// 커뮤니티 메인에서 사용. sort 파라미터에 따라 앨범 목록을 정렬하여 반환하는 메서드
-	public List<AlbumMainResponseDto> getAlbumsSorted(AlbumSortType sort) {
-		List<Album> albums = switch (sort) {
-			case POPULAR -> redisUtil.getTop5AlbumLikes();
-			case LATEST -> albumRepository.findByIsPublicTrueAndIsDeletedFalseOrderByCreatedAtDesc();
-			default -> throw new IllegalArgumentException(INVALID_SORT_CRITERIA.getErrorMessage());
-		};
+		int songCount = albumCreateRequestDto.songs().size();
+		Album album = albumRepository.save(Album.builder()
+			.member(member)
+			.albumName(albumCreateRequestDto.albumName())
+			.albumDescription(albumCreateRequestDto.albumDescription())
+			.category(AlbumCategory.findCategoryBySongCount(songCount))
+			.build());
 
-		// 앨범을 DTO로 변환하여 반환
-		return albums.stream()
-			.map(AlbumMainResponseDto::of)
-			.toList();
-	}
-
-	// 앨범명 검색을 통한 앨범 조회
-	public List<AlbumSearchResponseDto> searchAlbumsByAlbumName(String keyword) {
-		validateKeyword(keyword);
-		return getAlbumsBy(() -> albumRepository.findAlbumsByAlbumName(keyword));
-	}
-
-	// 곡명 검색을 통한 앨범 조회
-	public List<AlbumSearchResponseDto> searchAlbumsBySongName(String keyword) {
-		validateKeyword(keyword);
-		return getAlbumsBy(() -> albumRepository.findAlbumsBySongName(keyword));
-	}
-
-	// 해시태그 내용 검색을 통한 앨범 조회
-	public List<AlbumSearchResponseDto> searchAlbumsByHashtag(String keyword) {
-		validateKeyword(keyword);
-		return getAlbumsBy(() -> albumRepository.findAlbumsByHashtag(keyword));
-	}
-
-	// 장르 검색을 통한 앨범 조회
-	public List<AlbumSearchResponseDto> searchAlbumsByGenre(String keyword) {
-		validateKeyword(keyword);
-		return getAlbumsBy(() -> albumRepository.findAlbumsByGenre(keyword));
-	}
-
-	// 검색에서 공통 사용된 예외 처리 부분 메서드화
-	private void validateKeyword(String keyword) {
-		if (keyword == null || keyword.trim().length() < 2) {
-			throw new IllegalArgumentException(SEARCH_QUERY_TOO_SHORT.getErrorMessage());
+		List<SongDetailsResponseDto> songs = new ArrayList<>();
+		for (int trackNumber = 1; trackNumber <= songCount; trackNumber++) {
+			Long songId = albumCreateRequestDto.songs().get(trackNumber - 1);
+			Song song = songRepository.findById(songId)
+				.orElseThrow(() -> new BusinessException(ErrorMessage.SONG_NOT_FOUND));
+			if (song.getAlbum() != null) {
+				throw new BusinessException(ErrorMessage.SONG_ALREADY_INCLUDED);
+			}
+			song.setTrackNumber(trackNumber);
+			song.setIsTitle(Objects.equals(albumCreateRequestDto.titleSongId(), song.getId()));
+			songRepository.save(song);
+			album.addSong(song);
+			songs.add(SongDetailsResponseDto.of(song, null, likesService.getSongLikesCount(songId)));
 		}
-	}
 
-	// 검색에서 공통 사용된 부분 메서드화
-	private List<AlbumSearchResponseDto> getAlbumsBy(Supplier<List<Album>> albumSupplier) {
-		List<Album> albums = albumSupplier.get();
-		return albums.stream()
-			.map(AlbumSearchResponseDto::of)
-			.toList();
+		for (Long genreId : albumCreateRequestDto.genres()) {
+			Genre genre = genreRepository.findById(genreId)
+				.orElseThrow(() -> new BusinessException(ErrorMessage.GENRE_NOT_FOUND));
+			AlbumGenre albumGenre = AlbumGenre.builder().album(album).genre(genre).build();
+			albumGenreRepository.save(albumGenre);
+			album.addGenre(albumGenre);
+		}
+
+		for (String content : albumCreateRequestDto.hashtags()) {
+			Hashtag hashtag = hashtagRepository.findByContent(content)
+				.orElseGet(() -> hashtagRepository.save(new Hashtag(content)));
+			AlbumHashtag albumHashtag = AlbumHashtag.builder().album(album).hashtag(hashtag).build();
+			albumHashtagRepository.save(albumHashtag);
+			album.addHashtag(albumHashtag);
+		}
+
+		album = albumRepository.save(album);
+		String albumCoverImageUrl = awsS3Service.uploadAlbumCoverImage(albumCoverImage, album.getId());
+		album.updateAlbumCoverImageUrl(albumCoverImageUrl);
+		album = albumRepository.save(album);
+
+		return AlbumDetailsResponseDto.of(album, member,
+			likesAlbumRepository.existsLikesAlbumByAlbumIdAndMemberId(album.getId(), member.getId()),
+			likesService.getAlbumLikesCount(album.getId()), songs, 0);
 	}
 
 	public AlbumDetailsResponseDto getAlbumDetails(Long albumId) {
-		// 앨범 조회
 		Album album = albumRepository.findById(albumId)
-			.orElseThrow(() -> new NotFoundException(ALBUM_NOT_FOUND.getErrorMessage()));
+			.orElseThrow(() -> new BusinessException(ErrorMessage.ALBUM_NOT_FOUND));
+		List<SongDetailsResponseDto> songDetails = getSongDetails(album);
 
-		// 앨범 데이터를 DTO로 변환
-		return AlbumDetailsResponseDto.of(album, likesService.getAlbumLikesCount(albumId));
+		return AlbumDetailsResponseDto.of(album, album.getMember(),
+			likesAlbumRepository.existsLikesAlbumByAlbumIdAndMemberId(album.getId(), album.getMember().getId()),
+			likesService.getAlbumLikesCount(album.getId()), songDetails, album.getComments().size());
 	}
 
-	@Transactional
-	public AlbumUpdateResponseDto updateAlbum(Long albumId, AlbumUpdateRequestDto albumUpdateRequestDto) {
-		// 앨범 조회
+	public AlbumDetailsResponseDto updateAlbumDescription(Long albumId, String description) {
 		Album album = albumRepository.findById(albumId)
-			.orElseThrow(() -> new NotFoundException(ALBUM_NOT_FOUND.getErrorMessage()));
+			.orElseThrow(() -> new BusinessException(ErrorMessage.ALBUM_NOT_FOUND));
+		album.updateAlbumDescription(description);
+		albumRepository.save(album);
+		List<SongDetailsResponseDto> songDetails = getSongDetails(album);
 
-		// DTO에서 받은 정보로 앨범 업데이트
-		String newAlbumName = albumUpdateRequestDto.albumName();
-		if (newAlbumName != null) {
-			album.updateAlbumName(newAlbumName);
-		} else {
-			throw new IllegalArgumentException(ALBUM_NAME_BLANK_ERROR.getErrorMessage());
-		}
-		String newAlbumDescription = albumUpdateRequestDto.albumDescription();
-		if (newAlbumDescription != null) {
-			album.updateAlbumDescription(newAlbumDescription);
-		} else {
-			// TODO: AI 소개 생성
-		}
-
-		// 앨범 저장
-		Album updatedAlbum = albumRepository.save(album);
-
-		// 업데이트된 앨범을 DTO로 변환하여 반환
-		return AlbumUpdateResponseDto.of(updatedAlbum);
+		return AlbumDetailsResponseDto.of(album, album.getMember(),
+			likesAlbumRepository.existsLikesAlbumByAlbumIdAndMemberId(album.getId(), album.getMember().getId()),
+			likesService.getAlbumLikesCount(album.getId()), songDetails, album.getComments().size());
 	}
 
-	// TODO: 수정 및 확인 필요
-	@Transactional
-	public AlbumUpdateResponseDto createAlbum(AlbumCreateRequestDto albumCreateRequestDto) {
-		// 앨범 이름 유효성 검사
-		if (albumCreateRequestDto.albumName() == null || albumCreateRequestDto.albumName().trim().isEmpty()) {
-			throw new IllegalArgumentException(ALBUM_NAME_BLANK_ERROR.getErrorMessage());
+	public Page<AlbumSearchResponseDto> getAlbums(int sort, int page, int size) {
+		Pageable pageable = PageRequest.of(page, size);
+		if (sort == 1) {
+			return albumRepository.findAllByOrderByLikesCountDesc(pageable).map(AlbumSearchResponseDto::of);
+		} else {
+			return albumRepository.findAllByOrderByCreatedAtDesc(pageable).map(AlbumSearchResponseDto::of);
 		}
-
-		// 앨범 설명 유효성 검사
-		if (albumCreateRequestDto.albumDescription() == null || albumCreateRequestDto.albumDescription()
-			.trim()
-			.isEmpty()) {
-			// TODO: AI 소개 생성
-		}
-
-		// 앨범 커버 이미지 유효성 검사
-		if (albumCreateRequestDto.albumCoverImage() == null || albumCreateRequestDto.albumCoverImage()
-			.trim()
-			.isEmpty()) {
-			throw new IllegalArgumentException(ALBUM_COVER_IMAGE_BLANK_ERROR.getErrorMessage());
-		}
-
-		// TODO: Song에서 이미 처리하고 있는 부분인지 확인
-		// 곡 목록 유효성 검사
-		List<Song> songs = albumCreateRequestDto.songs();
-		if (songs == null || songs.isEmpty()) {
-			throw new IllegalArgumentException(ALBUM_SONGS_EMPTY_ERROR.getErrorMessage());
-		} else if (10 <= songs.size()) {
-			throw new IllegalArgumentException(INVALID_SONG_COUNT.getErrorMessage());
-		}
-
-		// 앨범 객체 생성
-		Album album = Album.builder()
-			.albumName(albumCreateRequestDto.albumName())
-			.albumDescription(albumCreateRequestDto.albumDescription())
-			.albumCoverImage(albumCreateRequestDto.albumCoverImage())
-			.build();
-
-		// 앨범 저장
-		Album savedAlbum = albumRepository.save(album);
-
-		// 저장된 앨범을 DTO로 변환하여 반환
-		return AlbumUpdateResponseDto.of(savedAlbum);
 	}
 
+	public Page<AlbumSearchResponseDto> searchAlbum(int page, int size, String keyword, List<String> options) {
+		Set<Album> searchResultSet = new HashSet<>();
+		if (keyword == null || keyword.isEmpty()) {
+			return this.getAlbums(0, page, size);
+		}
+		if (options.size() == 1 && options.getFirst().equals("all")) {
+			options = Arrays.asList("albumName", "songTitle", "hashtag", "genre");
+		}
+		log.debug("options: {}", options);
+		for (String option : options) {
+			switch (option) {
+				case "albumName":
+					searchResultSet.addAll(
+						albumRepository.findByAlbumNameContaining(keyword, Pageable.unpaged()).getContent());
+					break;
+				case "songTitle":
+					searchResultSet.addAll(
+						albumRepository.findBySongTitleContaining(keyword, Pageable.unpaged()).getContent());
+					break;
+				case "hashtag":
+					searchResultSet.addAll(
+						albumRepository.findByHashtagContentContaining(keyword, Pageable.unpaged()).getContent());
+					break;
+				case "genre":
+					searchResultSet.addAll(
+						albumRepository.findByGenreNameContaining(keyword, Pageable.unpaged()).getContent());
+					break;
+			}
+		}
+
+		List<Album> searchResultList = new ArrayList<>(searchResultSet);
+		int start = Math.min(page * size, searchResultList.size());
+		int end = Math.min((page + 1) * size, searchResultList.size());
+		List<Album> paginatedList = searchResultList.subList(start, end);
+
+		List<AlbumSearchResponseDto> albumSearchResponse = paginatedList.stream()
+			.map(AlbumSearchResponseDto::of)
+			.toList();
+
+		return new PageImpl<>(albumSearchResponse, PageRequest.of(page, size), searchResultList.size());
+	}
+
+	private List<SongDetailsResponseDto> getSongDetails(Album album) {
+		return album.getSongs().stream()
+			.map(song -> SongDetailsResponseDto.of(song, album.getAlbumCoverImageUrl(),
+				likesService.getSongLikesCount(song.getId())))
+			.toList();
+	}
+
+	public void deleteAlbum(Long albumId) {
+		Album album = albumRepository.findById(albumId)
+			.orElseThrow(() -> new BusinessException(ErrorMessage.ALBUM_NOT_FOUND));
+		for (Song song : album.getSongs()) {
+			song.removeFromAlbum();
+		}
+		likesService.deleteAlbumLikesOnRedis(albumId);
+		album.deleteAlbum();
+		albumRepository.save(album);
+	}
+
+	public Boolean toggleIsPublic(Long albumId) {
+		Album album = albumRepository.findById(albumId)
+			.orElseThrow(() -> new BusinessException(ErrorMessage.ALBUM_NOT_FOUND));
+		Boolean toggledIsPublic = album.toggleIsPublic();
+		albumRepository.save(album);
+		return toggledIsPublic;
+	}
 }

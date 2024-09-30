@@ -7,4 +7,5 @@ import com.dayangsung.melting.domain.likes.entity.LikesAlbum;
 public interface LikesAlbumRepository extends JpaRepository<LikesAlbum, Long> {
 
 	Optional<LikesAlbum> findLikesAlbumByAlbumIdAndMemberId(Long albumId, Long memberId);
+	Boolean existsLikesAlbumByAlbumIdAndMemberId(Long albumId, Long memberId);
 }
