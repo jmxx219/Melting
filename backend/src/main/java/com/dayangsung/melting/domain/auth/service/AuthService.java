@@ -66,28 +66,4 @@ public class AuthService extends DefaultOAuth2UserService {
 					.email(oAuth2Response.getEmail())
 					.build()));
 	}
-
-	public String reissueToken(HttpServletRequest request, HttpServletResponse response, String refreshToken) {
-		// 유효기간 만료되었거나 유효하지 않으면 예외 처리
-		if (!jwtUtil.validateToken(refreshToken)) {
-			throw new ResponseStatusException(HttpStatus.FORBIDDEN);
-		}
-		String email = jwtUtil.getEmail(refreshToken);
-		// 가입된 사용자인지 검증
-		memberRepository.findByEmail(email).orElseThrow(RuntimeException::new);
-		String storedRefreshToken = redisUtil.getRefreshToken(email);
-		// 저장되어 있는 refresh token과 불일치하면 예외 처리
-		if (!refreshToken.equals(storedRefreshToken)) {
-			throw new ResponseStatusException(HttpStatus.FORBIDDEN);
-		}
-		// access Token 재발급 후 redis, 쿠키 저장
-		String accessToken = jwtUtil.createAccessToken(email);
-		String newRefreshToken = jwtUtil.createRefreshToken(email);
-		redisUtil.saveAccessToken(email, accessToken);
-		redisUtil.saveRefreshToken(email, newRefreshToken);
-		CookieUtil.setCookie(response, "access_token", accessToken, 60 * 30);
-		CookieUtil.setCookie(response, "refresh_token", newRefreshToken, 60 * 30);
-
-		return newRefreshToken;
-	}
 }
