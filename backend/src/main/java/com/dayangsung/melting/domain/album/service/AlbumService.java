@@ -29,7 +29,9 @@ import com.dayangsung.melting.domain.hashtag.entity.AlbumHashtag;
 import com.dayangsung.melting.domain.hashtag.entity.Hashtag;
 import com.dayangsung.melting.domain.hashtag.repository.AlbumHashtagRepository;
 import com.dayangsung.melting.domain.hashtag.repository.HashtagRepository;
+import com.dayangsung.melting.domain.likes.entity.LikesSong;
 import com.dayangsung.melting.domain.likes.repository.LikesAlbumRepository;
+import com.dayangsung.melting.domain.likes.repository.LikesSongRepository;
 import com.dayangsung.melting.domain.likes.service.LikesService;
 import com.dayangsung.melting.domain.member.entity.Member;
 import com.dayangsung.melting.domain.member.repository.MemberRepository;
@@ -56,6 +58,7 @@ public class AlbumService {
 	private final HashtagRepository hashtagRepository;
 	private final AlbumHashtagRepository albumHashtagRepository;
 	private final LikesAlbumRepository likesAlbumRepository;
+	private final LikesSongRepository likesSongRepository;
 	private final LikesService likesService;
 	private final AwsS3Service awsS3Service;
 
@@ -85,7 +88,9 @@ public class AlbumService {
 			song.setIsTitle(Objects.equals(albumCreateRequestDto.titleSongId(), song.getId()));
 			songRepository.save(song);
 			album.addSong(song);
-			songs.add(SongDetailsResponseDto.of(song, null, likesService.getSongLikesCount(songId)));
+			Boolean isLiked = likesSongRepository
+				.existsByMemberIdAndSongIdAndStatusTrue(song.getId(), member.getId()).orElse(false);
+			songs.add(SongDetailsResponseDto.of(song, null, isLiked, likesService.getSongLikesCount(songId)));
 		}
 
 		for (Long genreId : albumCreateRequestDto.genres()) {
@@ -110,7 +115,7 @@ public class AlbumService {
 		album = albumRepository.save(album);
 
 		return AlbumDetailsResponseDto.of(album, member,
-			likesAlbumRepository.existsLikesAlbumByAlbumIdAndMemberId(album.getId(), member.getId()),
+			likesAlbumRepository.existsByMemberIdAndAlbumIdAndStatusTrue(album.getId(), member.getId()).orElse(false),
 			likesService.getAlbumLikesCount(album.getId()), songs, 0);
 	}
 
@@ -120,7 +125,7 @@ public class AlbumService {
 		List<SongDetailsResponseDto> songDetails = getSongDetails(album);
 
 		return AlbumDetailsResponseDto.of(album, album.getMember(),
-			likesAlbumRepository.existsLikesAlbumByAlbumIdAndMemberId(album.getId(), album.getMember().getId()),
+			likesAlbumRepository.existsByMemberIdAndAlbumIdAndStatusTrue(album.getId(), album.getMember().getId()).orElse(false),
 			likesService.getAlbumLikesCount(album.getId()), songDetails, album.getComments().size());
 	}
 
@@ -132,7 +137,7 @@ public class AlbumService {
 		List<SongDetailsResponseDto> songDetails = getSongDetails(album);
 
 		return AlbumDetailsResponseDto.of(album, album.getMember(),
-			likesAlbumRepository.existsLikesAlbumByAlbumIdAndMemberId(album.getId(), album.getMember().getId()),
+			likesAlbumRepository.existsByMemberIdAndAlbumIdAndStatusTrue(album.getId(), album.getMember().getId()).orElse(false),
 			likesService.getAlbumLikesCount(album.getId()), songDetails, album.getComments().size());
 	}
 
@@ -190,6 +195,7 @@ public class AlbumService {
 	private List<SongDetailsResponseDto> getSongDetails(Album album) {
 		return album.getSongs().stream()
 			.map(song -> SongDetailsResponseDto.of(song, album.getAlbumCoverImageUrl(),
+				likesSongRepository.existsByMemberIdAndSongIdAndStatusTrue(album.getMember().getId(), album.getId()).orElse(false),
 				likesService.getSongLikesCount(song.getId())))
 			.toList();
 	}
