@@ -54,8 +54,10 @@ public class SongController {
 
 	@Operation(summary = "곡 상세조회(스트리밍) API")
 	@GetMapping("/{songId}")
-	public ApiResponse<SongDetailsResponseDto> getSongDetails(@PathVariable Long songId) {
-		SongDetailsResponseDto responseDto = songService.getSongDetails(songId);
+	public ApiResponse<SongDetailsResponseDto> getSongDetails(
+		@PathVariable Long songId,
+		@AuthenticationPrincipal CustomOAuth2User customOAuth2User) {
+		SongDetailsResponseDto responseDto = songService.getSongDetails(songId, customOAuth2User.getName());
 		return ApiResponse.ok(responseDto);
 	}
 
