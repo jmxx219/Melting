@@ -2,24 +2,21 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import Heart from '@/components/Icon/Heart'
 import { Play, Crown } from 'lucide-react'
+import { LikedSongType } from '@/types/song'
 
 interface LikedSongProps {
-  song: {
-    songId: number
-    albumCoverImgUrl: string
-    artist: string
-    songTitle: string
-    nickname: string
-    executionTime: string
-    likeCount: number
-    isLiked: boolean
-    songOrder?: number
-    isTitle?: boolean
-  }
+  song: LikedSongType
   hasProfileImage?: boolean
+  songOrder?: number
+  isTitle?: boolean
 }
 
-export default function SongContent({ song, hasProfileImage }: LikedSongProps) {
+export default function SongContent({
+  song,
+  hasProfileImage,
+  songOrder = 0,
+  isTitle,
+}: LikedSongProps) {
   const navigate = useNavigate()
   const [isLiked, setIsLiked] = useState(song.isLiked)
 
@@ -45,15 +42,22 @@ export default function SongContent({ song, hasProfileImage }: LikedSongProps) {
           alt={song.songTitle}
           className="w-12 h-12 object-cover rounded-full"
         />
-      ) : song.songOrder !== undefined ? (
+      ) : songOrder !== 0 ? (
         <div className="w-6 h-6 flex items-center justify-center text-base">
-          {song.songOrder}
+          {songOrder}
         </div>
       ) : null}
 
       <div className="flex-1 flex flex-col justify-around h-12">
         <div className="font-bold text-sm flex items-center">
-          {song.isTitle && <Crown size={16} className="text-yellow-400 mr-2" />}
+          {isTitle && (
+            <Crown
+              fill={'#FFAF25'}
+              strokeWidth={0}
+              size={16}
+              className="text-primary-400 mr-2"
+            />
+          )}
           {truncateText(song.songTitle, 13)}
         </div>
         <div className="text-xs text-gray-500">{song.nickname}</div>
