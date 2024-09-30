@@ -1,4 +1,9 @@
-import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios'
+import axios, {
+  AxiosInstance,
+  AxiosRequestConfig,
+  AxiosResponse,
+  AxiosError,
+} from 'axios'
 
 const VITE_API_BASE_URL = import.meta.env.VITE_API_BASE_URL
 
@@ -14,61 +19,85 @@ const API_PATHS: Record<ApiPath, string> = {
 
 type HttpMethod = 'get' | 'post' | 'put' | 'patch' | 'delete'
 
+interface ApiResponse<T = any> {
+  data: T
+  message: string
+  status: number
+}
+
+interface CustomError {
+  message: string
+  status: number
+  data?: any
+}
+
 export const createAxiosInstance = (apiPath: ApiPath): AxiosInstance => {
   const instance = axios.create({
     baseURL: `${VITE_API_BASE_URL}${API_PATHS[apiPath]}`,
     withCredentials: true,
+    timeout: 10000, // 10초 타임아웃 설정
   })
 
   // 요청 인터셉터
   instance.interceptors.request.use(
     (config) => {
-      // 여기에 토큰 추가 등의 로직을 넣을 수 있습니다.
+      // 토큰 추가 등의 로직을 넣을 수 있습니다.
       return config
     },
-    (error) => {
-      return Promise.reject(error)
-    },
+    (error) => Promise.reject(error),
   )
 
   // 응답 인터셉터
   instance.interceptors.response.use(
-    (response) => {
-      return response
-    },
-    (error) => {
-      if (error.response) {
-        console.error('API 요청 오류:', error.response.data.message)
-      } else {
-        console.error('API 요청 오류:', error.message)
+    (response: AxiosResponse<ApiResponse>) => {
+      // ApiResponse 형식으로 데이터를 변환하여 반환
+      // access 토큰 로직 처리
+      return {
+        ...response,
+        data: response.data as ApiResponse,
       }
-      return Promise.reject(error)
+    },
+    (error: AxiosError<ApiResponse>) => {
+      const customError: CustomError = {
+        message:
+          error.response?.data?.message || 'An unexpected error occurred',
+        status: error.response?.status || 500,
+        data: error.response?.data,
+      }
+      console.error('API 요청 오류:', customError.message)
+      return Promise.reject(customError)
     },
   )
 
-  // HTTP 메서드 공통화
-  const createMethod = <T = any, R = AxiosResponse<T>, D = any>(
-    method: HttpMethod,
-  ) => {
-    return (url: string, data?: D, config?: AxiosRequestConfig) => {
-      const requestConfig: AxiosRequestConfig = {
-        ...config,
-        method,
-        url,
-        ...(method === 'get' || method === 'delete'
-          ? { params: data }
-          : { data }),
-      }
-
-      return instance.request<T, R>(requestConfig)
-    }
-  }
-
-  instance.get = createMethod('get')
-  instance.post = createMethod('post')
-  instance.put = createMethod('put')
-  instance.patch = createMethod('patch')
-  instance.delete = createMethod('delete')
-
   return instance
 }
+
+// 타입 안전성을 갖춘 API 메서드들
+export const createApi = <T>(axiosInstance: AxiosInstance) => ({
+  get: <R = T>(url: string, config?: AxiosRequestConfig) =>
+    axiosInstance
+      .get<ApiResponse<R>>(url, config)
+      .then((response) => response.data),
+
+  post: <R = T>(url: string, data?: any, config?: AxiosRequestConfig) =>
+    axiosInstance
+      .post<ApiResponse<R>>(url, data, config)
+      .then((response) => response.data),
+
+  put: <R = T>(url: string, data?: any, config?: AxiosRequestConfig) =>
+    axiosInstance
+      .put<ApiResponse<R>>(url, data, config)
+      .then((response) => response.data),
+
+  patch: <R = T>(url: string, data?: any, config?: AxiosRequestConfig) =>
+    axiosInstance
+      .patch<ApiResponse<R>>(url, data, config)
+      .then((response) => response.data),
+
+  delete: <R = T>(url: string, config?: AxiosRequestConfig) =>
+    axiosInstance
+      .delete<ApiResponse<R>>(url, config)
+      .then((response) => response.data),
+})
+
+export type { ApiResponse, CustomError, HttpMethod, ApiPath }
