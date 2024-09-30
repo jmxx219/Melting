@@ -29,7 +29,6 @@ import com.dayangsung.melting.domain.hashtag.entity.AlbumHashtag;
 import com.dayangsung.melting.domain.hashtag.entity.Hashtag;
 import com.dayangsung.melting.domain.hashtag.repository.AlbumHashtagRepository;
 import com.dayangsung.melting.domain.hashtag.repository.HashtagRepository;
-import com.dayangsung.melting.domain.likes.entity.LikesSong;
 import com.dayangsung.melting.domain.likes.repository.LikesAlbumRepository;
 import com.dayangsung.melting.domain.likes.repository.LikesSongRepository;
 import com.dayangsung.melting.domain.likes.service.LikesService;
@@ -125,7 +124,8 @@ public class AlbumService {
 		List<SongDetailsResponseDto> songDetails = getSongDetails(album);
 
 		return AlbumDetailsResponseDto.of(album, album.getMember(),
-			likesAlbumRepository.existsByMemberIdAndAlbumIdAndStatusTrue(album.getId(), album.getMember().getId()).orElse(false),
+			likesAlbumRepository.existsByMemberIdAndAlbumIdAndStatusTrue(album.getId(), album.getMember().getId())
+				.orElse(false),
 			likesService.getAlbumLikesCount(album.getId()), songDetails, album.getComments().size());
 	}
 
@@ -137,7 +137,8 @@ public class AlbumService {
 		List<SongDetailsResponseDto> songDetails = getSongDetails(album);
 
 		return AlbumDetailsResponseDto.of(album, album.getMember(),
-			likesAlbumRepository.existsByMemberIdAndAlbumIdAndStatusTrue(album.getId(), album.getMember().getId()).orElse(false),
+			likesAlbumRepository.existsByMemberIdAndAlbumIdAndStatusTrue(album.getId(), album.getMember().getId())
+				.orElse(false),
 			likesService.getAlbumLikesCount(album.getId()), songDetails, album.getComments().size());
 	}
 
@@ -195,7 +196,8 @@ public class AlbumService {
 	private List<SongDetailsResponseDto> getSongDetails(Album album) {
 		return album.getSongs().stream()
 			.map(song -> SongDetailsResponseDto.of(song, album.getAlbumCoverImageUrl(),
-				likesSongRepository.existsByMemberIdAndSongIdAndStatusTrue(album.getMember().getId(), album.getId()).orElse(false),
+				likesSongRepository.existsByMemberIdAndSongIdAndStatusTrue(album.getMember().getId(), album.getId())
+					.orElse(false),
 				likesService.getSongLikesCount(song.getId())))
 			.toList();
 	}
