@@ -165,4 +165,14 @@ public class MemberService {
 			.map(memberHashtag -> memberHashtag.getHashtag().getContent())
 			.toList();
 	}
+
+	@Transactional
+	public void updateMemberModelStatus(String memberId) {
+		Member member = memberRepository.findById(Long.parseLong(memberId)).orElseThrow(RuntimeException::new);
+
+		if (member.getCoverCount() >= 3 && !member.isAiCoverEnabled()) {
+			member.enableAiCover();
+			memberRepository.save(member);
+		}
+	}
 }

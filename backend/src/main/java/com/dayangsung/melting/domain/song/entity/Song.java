@@ -92,4 +92,8 @@ public class Song extends BaseEntity {
 	public void removeSong() {
 		this.isDeleted = true;
 	}
+
+	public void updateSongUrl(String songUrl) {
+		this.songUrl = songUrl;
+	}
 }
