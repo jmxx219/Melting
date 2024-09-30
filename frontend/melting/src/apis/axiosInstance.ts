@@ -1,4 +1,4 @@
-import axios, { AxiosInstance } from 'axios'
+import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios'
 
 const VITE_API_BASE_URL = import.meta.env.VITE_API_BASE_URL
 
@@ -11,11 +11,43 @@ const API_PATHS: Record<ApiPath, string> = {
   originalSongs: import.meta.env.VITE_API_ORIGINAL_SONGS_PATH,
   hashtags: import.meta.env.VITE_API_HASHTAGS_PATH,
 }
-export const createAxiosInstance = (apiPath: ApiPath): AxiosInstance => {
+
+type HttpMethod = 'get' | 'post' | 'put' | 'patch' | 'delete'
+
+interface CustomInstance extends AxiosInstance {
+  request<T = any, R = AxiosResponse<T>, D = any>(
+    config: AxiosRequestConfig<D>,
+  ): Promise<R>
+  get<T = any, R = AxiosResponse<T>, D = any>(
+    url: string,
+    config?: AxiosRequestConfig<D>,
+  ): Promise<R>
+  delete<T = any, R = AxiosResponse<T>, D = any>(
+    url: string,
+    config?: AxiosRequestConfig<D>,
+  ): Promise<R>
+  post<T = any, R = AxiosResponse<T>, D = any>(
+    url: string,
+    data?: D,
+    config?: AxiosRequestConfig<D>,
+  ): Promise<R>
+  put<T = any, R = AxiosResponse<T>, D = any>(
+    url: string,
+    data?: D,
+    config?: AxiosRequestConfig<D>,
+  ): Promise<R>
+  patch<T = any, R = AxiosResponse<T>, D = any>(
+    url: string,
+    data?: D,
+    config?: AxiosRequestConfig<D>,
+  ): Promise<R>
+}
+
+export const createAxiosInstance = (apiPath: ApiPath): CustomInstance => {
   const instance = axios.create({
     baseURL: `${VITE_API_BASE_URL}${API_PATHS[apiPath]}`,
     withCredentials: true,
-  })
+  }) as CustomInstance
 
   // 요청 인터셉터
   instance.interceptors.request.use(
@@ -38,6 +70,36 @@ export const createAxiosInstance = (apiPath: ApiPath): AxiosInstance => {
       return Promise.reject(error)
     },
   )
+
+  const createMethod = <T = any, R = AxiosResponse<T>, D = any>(
+    method: HttpMethod,
+  ) => {
+    return (url: string, data?: D, config?: AxiosRequestConfig) => {
+      const requestConfig: AxiosRequestConfig = {
+        ...config,
+        method,
+        url,
+      }
+
+      if (
+        data &&
+        (method === 'post' || method === 'put' || method === 'patch')
+      ) {
+        requestConfig.data = data
+      } else if (data && (method === 'get' || method === 'delete')) {
+        requestConfig.params = data
+      }
+
+      return instance.request<T, R>(requestConfig)
+    }
+  }
+
+  // HTTP 메서드 공통화
+  instance.get = createMethod('get')
+  instance.post = createMethod('post')
+  instance.put = createMethod('put')
+  instance.patch = createMethod('patch')
+  instance.delete = createMethod('delete')
 
   return instance
 }
