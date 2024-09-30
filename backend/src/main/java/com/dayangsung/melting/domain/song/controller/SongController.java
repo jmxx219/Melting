@@ -28,7 +28,7 @@ public class SongController {
 	public ApiResponse<SongDetailsResponseDto> getSongDetails(
 		@PathVariable Long songId,
 		@AuthenticationPrincipal CustomOAuth2User customOAuth2User) {
-		SongDetailsResponseDto responseDto = songService.getSongDetails(songId, customOAuth2User.getId());
+		SongDetailsResponseDto responseDto = songService.getSongDetails(songId, customOAuth2User.getName());
 		return ApiResponse.ok(responseDto);
 	}
 }

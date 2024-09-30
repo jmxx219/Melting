@@ -28,9 +28,9 @@ public class SongService {
 	private static final String STREAMING_COUNT_KEY = "song:streaming:counts";
 	private final MemberRepository memberRepository;
 
-	public SongDetailsResponseDto getSongDetails(Long songId, Long memberId) {
+	public SongDetailsResponseDto getSongDetails(Long songId, String email) {
 		Song song = songRepository.findById(songId).orElseThrow(RuntimeException::new);
-		Member member = memberRepository.findById(memberId).orElseThrow(RuntimeException::new);
+		Member member = memberRepository.findByEmail(email).orElseThrow(RuntimeException::new);
 
 		String albumCoverImage = awsS3Service.getDefaultSongCoverImageUrl();
 		if (song.getAlbum() != null) {
