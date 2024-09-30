@@ -1,4 +1,4 @@
-import { Song } from './song'
+import { LikedSongType, Song } from './song'
 
 export interface AlbumForm {
   tracks: Song[]
@@ -14,4 +14,38 @@ export interface BestAlbum {
   albumName: string
   nickname: string
   albumCoverImage: string
+}
+
+export interface AlbumDetailType {
+  albumInfo: AlbumDetailInfoType
+  albumId: number
+  songs: AlbumSongType[]
+  comments: AlbumCommentType[]
+  commentCnt: number
+}
+
+export interface AlbumDetailInfoType {
+  albumCoverImage: string
+  albumName: string
+  like: number
+  commentCnt: number
+  isLike: boolean
+  nickname: string
+  profileImage: string
+  createDate: string
+  genres: string[]
+  type: string
+  description: string
+  hashtags: string[]
+}
+
+export type AlbumSongType = LikedSongType & {
+  isTitle: boolean
+}
+
+export type AlbumCommentType = {
+  member: string
+  content: string
+  createdAt: string
+  profileImg: string
 }
