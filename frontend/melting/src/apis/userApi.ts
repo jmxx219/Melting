@@ -7,16 +7,17 @@ import {
   ValidateNicknameError,
   LogoutData,
   LogoutError,
+  GetMemberInfoData,
+  GetMemberInfoError,
 } from '@/types/user'
-import { handleApiError } from '@/utils/errorUtil.ts'
-import { GetMemberInfoData, GetMemberInfoError } from '@/types/user.ts'
+import { handleApiError } from '@/utils/errorUtil'
 
-const axiosInstance = createAxiosInstance('members')
+const instance = createAxiosInstance('members')
 
 export const userApi = {
   initMemberInfo: async (
     payload: InitMemberInfoPayload,
-  ): Promise<InitMemberInfoData | InitMemberInfoError> => {
+  ): Promise<InitMemberInfoData> => {
     const frm = new FormData()
     if (payload.multipartFile) {
       frm.append('multipartFile', payload.multipartFile)
@@ -29,25 +30,21 @@ export const userApi = {
     )
 
     try {
-      const response = await axiosInstance.patch<InitMemberInfoData>(
-        '/init',
-        frm,
-        {
-          headers: {
-            'Content-Type': 'multipart/form-data',
-          },
+      const response = await instance.patch<InitMemberInfoData>('/init', frm, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
         },
-      )
+      })
       return response.data
     } catch (error) {
       console.error('회원 정보 초기화 오류:', error)
-      throw error
+      throw handleApiError<InitMemberInfoError>(error)
     }
   },
 
   validateNickname: async (nickname: string): Promise<ValidateNicknameData> => {
     try {
-      const response = await axiosInstance.get<ValidateNicknameData>(
+      const response = await instance.get<ValidateNicknameData>(
         '/nickname-check',
         {
           params: { nickname },
@@ -61,16 +58,16 @@ export const userApi = {
 
   logout: async (): Promise<LogoutData> => {
     try {
-      const response = await axiosInstance.get<LogoutData>('/logout')
+      const response = await instance.get<LogoutData>('/logout')
       return response.data
     } catch (error) {
       throw handleApiError<LogoutError>(error)
     }
   },
 
-  getMemberInfo: async (): Promise<GetMemberInfoData | GetMemberInfoError> => {
+  getMemberInfo: async (): Promise<GetMemberInfoData> => {
     try {
-      const response = await axiosInstance.get<GetMemberInfoData>('')
+      const response = await instance.get<GetMemberInfoData>('')
       return response.data
     } catch (error) {
       throw handleApiError<GetMemberInfoError>(error)
