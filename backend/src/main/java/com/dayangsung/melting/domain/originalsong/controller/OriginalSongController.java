@@ -1,7 +1,6 @@
 package com.dayangsung.melting.domain.originalsong.controller;
 
-import java.util.List;
-
+import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -25,10 +24,13 @@ public class OriginalSongController {
 	private final OriginalSongService originalSongService;
 
 	@GetMapping
-	public ApiResponse<List<OriginalSongSearchResponseDto>> getSearchList(@RequestParam String keyword) {
-
-		List<OriginalSongSearchResponseDto> originalSongServiceSearchList = originalSongService.getSearchList(keyword);
-		return ApiResponse.ok(originalSongServiceSearchList);
+	public ApiResponse<Page<OriginalSongSearchResponseDto>> getSearchPage(
+		@RequestParam String keyword,
+		@RequestParam(defaultValue = "0") int page,
+		@RequestParam(defaultValue = "10") int size) {
+		Page<OriginalSongSearchResponseDto> originalSongServiceSearchPage =
+			originalSongService.getSearchPage(keyword, page, size);
+		return ApiResponse.ok(originalSongServiceSearchPage);
 	}
 
 	@GetMapping("/{originalSongId}")

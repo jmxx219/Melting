@@ -23,7 +23,9 @@ import com.dayangsung.melting.domain.song.dto.response.SongDetailsResponseDto;
 import com.dayangsung.melting.domain.song.entity.Song;
 import com.dayangsung.melting.domain.song.enums.SongType;
 import com.dayangsung.melting.domain.song.repository.SongRepository;
+import com.dayangsung.melting.global.common.enums.ErrorMessage;
 import com.dayangsung.melting.global.common.service.AwsS3Service;
+import com.dayangsung.melting.global.exception.BusinessException;
 import com.dayangsung.melting.global.redisson.DistributedLock;
 
 import lombok.RequiredArgsConstructor;
@@ -45,18 +47,19 @@ public class SongService {
 	private final WebClient webClient;
 
 	public SongDetailsResponseDto getSongDetails(Long songId, String email) {
-		Song song = songRepository.findById(songId).orElseThrow(RuntimeException::new);
-		Member member = memberRepository.findByEmail(email).orElseThrow(RuntimeException::new);
+		Song song = songRepository.findById(songId)
+			.orElseThrow(() -> new BusinessException(ErrorMessage.SONG_NOT_FOUND));
+		Member member = memberRepository.findByEmail(email)
+			.orElseThrow(() -> new BusinessException(ErrorMessage.MEMBER_NOT_FOUND));
 
-		String albumCoverImage = awsS3Service.getDefaultSongCoverImageUrl();
+		String albumCoverImageUrl = awsS3Service.getDefaultSongCoverImageUrl();
 		if (song.getAlbum() != null) {
-			albumCoverImage = song.getAlbum().getAlbumCoverImage();
+			albumCoverImageUrl = song.getAlbum().getAlbumCoverImageUrl();
 		}
 		incrementStreamingCount(song.getId());
 
 		boolean isLiked = likesService.isLikedBySongAndMember(song.getId(), member.getId());
-		return SongDetailsResponseDto.of(song, albumCoverImage, isLiked, likesService.getSongLikesCount(song.getId()));
-
+		return SongDetailsResponseDto.of(song, albumCoverImageUrl, isLiked, likesService.getSongLikesCount(song.getId()));
 	}
 
 	// Todo : 트랜잭션 적용 필요

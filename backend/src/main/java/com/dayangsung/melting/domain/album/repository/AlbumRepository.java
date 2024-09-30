@@ -1,33 +1,30 @@
 package com.dayangsung.melting.domain.album.repository;
 
-import java.util.List;
-
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import com.dayangsung.melting.domain.album.entity.Album;
 
-import io.lettuce.core.dynamic.annotation.Param;
-
 public interface AlbumRepository extends JpaRepository<Album, Long> {
 
-	// 공개되어 있고 삭제되지 않은 앨범 최신순 정렬
-	List<Album> findByIsPublicTrueAndIsDeletedFalseOrderByCreatedAtDesc();
+	@Query("SELECT a FROM Album a WHERE a.isDeleted = false AND a.isPublic = true ORDER BY a.createdAt DESC")
+	Page<Album> findAllByOrderByCreatedAtDesc(Pageable pageable);
 
-	// 키워드로 앨범 이름 검색하여 앨범 조회
-	@Query("SELECT a FROM Album a WHERE a.albumName LIKE %:keyword% AND a.isPublic = true AND a.isDeleted = false")
-	List<Album> findAlbumsByAlbumName(@Param("keyword") String keyword);
+	@Query("SELECT a FROM Album a LEFT JOIN a.likesAlbums la WHERE a.isDeleted = false AND a.isPublic = true GROUP BY a.id ORDER BY COUNT(la) DESC")
+	Page<Album> findAllByOrderByLikesCountDesc(Pageable pageable);
 
-	// 키워드로 곡 이름 검색하여 앨범 조회
-	@Query("SELECT a FROM Album a JOIN a.songs s WHERE s.originalSong.title LIKE %:keyword% AND a.isPublic = true AND a.isDeleted = false")
-	List<Album> findAlbumsBySongName(@Param("keyword") String keyword);
+	@Query("SELECT a FROM Album a WHERE a.isDeleted = false AND a.isPublic = true AND a.albumName LIKE %:keyword%")
+	Page<Album> findByAlbumNameContaining(@Param("keyword") String keyword, Pageable pageable);
 
-	// 키워드로 해시태그 내용 검색하여 앨범 조회
-	@Query("SELECT a FROM Album a JOIN a.hashtags h WHERE h.hashtag.content LIKE %:keyword% AND a.isPublic = true AND a.isDeleted = false")
-	List<Album> findAlbumsByHashtag(@Param("keyword") String keyword);
+	@Query("SELECT a FROM Album a JOIN a.songs s WHERE a.isDeleted = false AND a.isPublic = true AND s.originalSong.title LIKE %:keyword%")
+	Page<Album> findBySongTitleContaining(@Param("keyword") String keyword, Pageable pageable);
 
-	// 키워드로 장르 검색하여 앨범 조회
-	@Query("SELECT a FROM Album a JOIN a.genres g WHERE g.genre.content LIKE %:keyword% AND a.isPublic = true AND a.isDeleted = false")
-	List<Album> findAlbumsByGenre(@Param("keyword") String keyword);
-
+	@Query("SELECT a FROM Album a JOIN a.hashtags ah WHERE a.isDeleted = false AND a.isPublic = true AND ah.hashtag.content LIKE %:keyword%")
+	Page<Album> findByHashtagContentContaining(@Param("keyword") String keyword, Pageable pageable);
+	
+	@Query("SELECT a FROM Album a JOIN a.genres ag WHERE a.isDeleted = false AND a.isPublic = true AND ag.genre.content LIKE %:keyword%")
+	Page<Album> findByGenreNameContaining(@Param("keyword") String keyword, Pageable pageable);
 }

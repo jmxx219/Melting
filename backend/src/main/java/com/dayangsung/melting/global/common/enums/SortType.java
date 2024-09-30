@@ -1,11 +1,11 @@
-package com.dayangsung.melting.domain.album.enums;
+package com.dayangsung.melting.global.common.enums;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public enum AlbumSortType {
+public enum SortType {
 	LATEST("latest"),
 	POPULAR("popular");
 
