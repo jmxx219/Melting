@@ -23,6 +23,7 @@ import com.dayangsung.melting.global.handler.JwtAuthenticationEntryPoint;
 import com.dayangsung.melting.global.handler.LoginFailureHandler;
 import com.dayangsung.melting.global.handler.LoginSuccessHandler;
 import com.dayangsung.melting.global.util.JwtUtil;
+import com.dayangsung.melting.global.util.RedisUtil;
 
 import lombok.RequiredArgsConstructor;
 
@@ -35,6 +36,7 @@ public class SecurityConfig {
 	private final LoginSuccessHandler loginSuccessHandler;
 	private final LoginFailureHandler loginFailureHandler;
 	private final JwtUtil jwtUtil;
+	private final RedisUtil redisUtil;
 
 	@Bean
 	public SecurityFilterChain filterChain(HttpSecurity http,
@@ -49,7 +51,7 @@ public class SecurityConfig {
 			.exceptionHandling((exceptions) -> exceptions
 				.authenticationEntryPoint(new JwtAuthenticationEntryPoint())
 				.accessDeniedHandler(new JwtAccessDeniedHandler()))
-			.addFilterBefore(new JwtFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class)
+			.addFilterBefore(new JwtFilter(jwtUtil, redisUtil), UsernamePasswordAuthenticationFilter.class)
 			.oauth2Login(oauth2 -> oauth2
 				.authorizationEndpoint(authorization -> authorization
 					.baseUri("/oauth2/authorize/**")
