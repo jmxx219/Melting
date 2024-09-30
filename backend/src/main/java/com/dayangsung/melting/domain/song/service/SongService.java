@@ -2,6 +2,7 @@ package com.dayangsung.melting.domain.song.service;
 
 // import org.springframework.data.redis.core.RedisTemplate;
 
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
 import org.springframework.data.redis.core.RedisTemplate;
@@ -16,6 +17,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 
 import com.dayangsung.melting.domain.likes.service.LikesService;
 import com.dayangsung.melting.domain.member.entity.Member;
+import com.dayangsung.melting.domain.member.enums.Gender;
 import com.dayangsung.melting.domain.member.repository.MemberRepository;
 import com.dayangsung.melting.domain.originalsong.entity.OriginalSong;
 import com.dayangsung.melting.domain.originalsong.repository.OriginalSongRepository;
@@ -101,10 +103,51 @@ public class SongService {
 			.toFuture();
 	}
 
+	@Async
+	@Transactional
+	public CompletableFuture<Void> createAiCoverSong(
+		Long memberId, Long originalSongId) {
+
+		OriginalSong originalSong = originalSongRepository.findById(originalSongId).orElseThrow(RuntimeException::new);
+		Member member = memberRepository.findById(memberId).orElseThrow(RuntimeException::new);
+
+		Song song = Song.builder()
+			.originalSong(originalSong)
+			.member(member)
+			.songType(SongType.AICOVER)
+			.songUrl("")
+			.build();
+
+		Song savedSong = songRepository.save(song);
+
+		log.info("Created new Song with ID: {}", savedSong.getId());
+
+		Map<String, Object> requestBody = Map.of(
+			"song_id", savedSong.getId().toString(),
+			"original_song_mr_url", originalSong.getMrUrl(),
+			"original_song_voice_url", originalSong.getVoiceUrl(),
+			"member_gender", convertGender(member.getGender()),
+			"original_voice_gender", convertGender(originalSong.getArtistGender())
+		);
+
+		return webClient.post()
+			.uri("/api/rvc-ai/{memberId}/aicover", memberId)
+			.contentType(MediaType.APPLICATION_JSON)
+			.body(BodyInserters.fromValue(requestBody))
+			.retrieve()
+			.bodyToMono(Void.class)
+			.toFuture();
+
+	}
+
 	@Transactional
 	public void updateSongUrl(String songId, String songUrl) {
 		Song song = songRepository.findById(Long.parseLong(songId)).orElseThrow(RuntimeException::new);
 		song.updateSongUrl(songUrl);
 		songRepository.save(song);
+	}
+
+	private String convertGender(Gender gender) {
+		return gender.getGender().toUpperCase();
 	}
 }

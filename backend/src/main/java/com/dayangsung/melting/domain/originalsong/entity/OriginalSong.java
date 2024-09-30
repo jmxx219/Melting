@@ -42,12 +42,14 @@ public class OriginalSong extends BaseEntity {
 	private String lyrics;
 
 	@Builder
-	public OriginalSong(String title, String artist, Gender artistGender, String coverImageUrl, String mrUrl, String voiceUrl, String lyrics) {
+	public OriginalSong(String title, String artist, Gender artistGender, String coverImageUrl, String mrUrl,
+		String voiceUrl, String lyrics) {
 		this.title = title;
 		this.artist = artist;
 		this.artistGender = artistGender;
 		this.coverImageUrl = coverImageUrl;
 		this.mrUrl = mrUrl;
+		this.voiceUrl = voiceUrl;
 		this.lyrics = lyrics;
 	}
 }
