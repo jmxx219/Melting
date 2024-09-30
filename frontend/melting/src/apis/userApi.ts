@@ -66,7 +66,6 @@ export const userApi = {
   getMemberInfo: async (): Promise<GetMemberInfoData> => {
     try {
       const response = await api.get<GetMemberInfoData>('')
-      console.log(response.data)
       return response.data
     } catch (error) {
       throw error as CustomError
