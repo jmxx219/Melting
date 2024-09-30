@@ -1,5 +1,5 @@
-import { ReissueData, ReissueError } from '@/types/user'
 import { createAxiosInstance } from '@/apis/axiosInstance.ts'
+import { ReissueData, ReissueError } from '@/types/user'
 
 const VITE_LOCAL_URL = import.meta.env.VITE_LOCAL_URL
 const VITE_API_BASE_URL = import.meta.env.VITE_API_BASE_URL
