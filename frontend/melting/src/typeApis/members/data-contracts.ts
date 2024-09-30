@@ -1,15 +1,13 @@
-export interface user {
-  id: number
-  socialType: string
-  email: string
-  nickname: string
-  gender: string
-  profileImage: string
-}
-
-export interface MemberUpdateRequestDto {
-  nickname?: string
-}
+/* eslint-disable */
+/* tslint:disable */
+/*
+ * ---------------------------------------------------------------
+ * ## THIS FILE WAS GENERATED VIA SWAGGER-TYPESCRIPT-API        ##
+ * ##                                                           ##
+ * ## AUTHOR: acacode                                           ##
+ * ## SOURCE: https://github.com/acacode/swagger-typescript-api ##
+ * ---------------------------------------------------------------
+ */
 
 export interface ErrorResponse {
   errorMessage?:
@@ -81,17 +79,3 @@ export type ValidateNicknameError = ErrorResponse
 export type LogoutData = ApiResponseVoid
 
 export type LogoutError = ErrorResponse
-
-export type GetMemberInfoData = ApiResponseMemberResponseDto
-
-export type GetMemberInfoError = ErrorResponse
-
-export interface UpdateMemberInfoPayload {
-  /** @format binary */
-  multipartFile: File
-  memberUpdateRequestDto: MemberUpdateRequestDto
-}
-
-export type UpdateMemberInfoData = ApiResponseMemberResponseDto
-
-export type UpdateMemberInfoError = ErrorResponse
