@@ -8,7 +8,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.dayangsung.melting.domain.hashtag.entity.Hashtag;
 import com.dayangsung.melting.domain.hashtag.entity.MemberHashtag;
 import com.dayangsung.melting.domain.hashtag.service.HashtagService;
 import com.dayangsung.melting.domain.likes.service.LikesService;
