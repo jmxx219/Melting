@@ -44,14 +44,18 @@ public class SongService {
 	private final MemberRepository memberRepository;
 	private final WebClient webClient;
 
-	public SongDetailsResponseDto getSongDetails(Long songId) {
+	public SongDetailsResponseDto getSongDetails(Long songId, String email) {
 		Song song = songRepository.findById(songId).orElseThrow(RuntimeException::new);
+		Member member = memberRepository.findByEmail(email).orElseThrow(RuntimeException::new);
+
 		String albumCoverImage = awsS3Service.getDefaultSongCoverImageUrl();
 		if (song.getAlbum() != null) {
 			albumCoverImage = song.getAlbum().getAlbumCoverImage();
 		}
-		incrementStreamingCount(songId);
-		return SongDetailsResponseDto.of(song, albumCoverImage, likesService.getSongLikesCount(songId));
+		incrementStreamingCount(song.getId());
+
+		boolean isLiked = likesService.isLikedBySongAndMember(song.getId(), member.getId());
+		return SongDetailsResponseDto.of(song, albumCoverImage, isLiked, likesService.getSongLikesCount(song.getId()));
 
 	}
 
