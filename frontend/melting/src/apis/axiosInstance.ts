@@ -14,40 +14,11 @@ const API_PATHS: Record<ApiPath, string> = {
 
 type HttpMethod = 'get' | 'post' | 'put' | 'patch' | 'delete'
 
-interface CustomInstance extends AxiosInstance {
-  request<T = any, R = AxiosResponse<T>, D = any>(
-    config: AxiosRequestConfig<D>,
-  ): Promise<R>
-  get<T = any, R = AxiosResponse<T>, D = any>(
-    url: string,
-    config?: AxiosRequestConfig<D>,
-  ): Promise<R>
-  delete<T = any, R = AxiosResponse<T>, D = any>(
-    url: string,
-    config?: AxiosRequestConfig<D>,
-  ): Promise<R>
-  post<T = any, R = AxiosResponse<T>, D = any>(
-    url: string,
-    data?: D,
-    config?: AxiosRequestConfig<D>,
-  ): Promise<R>
-  put<T = any, R = AxiosResponse<T>, D = any>(
-    url: string,
-    data?: D,
-    config?: AxiosRequestConfig<D>,
-  ): Promise<R>
-  patch<T = any, R = AxiosResponse<T>, D = any>(
-    url: string,
-    data?: D,
-    config?: AxiosRequestConfig<D>,
-  ): Promise<R>
-}
-
-export const createAxiosInstance = (apiPath: ApiPath): CustomInstance => {
+export const createAxiosInstance = (apiPath: ApiPath): AxiosInstance => {
   const instance = axios.create({
     baseURL: `${VITE_API_BASE_URL}${API_PATHS[apiPath]}`,
     withCredentials: true,
-  }) as CustomInstance
+  })
 
   // 요청 인터셉터
   instance.interceptors.request.use(
@@ -66,11 +37,16 @@ export const createAxiosInstance = (apiPath: ApiPath): CustomInstance => {
       return response
     },
     (error) => {
-      console.error('API 요청 오류:', error)
+      if (error.response) {
+        console.error('API 요청 오류:', error.response.data.message)
+      } else {
+        console.error('API 요청 오류:', error.message)
+      }
       return Promise.reject(error)
     },
   )
 
+  // HTTP 메서드 공통화
   const createMethod = <T = any, R = AxiosResponse<T>, D = any>(
     method: HttpMethod,
   ) => {
@@ -79,22 +55,15 @@ export const createAxiosInstance = (apiPath: ApiPath): CustomInstance => {
         ...config,
         method,
         url,
-      }
-
-      if (
-        data &&
-        (method === 'post' || method === 'put' || method === 'patch')
-      ) {
-        requestConfig.data = data
-      } else if (data && (method === 'get' || method === 'delete')) {
-        requestConfig.params = data
+        ...(method === 'get' || method === 'delete'
+          ? { params: data }
+          : { data }),
       }
 
       return instance.request<T, R>(requestConfig)
     }
   }
 
-  // HTTP 메서드 공통화
   instance.get = createMethod('get')
   instance.post = createMethod('post')
   instance.put = createMethod('put')
