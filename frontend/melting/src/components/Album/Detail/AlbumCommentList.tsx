@@ -2,16 +2,23 @@ import { Button } from '@/components/ui/button'
 import { AlbumCommentType } from '@/types/album'
 import React from 'react'
 import AlbumComment from './AlbumComment'
+import { useNavigate } from 'react-router-dom'
 
 type AlbumCommentListProps = {
   comments: AlbumCommentType[]
   commentCnt: number
+  albumId: number
 }
 
 export default function AlbumCommentList({
   comments,
   commentCnt,
+  albumId,
 }: AlbumCommentListProps) {
+  const navigate = useNavigate()
+  const totalShowHandle = () => {
+    navigate('/album/comment', { state: { albumId: albumId } })
+  }
   return (
     <div id="album-comment" className="mt-10">
       <div className="flex justify-between items-center">
@@ -19,7 +26,7 @@ export default function AlbumCommentList({
           댓글 {commentCnt > 1000 ? '999+' : comments.length}
         </div>
         {commentCnt > 5 ? (
-          <Button variant={'ghost'} className="p-0">
+          <Button variant={'ghost'} className="p-0" onClick={totalShowHandle}>
             전체보기
           </Button>
         ) : (

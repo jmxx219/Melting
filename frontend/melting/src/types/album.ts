@@ -44,6 +44,7 @@ export type AlbumSongType = LikedSongType & {
 }
 
 export type AlbumCommentType = {
+  commentId: number
   member: string
   content: string
   createdAt: string

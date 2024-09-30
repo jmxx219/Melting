@@ -9,7 +9,7 @@ type AlbumDetailProps = {
 
 export default function AlbumDetail({ albumId }: AlbumDetailProps) {
   const album: AlbumDetailType = {
-    albumId,
+    albumId: 1,
     albumInfo: {
       albumCoverImage: '/images/mockup/album3.png',
       albumName: 'Band Aid',
@@ -53,12 +53,14 @@ export default function AlbumDetail({ albumId }: AlbumDetailProps) {
     ],
     comments: [
       {
+        commentId: 1,
         member: '노원핵주먹',
         content: '노래 다 좋네요~ 믿고 듣습니다',
         createdAt: '2024-09-27T04:13:00.712Z',
         profileImg: 'https://github.com/shadcn.png',
       },
       {
+        commentId: 2,
         member: '제이슨',
         content: '노래 좋아요 ㅎㅎ',
         createdAt: '2024-09-26T04:13:00.712Z',
@@ -79,6 +81,7 @@ export default function AlbumDetail({ albumId }: AlbumDetailProps) {
         <AlbumCommentList
           commentCnt={album.commentCnt}
           comments={album.comments}
+          albumId={album.albumId}
         />
       </div>
     </div>
