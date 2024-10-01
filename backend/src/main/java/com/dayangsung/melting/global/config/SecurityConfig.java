@@ -1,6 +1,6 @@
 package com.dayangsung.melting.global.config;
 
-import java.util.Collections;
+import java.util.Arrays;
 import java.util.List;
 
 import org.springframework.context.annotation.Bean;
@@ -86,7 +86,7 @@ public class SecurityConfig {
 
 		configuration.setAllowedOrigins(
 			List.of("https://localhost:5173", "http://localhost:5173", "https://j11a701.p.ssafy.io"));
-		configuration.setAllowedMethods(Collections.singletonList("*"));
+		configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
 		configuration.setAllowCredentials(true);
 		configuration.setAllowedHeaders(List.of("Authorization", "Set-Cookie", "Content-Type"));
 		configuration.setMaxAge(3600L);
