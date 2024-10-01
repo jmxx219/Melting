@@ -49,4 +49,5 @@ export type AlbumCommentType = {
   content: string
   createdAt: string
   profileImg: string
+  isMy: boolean
 }
