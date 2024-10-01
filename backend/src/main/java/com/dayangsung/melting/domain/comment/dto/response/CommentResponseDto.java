@@ -12,15 +12,16 @@ public record CommentResponseDto(
 	String writerProfileImage,
 	String writerNickname,
 	String content,
+	Boolean isMyComment,
 	LocalDateTime createdAt
 ) {
-
-	public static CommentResponseDto of(Comment comment, String writerProfileImage, String writerNickname) {
+	public static CommentResponseDto of(Comment comment, Boolean isMyComment) {
 		return CommentResponseDto.builder()
 			.commentId(comment.getId())
-			.writerProfileImage(writerProfileImage)
-			.writerNickname(writerNickname)
+			.writerProfileImage(comment.getMember().getProfileImageUrl())
+			.writerNickname(comment.getMember().getNickname())
 			.content(comment.getContent())
+			.isMyComment(isMyComment)
 			.createdAt(comment.getCreatedAt())
 			.build();
 	}
