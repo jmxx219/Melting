@@ -23,6 +23,7 @@ import com.dayangsung.melting.domain.member.dto.response.MemberResponseDto;
 import com.dayangsung.melting.domain.member.dto.response.MemberSongResponseDto;
 import com.dayangsung.melting.domain.member.enums.Gender;
 import com.dayangsung.melting.domain.member.service.MemberService;
+import com.dayangsung.melting.domain.song.dto.response.SongLikesPageResponseDto;
 import com.dayangsung.melting.global.common.response.ApiResponse;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -141,21 +142,14 @@ public class MemberController {
 		return ApiResponse.ok(albumMyPageResponseDto);
 	}
 
-	@GetMapping("/me/songs")
-	public ApiResponse<> getMemberSongs(
-		@RequestParam(defaultValue = "0") int sort,
-		@RequestParam(defaultValue = "0") int page,
-		@RequestParam(defaultValue = "10") int size,
-		@AuthenticationPrincipal CustomOAuth2User customOAuth2User) {
-
-	}
-
 	@GetMapping("/me/likes/songs")
-	public ApiResponse<> getMemberLikesSongs(
+	public ApiResponse<SongLikesPageResponseDto> getMemberLikesSongs(
 		@RequestParam(defaultValue = "0") int sort,
 		@RequestParam(defaultValue = "0") int page,
 		@RequestParam(defaultValue = "10") int size,
 		@AuthenticationPrincipal CustomOAuth2User customOAuth2User) {
-
+		SongLikesPageResponseDto songLikesPageResponseDto =
+			memberService.getMemberLikesSongs(customOAuth2User.getName(), sort, page, size);
+		return ApiResponse.ok(songLikesPageResponseDto);
 	}
 }
