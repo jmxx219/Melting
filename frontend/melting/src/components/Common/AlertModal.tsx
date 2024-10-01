@@ -26,12 +26,14 @@ export default function AlertModal({
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>{title}</AlertDialogTitle>
-          <AlertDialogDescription>
-            {messages.map((message, index) => (
-              <p key={index} className="mb-2 last:mb-0">
-                {message}
-              </p>
-            ))}
+          <AlertDialogDescription asChild>
+            <div>
+              {messages.map((message, index) => (
+                <span key={index} className="block mb-2 last:mb-0">
+                  {message}
+                </span>
+              ))}
+            </div>
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
