@@ -17,7 +17,10 @@ export default function AppRoutes() {
         <Routes>
           <Route path="/main" element={<MainPage />} />
           <Route path="/login" element={<LoginPage />} />
-          <Route path="/login/callback" element={<OAuthRedirectHandler />} />
+          <Route
+            path="/login/callback/:provider"
+            element={<OAuthRedirectHandler />}
+          />
           <Route path="/signup" element={<SignupPage />} />
 
           <Route path="/album/*" element={<AlbumRoutes />} />

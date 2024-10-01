@@ -6,8 +6,11 @@ const VITE_API_BASE_URL = import.meta.env.VITE_API_BASE_URL
 const axiosInstance = createAxiosInstance('members')
 
 export default function login(provider: 'kakao' | 'google') {
+  const redirectUrl = encodeURIComponent(
+    `${VITE_LOCAL_URL}/login/callback/${provider}`,
+  )
   window.location.assign(
-    `${VITE_API_BASE_URL}/oauth2/authorize/${provider}?redirect_url=${VITE_LOCAL_URL}/login/callback`,
+    `${VITE_API_BASE_URL}/oauth2/authorize/${provider}?redirect_url=${redirectUrl}`,
   )
 }
 
