@@ -7,17 +7,24 @@ import com.dayangsung.melting.domain.album.entity.Album;
 import lombok.Builder;
 
 @Builder
-public record AlbumSearchResponseDto(
+public record AlbumMyResponseDto(
 	Long albumId,
 	String albumName,
 	String creatorNickname,
-	LocalDateTime createdAt
+	LocalDateTime createdAt,
+	Boolean isPublic,
+	Boolean isLiked,
+	Integer likedCount
 ) {
-	public static AlbumSearchResponseDto of(Album album) {
-		return AlbumSearchResponseDto.builder()
+	public static AlbumMyResponseDto of(Album album, Boolean isLiked, Integer likedCount) {
+		return AlbumMyResponseDto.builder()
 			.albumId(album.getId())
 			.albumName(album.getAlbumName())
 			.creatorNickname(album.getMember().getNickname())
+			.createdAt(album.getCreatedAt())
+			.isPublic(album.getIsPublic())
+			.isLiked(isLiked)
+			.likedCount(likedCount)
 			.build();
 	}
 }
