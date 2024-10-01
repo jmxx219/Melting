@@ -83,6 +83,7 @@ public class AlbumService {
 			if (song.getAlbum() != null) {
 				throw new BusinessException(ErrorMessage.SONG_ALREADY_INCLUDED);
 			}
+			song.setAlbum(album);
 			song.setTrackNumber(trackNumber);
 			song.setIsTitle(Objects.equals(albumCreateRequestDto.titleSongId(), song.getId()));
 			songRepository.save(song);
