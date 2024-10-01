@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { ArrowDown } from 'lucide-react'
 
@@ -10,63 +10,75 @@ import { CoverType } from '@/types/constType'
 import SearchBar from '../Music/SearchBar'
 import MusicNote from '../Icon/MusicNote'
 
-const mockResults: Song[] = Array.from({ length: 30 }, (_, index) => ({
-  songId: index + 1,
-  albumCoverImgUrl: '/api/placeholder/50/50',
-  songTitle: `곡 제목 ${index + 1}`,
-  nickname: '쏠랑쏠랑',
-  artist: `아티스트 ${index + 1}`,
-  songType: 'melting' as CoverType,
-}))
+const generateMockData = (start: number, end: number): Song[] => {
+  return Array.from({ length: end - start }, (_, index) => ({
+    songId: start + index,
+    albumCoverImgUrl: '/api/placeholder/50/50',
+    songTitle: `Song ${start + index}`,
+    nickname: 'Artist',
+    artist: `Artist ${(start + index) % 5}`,
+    songType: index % 2 === 0 ? 'melting' : 'ai',
+  }))
+}
 
 export default function SongSearch() {
   const [searchTerm, setSearchTerm] = useState('')
   const [searchResults, setSearchResults] = useState<Song[]>([])
-  const [currentPage, setCurrentPage] = useState(1)
-  const [isFetching, setIsFetching] = useState(false)
+
+  const [page, setPage] = useState(1)
+  const [loading, setLoading] = useState(false)
+  const [hasMore, setHasMore] = useState(true)
+  const scrollContainerRef = useRef<HTMLDivElement>(null)
 
   const { selectedSongs, setSelectedSongs } = useAlbumContext()
   const navigate = useNavigate()
 
-  // API 대체 목업 데이터 로딩
-  const loadMoreSongs = () => {
-    if (isFetching) return // 이미 페칭 중일 때 중복 요청 방지
-    setIsFetching(true)
-    // 실제 API 요청 대신 페이지에 맞는 데이터를 가져옵니다
-    const newResults = mockResults.slice(
-      (currentPage - 1) * 10,
-      currentPage * 10,
-    )
-    setSearchResults((prev) => [...prev, ...newResults])
-    setCurrentPage((prev) => prev + 1)
-    setIsFetching(false)
-  }
-
-  // 무한 스크롤 감지
-  const handleScroll = () => {
-    if (
-      window.innerHeight + document.documentElement.scrollTop >=
-      document.documentElement.offsetHeight - 100
-    ) {
-      loadMoreSongs()
-    }
-  }
+  const loadMoreItems = useCallback(() => {
+    if (loading || !hasMore) return
+    setLoading(true)
+    // API 호출을 시뮬레이션합니다
+    setTimeout(() => {
+      const newItems = generateMockData(
+        searchResults.length,
+        searchResults.length + 10,
+      )
+      setSearchResults((prev) => [...prev, ...newItems])
+      setLoading(false)
+      if (newItems.length < 10) {
+        setHasMore(false)
+      }
+    }, 1000)
+  }, [loading, hasMore, searchResults.length])
 
   useEffect(() => {
-    // 초기 데이터 로딩
-    loadMoreSongs()
-    // 스크롤 이벤트 리스너 추가
-    window.addEventListener('scroll', handleScroll)
-    return () => {
-      window.removeEventListener('scroll', handleScroll)
+    const handleScroll = () => {
+      if (scrollContainerRef.current) {
+        const { scrollTop, scrollHeight, clientHeight } =
+          scrollContainerRef.current
+        if (scrollHeight - scrollTop <= clientHeight * 1.5) {
+          loadMoreItems()
+        }
+      }
     }
-  }, [])
+
+    const scrollContainer = scrollContainerRef.current
+    if (scrollContainer) {
+      scrollContainer.addEventListener('scroll', handleScroll)
+    }
+
+    return () => {
+      if (scrollContainer) {
+        scrollContainer.removeEventListener('scroll', handleScroll)
+      }
+    }
+  }, [loadMoreItems])
 
   const handleSearch = async () => {
-    // TODO: Implement API call to search for cover songs
-    // For now, we'll use mock data (reset the page)
-    setCurrentPage(1)
-    setSearchResults(mockResults.slice(0, 10))
+    setSearchResults([])
+    setPage(1)
+    setHasMore(true)
+    const initialResults = generateMockData(0, 10)
+    setSearchResults(initialResults)
   }
 
   const handleSelectSong = (song: Song) => {
@@ -112,31 +124,32 @@ export default function SongSearch() {
           placeholderText="나의 곡을 검색하세요"
         />
       </div>
-
-      {searchResults.length > 0 ? (
-        <div className="space-y-2">
-          {searchResults.map((song) => (
-            <SongItem
-              key={`${song.songId}-${song.songType}`}
-              {...song}
-              isSelected={selectedSongs.some((s) => s.songId === song.songId)}
-              onSelect={() => handleSelectSong(song)}
-              onTypeChange={(value) => handleTypeChange(song.songId, value)}
-              showTypeSelect
-            />
-          ))}
-        </div>
-      ) : (
-        <p className="text-gray-400 text-left">검색한 곡이 없습니다</p>
-      )}
+      <div
+        ref={scrollContainerRef}
+        className="flex-1 overflow-y-auto"
+        style={{ maxHeight: 'calc(100vh - 600px)' }}
+      >
+        {searchResults.map((song) => (
+          <SongItem
+            key={`${song.songId}-${song.songType}`}
+            {...song}
+            isSelected={selectedSongs.some((s) => s.songId === song.songId)}
+            onSelect={() => handleSelectSong(song)}
+            onTypeChange={(value) => handleTypeChange(song.songId, value)}
+            showTypeSelect
+          />
+        ))}
+        {loading && <p className="text-center">로딩 중...</p>}
+        {!hasMore && <p className="text-center">No more songs</p>}
+      </div>
 
       <div className="text-sm text-primary-500 space-y-1">
-        <p className="flex items-center">
-          ※ 음표(
+        <div className="flex flex-wrap items-center">
+          <span>※ 음표(</span>
           <MusicNote width={15} height={15} fill="#adadad" />
-          )를 클릭하여 곡을 추가/삭제할 수 있습니다.
-        </p>
-        <p>
+          <span>)를 클릭하여 곡을 추가/삭제할 수 있습니다.</span>
+        </div>
+        <p className="flex items-center">
           ※ 선택한 곡(
           <MusicNote width={15} height={15} fill="#da961f" />
           )은 아래서 확인 가능합니다.
