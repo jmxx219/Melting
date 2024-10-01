@@ -109,7 +109,7 @@ public class MemberService {
 					.map(song -> SongMypageDto.builder()
 						.songId(song.getId())
 						.albumCoverImageUrl(song.getAlbum() != null ? song.getAlbum().getAlbumCoverImageUrl() :
-							awsS3Service.getDefaultSongCoverImageUrl())
+							awsS3Service.getDefaultCoverImageUrl())
 						.songType(song.getSongType())
 						.likeCount(likesService.getSongLikesCount(song.getId()))
 						.isLiked(likesService.isLikedBySongAndMember(song.getId(), memberId))

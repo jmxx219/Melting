@@ -101,8 +101,8 @@ public class AwsS3Service {
 		return CLOUDFRONTURL + "/image/profile/default_image.png";
 	}
 
-	public String getDefaultSongCoverImageUrl() {
-		return CLOUDFRONTURL + "/image/generated_album_cover/default_song_cover.png";
+	public String getDefaultCoverImageUrl() {
+		return CLOUDFRONTURL + "/image/generated_album_cover/default_image.png";
 	}
 
 	public String getOriginalSongMrUrl(Long originalSongId) {
