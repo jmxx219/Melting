@@ -20,7 +20,7 @@ import com.dayangsung.melting.domain.member.entity.Member;
 import com.dayangsung.melting.domain.member.enums.Gender;
 import com.dayangsung.melting.domain.member.repository.MemberRepository;
 import com.dayangsung.melting.domain.originalsong.entity.OriginalSong;
-import com.dayangsung.melting.domain.song.dto.SongMypageDto;
+import com.dayangsung.melting.domain.song.dto.SongMyResponseDto;
 import com.dayangsung.melting.domain.song.entity.Song;
 import com.dayangsung.melting.domain.song.repository.SongRepository;
 import com.dayangsung.melting.global.common.enums.ErrorMessage;
@@ -108,8 +108,8 @@ public class MemberService {
 				OriginalSong originalSong = entry.getKey();
 				List<Song> songs = entry.getValue();
 
-				List<SongMypageDto> songMypageDtoList = songs.stream()
-					.map(song -> SongMypageDto.builder()
+				List<SongMyResponseDto> songMypageDtoList = songs.stream()
+					.map(song -> SongMyResponseDto.builder()
 						.songId(song.getId())
 						.albumCoverImageUrl(song.getAlbum() != null ? song.getAlbum().getAlbumCoverImageUrl() :
 							awsS3Service.getDefaultSongCoverImageUrl())

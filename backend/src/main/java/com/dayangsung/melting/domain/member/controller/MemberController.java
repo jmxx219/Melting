@@ -141,13 +141,21 @@ public class MemberController {
 		return ApiResponse.ok(albumMyPageResponseDto);
 	}
 
-	// @GetMapping("/me/songs")
-	// public ApiResponse<AlbumListResponseDto> getMemberSongs() {
-	//
-	// }
-	//
-	// @GetMapping("/me/likes/songs")
-	// public ApiResponse<AlbumListResponseDto> getMemberLikesSongs() {
-	//
-	// }
+	@GetMapping("/me/songs")
+	public ApiResponse<> getMemberSongs(
+		@RequestParam(defaultValue = "0") int sort,
+		@RequestParam(defaultValue = "0") int page,
+		@RequestParam(defaultValue = "10") int size,
+		@AuthenticationPrincipal CustomOAuth2User customOAuth2User) {
+
+	}
+
+	@GetMapping("/me/likes/songs")
+	public ApiResponse<> getMemberLikesSongs(
+		@RequestParam(defaultValue = "0") int sort,
+		@RequestParam(defaultValue = "0") int page,
+		@RequestParam(defaultValue = "10") int size,
+		@AuthenticationPrincipal CustomOAuth2User customOAuth2User) {
+
+	}
 }
