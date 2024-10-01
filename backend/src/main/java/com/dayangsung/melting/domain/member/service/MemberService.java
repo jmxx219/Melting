@@ -8,6 +8,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.dayangsung.melting.domain.album.dto.response.AlbumMyPageResponseDto;
+import com.dayangsung.melting.domain.album.service.AlbumService;
 import com.dayangsung.melting.domain.hashtag.entity.MemberHashtag;
 import com.dayangsung.melting.domain.hashtag.service.HashtagService;
 import com.dayangsung.melting.domain.likes.service.LikesService;
@@ -39,6 +41,7 @@ public class MemberService {
 	private final AwsS3Service awsS3Service;
 	private final MemberRepository memberRepository;
 	private final SongRepository songRepository;
+	private final AlbumService albumService;
 	private final LikesService likesService;
 	private final HashtagService hashtagService;
 
@@ -173,5 +176,17 @@ public class MemberService {
 			member.enableAiCover();
 			memberRepository.save(member);
 		}
+	}
+
+	public AlbumMyPageResponseDto getMemberAlbums(String email, int sort, int page, int size) {
+		Member member = memberRepository.findByEmail(email)
+			.orElseThrow(() -> new BusinessException(ErrorMessage.MEMBER_NOT_FOUND));
+		return albumService.getMemberAlbums(member.getId(), sort, page, size);
+	}
+
+	public AlbumMyPageResponseDto getMemberLikesAlbums(String email, int sort, int page, int size) {
+		Member member = memberRepository.findByEmail(email)
+			.orElseThrow(() -> new BusinessException(ErrorMessage.MEMBER_NOT_FOUND));
+		return albumService.getMemberLikesAlbums(member.getId(), sort, page, size);
 	}
 }

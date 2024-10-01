@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.dayangsung.melting.domain.album.dto.response.AlbumMyPageResponseDto;
 import com.dayangsung.melting.domain.auth.CustomOAuth2User;
 import com.dayangsung.melting.domain.member.dto.request.MemberInitRequestDto;
 import com.dayangsung.melting.domain.member.dto.request.MemberUpdateRequestDto;
@@ -117,4 +118,36 @@ public class MemberController {
 			memberService.deleteMemberHashtags(customOAuth2User.getName(), content);
 		return ApiResponse.ok(memberHashtags);
 	}
+
+	@GetMapping("/me/albums")
+	public ApiResponse<AlbumMyPageResponseDto> getMemberAlbums(
+		@RequestParam(defaultValue = "0") int sort,
+		@RequestParam(defaultValue = "0") int page,
+		@RequestParam(defaultValue = "10") int size,
+		@AuthenticationPrincipal CustomOAuth2User customOAuth2User) {
+		AlbumMyPageResponseDto albumMyPageResponseDto =
+			memberService.getMemberAlbums(customOAuth2User.getName(), sort, page, size);
+		return ApiResponse.ok(albumMyPageResponseDto);
+	}
+
+	@GetMapping("/me/likes/albums")
+	public ApiResponse<AlbumMyPageResponseDto> getMemberLikesAlbums(
+		@RequestParam(defaultValue = "0") int sort,
+		@RequestParam(defaultValue = "0") int page,
+		@RequestParam(defaultValue = "10") int size,
+		@AuthenticationPrincipal CustomOAuth2User customOAuth2User) {
+		AlbumMyPageResponseDto albumMyPageResponseDto =
+			memberService.getMemberLikesAlbums(customOAuth2User.getName(), sort, page, size);
+		return ApiResponse.ok(albumMyPageResponseDto);
+	}
+
+	// @GetMapping("/me/songs")
+	// public ApiResponse<AlbumListResponseDto> getMemberSongs() {
+	//
+	// }
+	//
+	// @GetMapping("/me/likes/songs")
+	// public ApiResponse<AlbumListResponseDto> getMemberLikesSongs() {
+	//
+	// }
 }
