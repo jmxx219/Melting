@@ -59,7 +59,8 @@ public class SongService {
 		incrementStreamingCount(song.getId());
 
 		boolean isLiked = likesService.isLikedBySongAndMember(song.getId(), member.getId());
-		return SongDetailsResponseDto.of(song, albumCoverImageUrl, isLiked, likesService.getSongLikesCount(song.getId()));
+		return SongDetailsResponseDto.of(song, albumCoverImageUrl, isLiked,
+			likesService.getSongLikesCount(song.getId()));
 	}
 
 	// Todo : 트랜잭션 적용 필요
@@ -78,19 +79,26 @@ public class SongService {
 		OriginalSong originalSong = originalSongRepository.findById(originalSongId).orElseThrow(RuntimeException::new);
 		Member member = memberRepository.findByEmail(email).orElseThrow(RuntimeException::new);
 
-		boolean songExists = songRepository.existsByMemberAndOriginalSongAndSongType(member, originalSong,
-			SongType.MELTING);
+		Song song = songRepository.findByMemberAndOriginalSongAndSongType(member, originalSong, SongType.MELTING)
+			.orElse(null);
 
-		Song song = Song.builder()
-			.originalSong(originalSong)
-			.member(member)
-			.songType(SongType.MELTING)
-			.songUrl("")
-			.build();
+		boolean isNewSong = false;
+
+		if (song == null) {
+			song = Song.builder()
+				.originalSong(originalSong)
+				.member(member)
+				.songType(SongType.MELTING)
+				.songUrl("")
+				.build();
+			isNewSong = true;
+		} else {
+			song.updateSongUrl("");
+		}
 
 		Song savedSong = songRepository.save(song);
 
-		log.info("Created new Song with ID: {}", savedSong.getId());
+		log.info("{} Song with ID: {}", isNewSong ? "Created new" : "Updated existing", savedSong.getId());
 
 		MultipartBodyBuilder builder = new MultipartBodyBuilder();
 		builder.part("voice_file", voiceFile.getResource());
@@ -98,7 +106,7 @@ public class SongService {
 		builder.part("original_song_mr_url", originalSong.getMrUrl());
 
 		String endpoint;
-		if (member.getCoverCount() < 3 && !songExists) {
+		if (member.getCoverCount() < 3 && isNewSong) {
 			endpoint = "/api/rvc-ai/{memberId}/melting-with-training";
 			member.increaseCoverCount();
 			memberRepository.save(member);
