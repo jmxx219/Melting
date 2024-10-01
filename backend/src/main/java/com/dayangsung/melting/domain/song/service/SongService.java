@@ -2,8 +2,15 @@ package com.dayangsung.melting.domain.song.service;
 
 // import org.springframework.data.redis.core.RedisTemplate;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
+import java.util.stream.Collectors;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.MediaType;
 import org.springframework.http.client.MultipartBodyBuilder;
@@ -20,6 +27,8 @@ import com.dayangsung.melting.domain.member.repository.MemberRepository;
 import com.dayangsung.melting.domain.originalsong.entity.OriginalSong;
 import com.dayangsung.melting.domain.originalsong.repository.OriginalSongRepository;
 import com.dayangsung.melting.domain.song.dto.response.SongDetailsResponseDto;
+import com.dayangsung.melting.domain.song.dto.response.SongSearchPageResponseDto;
+import com.dayangsung.melting.domain.song.dto.response.SongSearchResponseDto;
 import com.dayangsung.melting.domain.song.entity.Song;
 import com.dayangsung.melting.domain.song.enums.SongType;
 import com.dayangsung.melting.domain.song.repository.SongRepository;
@@ -52,7 +61,7 @@ public class SongService {
 		Member member = memberRepository.findByEmail(email)
 			.orElseThrow(() -> new BusinessException(ErrorMessage.MEMBER_NOT_FOUND));
 
-		String albumCoverImageUrl = awsS3Service.getDefaultSongCoverImageUrl();
+		String albumCoverImageUrl = awsS3Service.getDefaultCoverImageUrl();
 		if (song.getAlbum() != null) {
 			albumCoverImageUrl = song.getAlbum().getAlbumCoverImageUrl();
 		}
@@ -122,5 +131,34 @@ public class SongService {
 		Song song = songRepository.findById(Long.parseLong(songId)).orElseThrow(RuntimeException::new);
 		song.updateSongUrl(songUrl);
 		songRepository.save(song);
+	}
+
+	public SongSearchPageResponseDto getSongsForAlbumCreation(String email, String keyword, int page, int size) {
+		Member member = memberRepository.findByEmail(email)
+			.orElseThrow(() -> new BusinessException(ErrorMessage.MEMBER_NOT_FOUND));
+		List<Song> songs = songRepository.findSongsForAlbumCreation(member.getId(), keyword);
+
+		Map<OriginalSong, List<Song>> groupedByOriginal = songs.stream()
+			.collect(Collectors.groupingBy(Song::getOriginalSong));
+		List<SongSearchResponseDto> groupedSongsList = new ArrayList<>();
+		for (OriginalSong originalSong : groupedByOriginal.keySet()) {
+			List<Song> songList = groupedByOriginal.get(originalSong);
+			Long meltingSongId = null;
+			Long aiCoverSongId = null;
+			for (Song song : songList) {
+				if (song.getSongType().equals(SongType.MELTING)) {
+					meltingSongId = song.getId();
+				} else if (song.getSongType().equals(SongType.AICOVER)) {
+					aiCoverSongId = song.getId();
+				}
+			}
+			groupedSongsList.add(SongSearchResponseDto.of(
+				originalSong, awsS3Service.getDefaultCoverImageUrl(), meltingSongId, aiCoverSongId));
+		}
+
+		int start = (int) PageRequest.of(page, size).getOffset();
+		int end = Math.min((start + size), groupedSongsList.size());
+		Page<SongSearchResponseDto> pageOfSongs = new PageImpl<>(groupedSongsList.subList(start, end), PageRequest.of(page, size), groupedSongsList.size());
+		return SongSearchPageResponseDto.of(pageOfSongs);
 	}
 }
