@@ -10,7 +10,7 @@ interface AlbumSongToggleProps {
 
 export default function AlbumSongToggle({ viewType }: AlbumSongToggleProps) {
   const [selectedTab, setSelectedTab] = useState<'album' | 'song'>('album')
-  const [sortOption, setSortOption] = useState<'date' | 'popularity'>('date')
+  const [sortOption, setSortOption] = useState<'LATEST' | 'POPULAR'>('LATEST')
 
   return (
     <div className="w-full">
