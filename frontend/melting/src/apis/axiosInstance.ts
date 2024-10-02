@@ -20,6 +20,8 @@ export const createAxiosInstance = (apiPath: ApiPath): AxiosInstance => {
     withCredentials: true,
   })
 
+  console.log(`${VITE_API_BASE_URL}${API_PATHS[apiPath]}`)
+
   // 요청 인터셉터
   instance.interceptors.request.use(
     (config) => {
@@ -51,13 +53,16 @@ export const createAxiosInstance = (apiPath: ApiPath): AxiosInstance => {
     method: HttpMethod,
   ) => {
     return (url: string, data?: D, config?: AxiosRequestConfig) => {
+      console.log(url)
+
       const requestConfig: AxiosRequestConfig = {
         ...config,
         method,
         url,
+        // get, delete 메서드의 경우 쿼리 파라미터로 전달
         ...(method === 'get' || method === 'delete'
-          ? { params: data }
-          : { data }),
+          ? { params: data } // 쿼리 파라미터는 params로 전달
+          : { data }), // 나머지는 body로 전달
       }
 
       return instance.request<T, R>(requestConfig)
