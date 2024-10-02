@@ -31,7 +31,7 @@ export default function NicknameInput({
 
     try {
       const response = await userApi.validateNickname(value)
-      const isDuplicate = !response.data // API 응답이 false면 중복
+      const isDuplicate = !response // API 응답이 false면 중복
       setIsNicknameDuplicate(isDuplicate)
       return isDuplicate
     } catch (error) {

@@ -1,28 +1,30 @@
-import { createAxiosInstance } from './axiosInstance'
+import {
+  createAxiosInstance,
+  createApi,
+  ApiResponse,
+  CustomError,
+} from './axiosInstance'
 import {
   InitMemberInfoPayload,
   InitMemberInfoData,
-  InitMemberInfoError,
   ValidateNicknameData,
-  ValidateNicknameError,
   LogoutData,
-  LogoutError,
-} from '@/types/user'
-import { handleApiError } from '@/utils/errorUtil.ts'
-import {
   GetMemberInfoData,
-  GetMemberInfoError,
-} from '@/typeApis/data-contracts.ts'
+} from '@/types/user'
 
-const axiosInstance = createAxiosInstance('members')
+const instance = createAxiosInstance('members')
+const api = createApi<ApiResponse>(instance)
 
 export const userApi = {
   initMemberInfo: async (
     payload: InitMemberInfoPayload,
-  ): Promise<InitMemberInfoData | InitMemberInfoError> => {
+  ): Promise<InitMemberInfoData> => {
     const frm = new FormData()
     if (payload.multipartFile) {
       frm.append('multipartFile', payload.multipartFile)
+    } else {
+      // 빈 Blob 추가
+      frm.append('multipartFile', new Blob(), '')
     }
     frm.append(
       'memberInitRequestDto',
@@ -32,51 +34,44 @@ export const userApi = {
     )
 
     try {
-      const response = await axiosInstance.patch<InitMemberInfoData>(
-        '/init',
-        frm,
-        {
-          headers: {
-            'Content-Type': 'multipart/form-data',
-          },
+      const response = await api.patch<InitMemberInfoData>('/init', frm, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
         },
-      )
+      })
       return response.data
     } catch (error) {
       console.error('회원 정보 초기화 오류:', error)
-      throw error
+      throw error as CustomError
     }
   },
 
   validateNickname: async (nickname: string): Promise<ValidateNicknameData> => {
     try {
-      const response = await axiosInstance.get<ValidateNicknameData>(
-        '/nickname-check',
-        {
-          params: { nickname },
-        },
+      const response = await api.get<ValidateNicknameData>(
+        `/nickname-check?nickname=${nickname}`,
       )
       return response.data
     } catch (error) {
-      throw handleApiError<ValidateNicknameError>(error)
+      throw error as CustomError
     }
   },
 
   logout: async (): Promise<LogoutData> => {
     try {
-      const response = await axiosInstance.get<LogoutData>('/logout')
+      const response = await api.get<LogoutData>('/logout')
       return response.data
     } catch (error) {
-      throw handleApiError<LogoutError>(error)
+      throw error as CustomError
     }
   },
 
-  getMemberInfo: async (): Promise<GetMemberInfoData | GetMemberInfoError> => {
+  getMemberInfo: async (): Promise<GetMemberInfoData> => {
     try {
-      const response = await axiosInstance.get<GetMemberInfoData>('')
+      const response = await api.get<GetMemberInfoData>('')
       return response.data
     } catch (error) {
-      throw handleApiError<GetMemberInfoError>(error)
+      throw error as CustomError
     }
   },
 }
