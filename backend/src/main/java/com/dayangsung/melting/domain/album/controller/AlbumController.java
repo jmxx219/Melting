@@ -21,6 +21,8 @@ import com.dayangsung.melting.domain.album.dto.response.AlbumDetailsResponseDto;
 import com.dayangsung.melting.domain.album.dto.response.AlbumSearchPageResponseDto;
 import com.dayangsung.melting.domain.album.service.AlbumService;
 import com.dayangsung.melting.domain.auth.CustomOAuth2User;
+import com.dayangsung.melting.domain.genre.dto.response.GenreResponseDto;
+import com.dayangsung.melting.domain.genre.service.GenreService;
 import com.dayangsung.melting.global.common.response.ApiResponse;
 
 import lombok.RequiredArgsConstructor;
@@ -33,6 +35,7 @@ import lombok.extern.slf4j.Slf4j;
 public class AlbumController {
 
 	private final AlbumService albumService;
+	private final GenreService genreService;
 
 	@GetMapping
 	public ApiResponse<AlbumSearchPageResponseDto> getAlbums(
@@ -90,4 +93,10 @@ public class AlbumController {
 		Boolean toggledIsPublic = albumService.toggleIsPublic(albumId);
 		return ApiResponse.ok(toggledIsPublic);
 	}
+
+	@GetMapping("/genres")
+	public ApiResponse<List<GenreResponseDto>> getAllGenres() {
+		return ApiResponse.ok(genreService.findAll());
+	}
+
 }
