@@ -134,6 +134,41 @@ export interface AlbumDetailInfoType {
   hashtags: string[]
 }
 
+export interface SongDetailsResponseDto {
+  /** @format int64 */
+  songId?: number
+  songTitle?: string
+  nickname?: string
+  artist?: string
+  albumCoverImageUrl?: string
+  isLiked?: boolean
+  /** @format int32 */
+  likedCount?: number
+  songUrl?: string
+  lyrics?: string
+}
+
+export interface AlbumDetailsResponseDto {
+  /** @format int64 */
+  albumId?: number
+  albumName?: string
+  albumCreatorNickname?: string
+  albumCreatorProfileImageUrl?: string
+  albumDescription?: string
+  /** @format date-time */
+  createdAt?: string
+  category?: 'SINGLE' | 'MINI' | 'LP'
+  songs?: SongDetailsResponseDto[]
+  hashtags?: string[]
+  genres?: string[]
+  comments?: CommentResponseDto[]
+  /** @format int32 */
+  commentCount?: number
+  isLiked?: boolean
+  /** @format int32 */
+  likedCount?: number
+}
+
 export type AlbumSongType = LikedSongType & {
   isTitle: boolean
 }
