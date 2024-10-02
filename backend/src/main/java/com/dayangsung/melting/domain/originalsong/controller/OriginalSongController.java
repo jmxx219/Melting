@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.dayangsung.melting.domain.originalsong.dto.response.OriginalSongResponseDto;
+import com.dayangsung.melting.domain.originalsong.dto.response.OriginalSongSearchPageResponseDto;
 import com.dayangsung.melting.domain.originalsong.dto.response.OriginalSongSearchResponseDto;
 import com.dayangsung.melting.domain.originalsong.service.OriginalSongService;
 import com.dayangsung.melting.global.common.response.ApiResponse;
@@ -24,13 +25,13 @@ public class OriginalSongController {
 	private final OriginalSongService originalSongService;
 
 	@GetMapping
-	public ApiResponse<Page<OriginalSongSearchResponseDto>> getSearchPage(
+	public ApiResponse<OriginalSongSearchPageResponseDto> getSearchPage(
 		@RequestParam String keyword,
 		@RequestParam(defaultValue = "0") int page,
 		@RequestParam(defaultValue = "10") int size) {
-		Page<OriginalSongSearchResponseDto> originalSongServiceSearchPage =
+		OriginalSongSearchPageResponseDto originalSongPage =
 			originalSongService.getSearchPage(keyword, page, size);
-		return ApiResponse.ok(originalSongServiceSearchPage);
+		return ApiResponse.ok(originalSongPage);
 	}
 
 	@GetMapping("/{originalSongId}")
