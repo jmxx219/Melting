@@ -46,8 +46,7 @@ public record AlbumDetailsResponseDto(
 				.map(albumGenre -> albumGenre.getGenre().getContent())
 				.toList())
 			.comments(album.getComments().stream()
-				.map(comment -> CommentResponseDto.of(comment, comment.getMember().getProfileImageUrl(),
-					comment.getMember().getNickname()))
+				.map(comment -> CommentResponseDto.of(comment, comment.getMember().getId().equals(member.getId())))
 				.toList())
 			.commentCount(commentCount)
 			.isLiked(isLiked)
