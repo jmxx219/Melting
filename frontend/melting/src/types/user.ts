@@ -1,4 +1,4 @@
-import { ErrorResponse } from '@/types/globalType.ts'
+import { ApiResponseString, ErrorResponse } from '@/types/globalType.ts'
 
 export interface user {
   id: number
@@ -11,12 +11,6 @@ export interface user {
 
 export interface MemberUpdateRequestDto {
   nickname?: string
-}
-
-export interface ApiResponseString {
-  status?: string
-  data?: string
-  errorMessage?: string
 }
 
 export interface MemberInitRequestDto {
@@ -47,6 +41,12 @@ export interface ApiResponseVoid {
   errorMessage?: string
 }
 
+export interface ApiResponseMemberResponseDto {
+  status?: string
+  data?: MemberResponseDto
+  errorMessage?: string
+}
+
 export type ReissueData = ApiResponseString
 
 export type ReissueError = ErrorResponse
@@ -72,6 +72,10 @@ export type LogoutError = ErrorResponse
 export type GetMemberInfoData = MemberResponseDto
 
 export type GetMemberInfoError = ErrorResponse
+
+export interface MemberUpdateRequestDto {
+  nickname?: string
+}
 
 export interface UpdateMemberInfoPayload {
   /** @format binary */
