@@ -1,6 +1,6 @@
 stages:
   - build
- 
+
 build_BE:
   stage: build
   image: gradle:8.8-jdk21
@@ -14,20 +14,22 @@ build_BE:
     - sh ~/melting/spring-docker/spring.sh
   rules:
     - if: '$CI_COMMIT_BRANCH == "dev-be"'
-  tags: 
+  tags:
     - prod
- 
+
 build_FE:
   stage: build
   image: node
   before_script:
     - echo "[INFO] YML Settings"
     - cd frontend/melting
+    - printenv | grep 'VITE_' > .env
   script:
     - yarn install
     - yarn build
     - sudo cp -R dist ~/melting/melting-fe
+    - sh ~/melting/melting-fe/react.sh
   rules:
     - if: '$CI_COMMIT_BRANCH == "dev-fe"'
-  tags: 
+  tags:
     - prod
