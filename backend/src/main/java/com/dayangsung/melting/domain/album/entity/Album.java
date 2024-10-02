@@ -127,4 +127,8 @@ public class Album extends BaseEntity {
 	public void deleteAlbum() {
 		this.isDeleted = true;
 	}
+
+	public void setAiAlbumCoverImage(String albumCoverImageUrl) {
+		this.albumCoverImageUrl = albumCoverImageUrl;
+	}
 }
