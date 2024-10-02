@@ -241,4 +241,20 @@ public class SongService {
 			likesService.isLikedBySongAndMember(song.getId(), memberId), likesService.getSongLikesCount(song.getId())));
 		return SongLikesPageResponseDto.of(songLikesResponseDtoPage);
 	}
+
+	public Integer getSongLikesCount(Long songId) {
+		return likesService.getSongLikesCount(songId);
+	}
+
+	public Integer increaseSongLikes(Long songId, String email) {
+		Member member = memberRepository.findByEmail(email)
+			.orElseThrow(() -> new BusinessException(ErrorMessage.MEMBER_NOT_FOUND));
+		return likesService.increaseSongLikes(songId, member.getId());
+	}
+
+	public Integer decreaseSongLikes(Long songId, String email) {
+		Member member = memberRepository.findByEmail(email)
+			.orElseThrow(() -> new BusinessException(ErrorMessage.MEMBER_NOT_FOUND));
+		return likesService.decreaseSongLikes(songId, member.getId());
+	}
 }
