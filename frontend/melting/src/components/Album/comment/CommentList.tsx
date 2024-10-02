@@ -4,7 +4,6 @@ import { useInView } from 'react-intersection-observer'
 import { CommentResponseDto } from '@/types/album'
 import AlbumComment from '@/components/Album/Detail/AlbumComment'
 import CommentModal from '@/components/Album/comment/CommentModal'
-import { albumApi } from '@/apis/albumApi'
 
 type CommentListProps = {
   albumId: number
