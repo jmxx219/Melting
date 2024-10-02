@@ -14,7 +14,7 @@ public record SongMypageDto(
 	int likeCount,
 	boolean isLiked,
 	boolean isCreated,
-	LocalDateTime createdAt
+	LocalDateTime lastModifiedAt
 
 ) {
 }
