@@ -5,6 +5,9 @@ package com.dayangsung.melting.domain.song.service;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.MediaType;
 import org.springframework.http.client.MultipartBodyBuilder;
@@ -22,6 +25,8 @@ import com.dayangsung.melting.domain.member.repository.MemberRepository;
 import com.dayangsung.melting.domain.originalsong.entity.OriginalSong;
 import com.dayangsung.melting.domain.originalsong.repository.OriginalSongRepository;
 import com.dayangsung.melting.domain.song.dto.response.SongDetailsResponseDto;
+import com.dayangsung.melting.domain.song.dto.response.SongLikesPageResponseDto;
+import com.dayangsung.melting.domain.song.dto.response.SongLikesResponseDto;
 import com.dayangsung.melting.domain.song.entity.Song;
 import com.dayangsung.melting.domain.song.enums.SongType;
 import com.dayangsung.melting.domain.song.repository.SongRepository;
@@ -54,7 +59,7 @@ public class SongService {
 		Member member = memberRepository.findByEmail(email)
 			.orElseThrow(() -> new BusinessException(ErrorMessage.MEMBER_NOT_FOUND));
 
-		String albumCoverImageUrl = awsS3Service.getDefaultSongCoverImageUrl();
+		String albumCoverImageUrl = awsS3Service.getDefaultCoverImageUrl();
 		if (song.getAlbum() != null) {
 			albumCoverImageUrl = song.getAlbum().getAlbumCoverImageUrl();
 		}
@@ -81,19 +86,26 @@ public class SongService {
 		OriginalSong originalSong = originalSongRepository.findById(originalSongId).orElseThrow(RuntimeException::new);
 		Member member = memberRepository.findByEmail(email).orElseThrow(RuntimeException::new);
 
-		boolean songExists = songRepository.existsByMemberAndOriginalSongAndSongType(member, originalSong,
-			SongType.MELTING);
+		Song song = songRepository.findByMemberAndOriginalSongAndSongType(member, originalSong, SongType.MELTING)
+			.orElse(null);
 
-		Song song = Song.builder()
-			.originalSong(originalSong)
-			.member(member)
-			.songType(SongType.MELTING)
-			.songUrl("")
-			.build();
+		boolean isNewSong = false;
+
+		if (song == null) {
+			song = Song.builder()
+				.originalSong(originalSong)
+				.member(member)
+				.songType(SongType.MELTING)
+				.songUrl("")
+				.build();
+			isNewSong = true;
+		} else {
+			song.updateSongUrl("");
+		}
 
 		Song savedSong = songRepository.save(song);
 
-		log.info("Created new Song with ID: {}", savedSong.getId());
+		log.info("{} Song with ID: {}", isNewSong ? "Created new" : "Updated existing", savedSong.getId());
 
 		MultipartBodyBuilder builder = new MultipartBodyBuilder();
 		builder.part("voice_file", voiceFile.getResource());
@@ -101,7 +113,7 @@ public class SongService {
 		builder.part("original_song_mr_url", originalSong.getMrUrl());
 
 		String endpoint;
-		if (member.getCoverCount() < 3 && !songExists) {
+		if (member.getCoverCount() < 3 && isNewSong) {
 			endpoint = "/api/rvc-ai/{memberId}/melting-with-training";
 			member.increaseCoverCount();
 			memberRepository.save(member);
@@ -170,5 +182,19 @@ public class SongService {
 
 	private String convertGender(Gender gender) {
 		return gender.getGender().toUpperCase();
+	}
+
+	public SongLikesPageResponseDto getMemberLikesSongs(Long memberId, int sort, int page, int size) {
+		Pageable pageable = PageRequest.of(page, size);
+		Page<Song> songPage;
+		if (sort == 1) {
+			songPage = songRepository.findLikedSongsByMemberIdOrderByLikesCountDesc(memberId, pageable);
+		} else {
+			songPage = songRepository.findLikedSongsByMemberIdOrderByCreatedAtDesc(memberId, pageable);
+		}
+		Page<SongLikesResponseDto> songLikesResponseDtoPage = songPage.map(song -> SongLikesResponseDto.of(song,
+			song.getAlbum() != null ? song.getAlbum().getAlbumCoverImageUrl() : awsS3Service.getDefaultCoverImageUrl(),
+			likesService.isLikedBySongAndMember(song.getId(), memberId), likesService.getSongLikesCount(song.getId())));
+		return SongLikesPageResponseDto.of(songLikesResponseDtoPage);
 	}
 }
