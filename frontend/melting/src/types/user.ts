@@ -18,12 +18,6 @@ export interface MemberInitRequestDto {
   gender?: string
 }
 
-export interface ApiResponseMemberResponseDto {
-  status?: string
-  data?: MemberResponseDto
-  errorMessage?: string
-}
-
 export interface MemberResponseDto {
   nickname?: string
   profileImageUrl?: string

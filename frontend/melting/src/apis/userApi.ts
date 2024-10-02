@@ -102,7 +102,7 @@ export const userApi = {
           'Content-Type': 'multipart/form-data',
         },
       })
-      return response.data
+      return response.data as MemberResponseDto
     } catch (error) {
       console.error('회원 정보 수정 오류:', error)
       throw error as CustomError
