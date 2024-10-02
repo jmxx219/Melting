@@ -17,5 +17,4 @@ public record SongMypageDto(
 	LocalDateTime createdAt
 
 ) {
-
 }

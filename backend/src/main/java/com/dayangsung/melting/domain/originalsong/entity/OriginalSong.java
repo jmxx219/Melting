@@ -40,10 +40,12 @@ public class OriginalSong extends BaseEntity {
 
 	@Column(nullable = false, columnDefinition = "TEXT")
 	private String lyrics;
-	
+
+	private Integer lengthInSeconds;
+
 	@Builder
 	public OriginalSong(String title, String artist, Gender artistGender, String coverImageUrl, String mrUrl,
-		String voiceUrl, String lyrics) {
+		String voiceUrl, String lyrics, Integer lengthInSeconds) {
 		this.title = title;
 		this.artist = artist;
 		this.artistGender = artistGender;
@@ -51,5 +53,6 @@ public class OriginalSong extends BaseEntity {
 		this.mrUrl = mrUrl;
 		this.voiceUrl = voiceUrl;
 		this.lyrics = lyrics;
+		this.lengthInSeconds = lengthInSeconds;
 	}
 }

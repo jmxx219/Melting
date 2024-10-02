@@ -17,6 +17,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.dayangsung.melting.domain.album.dto.request.AlbumCreateRequestDto;
 import com.dayangsung.melting.domain.album.dto.response.AlbumDetailsResponseDto;
+import com.dayangsung.melting.domain.album.dto.response.AlbumMyPageResponseDto;
+import com.dayangsung.melting.domain.album.dto.response.AlbumMyResponseDto;
+import com.dayangsung.melting.domain.album.dto.response.AlbumSearchPageResponseDto;
 import com.dayangsung.melting.domain.album.dto.response.AlbumSearchResponseDto;
 import com.dayangsung.melting.domain.album.entity.Album;
 import com.dayangsung.melting.domain.album.enums.AlbumCategory;
@@ -29,8 +32,6 @@ import com.dayangsung.melting.domain.hashtag.entity.AlbumHashtag;
 import com.dayangsung.melting.domain.hashtag.entity.Hashtag;
 import com.dayangsung.melting.domain.hashtag.repository.AlbumHashtagRepository;
 import com.dayangsung.melting.domain.hashtag.repository.HashtagRepository;
-import com.dayangsung.melting.domain.likes.repository.LikesAlbumRepository;
-import com.dayangsung.melting.domain.likes.repository.LikesSongRepository;
 import com.dayangsung.melting.domain.likes.service.LikesService;
 import com.dayangsung.melting.domain.member.entity.Member;
 import com.dayangsung.melting.domain.member.repository.MemberRepository;
@@ -56,8 +57,6 @@ public class AlbumService {
 	private final AlbumGenreRepository albumGenreRepository;
 	private final HashtagRepository hashtagRepository;
 	private final AlbumHashtagRepository albumHashtagRepository;
-	private final LikesAlbumRepository likesAlbumRepository;
-	private final LikesSongRepository likesSongRepository;
 	private final LikesService likesService;
 	private final AwsS3Service awsS3Service;
 
@@ -88,9 +87,10 @@ public class AlbumService {
 			song.setIsTitle(Objects.equals(albumCreateRequestDto.titleSongId(), song.getId()));
 			songRepository.save(song);
 			album.addSong(song);
-			Boolean isLiked = likesSongRepository
-				.existsByMemberIdAndSongIdAndStatusTrue(song.getId(), member.getId()).orElse(false);
-			songs.add(SongDetailsResponseDto.of(song, null, isLiked, likesService.getSongLikesCount(songId)));
+			songs.add(SongDetailsResponseDto.of(
+				song, null,
+				likesService.isLikedBySongAndMember(song.getId(), member.getId()),
+				likesService.getSongLikesCount(songId)));
 		}
 
 		for (Long genreId : albumCreateRequestDto.genres()) {
@@ -115,7 +115,7 @@ public class AlbumService {
 		album = albumRepository.save(album);
 
 		return AlbumDetailsResponseDto.of(album, member,
-			likesAlbumRepository.existsByMemberIdAndAlbumIdAndStatusTrue(album.getId(), member.getId()).orElse(false),
+			likesService.isLikedByAlbumAndMember(album.getId(), member.getId()),
 			likesService.getAlbumLikesCount(album.getId()), songs, 0);
 	}
 
@@ -125,8 +125,7 @@ public class AlbumService {
 		List<SongDetailsResponseDto> songDetails = getSongDetails(album);
 
 		return AlbumDetailsResponseDto.of(album, album.getMember(),
-			likesAlbumRepository.existsByMemberIdAndAlbumIdAndStatusTrue(album.getId(), album.getMember().getId())
-				.orElse(false),
+			likesService.isLikedByAlbumAndMember(album.getId(), album.getMember().getId()),
 			likesService.getAlbumLikesCount(album.getId()), songDetails, album.getComments().size());
 	}
 
@@ -138,21 +137,23 @@ public class AlbumService {
 		List<SongDetailsResponseDto> songDetails = getSongDetails(album);
 
 		return AlbumDetailsResponseDto.of(album, album.getMember(),
-			likesAlbumRepository.existsByMemberIdAndAlbumIdAndStatusTrue(album.getId(), album.getMember().getId())
-				.orElse(false),
+			likesService.isLikedByAlbumAndMember(album.getId(), album.getMember().getId()),
 			likesService.getAlbumLikesCount(album.getId()), songDetails, album.getComments().size());
 	}
 
-	public Page<AlbumSearchResponseDto> getAlbums(int sort, int page, int size) {
+	public AlbumSearchPageResponseDto getAlbums(int sort, int page, int size) {
 		Pageable pageable = PageRequest.of(page, size);
+		Page<Album> albumPage;
 		if (sort == 1) {
-			return albumRepository.findAllByOrderByLikesCountDesc(pageable).map(AlbumSearchResponseDto::of);
+			albumPage = albumRepository.findAllByOrderByLikesCountDesc(pageable);
 		} else {
-			return albumRepository.findAllByOrderByCreatedAtDesc(pageable).map(AlbumSearchResponseDto::of);
+			albumPage = albumRepository.findAllByOrderByCreatedAtDesc(pageable);
 		}
+		Page<AlbumSearchResponseDto> albumSearchPage = albumPage.map(AlbumSearchResponseDto::of);
+		return AlbumSearchPageResponseDto.of(albumSearchPage);
 	}
 
-	public Page<AlbumSearchResponseDto> searchAlbum(int page, int size, String keyword, List<String> options) {
+	public AlbumSearchPageResponseDto searchAlbum(int page, int size, String keyword, List<String> options) {
 		Set<Album> searchResultSet = new HashSet<>();
 		if (keyword == null || keyword.isEmpty()) {
 			return this.getAlbums(0, page, size);
@@ -187,18 +188,18 @@ public class AlbumService {
 		int end = Math.min((page + 1) * size, searchResultList.size());
 		List<Album> paginatedList = searchResultList.subList(start, end);
 
-		List<AlbumSearchResponseDto> albumSearchResponse = paginatedList.stream()
+		List<AlbumSearchResponseDto> albumSearchList = paginatedList.stream()
 			.map(AlbumSearchResponseDto::of)
 			.toList();
-
-		return new PageImpl<>(albumSearchResponse, PageRequest.of(page, size), searchResultList.size());
+		Page<AlbumSearchResponseDto> albumSearchPage = new PageImpl<>(albumSearchList, PageRequest.of(page, size),
+			searchResultList.size());
+		return AlbumSearchPageResponseDto.of(albumSearchPage);
 	}
 
 	private List<SongDetailsResponseDto> getSongDetails(Album album) {
 		return album.getSongs().stream()
 			.map(song -> SongDetailsResponseDto.of(song, album.getAlbumCoverImageUrl(),
-				likesSongRepository.existsByMemberIdAndSongIdAndStatusTrue(album.getMember().getId(), album.getId())
-					.orElse(false),
+				likesService.isLikedBySongAndMember(album.getMember().getId(), song.getId()),
 				likesService.getSongLikesCount(song.getId())))
 			.toList();
 	}
@@ -220,5 +221,33 @@ public class AlbumService {
 		Boolean toggledIsPublic = album.toggleIsPublic();
 		albumRepository.save(album);
 		return toggledIsPublic;
+	}
+
+	public AlbumMyPageResponseDto getMemberAlbums(Long memberId, int sort, int page, int size) {
+		Pageable pageable = PageRequest.of(page, size);
+		Page<Album> albumPage;
+		if (sort == 1) {
+			albumPage = albumRepository.findByMemberIdAndOrderByLikesCountDesc(memberId, pageable);
+		} else {
+			albumPage = albumRepository.findByMemberIdAndOrderByCreatedAtDesc(memberId, pageable);
+		}
+		Page<AlbumMyResponseDto> albumMyResponseDtoPage = albumPage.map(album -> AlbumMyResponseDto.of(album,
+			likesService.isLikedByAlbumAndMember(album.getId(), memberId),
+			likesService.getAlbumLikesCount(album.getId())));
+		return AlbumMyPageResponseDto.of(albumMyResponseDtoPage);
+	}
+
+	public AlbumMyPageResponseDto getMemberLikesAlbums(Long memberId, int sort, int page, int size) {
+		Pageable pageable = PageRequest.of(page, size);
+		Page<Album> albumPage;
+		if (sort == 1) {
+			albumPage = albumRepository.findLikedAlbumsByMemberIdOrderByLikesCountDesc(memberId, pageable);
+		} else {
+			albumPage = albumRepository.findLikedAlbumsByMemberIdOrderByCreatedAtDesc(memberId, pageable);
+		}
+		Page<AlbumMyResponseDto> albumMyResponseDtoPage = albumPage.map(album -> AlbumMyResponseDto.of(album,
+			likesService.isLikedByAlbumAndMember(album.getId(), memberId),
+			likesService.getAlbumLikesCount(album.getId())));
+		return AlbumMyPageResponseDto.of(albumMyResponseDtoPage);
 	}
 }
