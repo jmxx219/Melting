@@ -21,7 +21,7 @@ import com.dayangsung.melting.domain.member.entity.Member;
 import com.dayangsung.melting.domain.member.enums.Gender;
 import com.dayangsung.melting.domain.member.repository.MemberRepository;
 import com.dayangsung.melting.domain.originalsong.entity.OriginalSong;
-import com.dayangsung.melting.domain.song.dto.SongMyPageDto;
+import com.dayangsung.melting.domain.song.dto.SongMypageDto;
 import com.dayangsung.melting.domain.song.dto.response.SongLikesPageResponseDto;
 import com.dayangsung.melting.domain.song.entity.Song;
 import com.dayangsung.melting.domain.song.repository.SongRepository;
