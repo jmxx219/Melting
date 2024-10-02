@@ -1,3 +1,5 @@
+import { ErrorResponse } from '@/types/globalType.ts'
+
 export interface user {
   id: number
   socialType: string
@@ -9,21 +11,6 @@ export interface user {
 
 export interface MemberUpdateRequestDto {
   nickname?: string
-}
-
-export interface ErrorResponse {
-  errorMessage?:
-    | 'MEMBER_NOT_FOUND'
-    | 'DUPLICATE_NICKNAME'
-    | 'INCORRECT_IMAGE_EXTENSION'
-    | 'MEMBER_BAD_REQUEST'
-    | 'ALBUM_NOT_FOUND'
-    | 'INVALID_SORT_CRITERIA'
-    | 'INVALID_SONG_COUNT'
-    | 'SEARCH_QUERY_TOO_SHORT'
-    | 'ALBUM_NAME_BLANK_ERROR'
-    | 'ALBUM_COVER_IMAGE_BLANK_ERROR'
-    | 'ALBUM_SONGS_EMPTY_ERROR'
 }
 
 export interface ApiResponseString {
