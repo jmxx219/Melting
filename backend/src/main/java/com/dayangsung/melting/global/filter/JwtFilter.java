@@ -36,11 +36,6 @@ public class JwtFilter extends OncePerRequestFilter {
 		log.debug("Jwt filter access_token:{}", accessToken);
 		log.debug("Jwt filter refresh_token:{}", refreshToken);
 
-		if(accessToken != null && refreshToken != null) {
-			Authentication authentication = jwtUtil.getAuthentication(accessToken);
-			SecurityContextHolder.getContext().setAuthentication(authentication);
-			log.debug("Security Context에 '{}' 인증 정보를 저장했습니다", authentication.getPrincipal());
-		}
 		if (accessToken == null && refreshToken != null) {
 			if (!jwtUtil.validateToken(refreshToken)) {
 				throw new ResponseStatusException(HttpStatus.FORBIDDEN);
@@ -51,12 +46,17 @@ public class JwtFilter extends OncePerRequestFilter {
 			if (!refreshToken.equals(storedRefreshToken)) {
 				throw new ResponseStatusException(HttpStatus.FORBIDDEN);
 			}
-			String newAccessToken = jwtUtil.createAccessToken(email);
-			String newRefreshToken = jwtUtil.createRefreshToken(email);
-			redisUtil.saveAccessToken(email, newAccessToken);
-			redisUtil.saveRefreshToken(email, newRefreshToken);
-			CookieUtil.setCookie(response, "access_token", newAccessToken, 60 * 30);
-			CookieUtil.setCookie(response, "refresh_token", newRefreshToken, 60 * 60 * 24 * 7);
+			accessToken = jwtUtil.createAccessToken(email);
+			refreshToken = jwtUtil.createRefreshToken(email);
+			redisUtil.saveAccessToken(email, accessToken);
+			redisUtil.saveRefreshToken(email, refreshToken);
+			CookieUtil.setCookie(response, "access_token", refreshToken, 60 * 30);
+			CookieUtil.setCookie(response, "refresh_token", refreshToken, 60 * 60 * 24 * 7);
+		}
+		if (accessToken != null && refreshToken != null) {
+			Authentication authentication = jwtUtil.getAuthentication(accessToken);
+			SecurityContextHolder.getContext().setAuthentication(authentication);
+			log.debug("Security Context에 '{}' 인증 정보를 저장했습니다", authentication.getPrincipal());
 		}
 
 		filterChain.doFilter(request, response);
