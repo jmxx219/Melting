@@ -88,7 +88,7 @@ export type GetMemberInfoError = ErrorResponse
 
 export interface UpdateMemberInfoPayload {
   /** @format binary */
-  multipartFile: File
+  multipartFile: File | null
   memberUpdateRequestDto: MemberUpdateRequestDto
 }
 
