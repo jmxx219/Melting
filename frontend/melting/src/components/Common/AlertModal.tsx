@@ -1,6 +1,5 @@
 import {
   AlertDialog,
-  AlertDialogTrigger,
   AlertDialogContent,
   AlertDialogHeader,
   AlertDialogTitle,
@@ -11,40 +10,36 @@ import {
 
 interface AlertModalProps {
   title: string
-  description: string
-  triggerText: React.ReactNode
-  triggerClassName?: string
+  messages: string[]
+  isOpen: boolean
+  onClose: () => void
 }
 
 export default function AlertModal({
   title,
-  description,
-  triggerText,
-  triggerClassName = '',
+  messages,
+  isOpen,
+  onClose,
 }: AlertModalProps) {
   return (
-    <AlertDialog>
-      <AlertDialogTrigger asChild>
-        <button
-          type="button"
-          className={`focus:outline-none ${triggerClassName}`}
-          onClick={(e) => {
-            e.stopPropagation()
-          }}
-        >
-          {triggerText}
-        </button>
-      </AlertDialogTrigger>
+    <AlertDialog open={isOpen} onOpenChange={onClose}>
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>{title}</AlertDialogTitle>
-          <AlertDialogDescription>{description}</AlertDialogDescription>
+          <AlertDialogDescription asChild>
+            <div>
+              {messages.map((message, index) => (
+                <span key={index} className="block mb-2 last:mb-0">
+                  {message}
+                </span>
+              ))}
+            </div>
+          </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel
-            onClick={(e) => {
-              e.stopPropagation()
-            }}
+            className={'bg-primary-400 rounded-3xl text-center'}
+            onClick={onClose}
           >
             확인
           </AlertDialogCancel>

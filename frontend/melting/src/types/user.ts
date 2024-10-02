@@ -9,6 +9,16 @@ export interface user {
   profileImage: string
 }
 
+export interface MemberUpdateRequestDto {
+  nickname?: string
+}
+
+export interface ApiResponseString {
+  status?: string
+  data?: string
+  errorMessage?: string
+}
+
 export interface MemberInitRequestDto {
   nickname?: string
   gender?: string
