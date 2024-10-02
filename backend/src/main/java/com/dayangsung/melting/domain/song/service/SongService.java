@@ -166,10 +166,12 @@ public class SongService {
 				originalSong, awsS3Service.getDefaultCoverImageUrl(), meltingSongId, aiCoverSongId));
 		}
 
-		int start = (int) PageRequest.of(page, size).getOffset();
+		int start = (int)PageRequest.of(page, size).getOffset();
 		int end = Math.min((start + size), groupedSongsList.size());
-		Page<SongSearchResponseDto> pageOfSongs = new PageImpl<>(groupedSongsList.subList(start, end), PageRequest.of(page, size), groupedSongsList.size());
+		Page<SongSearchResponseDto> pageOfSongs = new PageImpl<>(groupedSongsList.subList(start, end),
+			PageRequest.of(page, size), groupedSongsList.size());
 		return SongSearchPageResponseDto.of(pageOfSongs);
+	}
 
 	public SongLikesPageResponseDto getMemberLikesSongs(Long memberId, int sort, int page, int size) {
 		Pageable pageable = PageRequest.of(page, size);
