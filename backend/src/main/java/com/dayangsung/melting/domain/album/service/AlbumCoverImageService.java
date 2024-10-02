@@ -45,7 +45,7 @@ public class AlbumCoverImageService {
 			Album album = optionalAlbum.get();
 
 			// 앨범의 커버 이미지 업데이트
-			album.setAiAlbumCoverImage(albumCoverImageUrl);
+			album.updateAlbumCoverImageUrl(albumCoverImageUrl);
 
 			// 변경된 앨범 저장
 			albumRepository.save(album);
