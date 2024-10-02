@@ -2,6 +2,9 @@ package com.dayangsung.melting.domain.song.service;
 
 import java.util.concurrent.CompletableFuture;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.MediaType;
 import org.springframework.http.client.MultipartBodyBuilder;
@@ -18,6 +21,8 @@ import com.dayangsung.melting.domain.member.repository.MemberRepository;
 import com.dayangsung.melting.domain.originalsong.entity.OriginalSong;
 import com.dayangsung.melting.domain.originalsong.repository.OriginalSongRepository;
 import com.dayangsung.melting.domain.song.dto.response.SongDetailsResponseDto;
+import com.dayangsung.melting.domain.song.dto.response.SongLikesPageResponseDto;
+import com.dayangsung.melting.domain.song.dto.response.SongLikesResponseDto;
 import com.dayangsung.melting.domain.song.entity.Song;
 import com.dayangsung.melting.domain.song.enums.SongType;
 import com.dayangsung.melting.domain.song.repository.SongRepository;
@@ -50,14 +55,15 @@ public class SongService {
 		Member member = memberRepository.findByEmail(email)
 			.orElseThrow(() -> new BusinessException(ErrorMessage.MEMBER_NOT_FOUND));
 
-		String albumCoverImageUrl = awsS3Service.getDefaultSongCoverImageUrl();
+		String albumCoverImageUrl = awsS3Service.getDefaultCoverImageUrl();
 		if (song.getAlbum() != null) {
 			albumCoverImageUrl = song.getAlbum().getAlbumCoverImageUrl();
 		}
 		incrementStreamingCount(song.getId());
 
 		boolean isLiked = likesService.isLikedBySongAndMember(song.getId(), member.getId());
-		return SongDetailsResponseDto.of(song, albumCoverImageUrl, isLiked, likesService.getSongLikesCount(song.getId()));
+		return SongDetailsResponseDto.of(song, albumCoverImageUrl, isLiked,
+			likesService.getSongLikesCount(song.getId()));
 	}
 
 	// Todo : 트랜잭션 적용 필요
@@ -120,5 +126,19 @@ public class SongService {
 		Song song = songRepository.findById(Long.parseLong(songId)).orElseThrow(RuntimeException::new);
 		song.updateSongUrl(songUrl);
 		songRepository.save(song);
+	}
+
+	public SongLikesPageResponseDto getMemberLikesSongs(Long memberId, int sort, int page, int size) {
+		Pageable pageable = PageRequest.of(page, size);
+		Page<Song> songPage;
+		if (sort == 1) {
+			songPage = songRepository.findLikedSongsByMemberIdOrderByLikesCountDesc(memberId, pageable);
+		} else {
+			songPage = songRepository.findLikedSongsByMemberIdOrderByCreatedAtDesc(memberId, pageable);
+		}
+		Page<SongLikesResponseDto> songLikesResponseDtoPage = songPage.map(song -> SongLikesResponseDto.of(song,
+			song.getAlbum() != null ? song.getAlbum().getAlbumCoverImageUrl() : awsS3Service.getDefaultCoverImageUrl(),
+			likesService.isLikedBySongAndMember(song.getId(), memberId), likesService.getSongLikesCount(song.getId())));
+		return SongLikesPageResponseDto.of(songLikesResponseDtoPage);
 	}
 }
