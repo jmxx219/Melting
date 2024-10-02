@@ -1,7 +1,8 @@
 package com.dayangsung.melting.domain.member.service;
 
+import java.time.LocalDateTime;
+import java.util.Comparator;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
@@ -97,38 +98,43 @@ public class MemberService {
 		CookieUtil.deleteCookie(request, response, "refresh_token");
 	}
 
-	public MemberSongResponseDto getMemberSongs(Long memberId) {
-		Member member = memberRepository.findById(memberId)
+	public MemberSongResponseDto getMemberSongs(String email) {
+		Member member = memberRepository.findByEmail(email)
 			.orElseThrow(() -> new BusinessException(ErrorMessage.MEMBER_NOT_FOUND));
 
-		List<Song> memberSongs = songRepository.findByMemberIdAndIsDeletedFalse(member.getId());
+		List<Song> memberSongs = songRepository.findByMemberId(member.getId());
 
-		Map<OriginalSong, List<Song>> groupedSongs = memberSongs.stream()
-			.collect(Collectors.groupingBy(Song::getOriginalSong));
-
-		List<SongListDto> mySongList = groupedSongs.entrySet().stream()
+		List<SongListDto> mySongList = memberSongs.stream()
+			.collect(Collectors.groupingBy(Song::getOriginalSong))
+			.entrySet().stream()
 			.map(entry -> {
 				OriginalSong originalSong = entry.getKey();
-				List<Song> songs = entry.getValue();
-
-				List<SongMypageDto> songMypageDtoList = songs.stream()
+				List<SongMypageDto> songDtos = entry.getValue().stream()
 					.map(song -> SongMypageDto.builder()
 						.songId(song.getId())
 						.albumCoverImageUrl(song.getAlbum() != null ? song.getAlbum().getAlbumCoverImageUrl() :
 							awsS3Service.getDefaultCoverImageUrl())
 						.songType(song.getSongType())
 						.likeCount(likesService.getSongLikesCount(song.getId()))
-						.isLiked(likesService.isLikedBySongAndMember(song.getId(), memberId))
+						.isLiked(likesService.isLikedBySongAndMember(song.getId(), member.getId()))
+						.isCreated(!song.getSongUrl().isEmpty())
+						.createdAt(song.getCreatedAt())
 						.build())
+					.sorted(Comparator.comparing(SongMypageDto::songType))
 					.collect(Collectors.toList());
 
-				return SongListDto.of(originalSong, songMypageDtoList);
+				return SongListDto.of(originalSong, songDtos);
 			})
+			.sorted(Comparator.comparing(
+				dto -> dto.songList().stream()
+					.map(SongMypageDto::createdAt)
+					.max(LocalDateTime::compareTo)
+					.orElseThrow(),
+				Comparator.reverseOrder()
+			))
 			.collect(Collectors.toList());
 
-		boolean isPossibleAiCover = member.getCoverCount() >= 3;
-
-		return MemberSongResponseDto.of(mySongList, isPossibleAiCover);
+		return MemberSongResponseDto.of(mySongList, member.isAiCoverEnabled());
 	}
 
 	public List<String> getMemberHashtags(String email) {
