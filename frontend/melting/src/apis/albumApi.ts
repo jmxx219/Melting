@@ -1,9 +1,4 @@
-import {
-  createAxiosInstance,
-  createApi,
-  ApiResponse,
-  CustomError,
-} from './axiosInstance'
+import { createAxiosInstance, createApi, ApiResponse } from './axiosInstance'
 import {
   AlbumCreateRequestDto,
   AddAlbumLikesData,
@@ -16,7 +11,11 @@ import {
   GetAllCommentsData,
   GetAllGenresData,
   WriteCommentData,
+  CommentResponseDto,
+  GetAllCommentsError,
+  GetAllGenresError,
 } from '@/types/album.ts'
+import { RequestParams } from '@/types/globalType.ts'
 
 const instance = createAxiosInstance('albums')
 const api = createApi<ApiResponse>(instance)
@@ -27,10 +26,12 @@ export const albumApi = {
     sort?: 'LATEST' | 'POPULAR'
   }) => {
     try {
-      const response =
-        await instance.get<GetAlbumsInCommunityMainPageData>('/', {
+      const response = await instance.get<GetAlbumsInCommunityMainPageData>(
+        '/',
+        {
           params: query,
-        })
+        },
+      )
       return response.data
     } catch (error) {
       console.error('앨범 목록을 가져오는 중 오류 발생:', error)
@@ -95,18 +96,24 @@ export const albumApi = {
       page?: number
       size?: number
     },
-  ) => {
+    params?: RequestParams,
+  ): Promise<CommentResponseDto[]> => {
     try {
       const response = await instance.get<GetAllCommentsData>(
         `/${albumId}/comments`,
         {
           params: query,
+          ...params,
         },
       )
-      return response.data
+      if (response.data && Array.isArray(response.data)) {
+        return response.data
+      } else {
+        return [] // 데이터가 없거나 형식이 맞지 않으면 빈 배열 반환
+      }
     } catch (error) {
       console.error('댓글을 가져오는 중 오류 발생:', error)
-      throw error
+      throw error as GetAllCommentsError
     }
   },
 
@@ -134,7 +141,7 @@ export const albumApi = {
       }
     } catch (error) {
       console.error('장르 목록 가져오기 오류:', error)
-      throw error as CustomError
+      throw error as GetAllGenresError
     }
   },
 }
