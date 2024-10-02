@@ -52,24 +52,23 @@ public class MemberController {
 
 	@PatchMapping("/init")
 	public ApiResponse<MemberResponseDto> initMemberInfo(
-		@RequestPart MultipartFile multipartFile,
-		@RequestPart MemberInitRequestDto memberInitRequestDto,
-		@AuthenticationPrincipal CustomOAuth2User customOAuth2User) {
+		@RequestPart(required = false) MultipartFile multipartFile,
+		@RequestPart MemberInitRequestDto memberInitRequestDto) {
 		log.debug("member service nickname {}", memberInitRequestDto.nickname());
 		MemberResponseDto memberResponseDto =
 			memberService.initMemberInfo(multipartFile,
 				memberInitRequestDto.nickname(),
 				Gender.valueOf(memberInitRequestDto.gender().toUpperCase()),
-				customOAuth2User.getName());
+				"ssafy@ssafy.com");
 		return ApiResponse.ok(memberResponseDto);
 	}
 
 	@PatchMapping
 	public ApiResponse<MemberResponseDto> updateMemberInfo(
-		@RequestPart MultipartFile multipartFile,
+		@RequestPart(required = false) MultipartFile multipartFile,
 		@RequestPart MemberUpdateRequestDto memberUpdateRequestDto,
 		@AuthenticationPrincipal CustomOAuth2User customOAuth2User) {
-		if (multipartFile.isEmpty() && memberUpdateRequestDto.nickname().isEmpty()) {
+		if (multipartFile.isEmpty() && memberUpdateRequestDto.nickname() == null) {
 			return ApiResponse.error(MEMBER_BAD_REQUEST.getErrorMessage());
 		}
 		MemberResponseDto memberResponseDto = memberService.updateMemberInfo(
