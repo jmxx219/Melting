@@ -1,11 +1,11 @@
 import { Button } from '@/components/ui/button'
-import { AlbumCommentType } from '@/types/album'
+import { CommentResponseDto } from '@/types/album'
 import React from 'react'
 import AlbumComment from './AlbumComment'
 import { useNavigate } from 'react-router-dom'
 
 type AlbumCommentListProps = {
-  comments: AlbumCommentType[]
+  comments: CommentResponseDto[]
   commentCnt: number
   albumId: number
 }
