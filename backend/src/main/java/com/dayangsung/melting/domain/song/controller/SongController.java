@@ -10,12 +10,14 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.dayangsung.melting.domain.auth.CustomOAuth2User;
+import com.dayangsung.melting.domain.song.dto.request.AiCoverSongCreateRequestDto;
 import com.dayangsung.melting.domain.song.dto.request.MeltingSongCreateRequestDto;
 import com.dayangsung.melting.domain.song.dto.response.SongDetailsResponseDto;
 import com.dayangsung.melting.domain.song.dto.response.SongSearchPageResponseDto;
@@ -51,6 +53,19 @@ public class SongController {
 		// }
 
 		return songService.createMeltingSong(customOAuth2User.getName(), originalSongId, voiceFile)
+			.thenApply(result -> ResponseEntity.ok(ApiResponse.ok(result)));
+	}
+
+	@Operation(summary = "AI Cover 곡 생성 API")
+	@PostMapping(value = "/aicover")
+	@Async
+	public CompletableFuture<ResponseEntity<ApiResponse<Void>>> createAicoverSong(
+		@RequestBody AiCoverSongCreateRequestDto aiCoverSongCreateRequestDto,
+		@AuthenticationPrincipal CustomOAuth2User customOAuth2User) throws Exception {
+
+		Long originalSongId = aiCoverSongCreateRequestDto.originalSongId();
+
+		return songService.createAiCoverSong(customOAuth2User.getName(), originalSongId)
 			.thenApply(result -> ResponseEntity.ok(ApiResponse.ok(result)));
 	}
 

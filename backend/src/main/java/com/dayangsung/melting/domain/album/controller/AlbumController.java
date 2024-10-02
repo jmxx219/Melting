@@ -26,6 +26,8 @@ import com.dayangsung.melting.domain.album.service.AlbumDescriptionService;
 import com.dayangsung.melting.domain.album.service.AlbumService;
 import com.dayangsung.melting.domain.auth.CustomOAuth2User;
 import com.dayangsung.melting.domain.originalsong.dto.response.OriginalSongAiResponseDto;
+import com.dayangsung.melting.domain.genre.dto.response.GenreResponseDto;
+import com.dayangsung.melting.domain.genre.service.GenreService;
 import com.dayangsung.melting.global.common.response.ApiResponse;
 
 import lombok.RequiredArgsConstructor;
@@ -40,6 +42,7 @@ public class AlbumController {
 	private final AlbumService albumService;
 	private final AlbumCoverImageService albumCoverImageService;
 	private final AlbumDescriptionService albumDescriptionService;
+	private final GenreService genreService;
 
 	@GetMapping
 	public ApiResponse<AlbumSearchPageResponseDto> getAlbums(
@@ -98,13 +101,16 @@ public class AlbumController {
 		return ApiResponse.ok(toggledIsPublic);
 	}
 
-	// 생성형 AI를 통해 배경 사진을 만듦
 	@PostMapping("/{albumId}/covers")
 	public ApiResponse<String> createAiAlbumCoverImage(@PathVariable Long albumId,
 			@RequestBody AiCoverImageRequestDto aiCoverImageRequestDto) throws IOException {
 		List<OriginalSongAiResponseDto> songs = aiCoverImageRequestDto.songs();
 		String base64Image = albumCoverImageService.createAiCoverImage(albumId, songs);
 		return ApiResponse.ok(base64Image);
+
+	@GetMapping("/genres")
+	public ApiResponse<List<GenreResponseDto>> getAllGenres() {
+		return ApiResponse.ok(genreService.findAll());
 	}
 
 }
