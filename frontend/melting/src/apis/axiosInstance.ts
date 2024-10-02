@@ -65,6 +65,11 @@ export const createAxiosInstance = (apiPath: ApiPath): AxiosInstance => {
         data: error.response?.data,
       }
       console.error('API 요청 오류:', customError.message)
+
+      if (error.response?.status === 401) {
+        window.location.href = '/login' // 로그인 페이지로 리다이렉트
+      }
+
       return Promise.reject(customError)
     },
   )

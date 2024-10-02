@@ -10,10 +10,7 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { ArrowRight } from 'lucide-react'
-import {
-  InitMemberInfoPayload,
-  MemberInitRequestDto,
-} from '@/typeApis/members/data-contracts.ts'
+import { InitMemberInfoPayload, MemberInitRequestDto } from '@/types/user.ts'
 import { userApi } from '@/apis/userApi'
 import ProfileImage from '@/components/Common/ProfileImage.tsx'
 import NicknameInput from '@/components/Common/NicknameInput.tsx'
