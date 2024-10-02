@@ -10,6 +10,7 @@ import lombok.Builder;
 public record AlbumMyResponseDto(
 	Long albumId,
 	String albumName,
+	String albumCoverImageUrl,
 	String creatorNickname,
 	LocalDateTime createdAt,
 	Boolean isPublic,
@@ -20,6 +21,7 @@ public record AlbumMyResponseDto(
 		return AlbumMyResponseDto.builder()
 			.albumId(album.getId())
 			.albumName(album.getAlbumName())
+			.albumCoverImageUrl(album.getAlbumCoverImageUrl())
 			.creatorNickname(album.getMember().getNickname())
 			.createdAt(album.getCreatedAt())
 			.isPublic(album.getIsPublic())
