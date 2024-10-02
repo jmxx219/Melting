@@ -85,11 +85,11 @@ public class MemberController {
 		return ApiResponse.ok(null);
 	}
 
-	@Operation(summary = "사용자가 생성한 곡 목록")
+	@Operation(summary = "마이페이지에서 사용자가 생성한 곡 목록")
 	@GetMapping("/me/songs")
 	public ApiResponse<MemberSongResponseDto> getMemberSongs(
 		@AuthenticationPrincipal CustomOAuth2User customOAuth2User) {
-		MemberSongResponseDto memberSongResponseDto = memberService.getMemberSongs(customOAuth2User.getId());
+		MemberSongResponseDto memberSongResponseDto = memberService.getMemberSongs(customOAuth2User.getName());
 		return ApiResponse.ok(memberSongResponseDto);
 	}
 
