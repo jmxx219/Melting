@@ -1,13 +1,16 @@
 package com.dayangsung.melting.domain.member.service;
 
+import java.time.LocalDateTime;
+import java.util.Comparator;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.dayangsung.melting.domain.album.dto.response.AlbumMyPageResponseDto;
+import com.dayangsung.melting.domain.album.service.AlbumService;
 import com.dayangsung.melting.domain.hashtag.entity.MemberHashtag;
 import com.dayangsung.melting.domain.hashtag.service.HashtagService;
 import com.dayangsung.melting.domain.likes.service.LikesService;
@@ -19,8 +22,10 @@ import com.dayangsung.melting.domain.member.enums.Gender;
 import com.dayangsung.melting.domain.member.repository.MemberRepository;
 import com.dayangsung.melting.domain.originalsong.entity.OriginalSong;
 import com.dayangsung.melting.domain.song.dto.SongMypageDto;
+import com.dayangsung.melting.domain.song.dto.response.SongLikesPageResponseDto;
 import com.dayangsung.melting.domain.song.entity.Song;
 import com.dayangsung.melting.domain.song.repository.SongRepository;
+import com.dayangsung.melting.domain.song.service.SongService;
 import com.dayangsung.melting.global.common.enums.ErrorMessage;
 import com.dayangsung.melting.global.common.service.AwsS3Service;
 import com.dayangsung.melting.global.exception.BusinessException;
@@ -39,8 +44,10 @@ public class MemberService {
 	private final AwsS3Service awsS3Service;
 	private final MemberRepository memberRepository;
 	private final SongRepository songRepository;
+	private final AlbumService albumService;
 	private final LikesService likesService;
 	private final HashtagService hashtagService;
+	private final SongService songService;
 
 	public Boolean validateNickname(String nickname) {
 		return !memberRepository.existsByNickname(nickname);
@@ -91,38 +98,43 @@ public class MemberService {
 		CookieUtil.deleteCookie(request, response, "refresh_token");
 	}
 
-	public MemberSongResponseDto getMemberSongs(Long memberId) {
-		Member member = memberRepository.findById(memberId)
+	public MemberSongResponseDto getMemberSongs(String email) {
+		Member member = memberRepository.findByEmail(email)
 			.orElseThrow(() -> new BusinessException(ErrorMessage.MEMBER_NOT_FOUND));
 
-		List<Song> memberSongs = songRepository.findByMemberIdAndIsDeletedFalse(member.getId());
+		List<Song> memberSongs = songRepository.findByMemberId(member.getId());
 
-		Map<OriginalSong, List<Song>> groupedSongs = memberSongs.stream()
-			.collect(Collectors.groupingBy(Song::getOriginalSong));
-
-		List<SongListDto> mySongList = groupedSongs.entrySet().stream()
+		List<SongListDto> mySongList = memberSongs.stream()
+			.collect(Collectors.groupingBy(Song::getOriginalSong))
+			.entrySet().stream()
 			.map(entry -> {
 				OriginalSong originalSong = entry.getKey();
-				List<Song> songs = entry.getValue();
-
-				List<SongMypageDto> songMypageDtoList = songs.stream()
+				List<SongMypageDto> songDtos = entry.getValue().stream()
 					.map(song -> SongMypageDto.builder()
 						.songId(song.getId())
 						.albumCoverImageUrl(song.getAlbum() != null ? song.getAlbum().getAlbumCoverImageUrl() :
-							awsS3Service.getDefaultSongCoverImageUrl())
+							awsS3Service.getDefaultCoverImageUrl())
 						.songType(song.getSongType())
 						.likeCount(likesService.getSongLikesCount(song.getId()))
-						.isLiked(likesService.isLikedBySongAndMember(song.getId(), memberId))
+						.isLiked(likesService.isLikedBySongAndMember(song.getId(), member.getId()))
+						.isCreated(!song.getSongUrl().isEmpty())
+						.createdAt(song.getCreatedAt())
 						.build())
+					.sorted(Comparator.comparing(SongMypageDto::songType))
 					.collect(Collectors.toList());
 
-				return SongListDto.of(originalSong, songMypageDtoList);
+				return SongListDto.of(originalSong, songDtos);
 			})
+			.sorted(Comparator.comparing(
+				dto -> dto.songList().stream()
+					.map(SongMypageDto::createdAt)
+					.max(LocalDateTime::compareTo)
+					.orElseThrow(),
+				Comparator.reverseOrder()
+			))
 			.collect(Collectors.toList());
 
-		boolean isPossibleAiCover = member.getCoverCount() >= 3;
-
-		return MemberSongResponseDto.of(mySongList, isPossibleAiCover);
+		return MemberSongResponseDto.of(mySongList, member.isAiCoverEnabled());
 	}
 
 	public List<String> getMemberHashtags(String email) {
@@ -173,5 +185,23 @@ public class MemberService {
 			member.enableAiCover();
 			memberRepository.save(member);
 		}
+	}
+
+	public AlbumMyPageResponseDto getMemberAlbums(String email, int sort, int page, int size) {
+		Member member = memberRepository.findByEmail(email)
+			.orElseThrow(() -> new BusinessException(ErrorMessage.MEMBER_NOT_FOUND));
+		return albumService.getMemberAlbums(member.getId(), sort, page, size);
+	}
+
+	public AlbumMyPageResponseDto getMemberLikesAlbums(String email, int sort, int page, int size) {
+		Member member = memberRepository.findByEmail(email)
+			.orElseThrow(() -> new BusinessException(ErrorMessage.MEMBER_NOT_FOUND));
+		return albumService.getMemberLikesAlbums(member.getId(), sort, page, size);
+	}
+
+	public SongLikesPageResponseDto getMemberLikesSongs(String email, int sort, int page, int size) {
+		Member member = memberRepository.findByEmail(email)
+			.orElseThrow(() -> new BusinessException(ErrorMessage.MEMBER_NOT_FOUND));
+		return songService.getMemberLikesSongs(member.getId(), sort, page, size);
 	}
 }

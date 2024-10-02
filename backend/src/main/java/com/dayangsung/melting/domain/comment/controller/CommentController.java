@@ -1,7 +1,5 @@
 package com.dayangsung.melting.domain.comment.controller;
 
-import java.util.List;
-
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,7 +11,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.dayangsung.melting.domain.auth.CustomOAuth2User;
 import com.dayangsung.melting.domain.comment.dto.request.CommentRequestDto;
+import com.dayangsung.melting.domain.comment.dto.response.CommentPageResponseDto;
 import com.dayangsung.melting.domain.comment.dto.response.CommentResponseDto;
 import com.dayangsung.melting.domain.comment.service.CommentService;
 import com.dayangsung.melting.global.common.response.ApiResponse;
@@ -29,10 +29,13 @@ public class CommentController {
 	private final CommentService commentService;
 
 	@GetMapping
-	public ApiResponse<List<CommentResponseDto>> getAllComments(@PathVariable Long albumId,
-		@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "25") int size) {
-		List<CommentResponseDto> commentResponseDtoList =
-			commentService.getAllComments(albumId, page, size);
+	public ApiResponse<CommentPageResponseDto> getAllComments(
+		@PathVariable Long albumId,
+		@RequestParam(defaultValue = "0") int page,
+		@RequestParam(defaultValue = "10") int size,
+		@AuthenticationPrincipal CustomOAuth2User customOAuth2User) {
+		CommentPageResponseDto commentResponseDtoList =
+			commentService.getAllComments(albumId, customOAuth2User.getName(), page, size);
 		return ApiResponse.ok(commentResponseDtoList);
 	}
 

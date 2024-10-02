@@ -13,7 +13,7 @@ public record SongListDto(
 	String songTitle,
 	String artist,
 	List<SongMypageDto> songList
-	
+
 ) {
 	public static SongListDto of(OriginalSong originalSong, List<SongMypageDto> songList) {
 		return SongListDto.builder()

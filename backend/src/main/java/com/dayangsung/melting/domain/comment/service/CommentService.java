@@ -1,20 +1,20 @@
 package com.dayangsung.melting.domain.comment.service;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 
 import com.dayangsung.melting.domain.album.entity.Album;
 import com.dayangsung.melting.domain.album.repository.AlbumRepository;
+import com.dayangsung.melting.domain.comment.dto.response.CommentPageResponseDto;
 import com.dayangsung.melting.domain.comment.dto.response.CommentResponseDto;
 import com.dayangsung.melting.domain.comment.entity.Comment;
 import com.dayangsung.melting.domain.comment.repository.CommentRepository;
 import com.dayangsung.melting.domain.member.entity.Member;
 import com.dayangsung.melting.domain.member.repository.MemberRepository;
+import com.dayangsung.melting.global.common.enums.ErrorMessage;
+import com.dayangsung.melting.global.exception.BusinessException;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -28,22 +28,20 @@ public class CommentService {
 	private final AlbumRepository albumRepository;
 	private final MemberRepository memberRepository;
 
-	public List<CommentResponseDto> getAllComments(Long albumId, int page, int size) {
+	public CommentPageResponseDto getAllComments(Long albumId, String email, int page, int size) {
+		Member member = memberRepository.findByEmail(email)
+			.orElseThrow(() -> new BusinessException(ErrorMessage.MEMBER_NOT_FOUND));
 		Pageable pageable = PageRequest.of(page, size);
-		Slice<Comment> commentList =
-			commentRepository.findByAlbumIdAndNotDeleted(albumId, pageable);
-		return commentList.stream()
-			.map(comment -> CommentResponseDto.of(
-				comment,
-				comment.getMember().getProfileImageUrl(),
-				comment.getMember().getNickname()
-			))
-			.collect(Collectors.toList());
+		Page<Comment> commentPage = commentRepository.findByAlbumIdAndNotDeleted(albumId, pageable);
+		Page<CommentResponseDto> commentResponse =
+			commentPage.map(comment -> CommentResponseDto.of(comment, isMyComment(comment, member.getId())));
+		return CommentPageResponseDto.of(commentResponse);
 	}
 
 	public CommentResponseDto writeComment(Long albumId, String email, String content) {
+		Member member = memberRepository.findByEmail(email)
+			.orElseThrow(() -> new BusinessException(ErrorMessage.MEMBER_NOT_FOUND));
 		Album album = albumRepository.getReferenceById(albumId);
-		Member member = memberRepository.findByEmail(email).orElseThrow(RuntimeException::new);
 		Comment comment = commentRepository.save(
 			Comment.builder()
 				.album(album)
@@ -53,33 +51,28 @@ public class CommentService {
 		if (!album.getComments().contains(comment)) {
 			album.addComment(comment);
 		}
-		return CommentResponseDto.of(
-			comment,
-			comment.getMember().getProfileImageUrl(),
-			comment.getMember().getNickname()
-		);
+		return CommentResponseDto.of(comment, isMyComment(comment, member.getId()));
 	}
-
-	// 아래 email들은 추후 메소드 시큐리티 적용할 때 사용할 예정
+	
 	public CommentResponseDto modifyComment(Long commentId, String email, String content) {
+		Member member = memberRepository.findByEmail(email)
+			.orElseThrow(() -> new BusinessException(ErrorMessage.MEMBER_NOT_FOUND));
 		Comment comment = commentRepository.getReferenceById(commentId);
 		comment.modifyContent(content);
 		commentRepository.save(comment);
-		return CommentResponseDto.of(
-			comment,
-			comment.getMember().getProfileImageUrl(),
-			comment.getMember().getNickname()
-		);
+		return CommentResponseDto.of(comment, isMyComment(comment, member.getId()));
 	}
 
 	public CommentResponseDto deleteComment(Long commentId, String email) {
+		Member member = memberRepository.findByEmail(email)
+			.orElseThrow(() -> new BusinessException(ErrorMessage.MEMBER_NOT_FOUND));
 		Comment comment = commentRepository.getReferenceById(commentId);
 		comment.deleteComment();
 		commentRepository.save(comment);
-		return CommentResponseDto.of(
-			comment,
-			comment.getMember().getProfileImageUrl(),
-			comment.getMember().getNickname()
-		);
+		return CommentResponseDto.of(comment, isMyComment(comment, member.getId()));
+	}
+
+	private Boolean isMyComment(Comment comment, Long memberId) {
+		return comment.getMember().getId().equals(memberId);
 	}
 }

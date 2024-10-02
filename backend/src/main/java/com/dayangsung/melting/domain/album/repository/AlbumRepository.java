@@ -24,7 +24,19 @@ public interface AlbumRepository extends JpaRepository<Album, Long> {
 
 	@Query("SELECT a FROM Album a JOIN a.hashtags ah WHERE a.isDeleted = false AND a.isPublic = true AND ah.hashtag.content LIKE %:keyword%")
 	Page<Album> findByHashtagContentContaining(@Param("keyword") String keyword, Pageable pageable);
-	
+
 	@Query("SELECT a FROM Album a JOIN a.genres ag WHERE a.isDeleted = false AND a.isPublic = true AND ag.genre.content LIKE %:keyword%")
 	Page<Album> findByGenreNameContaining(@Param("keyword") String keyword, Pageable pageable);
+
+	@Query("SELECT a FROM Album a WHERE a.member.id = :memberId AND a.isDeleted = false ORDER BY a.createdAt DESC")
+	Page<Album> findByMemberIdAndOrderByCreatedAtDesc(@Param("memberId") Long memberId, Pageable pageable);
+
+	@Query("SELECT a FROM Album a LEFT JOIN a.likesAlbums la WHERE a.member.id = :memberId AND a.isDeleted = false GROUP BY a.id ORDER BY COUNT(la) DESC")
+	Page<Album> findByMemberIdAndOrderByLikesCountDesc(@Param("memberId") Long memberId, Pageable pageable);
+
+	@Query("SELECT a FROM Album a JOIN a.likesAlbums la WHERE la.member.id = :memberId AND a.isDeleted = false AND a.isPublic = true ORDER BY a.createdAt DESC")
+	Page<Album> findLikedAlbumsByMemberIdOrderByCreatedAtDesc(@Param("memberId") Long memberId, Pageable pageable);
+
+	@Query("SELECT a FROM Album a JOIN a.likesAlbums la WHERE la.member.id = :memberId AND a.isDeleted = false AND a.isPublic = true GROUP BY a.id ORDER BY COUNT(la) DESC")
+	Page<Album> findLikedAlbumsByMemberIdOrderByLikesCountDesc(@Param("memberId") Long memberId, Pageable pageable);
 }
