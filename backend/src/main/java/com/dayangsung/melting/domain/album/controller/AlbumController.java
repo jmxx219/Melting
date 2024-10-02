@@ -18,6 +18,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.dayangsung.melting.domain.album.dto.request.AlbumCreateRequestDto;
 import com.dayangsung.melting.domain.album.dto.request.AlbumUpdateRequestDto;
 import com.dayangsung.melting.domain.album.dto.response.AlbumDetailsResponseDto;
+import com.dayangsung.melting.domain.album.dto.response.AlbumRankingResponseDto;
 import com.dayangsung.melting.domain.album.dto.response.AlbumSearchPageResponseDto;
 import com.dayangsung.melting.domain.album.service.AlbumService;
 import com.dayangsung.melting.domain.auth.CustomOAuth2User;
@@ -97,6 +98,12 @@ public class AlbumController {
 	@GetMapping("/genres")
 	public ApiResponse<List<GenreResponseDto>> getAllGenres() {
 		return ApiResponse.ok(genreService.findAll());
+	}
+
+	@GetMapping("/steady")
+	public ApiResponse<List<AlbumRankingResponseDto>> getSteadyAlbums() {
+		List<AlbumRankingResponseDto> steadyAlbums = albumService.getSteadyAlbums();
+		return ApiResponse.ok(steadyAlbums);
 	}
 
 }
