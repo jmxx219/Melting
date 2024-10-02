@@ -9,7 +9,6 @@ import java.util.stream.Collectors;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.MediaType;
@@ -28,10 +27,10 @@ import com.dayangsung.melting.domain.member.repository.MemberRepository;
 import com.dayangsung.melting.domain.originalsong.entity.OriginalSong;
 import com.dayangsung.melting.domain.originalsong.repository.OriginalSongRepository;
 import com.dayangsung.melting.domain.song.dto.response.SongDetailsResponseDto;
-import com.dayangsung.melting.domain.song.dto.response.SongSearchPageResponseDto;
-import com.dayangsung.melting.domain.song.dto.response.SongSearchResponseDto;
 import com.dayangsung.melting.domain.song.dto.response.SongLikesPageResponseDto;
 import com.dayangsung.melting.domain.song.dto.response.SongLikesResponseDto;
+import com.dayangsung.melting.domain.song.dto.response.SongSearchPageResponseDto;
+import com.dayangsung.melting.domain.song.dto.response.SongSearchResponseDto;
 import com.dayangsung.melting.domain.song.entity.Song;
 import com.dayangsung.melting.domain.song.enums.SongType;
 import com.dayangsung.melting.domain.song.repository.SongRepository;
@@ -197,6 +196,7 @@ public class SongService {
 
 	private String convertGender(Gender gender) {
 		return gender.getGender().toUpperCase();
+	}
 
 	public SongSearchPageResponseDto getSongsForAlbumCreation(String email, String keyword, int page, int size) {
 		Member member = memberRepository.findByEmail(email)
