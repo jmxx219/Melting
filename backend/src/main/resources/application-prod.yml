@@ -56,9 +56,9 @@ spring:
       max-request-size: 20MB
   jwt:
     secret: ${JWT_SECRET}
-    
+
 fastapi:
-  baseUrl: http://localhost:8000
+  baseUrl: ${FASTAPI_BASEURL}
 
 logging:
   level:
