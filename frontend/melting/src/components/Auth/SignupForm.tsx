@@ -86,9 +86,9 @@ export default function SignupForm() {
           multipartFile: profileImageFile || undefined,
           memberInitRequestDto: memberInitRequestDto,
         }
-
-        const response = await userApi.initMemberInfo(payload)
-        console.log('회원 정보 초기화 성공:', response)
+        await userApi.initMemberInfo(payload)
+        // const response = await userApi.initMemberInfo(payload)
+        // console.log('회원 정보 초기화 성공:', response)
         navigate('/main')
       } catch (error) {
         console.error('회원 정보 초기화 중 오류 발생:', error)
