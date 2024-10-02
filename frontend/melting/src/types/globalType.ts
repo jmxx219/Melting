@@ -18,3 +18,16 @@ export interface ErrorResponse {
     | 'ALBUM_COVER_IMAGE_BLANK_ERROR'
     | 'ALBUM_SONGS_EMPTY_ERROR'
 }
+
+export interface ApiResponseInteger {
+  status?: string
+  /** @format int32 */
+  data?: number
+  errorMessage?: string
+}
+
+export interface ApiResponseString {
+  status?: string
+  data?: string
+  errorMessage?: string
+}
