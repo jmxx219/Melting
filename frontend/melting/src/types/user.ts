@@ -18,15 +18,9 @@ export interface MemberInitRequestDto {
   gender?: string
 }
 
-export interface ApiResponseMemberResponseDto {
-  status?: string
-  data?: MemberResponseDto
-  errorMessage?: string
-}
-
 export interface MemberResponseDto {
   nickname?: string
-  profile_image_url?: string
+  profileImageUrl?: string
 }
 
 export interface ApiResponseBoolean {
@@ -79,7 +73,7 @@ export interface MemberUpdateRequestDto {
 
 export interface UpdateMemberInfoPayload {
   /** @format binary */
-  multipartFile: File
+  multipartFile: File | null
   memberUpdateRequestDto: MemberUpdateRequestDto
 }
 
