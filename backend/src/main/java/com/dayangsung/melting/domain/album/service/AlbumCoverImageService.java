@@ -26,14 +26,17 @@ public class AlbumCoverImageService {
 	@Transactional
 	public String createAiCoverImage(Long albumId, List<OriginalSongAiResponseDto> originalSongs) throws IOException {
 		String[] result = openAiImageService.createAiCoverImage(originalSongs);
-		String url = awsS3Service.uploadBase64ImageToS3(result[0], result[1]);
-		// TODO: DB에 저장 시점 프론트와 논의 후 수정
+		// // S3에 저장할 시
+		// String url = awsS3Service.uploadBase64ImageToS3(result[0], result[1]);
+		// base64 반환 시
+		String base64Image = result[0];
+
+		// TODO: DB에 저장 로직 검토
 		// saveAlbumCoverImage(albumId, result[0], result[1]);
-		return url;
+		return base64Image;
 	}
 
 	private void saveAlbumCoverImage(Long albumId, String albumCoverImageUrl, String fileName) {
-		// TODO: DB에 저장 필요한 부분 있는지 검토
 
 		// Album에 AI album cover image 저장
 		Optional<Album> optionalAlbum = albumRepository.findById(albumId);
