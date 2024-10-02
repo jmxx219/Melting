@@ -144,16 +144,26 @@ public class SongService {
 			throw new RuntimeException();
 		}
 
-		Song song = Song.builder()
-			.originalSong(originalSong)
-			.member(member)
-			.songType(SongType.AICOVER)
-			.songUrl("")
-			.build();
+		Song song = songRepository.findByMemberAndOriginalSongAndSongType(member, originalSong, SongType.AICOVER)
+			.orElse(null);
+
+		boolean isNewSong = false;
+
+		if (song == null) {
+			song = Song.builder()
+				.originalSong(originalSong)
+				.member(member)
+				.songType(SongType.AICOVER)
+				.songUrl("")
+				.build();
+			isNewSong = true;
+		} else {
+			song.updateSongUrl("");
+		}
 
 		Song savedSong = songRepository.save(song);
 
-		log.info("Created new Song with ID: {}", savedSong.getId());
+		log.info("{} Song with ID: {}", isNewSong ? "Created new" : "Updated existing", savedSong.getId());
 
 		Map<String, Object> requestBody = Map.of(
 			"song_id", savedSong.getId().toString(),
