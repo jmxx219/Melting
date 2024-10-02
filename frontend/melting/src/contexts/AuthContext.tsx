@@ -1,4 +1,10 @@
-import { createContext, useContext, useState, ReactNode } from 'react'
+import {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  ReactNode,
+} from 'react'
 import { useQueryClient } from '@tanstack/react-query'
 
 interface AuthContextType {
@@ -10,8 +16,17 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
-  const [isLogin, setIsLogin] = useState<boolean>(false)
+  const [isLogin, setIsLogin] = useState<boolean>(() => {
+    // 로컬 스토리지에서 로그인 상태를 가져옴
+    const storedLogin = localStorage.getItem('isLogin')
+    return storedLogin === 'true'
+  })
   const queryClient = useQueryClient()
+
+  useEffect(() => {
+    // 로그인 상태가 변경될 때마다 로컬 스토리지에 저장
+    localStorage.setItem('isLogin', String(isLogin))
+  }, [isLogin])
 
   const login = () => {
     setIsLogin(true)
