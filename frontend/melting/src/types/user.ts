@@ -13,12 +13,6 @@ export interface MemberUpdateRequestDto {
   nickname?: string
 }
 
-export interface ApiResponseString {
-  status?: string
-  data?: string
-  errorMessage?: string
-}
-
 export interface MemberInitRequestDto {
   nickname?: string
   gender?: string
@@ -75,7 +69,7 @@ export type LogoutData = ApiResponseVoid
 
 export type LogoutError = ErrorResponse
 
-export type GetMemberInfoData = ApiResponseMemberResponseDto
+export type GetMemberInfoData = MemberResponseDto
 
 export type GetMemberInfoError = ErrorResponse
 

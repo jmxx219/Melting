@@ -135,3 +135,19 @@ export type AlbumCommentType = {
   profileImg: string
   isMy: boolean
 }
+
+export interface ApiResponseListGenreResponseDto {
+  status?: string
+  data?: GenreResponseDto[]
+  errorMessage?: string
+}
+
+export interface GenreResponseDto {
+  /** @format int64 */
+  id?: number
+  content?: string
+}
+
+export type GetAllGenresData = ApiResponseListGenreResponseDto
+
+export type GetAllGenresError = ErrorResponse

@@ -1,17 +1,25 @@
-import { createAxiosInstance } from './axiosInstance'
 import {
+  createAxiosInstance,
+  createApi,
+  ApiResponse,
+  CustomError,
+} from './axiosInstance'
+import {
+  AlbumCreateRequestDto,
   AddAlbumLikesData,
   CommentRequestDto,
   CreateAlbumData,
   DeleteAlbumLikesData,
+  GenreResponseDto,
   GetAlbumLikesCountData,
   GetAlbumsInCommunityMainPageData,
   GetAllCommentsData,
+  GetAllGenresData,
   WriteCommentData,
 } from '@/types/album.ts'
-import { AlbumCreateRequestDto } from '@/typeApis/data-contracts.ts'
 
-const axiosInstance = createAxiosInstance('albums')
+const instance = createAxiosInstance('albums')
+const api = createApi<ApiResponse>(instance)
 
 export const albumApi = {
   // 커뮤니티 메인 페이지의 앨범 목록 가져오기
@@ -20,7 +28,7 @@ export const albumApi = {
   }) => {
     try {
       const response =
-        await axiosInstance.get<GetAlbumsInCommunityMainPageData>('/', {
+        await instance.get<GetAlbumsInCommunityMainPageData>('/', {
           params: query,
         })
       return response.data
@@ -33,7 +41,7 @@ export const albumApi = {
   // 앨범 생성
   createAlbum: async (data: AlbumCreateRequestDto) => {
     try {
-      const response = await axiosInstance.post<CreateAlbumData>('/', data)
+      const response = await instance.post<CreateAlbumData>('/', data)
       return response.data
     } catch (error) {
       console.error('앨범 생성 중 오류 발생:', error)
@@ -44,7 +52,7 @@ export const albumApi = {
   // 앨범 좋아요 수 가져오기
   getAlbumLikesCount: async (albumId: number) => {
     try {
-      const response = await axiosInstance.get<GetAlbumLikesCountData>(
+      const response = await instance.get<GetAlbumLikesCountData>(
         `/${albumId}/likes`,
       )
       return response.data
@@ -57,7 +65,7 @@ export const albumApi = {
   // 앨범 좋아요 추가
   addAlbumLikes: async (albumId: number) => {
     try {
-      const response = await axiosInstance.post<AddAlbumLikesData>(
+      const response = await instance.post<AddAlbumLikesData>(
         `/${albumId}/likes`,
       )
       return response.data
@@ -70,7 +78,7 @@ export const albumApi = {
   // 앨범 좋아요 삭제
   deleteAlbumLikes: async (albumId: number) => {
     try {
-      const response = await axiosInstance.delete<DeleteAlbumLikesData>(
+      const response = await instance.delete<DeleteAlbumLikesData>(
         `/${albumId}/likes`,
       )
       return response.data
@@ -89,7 +97,7 @@ export const albumApi = {
     },
   ) => {
     try {
-      const response = await axiosInstance.get<GetAllCommentsData>(
+      const response = await instance.get<GetAllCommentsData>(
         `/${albumId}/comments`,
         {
           params: query,
@@ -105,7 +113,7 @@ export const albumApi = {
   // 앨범에 댓글 작성
   writeComment: async (albumId: number, data: CommentRequestDto) => {
     try {
-      const response = await axiosInstance.post<WriteCommentData>(
+      const response = await instance.post<WriteCommentData>(
         `/${albumId}/comments`,
         data,
       )
@@ -113,6 +121,20 @@ export const albumApi = {
     } catch (error) {
       console.error('댓글 작성 중 오류 발생:', error)
       throw error
+    }
+  },
+
+  getAllGenres: async (): Promise<GenreResponseDto[]> => {
+    try {
+      const response = await api.get<GetAllGenresData>('/genres')
+      if (response.data && Array.isArray(response.data)) {
+        return response.data
+      } else {
+        return [] // 데이터가 없거나 형식이 맞지 않으면 빈 배열 반환
+      }
+    } catch (error) {
+      console.error('장르 목록 가져오기 오류:', error)
+      throw error as CustomError
     }
   },
 }
