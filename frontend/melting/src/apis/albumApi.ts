@@ -27,10 +27,12 @@ export const albumApi = {
     sort?: 'LATEST' | 'POPULAR'
   }) => {
     try {
-      const response =
-        await instance.get<GetAlbumsInCommunityMainPageData>('/', {
+      const response = await instance.get<GetAlbumsInCommunityMainPageData>(
+        '/',
+        {
           params: query,
-        })
+        },
+      )
       return response.data
     } catch (error) {
       console.error('앨범 목록을 가져오는 중 오류 발생:', error)

@@ -202,10 +202,25 @@ export interface ApiResponseSongDetailsResponseDto {
   errorMessage?: string
 }
 
-export interface ApiResponsePageOriginalSongSearchResponseDto {
+export interface ApiResponseOriginalSongSearchPageResponseDto {
   status?: string
-  data?: PageOriginalSongSearchResponseDto
+  data?: OriginalSongSearchPageResponseDto
   errorMessage?: string
+}
+
+export interface OriginalSongSearchPageResponseDto {
+  originalSongPage?: OriginalSongSearchResponseDto[]
+  isLast?: boolean
+  /** @format int32 */
+  pageNumber?: number
+  /** @format int32 */
+  pageSize?: number
+  /** @format int32 */
+  totalPages?: number
+  /** @format int64 */
+  totalElements?: number
+  /** @format int32 */
+  numberOfElements?: number
 }
 
 export interface OriginalSongSearchResponseDto {
@@ -214,43 +229,6 @@ export interface OriginalSongSearchResponseDto {
   title?: string
   artist?: string
   coverImageUrl?: string
-}
-
-export interface PageOriginalSongSearchResponseDto {
-  /** @format int32 */
-  totalPages?: number
-  /** @format int64 */
-  totalElements?: number
-  first?: boolean
-  last?: boolean
-  /** @format int32 */
-  size?: number
-  content?: OriginalSongSearchResponseDto[]
-  /** @format int32 */
-  number?: number
-  sort?: SortObject
-  /** @format int32 */
-  numberOfElements?: number
-  pageable?: PageableObject
-  empty?: boolean
-}
-
-export interface PageableObject {
-  /** @format int64 */
-  offset?: number
-  sort?: SortObject
-  paged?: boolean
-  /** @format int32 */
-  pageNumber?: number
-  /** @format int32 */
-  pageSize?: number
-  unpaged?: boolean
-}
-
-export interface SortObject {
-  empty?: boolean
-  sorted?: boolean
-  unsorted?: boolean
 }
 
 export interface ApiResponseOriginalSongResponseDto {
@@ -298,7 +276,7 @@ export interface SongMypageDto {
   isLiked?: boolean
   isCreated?: boolean
   /** @format date-time */
-  createdAt?: string
+  lastModifiedAt?: string
 }
 
 export interface ApiResponseSongLikesPageResponseDto {
@@ -355,6 +333,7 @@ export interface AlbumMyResponseDto {
   /** @format int64 */
   albumId?: number
   albumName?: string
+  albumCoverImageUrl?: string
   creatorNickname?: string
   /** @format date-time */
   createdAt?: string
@@ -555,7 +534,7 @@ export type GetSongDetailsData = ApiResponseSongDetailsResponseDto
 
 export type GetSongDetailsError = ErrorResponse
 
-export type GetSearchPageData = ApiResponsePageOriginalSongSearchResponseDto
+export type GetSearchPageData = ApiResponseOriginalSongSearchPageResponseDto
 
 export type GetSearchPageError = ErrorResponse
 

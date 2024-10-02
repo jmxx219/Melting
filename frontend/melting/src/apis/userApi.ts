@@ -13,6 +13,12 @@ import {
   UpdateMemberInfoPayload,
   UpdateMemberInfoData,
   MemberResponseDto,
+  GetMemberAlbumsData,
+  GetMemberLikesAlbumsData,
+  GetMemberAlbumsError,
+  GetMemberLikesAlbumsError,
+  AlbumMyPageResponseDto,
+  ApiResponseAlbumMyPageResponseDto,
 } from '@/types/user'
 
 const instance = createAxiosInstance('members')
@@ -107,5 +113,49 @@ export const userApi = {
       console.error('회원 정보 수정 오류:', error)
       throw error as CustomError
     }
+  },
+  getMemberAlbums: async (): Promise<AlbumMyPageResponseDto> => {
+    try {
+      const response = await api.get<GetMemberAlbumsData>('/me/albums')
+      // const response = dummyData
+      return response.data as AlbumMyPageResponseDto
+    } catch (error) {
+      console.error('회원 앨범 조회 오류:', error)
+      throw error as GetMemberAlbumsError
+    }
+  },
+  getMemberLikesAlbums: async (): Promise<AlbumMyPageResponseDto> => {
+    try {
+      const response =
+        await api.get<GetMemberLikesAlbumsData>('/me/likes/albums')
+      // const response = dummyData
+      return response.data as AlbumMyPageResponseDto
+    } catch (error) {
+      console.error('회원 좋아요한 앨범 조회 오류:', error)
+      throw error as GetMemberLikesAlbumsError
+    }
+  },
+}
+
+const dummyData: ApiResponseAlbumMyPageResponseDto = {
+  status: 'success',
+  data: {
+    albumInfoList: Array.from({ length: 20 }, (_, index) => ({
+      albumId: index + 1,
+      albumName: `더미 앨범 ${index + 1}`,
+      albumCoverImageUrl:
+        'https://image.bugsm.co.kr/album/images/200/40955/4095501.jpg?version=20240307012526.0',
+      creatorNickname: '노원핵주먹',
+      createdAt: `2024-09-${String(20 + index).padStart(2, '0')}T12:00:00.000Z`,
+      isPublic: true,
+      isLiked: index % 2 === 0, // 짝수는 좋아요 표시
+      likedCount: Math.floor(Math.random() * 100), // 랜덤 좋아요 수
+    })),
+    isLast: false,
+    pageNumber: 0,
+    pageSize: 10,
+    totalPages: 2, // 총 2 페이지
+    totalElements: 20,
+    numberOfElements: 20,
   },
 }

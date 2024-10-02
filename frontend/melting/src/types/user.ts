@@ -41,6 +41,41 @@ export interface ApiResponseMemberResponseDto {
   errorMessage?: string
 }
 
+export interface ApiResponseAlbumMyPageResponseDto {
+  status?: string
+  data?: AlbumMyPageResponseDto
+  errorMessage?: string
+}
+
+export interface AlbumMyPageResponseDto {
+  albumInfoList: AlbumMyResponseDto[]
+  isLast: boolean
+  /** @format int32 */
+  pageNumber: number
+  /** @format int32 */
+  pageSize: number
+  /** @format int32 */
+  totalPages: number
+  /** @format int64 */
+  totalElements: number
+  /** @format int32 */
+  numberOfElements: number
+}
+
+export interface AlbumMyResponseDto {
+  /** @format int64 */
+  albumId: number
+  albumName: string
+  albumCoverImageUrl: string
+  creatorNickname: string
+  /** @format date-time */
+  createdAt: string
+  isPublic: boolean
+  isLiked: boolean
+  /** @format int32 */
+  likedCount: number
+}
+
 export type ReissueData = ApiResponseString
 
 export type ReissueError = ErrorResponse
@@ -80,3 +115,11 @@ export interface UpdateMemberInfoPayload {
 export type UpdateMemberInfoData = ApiResponseMemberResponseDto
 
 export type UpdateMemberInfoError = ErrorResponse
+
+export type GetMemberAlbumsData = ApiResponseAlbumMyPageResponseDto
+
+export type GetMemberLikesAlbumsData = ApiResponseAlbumMyPageResponseDto
+
+export type GetMemberAlbumsError = ErrorResponse
+
+export type GetMemberLikesAlbumsError = ErrorResponse

@@ -5,20 +5,12 @@ import Heart from '@/components/Icon/Heart'
 import { X, Play } from 'lucide-react'
 import { formatLikeCount } from '@/utils/numberUtil'
 import ConfirmDialog from '@/components/Common/ConfirmDialog'
-
-interface AlbumData {
-  id: number
-  coverImage: string
-  albumName: string
-  artistName: string
-  isLiked: boolean
-  likeCount: number
-  releaseDate: string
-  isPublic: boolean
-}
+import { AlbumMyResponseDto } from '@/types/user'
+import { convertIsoToDotDate } from '@/utils/dateUtil'
+import { addAlbumLikes } from '@/apis/albumApi'
 
 interface MyAlbumProps {
-  album: AlbumData
+  album: AlbumMyResponseDto
   viewType: 'my' | 'liked'
 }
 
@@ -28,28 +20,29 @@ export default function MyAlbumContent({ album, viewType }: MyAlbumProps) {
   const [isPublic, setIsPublic] = useState(album.isPublic)
 
   const goToAlbumDetail = () => {
-    navigate(`/album/${album.id}`)
+    navigate(`/album/detail`, { state: album.albumId })
   }
 
   const goToPlayAlbum = (e: React.MouseEvent) => {
     e.stopPropagation()
-    // TODO: 앨범 재생 화면으로 이동
-    navigate(`/album/play`, { state: album.id })
+    navigate(`/album/play`, { state: album.albumId })
   }
 
   const toggleLike = (e: React.MouseEvent) => {
     e.stopPropagation()
     setIsLiked(!isLiked)
     // TODO: 좋아요 상태 업데이트 API 호출
+    // albumApi.addAlbumLikes(album.albumId)
   }
 
   const handleSwitchChange = (checked: boolean) => {
     setIsPublic(checked)
     // TODO: 공개/비공개 상태 업데이트 API 호출
   }
+
   const deleteAlbum = () => {
     // TODO: 앨범 삭제 API 호출
-    console.log('앨범 삭제: ', album.id)
+    console.log('앨범 삭제: ', album.albumId)
 
     if (viewType === 'my') {
       navigate('/mypage/my')
@@ -66,7 +59,7 @@ export default function MyAlbumContent({ album, viewType }: MyAlbumProps) {
     <div className="relative flex mb-4" onClick={goToAlbumDetail}>
       <div className="relative mr-2 w-24 h-24 flex-shrink-0">
         <img
-          src={album.coverImage}
+          src={album.albumCoverImageUrl}
           alt={album.albumName}
           className="absolute inset-0 w-full h-full rounded-lg object-cover"
         />
@@ -94,7 +87,7 @@ export default function MyAlbumContent({ album, viewType }: MyAlbumProps) {
           )}
         </div>
 
-        <div className="text-sm">{truncateText(album.artistName, 20)}</div>
+        <div className="text-sm">{truncateText(album.creatorNickname, 20)}</div>
         <div className="flex items-center space-x-2 text-sm">
           <button
             type="button"
@@ -108,18 +101,18 @@ export default function MyAlbumContent({ album, viewType }: MyAlbumProps) {
           </button>
           <span>
             {viewType === 'my'
-              ? album.likeCount.toLocaleString()
-              : formatLikeCount(album.likeCount)}
+              ? album.likedCount.toLocaleString()
+              : formatLikeCount(album.likedCount)}
           </span>
         </div>
 
         <div className="flex justify-between items-center text-sm text-gray-400">
-          <span>{album.releaseDate}</span>
+          <span>{convertIsoToDotDate(album.createdAt)}</span>
 
           {viewType === 'my' && (
             <div className="flex items-center space-x-2">
               <Switch
-                id={`album-${album.id}-switch`}
+                id={`album-${album.albumId}-switch`}
                 checked={isPublic}
                 onCheckedChange={handleSwitchChange}
                 onClick={(e) => e.stopPropagation()}
