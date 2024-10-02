@@ -1,5 +1,6 @@
 import { useEffect } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
+import { useAuth } from '@/contexts/AuthContext.tsx'
 
 const VITE_API_BASE_URL = import.meta.env.VITE_API_BASE_URL
 const VITE_LOCAL_URL = import.meta.env.VITE_LOCAL_URL
@@ -30,7 +31,9 @@ export default function OAuthRedirectHandler() {
   useEffect(() => {
     const params = new URLSearchParams(window.location.search)
     const init = params.get('init')
+    const { login } = useAuth()
 
+    login()
     if (init === 'false') {
       navigate('/signup')
     } else if (init === 'true') {

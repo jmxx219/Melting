@@ -3,6 +3,7 @@ import { Route, Routes } from 'react-router-dom'
 import { AlbumProvider } from '@/contexts/AlbumContext'
 import AlbumPlayMain from '@/pages/Album/AlbumPlayMain'
 import AlbumDetailMain from '@/pages/Album/AlbumDetailMain'
+import CommentMain from '@/pages/Album/CommentMain'
 
 const AlbumRegist = React.lazy(() => import('@/pages/Album/AlbumRegist'))
 const SongSelection = React.lazy(() => import('@/pages/Album/SongSelection'))
@@ -20,6 +21,7 @@ export default function AlbumRoutes() {
           <Route path="create/song-selection" element={<SongSelection />} />
           <Route path="play" element={<AlbumPlayMain />} />
           <Route path="detail" element={<AlbumDetailMain />}></Route>
+          <Route path="comment" element={<CommentMain />}></Route>
         </Routes>
       </Suspense>
     </AlbumProvider>
