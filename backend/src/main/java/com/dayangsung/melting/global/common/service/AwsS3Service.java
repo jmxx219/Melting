@@ -2,10 +2,12 @@ package com.dayangsung.melting.global.common.service;
 
 import static com.dayangsung.melting.global.common.enums.ErrorMessage.*;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
+import java.util.Base64;
 import java.util.List;
 import java.util.Objects;
 
@@ -16,6 +18,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.DeleteObjectRequest;
 import com.amazonaws.services.s3.model.ObjectMetadata;
+import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.dayangsung.melting.domain.member.entity.Member;
 import com.dayangsung.melting.domain.member.repository.MemberRepository;
 
@@ -134,4 +137,16 @@ public class AwsS3Service {
 	public void deleteFile(String fileName, String bucketFolderPath) {
 		amazonS3.deleteObject(new DeleteObjectRequest(bucket + bucketFolderPath, fileName));
 	}
+
+	public String uploadBase64ImageToS3(String base64Image, String fileName) {
+		byte[] imageBytes = Base64.getDecoder().decode(base64Image);
+		ByteArrayInputStream inputStream = new ByteArrayInputStream(imageBytes);
+		ObjectMetadata metadata = new ObjectMetadata();
+		metadata.setContentLength(imageBytes.length);
+		metadata.setContentType("image/png");
+
+		amazonS3.putObject(new PutObjectRequest(bucket, fileName, inputStream, metadata));
+		return CLOUDFRONTURL + "/" + fileName;
+	}
+
 }
