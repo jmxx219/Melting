@@ -21,7 +21,6 @@ public interface SongRepository extends JpaRepository<Song, Long> {
 
 	@Query("SELECT s FROM Song s " +
 		"WHERE s.album IS NULL " +
-		"AND s.isDeleted = false " +
 		"AND s.member.id = :memberId " +
 		"AND s.originalSong.title LIKE %:keyword%")
 	List<Song> findSongsForAlbumCreation(@Param("memberId") Long memberId, @Param("keyword") String keyword);
