@@ -107,6 +107,14 @@ export type WriteCommentData = ApiResponseCommentResponseDto
 
 export type WriteCommentError = ErrorResponse
 
+export type DeleteCommentData = ApiResponseCommentResponseDto
+
+export type DeleteCommentError = ErrorResponse
+
+export type ModifyCommentData = ApiResponseCommentResponseDto
+
+export type ModifyCommentError = ErrorResponse
+
 export type GetMemberInfoData = ApiResponseMemberResponseDto
 
 export type GetMemberInfoError = ErrorResponse
