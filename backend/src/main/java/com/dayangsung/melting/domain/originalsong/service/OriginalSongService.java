@@ -6,6 +6,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.dayangsung.melting.domain.originalsong.dto.response.OriginalSongResponseDto;
+import com.dayangsung.melting.domain.originalsong.dto.response.OriginalSongSearchPageResponseDto;
 import com.dayangsung.melting.domain.originalsong.dto.response.OriginalSongSearchResponseDto;
 import com.dayangsung.melting.domain.originalsong.entity.OriginalSong;
 import com.dayangsung.melting.domain.originalsong.repository.OriginalSongRepository;
@@ -20,10 +21,11 @@ public class OriginalSongService {
 
 	private final OriginalSongRepository originalSongRepository;
 
-	public Page<OriginalSongSearchResponseDto> getSearchPage(String keyword, int page, int size) {
+	public OriginalSongSearchPageResponseDto getSearchPage(String keyword, int page, int size) {
 		Pageable pageable = PageRequest.of(page, size);
-		Page<OriginalSong> originalSongPage = originalSongRepository.findByKeyword(keyword, pageable);
-		return originalSongPage.map(OriginalSongSearchResponseDto::of);
+		Page<OriginalSongSearchResponseDto> originalSongPage =
+			originalSongRepository.findByKeyword(keyword, pageable).map(OriginalSongSearchResponseDto::of);
+		return OriginalSongSearchPageResponseDto.of(originalSongPage);
 	}
 
 	public OriginalSongResponseDto getOriginalSongInfo(Long originalSongId) {
