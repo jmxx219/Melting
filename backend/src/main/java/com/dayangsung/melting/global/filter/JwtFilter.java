@@ -50,7 +50,7 @@ public class JwtFilter extends OncePerRequestFilter {
 			refreshToken = jwtUtil.createRefreshToken(email);
 			redisUtil.saveAccessToken(email, accessToken);
 			redisUtil.saveRefreshToken(email, refreshToken);
-			CookieUtil.setCookie(response, "access_token", refreshToken, 60 * 30);
+			CookieUtil.setCookie(response, "access_token", accessToken, 60 * 30);
 			CookieUtil.setCookie(response, "refresh_token", refreshToken, 60 * 60 * 24 * 7);
 		}
 		if (accessToken != null && refreshToken != null) {
