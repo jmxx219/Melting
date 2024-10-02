@@ -1,15 +1,36 @@
+import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+
 import { useAlbumContext } from '@/contexts/AlbumContext'
 import { Button } from '@/components/ui/button'
 import SubmitButton from '../Button/SubmitButton'
-import { genres, GenreType } from '@/types/constType'
+import { albumApi } from '@/apis/albumApi.ts'
+import { GenreResponseDto } from '@/types/album.ts'
 
 export default function GenreSelection() {
   const { selectedGenres, setSelectedGenres } = useAlbumContext()
   const navigate = useNavigate()
+  const [genres, setGenres] = useState<string[]>([])
 
-  const toggleGenre = (genre: GenreType) => {
-    setSelectedGenres((prev: GenreType[]): GenreType[] => {
+  useEffect(() => {
+    // getAllGenres API 호출
+    const fetchGenres = async () => {
+      try {
+        const data = await albumApi.getAllGenres()
+        const genreList = data.map(
+          (item: GenreResponseDto) => item.content ?? '',
+        )
+        setGenres(genreList)
+      } catch (error) {
+        console.error('장르 목록 가져오기 실패:', error)
+      }
+    }
+
+    fetchGenres()
+  }, [])
+
+  const toggleGenre = (genre: string) => {
+    setSelectedGenres((prev: string[]): string[] => {
       if (prev.includes(genre)) {
         return prev.filter((g) => g !== genre)
       } else if (prev.length < 3) {
@@ -33,7 +54,7 @@ export default function GenreSelection() {
               type="button"
               key={genre}
               variant={selectedGenres.includes(genre) ? 'default' : 'tag'}
-              onClick={() => toggleGenre(genre as GenreType)}
+              onClick={() => toggleGenre(genre)}
               className={`rounded-full ${
                 selectedGenres.includes(genre)
                   ? 'bg-primary-400 text-white' // 선택된 경우 배경은 primary, 글씨는 흰색
