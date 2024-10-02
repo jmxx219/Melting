@@ -1,7 +1,6 @@
 import { LikedSongType, Song } from './song'
 import { ErrorResponse, ApiResponseInteger } from '@/types/globalType.ts'
 import { ApiResponseMemberResponseDto } from '@/types/user.ts'
-import { Genre, Hashtag } from '@/typeApis/data-contracts.ts'
 
 export interface AlbumForm {
   tracks: Song[]
@@ -20,12 +19,13 @@ export interface BestAlbum {
 }
 
 export interface AlbumCreateRequestDto {
-  album_name: string
-  album_cover_image?: string
-  album_description?: string
-  songs: Song[]
-  hashtags?: Hashtag[]
-  genres?: Genre[]
+  albumName?: string
+  albumDescription?: string
+  songs?: number[]
+  /** @format int64 */
+  titleSongId?: number
+  genres?: number[]
+  hashtags?: string[]
 }
 
 export interface AlbumMainResponseDto {
@@ -143,7 +143,7 @@ export type AlbumCommentType = {
   content: string
   createdAt: string
   profileImg: string
-  isMy: boolean
+  isMyComment: boolean
 }
 
 export interface ApiResponseListGenreResponseDto {
