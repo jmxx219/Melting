@@ -1,6 +1,7 @@
 package com.dayangsung.melting.domain.song.repository;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -16,7 +17,7 @@ import com.dayangsung.melting.domain.song.enums.SongType;
 public interface SongRepository extends JpaRepository<Song, Long> {
 	List<Song> findByMemberId(Long memberId);
 
-	boolean existsByMemberAndOriginalSongAndSongType(Member member, OriginalSong originalSong, SongType songType);
+	Optional<Song> findByMemberAndOriginalSongAndSongType(Member member, OriginalSong originalSong, SongType songType);
 
 	@Query("SELECT s FROM Song s JOIN s.likesSongs ls WHERE ls.member.id = :memberId ORDER BY s.createdAt DESC")
 	Page<Song> findLikedSongsByMemberIdOrderByCreatedAtDesc(@Param("memberId") Long memberId, Pageable pageable);
