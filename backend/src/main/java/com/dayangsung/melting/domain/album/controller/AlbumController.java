@@ -22,7 +22,6 @@ import com.dayangsung.melting.domain.album.dto.response.AlbumSearchPageResponseD
 import com.dayangsung.melting.domain.album.service.AlbumService;
 import com.dayangsung.melting.domain.auth.CustomOAuth2User;
 import com.dayangsung.melting.domain.genre.dto.response.GenreResponseDto;
-import com.dayangsung.melting.domain.genre.service.GenreService;
 import com.dayangsung.melting.global.common.response.ApiResponse;
 
 import lombok.RequiredArgsConstructor;
@@ -35,7 +34,6 @@ import lombok.extern.slf4j.Slf4j;
 public class AlbumController {
 
 	private final AlbumService albumService;
-	private final GenreService genreService;
 
 	@GetMapping
 	public ApiResponse<AlbumSearchPageResponseDto> getAlbums(
@@ -96,7 +94,27 @@ public class AlbumController {
 
 	@GetMapping("/genres")
 	public ApiResponse<List<GenreResponseDto>> getAllGenres() {
-		return ApiResponse.ok(genreService.findAll());
+		List<GenreResponseDto> genreResponse = albumService.getAllGenres();
+		return ApiResponse.ok(genreResponse);
 	}
 
+	@GetMapping("/{albumId}/likes")
+	public ApiResponse<Integer> getAlbumLikesCount(@PathVariable Long albumId) {
+		Integer albumLikesCount = albumService.getAlbumLikesCount(albumId);
+		return ApiResponse.ok(albumLikesCount);
+	}
+
+	@PostMapping("/{albumId}/likes")
+	public ApiResponse<Integer> addAlbumLikes(@PathVariable Long albumId,
+		@AuthenticationPrincipal CustomOAuth2User customOAuth2User) {
+		Integer albumLikesCount = albumService.increaseAlbumLikes(albumId, customOAuth2User.getName());
+		return ApiResponse.ok(albumLikesCount);
+	}
+
+	@DeleteMapping("/{albumId}/likes")
+	public ApiResponse<Integer> deleteAlbumLikes(@PathVariable Long albumId,
+		@AuthenticationPrincipal CustomOAuth2User customOAuth2User) {
+		Integer albumLikesCount = albumService.decreaseAlbumLikes(albumId, customOAuth2User.getName());
+		return ApiResponse.ok(albumLikesCount);
+	}
 }

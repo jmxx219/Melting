@@ -6,6 +6,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -87,6 +88,26 @@ public class SongController {
 		SongSearchPageResponseDto responseDto =
 			songService.getSongsForAlbumCreation(customOAuth2User.getName(), keyword, page, size);
 		return ApiResponse.ok(responseDto);
+	}
+
+	@GetMapping("/{songId}/likes")
+	public ApiResponse<Integer> getSongLikesCount(@PathVariable Long songId) {
+		Integer songLikesCount = songService.getSongLikesCount(songId);
+		return ApiResponse.ok(songLikesCount);
+	}
+
+	@PostMapping("/{songId}/likes")
+	public ApiResponse<Integer> addSongLikes(@PathVariable Long songId,
+		@AuthenticationPrincipal CustomOAuth2User customOAuth2User) {
+		Integer songLikesCount = songService.increaseSongLikes(songId, customOAuth2User.getName());
+		return ApiResponse.ok(songLikesCount);
+	}
+
+	@DeleteMapping("/{songId}/likes")
+	public ApiResponse<Integer> deleteSongLikes(@PathVariable Long songId,
+		@AuthenticationPrincipal CustomOAuth2User customOAuth2User) {
+		Integer songLikesCount = songService.decreaseSongLikes(songId, customOAuth2User.getName());
+		return ApiResponse.ok(songLikesCount);
 	}
 
 	private boolean isAudioFile(MultipartFile file) {
