@@ -22,6 +22,9 @@ export const userApi = {
     const frm = new FormData()
     if (payload.multipartFile) {
       frm.append('multipartFile', payload.multipartFile)
+    } else {
+      // 빈 Blob 추가
+      frm.append('multipartFile', new Blob(), '')
     }
     frm.append(
       'memberInitRequestDto',

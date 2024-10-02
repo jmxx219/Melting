@@ -3,7 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom'
 import { useAuth } from '@/contexts/AuthContext.tsx'
 
 const VITE_API_BASE_URL = import.meta.env.VITE_API_BASE_URL
-const VITE_LOCAL_URL = import.meta.env.VITE_LOCAL_URL
+const VITE_REDIRECT_URL = import.meta.env.VITE_REDIRECT_URL
 
 export default function OAuthRedirectHandler() {
   const navigate = useNavigate()
@@ -17,7 +17,7 @@ export default function OAuthRedirectHandler() {
     }
 
     const redirectUrl = encodeURIComponent(
-      `${VITE_LOCAL_URL}/login/callback/${provider}`,
+      `${VITE_REDIRECT_URL}/login/callback/${provider}`,
     )
 
     fetch(
