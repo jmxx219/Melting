@@ -14,7 +14,7 @@ import com.dayangsung.melting.domain.song.entity.Song;
 import com.dayangsung.melting.domain.song.enums.SongType;
 
 public interface SongRepository extends JpaRepository<Song, Long> {
-	List<Song> findByMemberIdAndIsDeletedFalse(Long memberId);
+	List<Song> findByMemberId(Long memberId);
 
 	boolean existsByMemberAndOriginalSongAndSongType(Member member, OriginalSong originalSong, SongType songType);
 
