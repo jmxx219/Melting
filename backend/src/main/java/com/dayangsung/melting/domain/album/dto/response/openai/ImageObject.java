@@ -1,15 +1,9 @@
 package com.dayangsung.melting.domain.album.dto.response.openai;
 
 
-import lombok.Data;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
-/**
- * OpenAI API 형식과 일치하도록 작성하였음
- */
-
-@Data
-public class ImageObject {
-	String b64_json;
-	// String url;
-	String revised_prompt;
+public record ImageObject(
+		@JsonProperty("b64_json") String b64Json,
+		@JsonProperty("revised_prompt") String revisedPrompt) {
 }
