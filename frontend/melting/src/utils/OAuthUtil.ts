@@ -8,6 +8,7 @@ const VITE_LOCAL_URL = import.meta.env.VITE_LOCAL_URL
 export default function OAuthRedirectHandler() {
   const navigate = useNavigate()
   const { provider } = useParams<{ provider: string }>()
+  const { login } = useAuth()
 
   useEffect(() => {
     if (!provider) {
@@ -31,7 +32,6 @@ export default function OAuthRedirectHandler() {
   useEffect(() => {
     const params = new URLSearchParams(window.location.search)
     const init = params.get('init')
-    const { login } = useAuth()
 
     login()
     if (init === 'false') {
@@ -41,7 +41,7 @@ export default function OAuthRedirectHandler() {
     } else {
       console.error('Invalid redirect URL')
     }
-  }, [navigate])
+  }, [navigate, login])
 
   return null
 }
