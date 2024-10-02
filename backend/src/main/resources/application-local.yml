@@ -25,7 +25,7 @@ spring:
 
   data:
     redis:
-      host: localhost
+      host: j11a701.p.ssafy.io
       port: 6379
       redisson-prefix: redis://
 
