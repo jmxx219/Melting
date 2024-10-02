@@ -7,7 +7,7 @@ import com.dayangsung.melting.domain.song.enums.SongType;
 import lombok.Builder;
 
 @Builder
-public record SongMypageDto(
+public record SongMyPageDto(
 	Long songId,
 	String albumCoverImageUrl,
 	SongType songType,
@@ -17,5 +17,4 @@ public record SongMypageDto(
 	LocalDateTime createdAt
 
 ) {
-
 }
