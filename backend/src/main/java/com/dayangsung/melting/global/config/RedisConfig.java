@@ -10,6 +10,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.cache.RedisCacheConfiguration;
 import org.springframework.data.redis.cache.RedisCacheManager;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
+import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.listener.PatternTopic;
@@ -32,12 +33,19 @@ public class RedisConfig {
 	@Value("${spring.data.redis.port}")
 	private int port;
 
+	@Value("${spring.data.redis.password}")
+	private String password;
+
 	@Value("${spring.data.redis.redisson-prefix}")
 	private String redissonPrefix;
 
 	@Bean
 	public RedisConnectionFactory redisConnectionFactory() {
-		return new LettuceConnectionFactory(host, port);
+		RedisStandaloneConfiguration redisConfiguration = new RedisStandaloneConfiguration();
+		redisConfiguration.setHostName(host);
+		redisConfiguration.setPort(port);
+		redisConfiguration.setPassword(password);
+		return new LettuceConnectionFactory(redisConfiguration);
 	}
 
 	@Bean
