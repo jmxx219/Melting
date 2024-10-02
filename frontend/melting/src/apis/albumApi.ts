@@ -14,6 +14,8 @@ import {
   CommentResponseDto,
   GetAllCommentsError,
   GetAllGenresError,
+  ModifyCommentData,
+  DeleteCommentData,
 } from '@/types/album.ts'
 import { RequestParams } from '@/types/globalType.ts'
 
@@ -127,6 +129,37 @@ export const albumApi = {
       return response.data
     } catch (error) {
       console.error('댓글 작성 중 오류 발생:', error)
+      throw error
+    }
+  },
+
+  // 앨범 댓글 수정
+  modifyComment: async (
+    albumId: number,
+    commentId: number,
+    data: CommentRequestDto,
+  ) => {
+    try {
+      const response = await instance.patch<ModifyCommentData>(
+        `/${albumId}/comments/${commentId}`,
+        data,
+      )
+      return response.data
+    } catch (error) {
+      console.error('댓글 수정 중 오류 발생:', error)
+      throw error
+    }
+  },
+
+  // 앨범 댓글 삭제
+  deleteComment: async (albumId: number, commentId: number) => {
+    try {
+      const response = await instance.delete<DeleteCommentData>(
+        `/${albumId}/comments/${commentId}`,
+      )
+      return response.data
+    } catch (error) {
+      console.error('댓글 삭제 중 오류 발생:', error)
       throw error
     }
   },
