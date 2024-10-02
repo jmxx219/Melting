@@ -3,7 +3,7 @@ package com.dayangsung.melting.domain.member.dto;
 import java.util.List;
 
 import com.dayangsung.melting.domain.originalsong.entity.OriginalSong;
-import com.dayangsung.melting.domain.song.dto.SongMyResponseDto;
+import com.dayangsung.melting.domain.song.dto.SongMyPageDto;
 
 import lombok.Builder;
 
@@ -12,10 +12,10 @@ public record SongListDto(
 	Long originalSongId,
 	String songTitle,
 	String artist,
-	List<SongMyResponseDto> songList
+	List<SongMyPageDto> songList
 
 ) {
-	public static SongListDto of(OriginalSong originalSong, List<SongMyResponseDto> songList) {
+	public static SongListDto of(OriginalSong originalSong, List<SongMyPageDto> songList) {
 		return SongListDto.builder()
 			.originalSongId(originalSong.getId())
 			.songTitle(originalSong.getTitle())
