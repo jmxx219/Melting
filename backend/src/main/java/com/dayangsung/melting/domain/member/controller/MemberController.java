@@ -53,13 +53,14 @@ public class MemberController {
 	@PatchMapping("/init")
 	public ApiResponse<MemberResponseDto> initMemberInfo(
 		@RequestPart(required = false) MultipartFile multipartFile,
-		@RequestPart MemberInitRequestDto memberInitRequestDto) {
+		@RequestPart MemberInitRequestDto memberInitRequestDto,
+		@AuthenticationPrincipal CustomOAuth2User customOAuth2User) {
 		log.debug("member service nickname {}", memberInitRequestDto.nickname());
 		MemberResponseDto memberResponseDto =
 			memberService.initMemberInfo(multipartFile,
 				memberInitRequestDto.nickname(),
 				Gender.valueOf(memberInitRequestDto.gender().toUpperCase()),
-				"ssafy@ssafy.com");
+				customOAuth2User.getName());
 		return ApiResponse.ok(memberResponseDto);
 	}
 
