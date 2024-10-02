@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -19,6 +20,7 @@ import com.dayangsung.melting.domain.auth.CustomOAuth2User;
 import com.dayangsung.melting.domain.song.dto.request.AiCoverSongCreateRequestDto;
 import com.dayangsung.melting.domain.song.dto.request.MeltingSongCreateRequestDto;
 import com.dayangsung.melting.domain.song.dto.response.SongDetailsResponseDto;
+import com.dayangsung.melting.domain.song.dto.response.SongSearchPageResponseDto;
 import com.dayangsung.melting.domain.song.service.SongService;
 import com.dayangsung.melting.global.common.response.ApiResponse;
 
@@ -73,6 +75,17 @@ public class SongController {
 		@PathVariable Long songId,
 		@AuthenticationPrincipal CustomOAuth2User customOAuth2User) {
 		SongDetailsResponseDto responseDto = songService.getSongDetails(songId, customOAuth2User.getName());
+		return ApiResponse.ok(responseDto);
+	}
+
+	@GetMapping
+	public ApiResponse<SongSearchPageResponseDto> getSongsForAlbumCreation(
+		@RequestParam String keyword,
+		@RequestParam(defaultValue = "0") int page,
+		@RequestParam(defaultValue = "10") int size,
+		@AuthenticationPrincipal CustomOAuth2User customOAuth2User) {
+		SongSearchPageResponseDto responseDto =
+			songService.getSongsForAlbumCreation(customOAuth2User.getName(), keyword, page, size);
 		return ApiResponse.ok(responseDto);
 	}
 
