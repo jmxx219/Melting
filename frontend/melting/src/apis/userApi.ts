@@ -10,6 +10,9 @@ import {
   ValidateNicknameData,
   LogoutData,
   GetMemberInfoData,
+  UpdateMemberInfoPayload,
+  UpdateMemberInfoData,
+  MemberResponseDto,
 } from '@/types/user'
 
 const instance = createAxiosInstance('members')
@@ -71,6 +74,37 @@ export const userApi = {
       const response = await api.get<GetMemberInfoData>('')
       return response.data
     } catch (error) {
+      throw error as CustomError
+    }
+  },
+
+  updateMemberInfo: async (
+    payload: UpdateMemberInfoPayload,
+  ): Promise<MemberResponseDto> => {
+    const frm = new FormData()
+
+    if (payload.multipartFile) {
+      frm.append('multipartFile', payload.multipartFile)
+    } else {
+      frm.append('multipartFile', new Blob(), '')
+    }
+
+    frm.append(
+      'memberUpdateRequestDto',
+      new Blob([JSON.stringify(payload.memberUpdateRequestDto)], {
+        type: 'application/json',
+      }),
+    )
+
+    try {
+      const response = await api.patch<UpdateMemberInfoData>('', frm, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      })
+      return response.data
+    } catch (error) {
+      console.error('회원 정보 수정 오류:', error)
       throw error as CustomError
     }
   },
