@@ -118,7 +118,7 @@ public class MemberService {
 						.likeCount(likesService.getSongLikesCount(song.getId()))
 						.isLiked(likesService.isLikedBySongAndMember(song.getId(), member.getId()))
 						.isCreated(!song.getSongUrl().isEmpty())
-						.createdAt(song.getCreatedAt())
+						.lastModifiedAt(song.getLastModifiedAt())
 						.build())
 					.sorted(Comparator.comparing(SongMypageDto::songType))
 					.collect(Collectors.toList());
@@ -127,7 +127,7 @@ public class MemberService {
 			})
 			.sorted(Comparator.comparing(
 				dto -> dto.songList().stream()
-					.map(SongMypageDto::createdAt)
+					.map(SongMypageDto::lastModifiedAt)
 					.max(LocalDateTime::compareTo)
 					.orElseThrow(),
 				Comparator.reverseOrder()
