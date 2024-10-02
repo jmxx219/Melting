@@ -19,7 +19,10 @@ export default function AppRoutes() {
         <Suspense fallback={<Loading />}>
           <Routes>
             <Route path="/login" element={<LoginPage />} />
-            <Route path="/login/callback" element={<OAuthRedirectHandler />} />
+            <Route
+              path="/login/callback/:provider"
+              element={<OAuthRedirectHandler />}
+            />
             <Route path="/signup" element={<SignupPage />} />
             <Route element={<ProtectedRoute />}>
               <Route path="/main" element={<MainPage />} />

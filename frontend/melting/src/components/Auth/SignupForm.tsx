@@ -9,7 +9,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-import { ArrowRight, X } from 'lucide-react'
+import { ArrowRight } from 'lucide-react'
 import {
   InitMemberInfoPayload,
   MemberInitRequestDto,
@@ -27,7 +27,7 @@ const isValidNickname = (nickname: string): boolean => {
 export default function SignupForm() {
   const navigate = useNavigate()
   const [isDialogOpen, setIsDialogOpen] = useState(false)
-  const [dialogMessage, setDialogMessage] = useState('')
+  const [dialogMessages, setDialogMessages] = useState<string[]>([])
 
   const [profileImage, setProfileImage] = useState<string | null>(null)
   const [profileImageFile, setProfileImageFile] = useState<File | null>(null)
@@ -86,18 +86,23 @@ export default function SignupForm() {
           multipartFile: profileImageFile || undefined,
           memberInitRequestDto: memberInitRequestDto,
         }
-
-        const response = await userApi.initMemberInfo(payload)
-        console.log('회원 정보 초기화 성공:', response)
+        await userApi.initMemberInfo(payload)
+        // const response = await userApi.initMemberInfo(payload)
+        // console.log('회원 정보 초기화 성공:', response)
         navigate('/main')
       } catch (error) {
         console.error('회원 정보 초기화 중 오류 발생:', error)
-        setDialogMessage(
-          '회원 정보 초기화 중 오류가 발생했습니다. 다시 시도해주세요.',
-        )
+        setDialogMessages([
+          '회원 정보 초기화 중 오류가 발생했습니다.',
+          '다시 시도해주세요.',
+        ])
         setIsDialogOpen(true)
       }
     }
+  }
+
+  const handleCloseDialog = () => {
+    setIsDialogOpen(false)
   }
 
   return (
@@ -150,12 +155,13 @@ export default function SignupForm() {
           </div>
         </Button>
       </div>
+
       {isDialogOpen && (
         <AlertModal
-          title={'회원가입 오류'}
-          description={dialogMessage}
-          triggerText={<X size={22} className="text-primary-400" />}
-          triggerClassName="ml-4"
+          title="회원가입 오류"
+          messages={dialogMessages}
+          isOpen={isDialogOpen}
+          onClose={handleCloseDialog}
         />
       )}
     </div>

@@ -1,13 +1,16 @@
 import { createAxiosInstance } from '@/apis/axiosInstance.ts'
 import { ReissueData, ReissueError } from '@/types/user'
 
-const VITE_LOCAL_URL = import.meta.env.VITE_LOCAL_URL
+const VITE_REDIRECT_URL = import.meta.env.VITE_REDIRECT_URL
 const VITE_API_BASE_URL = import.meta.env.VITE_API_BASE_URL
 const axiosInstance = createAxiosInstance('members')
 
 export default function login(provider: 'kakao' | 'google') {
+  const redirectUrl = encodeURIComponent(
+    `${VITE_REDIRECT_URL}/login/callback/${provider}`,
+  )
   window.location.assign(
-    `${VITE_API_BASE_URL}/oauth2/authorize/${provider}?redirect_url=${VITE_LOCAL_URL}/login/callback`,
+    `${VITE_API_BASE_URL}/oauth2/authorize/${provider}?redirect_url=${redirectUrl}`,
   )
 }
 
