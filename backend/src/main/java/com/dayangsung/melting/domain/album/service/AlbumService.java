@@ -24,10 +24,12 @@ import com.dayangsung.melting.domain.album.dto.response.AlbumSearchResponseDto;
 import com.dayangsung.melting.domain.album.entity.Album;
 import com.dayangsung.melting.domain.album.enums.AlbumCategory;
 import com.dayangsung.melting.domain.album.repository.AlbumRepository;
+import com.dayangsung.melting.domain.genre.dto.response.GenreResponseDto;
 import com.dayangsung.melting.domain.genre.entity.AlbumGenre;
 import com.dayangsung.melting.domain.genre.entity.Genre;
 import com.dayangsung.melting.domain.genre.repository.AlbumGenreRepository;
 import com.dayangsung.melting.domain.genre.repository.GenreRepository;
+import com.dayangsung.melting.domain.genre.service.GenreService;
 import com.dayangsung.melting.domain.hashtag.entity.AlbumHashtag;
 import com.dayangsung.melting.domain.hashtag.entity.Hashtag;
 import com.dayangsung.melting.domain.hashtag.repository.AlbumHashtagRepository;
@@ -53,6 +55,7 @@ public class AlbumService {
 	private final MemberRepository memberRepository;
 	private final AlbumRepository albumRepository;
 	private final SongRepository songRepository;
+	private final GenreService genreService;
 	private final GenreRepository genreRepository;
 	private final AlbumGenreRepository albumGenreRepository;
 	private final HashtagRepository hashtagRepository;
@@ -249,5 +252,25 @@ public class AlbumService {
 			likesService.isLikedByAlbumAndMember(album.getId(), memberId),
 			likesService.getAlbumLikesCount(album.getId())));
 		return AlbumMyPageResponseDto.of(albumMyResponseDtoPage);
+	}
+
+	public List<GenreResponseDto> getAllGenres() {
+		return genreService.findAll();
+	}
+
+	public Integer getAlbumLikesCount(Long albumId) {
+		return likesService.getAlbumLikesCount(albumId);
+	}
+
+	public Integer increaseAlbumLikes(Long albumId, String email) {
+		Member member = memberRepository.findByEmail(email)
+			.orElseThrow(() -> new BusinessException(ErrorMessage.MEMBER_NOT_FOUND));
+		return likesService.increaseAlbumLikes(albumId, member.getId());
+	}
+
+	public Integer decreaseAlbumLikes(Long albumId, String email) {
+		Member member = memberRepository.findByEmail(email)
+			.orElseThrow(() -> new BusinessException(ErrorMessage.MEMBER_NOT_FOUND));
+		return likesService.decreaseAlbumLikes(albumId, member.getId());
 	}
 }
