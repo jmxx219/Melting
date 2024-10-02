@@ -58,7 +58,7 @@ spring:
     secret: ${JWT_SECRET}
 
 fastapi:
-  baseUrl: ${FASTAPI_BASEURL}
+  baseurl: ${FASTAPI_BASEURL}
 
 logging:
   level:
