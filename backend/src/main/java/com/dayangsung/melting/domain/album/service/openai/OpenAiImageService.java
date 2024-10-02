@@ -47,7 +47,7 @@ public class OpenAiImageService {
 		String content = jsonParsing(blockedResult);
 		Mono<String> imageResult = requestImageGeneration(content);
 
-		String fileName = albumImageUploadService.generateFileName("covers", ".png"); // 포맷을 PNG로 가정
+		String fileName = albumImageUploadService.generateFileName("image/generated_album_cover", ".png"); // 포맷을 PNG로 가정
 		String base64Image = albumImageUploadService.parseAiCoverImage(imageResult);
 
 		return new String[] {base64Image, fileName};
