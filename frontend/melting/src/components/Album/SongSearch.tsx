@@ -5,10 +5,15 @@ import { ArrowDown } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import SongItem from '@/components/Music/SongItem'
 import { useAlbumContext } from '@/contexts/AlbumContext'
-import { Song } from '@/types/song'
+import {
+  Song,
+  SongSearchPageResponseDto,
+  SongSearchResponseDto,
+} from '@/types/song'
 import { CoverType } from '@/types/constType'
 import SearchBar from '../Music/SearchBar'
 import MusicNote from '../Icon/MusicNote'
+import { songApi } from '@/apis/songApi'
 
 const generateMockData = (start: number, end: number): Song[] => {
   return Array.from({ length: end - start }, (_, index) => ({
@@ -21,11 +26,38 @@ const generateMockData = (start: number, end: number): Song[] => {
   }))
 }
 
+const convertSongDtoToSong = (item: SongSearchResponseDto): Song => {
+  // 두 속성 중 하나가 반드시 존재한다는 가정하에 assertion 사용
+  const songId = item.meltingSongId || item.aiCoverSongId!
+  return {
+    songId: songId as number, // Type assertion을 사용하여 songId를 number로 단언
+    albumCoverImageUrl: item.albumCoverImage || '',
+    songTitle: item.originalSongTitle || '',
+    nickname: 'Artist',
+    artist: item.originalSongArtist || '',
+    songType: item.meltingSongId ? 'melting' : 'ai',
+    meltingSongId: item.meltingSongId || null,
+    aiCoverSongId: item.aiCoverSongId || null,
+  }
+}
+
+const fetchSongs = async (searchTerm: string, page: number) => {
+  try {
+    const response: SongSearchPageResponseDto =
+      await songApi.getSongsForAlbumCreation(searchTerm, page, 10)
+    const newItems =
+      response.songSearchResponseDtoList?.map(convertSongDtoToSong) || []
+    return { newItems, isLast: response.isLast }
+  } catch (error) {
+    console.error('Failed to load songs:', error)
+    return { newItems: [], isLast: true }
+  }
+}
+
 export default function SongSearch() {
   const [searchTerm, setSearchTerm] = useState('')
   const [searchResults, setSearchResults] = useState<Song[]>([])
-
-  const [page, setPage] = useState(1)
+  const [page, setPage] = useState(0)
   const [loading, setLoading] = useState(false)
   const [hasMore, setHasMore] = useState(true)
   const scrollContainerRef = useRef<HTMLDivElement>(null)
@@ -33,22 +65,16 @@ export default function SongSearch() {
   const { selectedSongs, setSelectedSongs } = useAlbumContext()
   const navigate = useNavigate()
 
-  const loadMoreItems = useCallback(() => {
+  const loadMoreItems = useCallback(async () => {
     if (loading || !hasMore) return
     setLoading(true)
-    // API 호출을 시뮬레이션합니다
-    setTimeout(() => {
-      const newItems = generateMockData(
-        searchResults.length,
-        searchResults.length + 10,
-      )
-      setSearchResults((prev) => [...prev, ...newItems])
-      setLoading(false)
-      if (newItems.length < 10) {
-        setHasMore(false)
-      }
-    }, 1000)
-  }, [loading, hasMore, searchResults.length])
+
+    const { newItems, isLast } = await fetchSongs(searchTerm, page)
+    setSearchResults((prev) => [...prev, ...newItems])
+    setHasMore(!isLast)
+    setPage((prev) => prev + 1)
+    setLoading(false)
+  }, [loading, hasMore, page, searchTerm])
 
   useEffect(() => {
     const handleScroll = () => {
@@ -75,11 +101,21 @@ export default function SongSearch() {
 
   const handleSearch = async () => {
     setSearchResults([])
-    setPage(1)
+    setPage(0)
     setHasMore(true)
-    const initialResults = generateMockData(0, 10)
-    setSearchResults(initialResults)
+    setLoading(true)
+
+    const { newItems, isLast } = await fetchSongs(searchTerm, 0)
+    setSearchResults(newItems)
+    setHasMore(!isLast)
+    setLoading(false)
   }
+
+  useEffect(() => {
+    if (searchTerm.length > 0) {
+      handleSearch()
+    }
+  }, [searchTerm])
 
   const handleSelectSong = (song: Song) => {
     const isSelected = selectedSongs.some((s) => s.songId === song.songId)
@@ -87,27 +123,40 @@ export default function SongSearch() {
     if (isSelected) {
       setSelectedSongs(selectedSongs.filter((s) => s.songId !== song.songId))
     } else {
-      const songInSearchResults = searchResults.find(
-        (s) => s.songId === song.songId,
-      )
-      if (songInSearchResults) {
-        setSelectedSongs([...selectedSongs, songInSearchResults])
-      }
+      setSelectedSongs([...selectedSongs, song])
     }
   }
 
   const handleTypeChange = (songId: number, type: CoverType) => {
     setSearchResults(
       searchResults.map((song) =>
-        song.songId === songId ? { ...song, song_type: type } : song,
+        song.songId === songId
+          ? {
+              ...song,
+              songType: type,
+              songId:
+                type === 'melting' ? song.meltingSongId! : song.aiCoverSongId!,
+            }
+          : song,
       ),
     )
 
     setSelectedSongs(
       selectedSongs.map((song) =>
-        song.songId === songId ? { ...song, song_type: type } : song,
+        song.songId === songId
+          ? {
+              ...song,
+              songType: type,
+              songId:
+                type === 'melting' ? song.meltingSongId! : song.aiCoverSongId!,
+            }
+          : song,
       ),
     )
+  }
+
+  const handleMelting = () => {
+    navigate('/music')
   }
 
   const handleSubmit = () => {
@@ -131,16 +180,25 @@ export default function SongSearch() {
       >
         {searchResults.map((song) => (
           <SongItem
-            key={`${song.songId}-${song.songType}`}
+            key={`${song.songId}`}
             {...song}
             isSelected={selectedSongs.some((s) => s.songId === song.songId)}
             onSelect={() => handleSelectSong(song)}
             onTypeChange={(value) => handleTypeChange(song.songId, value)}
             showTypeSelect
+            meltingSongId={song.meltingSongId || null}
+            aiCoverSongId={song.aiCoverSongId || null}
           />
         ))}
-        {loading && <p className="text-center">로딩 중...</p>}
-        {!hasMore && <p className="text-center">No more songs</p>}
+        {searchResults.length === 0 && !loading && (
+          <div className="mt-16 text-center">
+            <p>검색한 곡이 없습니다.</p>
+            <Button type="button" onClick={handleMelting} className="mt-4">
+              녹음 하러 가기
+            </Button>
+          </div>
+        )}
+        {loading && <p className="mt-16 text-center">로딩 중...</p>}
       </div>
 
       <div className="text-sm text-primary-500 space-y-1">
