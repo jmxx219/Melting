@@ -18,6 +18,7 @@ public record AlbumSearchResponseDto(
 			.albumId(album.getId())
 			.albumName(album.getAlbumName())
 			.creatorNickname(album.getMember().getNickname())
+			.createdAt(album.getCreatedAt())
 			.build();
 	}
 }
