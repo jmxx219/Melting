@@ -1,5 +1,6 @@
 package com.dayangsung.melting.domain.album.controller;
 
+import java.io.IOException;
 import java.util.List;
 
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -17,8 +18,10 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.dayangsung.melting.domain.album.dto.request.AlbumCreateRequestDto;
 import com.dayangsung.melting.domain.album.dto.request.AlbumUpdateRequestDto;
+import com.dayangsung.melting.domain.album.dto.request.openai.AiCoverImageRequestDto;
 import com.dayangsung.melting.domain.album.dto.response.AlbumDetailsResponseDto;
 import com.dayangsung.melting.domain.album.dto.response.AlbumSearchPageResponseDto;
+import com.dayangsung.melting.domain.album.service.AlbumCoverImageService;
 import com.dayangsung.melting.domain.album.service.AlbumService;
 import com.dayangsung.melting.domain.auth.CustomOAuth2User;
 import com.dayangsung.melting.domain.genre.dto.response.GenreResponseDto;
@@ -34,6 +37,7 @@ import lombok.extern.slf4j.Slf4j;
 public class AlbumController {
 
 	private final AlbumService albumService;
+	private final AlbumCoverImageService albumCoverImageService;
 
 	@GetMapping
 	public ApiResponse<AlbumSearchPageResponseDto> getAlbums(
@@ -90,6 +94,14 @@ public class AlbumController {
 	public ApiResponse<Boolean> toggleIsPublic(@PathVariable Long albumId) {
 		Boolean toggledIsPublic = albumService.toggleIsPublic(albumId);
 		return ApiResponse.ok(toggledIsPublic);
+	}
+
+	@PostMapping("/{albumId}/covers")
+	public ApiResponse<String> createAiAlbumCoverImage(@PathVariable Long albumId,
+			@RequestBody AiCoverImageRequestDto aiCoverImageRequestDto) throws IOException {
+		List<Long> songs = aiCoverImageRequestDto.songs();
+		String base64Image = albumCoverImageService.createAiCoverImage(albumId, songs);
+		return ApiResponse.ok(base64Image);
 	}
 
 	@GetMapping("/genres")
