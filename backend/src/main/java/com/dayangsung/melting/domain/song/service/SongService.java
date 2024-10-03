@@ -202,7 +202,12 @@ public class SongService {
 	public SongSearchPageResponseDto getSongsForAlbumCreation(String email, String keyword, int page, int size) {
 		Member member = memberRepository.findByEmail(email)
 			.orElseThrow(() -> new BusinessException(ErrorMessage.MEMBER_NOT_FOUND));
-		List<Song> songs = songRepository.findSongsForAlbumCreation(member.getId(), keyword);
+		List<Song> songs;
+		if (keyword == null || keyword.trim().isEmpty()) {
+			songs = songRepository.findAllSongsForAlbumCreation(member.getId());
+		} else {
+			songs = songRepository.findSongsForAlbumCreation(member.getId(), keyword);
+		}
 
 		Map<OriginalSong, List<Song>> groupedByOriginal = songs.stream()
 			.collect(Collectors.groupingBy(Song::getOriginalSong));
@@ -241,5 +246,27 @@ public class SongService {
 			song.getAlbum() != null ? song.getAlbum().getAlbumCoverImageUrl() : awsS3Service.getDefaultCoverImageUrl(),
 			likesService.isLikedBySongAndMember(song.getId(), memberId), likesService.getSongLikesCount(song.getId())));
 		return SongLikesPageResponseDto.of(songLikesResponseDtoPage);
+	}
+
+	public Integer getSongLikesCount(Long songId) {
+		return likesService.getSongLikesCount(songId);
+	}
+
+	public Integer increaseSongLikes(Long songId, String email) {
+		Member member = memberRepository.findByEmail(email)
+			.orElseThrow(() -> new BusinessException(ErrorMessage.MEMBER_NOT_FOUND));
+		return likesService.increaseSongLikes(songId, member.getId());
+	}
+
+	public Integer decreaseSongLikes(Long songId, String email) {
+		Member member = memberRepository.findByEmail(email)
+			.orElseThrow(() -> new BusinessException(ErrorMessage.MEMBER_NOT_FOUND));
+		return likesService.decreaseSongLikes(songId, member.getId());
+	}
+
+	@Transactional(readOnly = true)
+	public List<Song> idListToSongList(List<Long> idList) {
+		return idList.stream().map(songId -> songRepository.findById(songId)
+			.orElseThrow(() -> new BusinessException(ErrorMessage.SONG_NOT_FOUND))).toList();
 	}
 }
