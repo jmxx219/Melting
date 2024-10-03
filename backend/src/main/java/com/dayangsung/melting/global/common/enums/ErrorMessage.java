@@ -25,6 +25,8 @@ public enum ErrorMessage {
 	SEARCH_QUERY_TOO_SHORT("검색어가 너무 짧습니다. 최소 2자 이상 입력해 주세요."),
 	ALBUM_NAME_BLANK_ERROR("앨범 이름은 비어있을 수 없습니다."),
 	ALBUM_COVER_IMAGE_BLANK_ERROR("앨범 커버 이미지가 비어있습니다."),
+	ALBUM_LIKES_NOT_FOUND("앨범 좋아요 정보를 찾을 수 없습니다."),
+	SONG_LIKES_NOT_FOUND("곡 좋아요 정보를 찾을 수 없습니다."),
 
 	// Song
 	INVALID_FILE_TYPE("올파르지 않은 파일 형식입니다."),
