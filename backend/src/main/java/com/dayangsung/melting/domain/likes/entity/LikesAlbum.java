@@ -22,11 +22,11 @@ import lombok.Setter;
 @Getter
 @Entity
 @Table(
-	name="member_likes_album",
-	uniqueConstraints={
+	name = "member_likes_album",
+	uniqueConstraints = {
 		@UniqueConstraint(
 			name = "member_likes_album_uk",
-			columnNames={"member_id", "album_id"}
+			columnNames = {"member_id", "album_id"}
 		)
 	}
 )
@@ -57,5 +57,6 @@ public class LikesAlbum {
 	public LikesAlbum(Album album, Member member) {
 		this.album = album;
 		this.member = member;
+		this.status = true;
 	}
 }
