@@ -21,11 +21,11 @@ import lombok.NoArgsConstructor;
 @Getter
 @Entity
 @Table(
-	name="member_likes_song",
-	uniqueConstraints={
+	name = "member_likes_song",
+	uniqueConstraints = {
 		@UniqueConstraint(
 			name = "member_likes_song_uk",
-			columnNames={"member_id", "song_id"}
+			columnNames = {"member_id", "song_id"}
 		)
 	}
 )
@@ -55,5 +55,6 @@ public class LikesSong {
 	public LikesSong(Song song, Member member) {
 		this.song = song;
 		this.member = member;
+		this.status = true;
 	}
 }
