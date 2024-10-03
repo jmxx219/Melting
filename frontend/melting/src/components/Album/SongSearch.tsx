@@ -15,17 +15,6 @@ import SearchBar from '../Music/SearchBar'
 import MusicNote from '../Icon/MusicNote'
 import { songApi } from '@/apis/songApi'
 
-const generateMockData = (start: number, end: number): Song[] => {
-  return Array.from({ length: end - start }, (_, index) => ({
-    songId: start + index,
-    albumCoverImgUrl: '/api/placeholder/50/50',
-    songTitle: `Song ${start + index}`,
-    nickname: 'Artist',
-    artist: `Artist ${(start + index) % 5}`,
-    songType: index % 2 === 0 ? 'melting' : 'ai',
-  }))
-}
-
 const convertSongDtoToSong = (item: SongSearchResponseDto): Song => {
   // 두 속성 중 하나가 반드시 존재한다는 가정하에 assertion 사용
   const songId = item.meltingSongId || item.aiCoverSongId!
