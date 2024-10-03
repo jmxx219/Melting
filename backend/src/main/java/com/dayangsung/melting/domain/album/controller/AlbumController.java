@@ -22,10 +22,8 @@ import com.dayangsung.melting.domain.album.dto.request.openai.AiCoverImageReques
 import com.dayangsung.melting.domain.album.dto.response.AlbumDetailsResponseDto;
 import com.dayangsung.melting.domain.album.dto.response.AlbumSearchPageResponseDto;
 import com.dayangsung.melting.domain.album.service.AlbumCoverImageService;
-import com.dayangsung.melting.domain.album.service.AlbumDescriptionService;
 import com.dayangsung.melting.domain.album.service.AlbumService;
 import com.dayangsung.melting.domain.auth.CustomOAuth2User;
-import com.dayangsung.melting.domain.originalsong.dto.response.OriginalSongAiResponseDto;
 import com.dayangsung.melting.domain.genre.dto.response.GenreResponseDto;
 import com.dayangsung.melting.global.common.response.ApiResponse;
 
@@ -40,8 +38,6 @@ public class AlbumController {
 
 	private final AlbumService albumService;
 	private final AlbumCoverImageService albumCoverImageService;
-	private final AlbumDescriptionService albumDescriptionService;
-	private final GenreService genreService;
 
 	@GetMapping
 	public ApiResponse<AlbumSearchPageResponseDto> getAlbums(
@@ -103,9 +99,10 @@ public class AlbumController {
 	@PostMapping("/{albumId}/covers")
 	public ApiResponse<String> createAiAlbumCoverImage(@PathVariable Long albumId,
 			@RequestBody AiCoverImageRequestDto aiCoverImageRequestDto) throws IOException {
-		List<OriginalSongAiResponseDto> songs = aiCoverImageRequestDto.songs();
+		List<Long> songs = aiCoverImageRequestDto.songs();
 		String base64Image = albumCoverImageService.createAiCoverImage(albumId, songs);
 		return ApiResponse.ok(base64Image);
+	}
 
 	@GetMapping("/genres")
 	public ApiResponse<List<GenreResponseDto>> getAllGenres() {

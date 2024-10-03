@@ -19,7 +19,7 @@ public class AlbumImageUploadService {
 		String responseBody = result.block();
 		ObjectMapper mapper = new ObjectMapper();
 		AiCoverImageResponseDto response = mapper.readValue(responseBody, AiCoverImageResponseDto.class);
-		return response.getData().getFirst().getB64_json();
+		return response.data().getFirst().b64Json();
 	}
 
 	public String generateFileName(String directory, String extension) {
