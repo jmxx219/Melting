@@ -257,4 +257,10 @@ public class SongService {
 			.orElseThrow(() -> new BusinessException(ErrorMessage.MEMBER_NOT_FOUND));
 		return likesService.decreaseSongLikes(songId, member.getId());
 	}
+
+	@Transactional(readOnly = true)
+	public List<Song> idListToSongList(List<Long> idList) {
+		return idList.stream().map(songId -> songRepository.findById(songId)
+			.orElseThrow(() -> new BusinessException(ErrorMessage.SONG_NOT_FOUND))).toList();
+	}
 }
