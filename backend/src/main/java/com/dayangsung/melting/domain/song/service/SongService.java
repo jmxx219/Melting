@@ -1,5 +1,8 @@
 package com.dayangsung.melting.domain.song.service;
 
+import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -11,13 +14,10 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.http.MediaType;
-import org.springframework.http.client.MultipartBodyBuilder;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import com.dayangsung.melting.domain.likes.service.LikesService;
@@ -26,6 +26,8 @@ import com.dayangsung.melting.domain.member.enums.Gender;
 import com.dayangsung.melting.domain.member.repository.MemberRepository;
 import com.dayangsung.melting.domain.originalsong.entity.OriginalSong;
 import com.dayangsung.melting.domain.originalsong.repository.OriginalSongRepository;
+import com.dayangsung.melting.domain.song.dto.AiCoverRedisPubDto;
+import com.dayangsung.melting.domain.song.dto.MeltingRedisPubDto;
 import com.dayangsung.melting.domain.song.dto.response.SongDetailsResponseDto;
 import com.dayangsung.melting.domain.song.dto.response.SongLikesPageResponseDto;
 import com.dayangsung.melting.domain.song.dto.response.SongLikesResponseDto;
@@ -85,7 +87,7 @@ public class SongService {
 	@Async
 	@Transactional
 	public CompletableFuture<Void> createMeltingSong(
-		String email, Long originalSongId, MultipartFile voiceFile) {
+		String email, Long originalSongId, MultipartFile voiceFile) throws IOException {
 
 		OriginalSong originalSong = originalSongRepository.findById(originalSongId).orElseThrow(RuntimeException::new);
 		Member member = memberRepository.findByEmail(email).orElseThrow(RuntimeException::new);
@@ -108,32 +110,36 @@ public class SongService {
 		}
 
 		Song savedSong = songRepository.save(song);
-
+		String filename = getFilename(member, savedSong);
 		log.info("{} Song with ID: {}", isNewSong ? "Created new" : "Updated existing", savedSong.getId());
 
-		MultipartBodyBuilder builder = new MultipartBodyBuilder();
-		builder.part("voice_file", voiceFile.getResource());
-		builder.part("song_id", savedSong.getId().toString());
-		builder.part("original_song_mr_url", originalSong.getMrUrl());
+		String userVoiceUrl = awsS3Service.uploadFileToS3(voiceFile, "/audio/member_voice",
+			filename);
 
-		String endpoint;
+		boolean endpoint;
 		if (member.getCoverCount() < 3 && isNewSong) {
-			endpoint = "/api/rvc-ai/{memberId}/melting-with-training";
+			endpoint = true;
 			member.increaseCoverCount();
 			memberRepository.save(member);
 		} else {
-			endpoint = "/api/rvc-ai/{memberId}/melting";
+			endpoint = false;
 		}
 
-		return webClient.post()
-			.uri(uriBuilder -> uriBuilder
-				.path(endpoint)
-				.build(member.getId()))
-			.contentType(MediaType.MULTIPART_FORM_DATA)
-			.body(BodyInserters.fromMultipartData(builder.build()))
-			.retrieve()
-			.bodyToMono(Void.class)
-			.toFuture();
+		MeltingRedisPubDto meltingRedisPubDto = MeltingRedisPubDto.builder()
+			.userVoiceUrl(userVoiceUrl)
+			.mrUrl(originalSong.getMrUrl())
+			.memberId(member.getId())
+			.songId(savedSong.getId())
+			.endpoint(endpoint)
+			.build();
+
+		redisTemplate.convertAndSend("melting_song_channel", meltingRedisPubDto);
+		return CompletableFuture.completedFuture(null);
+	}
+
+	private static String getFilename(Member member, Song savedSong) {
+		return String.format("m%s_s%s_%s", member.getId(), savedSong.getId(), LocalDateTime.now().format(
+			DateTimeFormatter.ofPattern("yyyyMMddHHmmss")));
 	}
 
 	@Async
@@ -169,22 +175,17 @@ public class SongService {
 
 		log.info("{} Song with ID: {}", isNewSong ? "Created new" : "Updated existing", savedSong.getId());
 
-		Map<String, Object> requestBody = Map.of(
-			"song_id", savedSong.getId().toString(),
-			"original_song_mr_url", originalSong.getMrUrl(),
-			"original_song_voice_url", originalSong.getVoiceUrl(),
-			"member_gender", convertGender(member.getGender()),
-			"original_voice_gender", convertGender(originalSong.getArtistGender())
-		);
+		AiCoverRedisPubDto aiCoverRedisPubDto = AiCoverRedisPubDto.builder()
+			.memberId(member.getId())
+			.songId(savedSong.getId())
+			.originalSongMrUrl(originalSong.getMrUrl())
+			.originalSongVoiceUrl(originalSong.getVoiceUrl())
+			.memberGender(member.getGender().toString())
+			.originalVoiceGender(member.getGender().toString())
+			.build();
 
-		return webClient.post()
-			.uri("/api/rvc-ai/{memberId}/aicover", member.getId())
-			.contentType(MediaType.APPLICATION_JSON)
-			.body(BodyInserters.fromValue(requestBody))
-			.retrieve()
-			.bodyToMono(Void.class)
-			.toFuture();
-
+		redisTemplate.convertAndSend("ai_cover_song_channel", aiCoverRedisPubDto);
+		return CompletableFuture.completedFuture(null);
 	}
 
 	@Transactional
@@ -201,7 +202,12 @@ public class SongService {
 	public SongSearchPageResponseDto getSongsForAlbumCreation(String email, String keyword, int page, int size) {
 		Member member = memberRepository.findByEmail(email)
 			.orElseThrow(() -> new BusinessException(ErrorMessage.MEMBER_NOT_FOUND));
-		List<Song> songs = songRepository.findSongsForAlbumCreation(member.getId(), keyword);
+		List<Song> songs;
+		if (keyword == null || keyword.trim().isEmpty()) {
+			songs = songRepository.findAllSongsForAlbumCreation(member.getId());
+		} else {
+			songs = songRepository.findSongsForAlbumCreation(member.getId(), keyword);
+		}
 
 		Map<OriginalSong, List<Song>> groupedByOriginal = songs.stream()
 			.collect(Collectors.groupingBy(Song::getOriginalSong));
@@ -240,5 +246,27 @@ public class SongService {
 			song.getAlbum() != null ? song.getAlbum().getAlbumCoverImageUrl() : awsS3Service.getDefaultCoverImageUrl(),
 			likesService.isLikedBySongAndMember(song.getId(), memberId), likesService.getSongLikesCount(song.getId())));
 		return SongLikesPageResponseDto.of(songLikesResponseDtoPage);
+	}
+
+	public Integer getSongLikesCount(Long songId) {
+		return likesService.getSongLikesCount(songId);
+	}
+
+	public Integer increaseSongLikes(Long songId, String email) {
+		Member member = memberRepository.findByEmail(email)
+			.orElseThrow(() -> new BusinessException(ErrorMessage.MEMBER_NOT_FOUND));
+		return likesService.increaseSongLikes(songId, member.getId());
+	}
+
+	public Integer decreaseSongLikes(Long songId, String email) {
+		Member member = memberRepository.findByEmail(email)
+			.orElseThrow(() -> new BusinessException(ErrorMessage.MEMBER_NOT_FOUND));
+		return likesService.decreaseSongLikes(songId, member.getId());
+	}
+
+	@Transactional(readOnly = true)
+	public List<Song> idListToSongList(List<Long> idList) {
+		return idList.stream().map(songId -> songRepository.findById(songId)
+			.orElseThrow(() -> new BusinessException(ErrorMessage.SONG_NOT_FOUND))).toList();
 	}
 }
