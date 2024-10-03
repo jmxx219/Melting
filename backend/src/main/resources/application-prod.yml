@@ -79,3 +79,6 @@ cloud:
       secret key: ${CLOUD_AWS_CREDENTIALS_SECRET_KEY}
     stack:
       auto: false
+
+openai:
+  api-key: ${OPENAI_API_KEY}
