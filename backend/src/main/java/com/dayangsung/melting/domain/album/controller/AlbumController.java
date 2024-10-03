@@ -1,5 +1,6 @@
 package com.dayangsung.melting.domain.album.controller;
 
+import java.io.IOException;
 import java.util.List;
 
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -17,9 +18,11 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.dayangsung.melting.domain.album.dto.request.AlbumCreateRequestDto;
 import com.dayangsung.melting.domain.album.dto.request.AlbumUpdateRequestDto;
+import com.dayangsung.melting.domain.album.dto.request.openai.AiCoverImageRequestDto;
 import com.dayangsung.melting.domain.album.dto.response.AlbumDetailsResponseDto;
 import com.dayangsung.melting.domain.album.dto.response.AlbumRankingResponseDto;
 import com.dayangsung.melting.domain.album.dto.response.AlbumSearchPageResponseDto;
+import com.dayangsung.melting.domain.album.service.AlbumCoverImageService;
 import com.dayangsung.melting.domain.album.service.AlbumService;
 import com.dayangsung.melting.domain.auth.CustomOAuth2User;
 import com.dayangsung.melting.domain.genre.dto.response.GenreResponseDto;
@@ -36,7 +39,7 @@ import lombok.extern.slf4j.Slf4j;
 public class AlbumController {
 
 	private final AlbumService albumService;
-	private final GenreService genreService;
+	private final AlbumCoverImageService albumCoverImageService;
 
 	@GetMapping
 	public ApiResponse<AlbumSearchPageResponseDto> getAlbums(
@@ -95,9 +98,24 @@ public class AlbumController {
 		return ApiResponse.ok(toggledIsPublic);
 	}
 
+	@PostMapping("/{albumId}/covers")
+	public ApiResponse<String> createAiAlbumCoverImage(@PathVariable Long albumId,
+			@RequestBody AiCoverImageRequestDto aiCoverImageRequestDto) throws IOException {
+		List<Long> songs = aiCoverImageRequestDto.songs();
+		String base64Image = albumCoverImageService.createAiCoverImage(albumId, songs);
+		return ApiResponse.ok(base64Image);
+	}
+
 	@GetMapping("/genres")
 	public ApiResponse<List<GenreResponseDto>> getAllGenres() {
-		return ApiResponse.ok(genreService.findAll());
+		List<GenreResponseDto> genreResponse = albumService.getAllGenres();
+		return ApiResponse.ok(genreResponse);
+	}
+
+	@GetMapping("/{albumId}/likes")
+	public ApiResponse<Integer> getAlbumLikesCount(@PathVariable Long albumId) {
+		Integer albumLikesCount = albumService.getAlbumLikesCount(albumId);
+		return ApiResponse.ok(albumLikesCount);
 	}
 
 	@GetMapping("/steady")
@@ -106,4 +124,17 @@ public class AlbumController {
 		return ApiResponse.ok(steadyAlbums);
 	}
 
+	@PostMapping("/{albumId}/likes")
+	public ApiResponse<Integer> addAlbumLikes(@PathVariable Long albumId,
+		@AuthenticationPrincipal CustomOAuth2User customOAuth2User) {
+		Integer albumLikesCount = albumService.increaseAlbumLikes(albumId, customOAuth2User.getName());
+		return ApiResponse.ok(albumLikesCount);
+	}
+
+	@DeleteMapping("/{albumId}/likes")
+	public ApiResponse<Integer> deleteAlbumLikes(@PathVariable Long albumId,
+		@AuthenticationPrincipal CustomOAuth2User customOAuth2User) {
+		Integer albumLikesCount = albumService.decreaseAlbumLikes(albumId, customOAuth2User.getName());
+		return ApiResponse.ok(albumLikesCount);
+	}
 }
