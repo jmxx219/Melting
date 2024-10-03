@@ -9,7 +9,8 @@ import org.springframework.web.reactive.function.client.ExchangeStrategies;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import com.dayangsung.melting.domain.album.service.AlbumImageUploadService;
-import com.dayangsung.melting.domain.originalsong.dto.response.OriginalSongAiResponseDto;
+import com.dayangsung.melting.domain.song.entity.Song;
+import com.dayangsung.melting.domain.song.service.SongService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -21,14 +22,16 @@ public class OpenAiImageService {
 
 	private final OpenAiLyricsSummaryService openAiLyricsSummaryService;
 	private final AlbumImageUploadService albumImageUploadService;
+	private final SongService songService;
 	private final WebClient webClient;
 	private final ObjectMapper jacksonObjectMapper;
 
 	public OpenAiImageService(@Value("${openai.api-key}") String openAiApiKey,
 			AlbumImageUploadService albumImageUploadService, OpenAiLyricsSummaryService openAiLyricsSummaryService,
-			ObjectMapper jacksonObjectMapper) {
+		SongService songService, ObjectMapper jacksonObjectMapper) {
 		this.albumImageUploadService = albumImageUploadService;
 		this.openAiLyricsSummaryService = openAiLyricsSummaryService;
+		this.songService = songService;
 		this.webClient = WebClient.builder()
 				.exchangeStrategies(ExchangeStrategies.builder()
 						.codecs(configurer -> configurer.defaultCodecs().maxInMemorySize(10 * 1024 * 1024))
@@ -39,9 +42,13 @@ public class OpenAiImageService {
 		this.jacksonObjectMapper = jacksonObjectMapper;
 	}
 
-	public String[] createAiCoverImage(List<OriginalSongAiResponseDto> songs) throws JsonProcessingException {
+	public String[] createAiCoverImage(List<Long> songs) throws JsonProcessingException {
+		List<Song> songList = songService.idListToSongList(songs);
+		List<String> lyricsList = songList.stream()
+			.map(song -> song.getOriginalSong().getLyrics())
+			.toList();
 
-		Mono<String> lyricsResult = openAiLyricsSummaryService.summarizeLyrics(songs);
+		Mono<String> lyricsResult = openAiLyricsSummaryService.summarizeLyrics(lyricsList);
 		String blockedResult = lyricsResult.block();
 
 		String content = jsonParsing(blockedResult);

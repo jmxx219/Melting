@@ -7,8 +7,6 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
-import com.dayangsung.melting.domain.originalsong.dto.response.OriginalSongAiResponseDto;
-
 import reactor.core.publisher.Mono;
 
 @Service
@@ -25,9 +23,9 @@ public class OpenAiLyricsSummaryService {
 	}
 
 	// 가사 요약
-	public Mono<String> summarizeLyrics(List<OriginalSongAiResponseDto> originalSongs) {
-		String lyrics = extractLyrics(originalSongs);
-		String prompt = String.format("Summarize the following song lyrics in a concise way: %s", lyrics);
+	public Mono<String> summarizeLyrics(List<String> lyrics) {
+		String allLyrics = extractLyrics(lyrics);
+		String prompt = String.format("Summarize the following song lyrics in a concise way: %s", allLyrics);
 
 		// API 요청
 		Mono<String> result = this.webClient.post()
@@ -48,10 +46,9 @@ public class OpenAiLyricsSummaryService {
 		return result;
 	}
 
-	private String extractLyrics(List<OriginalSongAiResponseDto> originalSongs) {
+	private String extractLyrics(List<String> originalSongs) {
 		StringBuilder lyricsBuilder = new StringBuilder();
-		for (OriginalSongAiResponseDto originalSong : originalSongs) {
-			String lyrics = originalSong.lyrics();
+		for (String lyrics : originalSongs) {
 			lyricsBuilder.append(lyrics).append(' ');
 		}
 		return lyricsBuilder.toString().replace('\n', ' ').trim();

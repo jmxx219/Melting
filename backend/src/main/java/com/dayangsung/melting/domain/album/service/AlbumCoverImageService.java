@@ -10,7 +10,6 @@ import org.springframework.transaction.annotation.Transactional;
 import com.dayangsung.melting.domain.album.entity.Album;
 import com.dayangsung.melting.domain.album.repository.AlbumRepository;
 import com.dayangsung.melting.domain.album.service.openai.OpenAiImageService;
-import com.dayangsung.melting.domain.originalsong.dto.response.OriginalSongAiResponseDto;
 import com.dayangsung.melting.global.common.service.AwsS3Service;
 
 import lombok.RequiredArgsConstructor;
@@ -24,7 +23,7 @@ public class AlbumCoverImageService {
 	private final AlbumRepository albumRepository;
 
 	@Transactional
-	public String createAiCoverImage(Long albumId, List<OriginalSongAiResponseDto> originalSongs) throws IOException {
+	public String createAiCoverImage(Long albumId, List<Long> originalSongs) throws IOException {
 		String[] result = openAiImageService.createAiCoverImage(originalSongs);
 		// // S3에 저장할 시
 		// String url = awsS3Service.uploadBase64ImageToS3(result[0], result[1]);
@@ -39,17 +38,13 @@ public class AlbumCoverImageService {
 	private void saveAlbumCoverImage(Long albumId, String albumCoverImageUrl, String fileName) {
 
 		// Album에 AI album cover image 저장
-		Optional<Album> optionalAlbum = albumRepository.findById(albumId);
+		Album album = albumRepository.findById(albumId)
+			.orElseThrow();
 
-		if (optionalAlbum.isPresent()) {
-			Album album = optionalAlbum.get();
+		// 앨범의 커버 이미지 업데이트
+		album.updateAlbumCoverImageUrl(albumCoverImageUrl);
 
-			// 앨범의 커버 이미지 업데이트
-			album.updateAlbumCoverImageUrl(albumCoverImageUrl);
-
-			// 변경된 앨범 저장
-			albumRepository.save(album);
-		}
+		// 변경된 앨범 저장
+		albumRepository.save(album);
 	}
-
 }
