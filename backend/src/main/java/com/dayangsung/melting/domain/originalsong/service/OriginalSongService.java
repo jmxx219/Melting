@@ -23,8 +23,14 @@ public class OriginalSongService {
 
 	public OriginalSongSearchPageResponseDto getSearchPage(String keyword, int page, int size) {
 		Pageable pageable = PageRequest.of(page, size);
-		Page<OriginalSongSearchResponseDto> originalSongPage =
-			originalSongRepository.findByKeyword(keyword, pageable).map(OriginalSongSearchResponseDto::of);
+		Page<OriginalSongSearchResponseDto> originalSongPage;
+		if (keyword == null || keyword.isEmpty()) {
+			originalSongPage = originalSongRepository.findAllOrderByArtistAsc(pageable)
+				.map(OriginalSongSearchResponseDto::of);
+		} else {
+			originalSongPage = originalSongRepository.findByKeyword(keyword, pageable)
+				.map(OriginalSongSearchResponseDto::of);
+		}
 		return OriginalSongSearchPageResponseDto.of(originalSongPage);
 	}
 
