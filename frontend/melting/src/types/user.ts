@@ -1,3 +1,5 @@
+import { ApiResponseString, ErrorResponse } from '@/types/globalType.ts'
+
 export interface user {
   id: number
   socialType: string
@@ -11,41 +13,14 @@ export interface MemberUpdateRequestDto {
   nickname?: string
 }
 
-export interface ErrorResponse {
-  errorMessage?:
-    | 'MEMBER_NOT_FOUND'
-    | 'DUPLICATE_NICKNAME'
-    | 'INCORRECT_IMAGE_EXTENSION'
-    | 'MEMBER_BAD_REQUEST'
-    | 'ALBUM_NOT_FOUND'
-    | 'INVALID_SORT_CRITERIA'
-    | 'INVALID_SONG_COUNT'
-    | 'SEARCH_QUERY_TOO_SHORT'
-    | 'ALBUM_NAME_BLANK_ERROR'
-    | 'ALBUM_COVER_IMAGE_BLANK_ERROR'
-    | 'ALBUM_SONGS_EMPTY_ERROR'
-}
-
-export interface ApiResponseString {
-  status?: string
-  data?: string
-  errorMessage?: string
-}
-
 export interface MemberInitRequestDto {
   nickname?: string
   gender?: string
 }
 
-export interface ApiResponseMemberResponseDto {
-  status?: string
-  data?: MemberResponseDto
-  errorMessage?: string
-}
-
 export interface MemberResponseDto {
   nickname?: string
-  profile_image_url?: string
+  profileImageUrl?: string
 }
 
 export interface ApiResponseBoolean {
@@ -57,6 +32,12 @@ export interface ApiResponseBoolean {
 export interface ApiResponseVoid {
   status?: string
   data?: object
+  errorMessage?: string
+}
+
+export interface ApiResponseMemberResponseDto {
+  status?: string
+  data?: MemberResponseDto
   errorMessage?: string
 }
 
@@ -86,9 +67,13 @@ export type GetMemberInfoData = MemberResponseDto
 
 export type GetMemberInfoError = ErrorResponse
 
+export interface MemberUpdateRequestDto {
+  nickname?: string
+}
+
 export interface UpdateMemberInfoPayload {
   /** @format binary */
-  multipartFile: File
+  multipartFile: File | null
   memberUpdateRequestDto: MemberUpdateRequestDto
 }
 

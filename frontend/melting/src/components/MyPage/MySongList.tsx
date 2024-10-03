@@ -1,7 +1,7 @@
 import MySongContent from '@/components/MyPage/MySongContent'
 
 interface AlbumSongToggleProps {
-  sortOption: 'date' | 'popularity'
+  sortOption: 'LATEST' | 'POPULAR'
 }
 
 export default function MySongList({}: AlbumSongToggleProps) {
