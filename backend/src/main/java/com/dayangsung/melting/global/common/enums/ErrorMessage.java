@@ -12,6 +12,7 @@ public enum ErrorMessage {
 	MEMBER_HASHTAG_FULL("개인별 해시태그는 5개까지 등록 가능합니다."),
 	MEMBER_HASHTAG_EMPTY("개인별 해시태그가 존재하지 않습니다."),
 	MEMBER_HASHTAG_EXIST("추가하려는 개인별 해시태그가 이미 존재합니다"),
+	MEMBER_HASHTAG_BAD_REQUEST("해시태그 내용이 존재하지 않습니다"),
 
 	SONG_NOT_FOUND("존재하지 않는 생성곡입니다."),
 	SONG_ALREADY_INCLUDED("이미 다른 앨범에 포함되어 있는 곡입니다."),
