@@ -1,6 +1,11 @@
 const cover = {
-  melting: 'melting',
-  ai: 'ai',
+  melting: 'MELTING',
+  ai: 'AI',
+} as const
+
+const sort = {
+  latest: 'LATEST',
+  popular: 'POPULAR',
 } as const
 
 export const genres = [
@@ -35,3 +40,4 @@ export const genres = [
 
 export type CoverType = keyof typeof cover
 export type GenreType = (typeof genres)[number]
+export type SortType = keyof typeof sort
