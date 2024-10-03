@@ -56,9 +56,9 @@ spring:
       max-request-size: 20MB
   jwt:
     secret: ${JWT_SECRET}
-    
+
 fastapi:
-  baseUrl: http://localhost:8000
+  baseurl: ${FASTAPI_BASEURL}
 
 logging:
   level:
@@ -79,3 +79,6 @@ cloud:
       secret key: ${CLOUD_AWS_CREDENTIALS_SECRET_KEY}
     stack:
       auto: false
+
+openai:
+  api-key: ${OPENAI_API_KEY}

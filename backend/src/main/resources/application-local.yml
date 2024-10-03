@@ -25,7 +25,6 @@ spring:
 
   data:
     redis:
-      host: localhost
       port: 6379
       redisson-prefix: redis://
 
@@ -41,5 +40,3 @@ logging:
         melting: debug
     web: debug
 
-fastapi:
-  baseUrl: http://localhost:8000
