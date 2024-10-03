@@ -98,6 +98,7 @@ public class MemberService {
 		CookieUtil.deleteCookie(request, response, "refresh_token");
 	}
 
+	@Transactional
 	public MemberSongResponseDto getMemberSongs(String email) {
 		Member member = memberRepository.findByEmail(email)
 			.orElseThrow(() -> new BusinessException(ErrorMessage.MEMBER_NOT_FOUND));
@@ -137,6 +138,7 @@ public class MemberService {
 		return MemberSongResponseDto.of(mySongList, member.isAiCoverEnabled());
 	}
 
+	@Transactional
 	public List<String> getMemberHashtags(String email) {
 		Member member = memberRepository.findByEmail(email)
 			.orElseThrow(() -> new BusinessException(ErrorMessage.MEMBER_NOT_FOUND));
@@ -146,7 +148,11 @@ public class MemberService {
 			.toList();
 	}
 
+	@Transactional
 	public List<String> addMemberHashtags(String email, String content) {
+		if (content == null || content.trim().isEmpty()) {
+			throw new BusinessException(ErrorMessage.MEMBER_HASHTAG_BAD_REQUEST);
+		}
 		Member member = memberRepository.findByEmail(email)
 			.orElseThrow(() -> new BusinessException(ErrorMessage.MEMBER_NOT_FOUND));
 		List<MemberHashtag> memberHashtags = member.getMemberHashtags();
@@ -161,7 +167,11 @@ public class MemberService {
 			.toList();
 	}
 
+	@Transactional
 	public List<String> deleteMemberHashtags(String email, String content) {
+		if (content == null || content.trim().isEmpty()) {
+			throw new BusinessException(ErrorMessage.MEMBER_HASHTAG_BAD_REQUEST);
+		}
 		Member member = memberRepository.findByEmail(email)
 			.orElseThrow(() -> new BusinessException(ErrorMessage.MEMBER_NOT_FOUND));
 		List<MemberHashtag> memberHashtags = member.getMemberHashtags();
