@@ -201,7 +201,12 @@ public class SongService {
 	public SongSearchPageResponseDto getSongsForAlbumCreation(String email, String keyword, int page, int size) {
 		Member member = memberRepository.findByEmail(email)
 			.orElseThrow(() -> new BusinessException(ErrorMessage.MEMBER_NOT_FOUND));
-		List<Song> songs = songRepository.findSongsForAlbumCreation(member.getId(), keyword);
+		List<Song> songs;
+		if (keyword == null || keyword.trim().isEmpty()) {
+			songs = songRepository.findAllSongsForAlbumCreation(member.getId());
+		} else {
+			songs = songRepository.findSongsForAlbumCreation(member.getId(), keyword);
+		}
 
 		Map<OriginalSong, List<Song>> groupedByOriginal = songs.stream()
 			.collect(Collectors.groupingBy(Song::getOriginalSong));

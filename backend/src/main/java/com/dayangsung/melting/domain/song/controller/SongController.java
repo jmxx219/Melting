@@ -81,10 +81,11 @@ public class SongController {
 
 	@GetMapping
 	public ApiResponse<SongSearchPageResponseDto> getSongsForAlbumCreation(
-		@RequestParam String keyword,
+		@RequestParam(required = false) String keyword,
 		@RequestParam(defaultValue = "0") int page,
 		@RequestParam(defaultValue = "10") int size,
 		@AuthenticationPrincipal CustomOAuth2User customOAuth2User) {
+		log.debug("keyword: {}", keyword);
 		SongSearchPageResponseDto responseDto =
 			songService.getSongsForAlbumCreation(customOAuth2User.getName(), keyword, page, size);
 		return ApiResponse.ok(responseDto);
