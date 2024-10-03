@@ -26,6 +26,7 @@ public enum ErrorMessage {
 	ALBUM_NAME_BLANK_ERROR("앨범 이름은 비어있을 수 없습니다."),
 	ALBUM_COVER_IMAGE_BLANK_ERROR("앨범 커버 이미지가 비어있습니다."),
 	ALBUM_LIKES_NOT_FOUND("앨범 좋아요 정보를 찾을 수 없습니다."),
+	REDIS_SCORE_EMPTY("조회한 redis sorted set value의 score값이 존재하지 않습니다."),
 	SONG_LIKES_NOT_FOUND("곡 좋아요 정보를 찾을 수 없습니다."),
 
 	// Song
