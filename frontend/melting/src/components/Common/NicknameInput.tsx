@@ -1,5 +1,5 @@
 import { Input } from '@/components/ui/input'
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 import { userApi } from '@/apis/userApi.ts'
 
 interface NicknameInputProps {
@@ -20,8 +20,17 @@ export default function NicknameInput({
   onValidate,
   isShowInfo,
 }: NicknameInputProps) {
+  const originalNickname = useRef<string | null>(null)
   const [isNicknameValid, setIsNicknameValid] = useState(false)
   const [isNicknameDuplicate, setIsNicknameDuplicate] = useState(false)
+  const [isNicknameSameAsOriginal, setIsNicknameSameAsOriginal] =
+    useState(false)
+
+  useEffect(() => {
+    if (originalNickname.current === null) {
+      originalNickname.current = nickname
+    }
+  }, [nickname])
 
   const checkNickname = useCallback(async (value: string) => {
     if (!isValidNickname(value)) {
@@ -45,6 +54,14 @@ export default function NicknameInput({
     const validateNickname = async () => {
       const nicknameValid = isValidNickname(nickname)
       setIsNicknameValid(nicknameValid)
+
+      if (originalNickname.current && nickname === originalNickname.current) {
+        setIsNicknameSameAsOriginal(true)
+        onValidate(false)
+        return
+      } else {
+        setIsNicknameSameAsOriginal(false)
+      }
 
       if (nicknameValid) {
         const nicknameDuplicate = await checkNickname(nickname)
@@ -92,15 +109,23 @@ export default function NicknameInput({
           >
             {nickname.length}/20
           </span>
-          {!isNicknameValid && nickname.length > 0 && (
-            <p className="text-status-warning text-xs mt-1">
-              닉네임은 2-20자의 한글, 영문, 숫자만 가능합니다.
-            </p>
-          )}
-          {isNicknameValid && isNicknameDuplicate && (
-            <p className="text-status-warning text-xs mt-1">
-              이미 사용 중인 닉네임입니다.
-            </p>
+          {isNicknameSameAsOriginal ? (
+            <span className="text-primary-400 text-xs mt-1">
+              기존 이름입니다.
+            </span>
+          ) : (
+            <>
+              {!isNicknameValid && nickname.length > 0 && (
+                <span className="text-status-warning text-xs mt-1">
+                  닉네임은 2-20자의 한글, 영문, 숫자만 가능합니다.
+                </span>
+              )}
+              {isNicknameValid && isNicknameDuplicate && (
+                <span className="text-status-warning text-xs mt-1">
+                  이미 사용 중인 닉네임입니다.
+                </span>
+              )}
+            </>
           )}
         </div>
       </div>

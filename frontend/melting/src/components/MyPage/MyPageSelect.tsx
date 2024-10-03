@@ -1,11 +1,11 @@
-import { useState } from 'react'
 import { ArrowRight } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { useNavigate } from 'react-router-dom'
 import ProfileImage from '@/components/Common/ProfileImage'
+import { useUserInfo } from '@/hooks/useUserInfo'
 
 export default function MyPageSelect() {
-  const [profileImage] = useState<string | null>(null)
+  const { data: userInfo } = useUserInfo()
   const navigate = useNavigate()
 
   const handleRegisteredSongs = () => {
@@ -28,15 +28,23 @@ export default function MyPageSelect() {
     // TODO: 회원 탈퇴
   }
 
+  if (!userInfo) {
+    return (
+      <div className="flex text-2xl font-bold">
+        회원 정보를 가져올 수 없습니다.
+      </div>
+    )
+  }
+
   return (
     <div className="px-4 py-10 flex flex-col">
       <div className="flex flex-col items-center mb-8">
         <ProfileImage
-          profileImage={profileImage}
+          profileImage={userInfo.profileImageUrl}
           avatarSize="w-32 h-32"
           userIconSize="w-12 h-12"
         />
-        <div className="text-xl font-bold mt-6">노원핵주먹</div>
+        <div className="text-xl font-bold mt-6">{userInfo.nickname}</div>
       </div>
 
       <div className="flex flex-col w-full mb-8">
