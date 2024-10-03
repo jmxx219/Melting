@@ -1,5 +1,7 @@
 package com.dayangsung.melting.domain.hashtag.service;
 
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -59,5 +61,11 @@ public class HashtagService {
 			.orElseThrow(() -> new BusinessException(ErrorMessage.HASHTAG_NOT_FOUND));
 		member.deleteMemberHashtag(memberHashtag);
 		memberHashtagRepository.delete(memberHashtag);
+	}
+
+	@Transactional(readOnly = true)
+	public List<Hashtag> idListToHashtagList(List<Long> idList) {
+		return idList.stream().map(hashtagId -> hashtagRepository.findById(hashtagId)
+			.orElseThrow(() -> new BusinessException(ErrorMessage.HASHTAG_NOT_FOUND))).toList();
 	}
 }
