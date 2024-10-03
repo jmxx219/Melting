@@ -127,4 +127,5 @@ public class Album extends BaseEntity {
 	public void deleteAlbum() {
 		this.isDeleted = true;
 	}
+
 }
