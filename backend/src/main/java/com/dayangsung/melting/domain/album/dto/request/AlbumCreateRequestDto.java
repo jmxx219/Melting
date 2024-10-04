@@ -7,7 +7,7 @@ public record AlbumCreateRequestDto(
 	String albumDescription,
 	List<Long> songs,
 	Long titleSongId,
-	List<Long> genres,
+	List<String> genres,
 	List<String> hashtags
 ) {
 }

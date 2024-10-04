@@ -99,8 +99,8 @@ public class AlbumService {
 				likesService.getSongLikesCount(songId)));
 		}
 
-		for (Long genreId : albumCreateRequestDto.genres()) {
-			Genre genre = genreRepository.findById(genreId)
+		for (String genreContent : albumCreateRequestDto.genres()) {
+			Genre genre = genreRepository.findByContent(genreContent)
 				.orElseThrow(() -> new BusinessException(ErrorMessage.GENRE_NOT_FOUND));
 			AlbumGenre albumGenre = AlbumGenre.builder().album(album).genre(genre).build();
 			albumGenreRepository.save(albumGenre);
