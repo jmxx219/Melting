@@ -1,29 +1,31 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
-import { Search } from 'lucide-react'
-import { Button } from '../ui/button'
-import { Input } from '../ui/input'
 import { musicApi } from '@/apis/music/musicApi'
 import MusicList from '@/components/Music/MusicList'
 import { OriginalSongSearchResponseDto } from '@/typeApis/data-contracts'
+import { Search } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { Button } from '../ui/button'
+import { Input } from '../ui/input'
 
 export default function MusicSelectList() {
   const [songs, setSongs] = useState<
     OriginalSongSearchResponseDto[] | undefined
   >([])
   const [keyword, setKeyword] = useState<string>('')
-  const [page, setPage] = useState<number | undefined>(0)
-
+  // const [page, setPage] = useState<number | undefined>(0)
+  const page = 0
   useEffect(() => {
     const fetchInitialSongs = async () => {
       const response = await musicApi.originSongList(keyword, page)
+      console.log(response)
+
       setSongs(response.originalSongPage)
     }
 
     fetchInitialSongs()
-  }, [keyword, page]) // 빈 배열을 넣으면 컴포넌트 마운트 시 한 번만 실행됨
+  }, [keyword, page])
   // @ts-ignore
   const [selectId, setSelectId] = useState<number | undefined>(-1)
   const navigate = useNavigate()

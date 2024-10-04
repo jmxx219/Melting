@@ -158,6 +158,16 @@ export default function MusciRecordContent({
         onEnded={handleAudioEnded}
       />
 
+      {/* {isEnd && recordedAudioUrl && (
+        <div className="mt-5">
+          <h3 className="text-center text-lg font-bold">녹음된 파일 재생</h3>
+          <AudioPlayer
+            audioSrc={recordedAudioUrl}
+            onEnded={() => console.log('Playback ended')}
+          />
+        </div>
+      )} */}
+
       <div className="text-center">
         <Button
           type="button"
