@@ -30,6 +30,8 @@ export default function MyAlbumList({ viewType }: MyAlbumListProps) {
         setAlbums((prev) => [...prev, ...(response.albumInfoList ?? [])])
       }
 
+      console.log(response)
+
       setPageNumber(response.pageNumber || 0)
       setTotalPages(response.totalPages || 0)
       setIsLast(response.isLast || false)

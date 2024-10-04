@@ -67,9 +67,9 @@ export const albumApi = {
   // 앨범 좋아요 추가
   addAlbumLikes: async (albumId: number) => {
     try {
-      const response = await instance.post<AddAlbumLikesData>(
-        `/${albumId}/likes`,
-      )
+      console.log(albumId)
+
+      const response = await api.post<AddAlbumLikesData>(`/${albumId}/likes`)
       return response.data
     } catch (error) {
       console.error('앨범 좋아요 추가 중 오류 발생:', error)

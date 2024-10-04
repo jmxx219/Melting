@@ -7,7 +7,7 @@ import { formatLikeCount } from '@/utils/numberUtil'
 import ConfirmDialog from '@/components/Common/ConfirmDialog'
 import { AlbumMyResponseDto } from '@/types/user'
 import { convertIsoToDotDate } from '@/utils/dateUtil'
-import { addAlbumLikes } from '@/apis/albumApi'
+import { albumApi } from '@/apis/albumApi'
 
 interface MyAlbumProps {
   album: AlbumMyResponseDto
@@ -17,6 +17,7 @@ interface MyAlbumProps {
 export default function MyAlbumContent({ album, viewType }: MyAlbumProps) {
   const navigate = useNavigate()
   const [isLiked, setIsLiked] = useState(album.isLiked)
+  const [likeCount, setLikeCount] = useState(album.likedCount || 0)
   const [isPublic, setIsPublic] = useState(album.isPublic)
 
   const goToAlbumDetail = () => {
@@ -28,11 +29,22 @@ export default function MyAlbumContent({ album, viewType }: MyAlbumProps) {
     navigate(`/album/play`, { state: album.albumId })
   }
 
-  const toggleLike = (e: React.MouseEvent) => {
+  const toggleLike = async (e: React.MouseEvent) => {
     e.stopPropagation()
-    setIsLiked(!isLiked)
-    // TODO: 좋아요 상태 업데이트 API 호출
-    // albumApi.addAlbumLikes(album.albumId)
+    const newLikedState = !isLiked
+    setIsLiked(newLikedState)
+    try {
+      if (newLikedState) {
+        await albumApi.addAlbumLikes(album.albumId)
+        setLikeCount((prevCount) => prevCount + 1)
+      } else {
+        await albumApi.deleteAlbumLikes(album.albumId)
+        setLikeCount((prevCount) => prevCount - 1)
+      }
+    } catch (error) {
+      console.error('좋아요 상태 업데이트 중 오류 발생:', error)
+      setIsLiked(!newLikedState)
+    }
   }
 
   const handleSwitchChange = (checked: boolean) => {
