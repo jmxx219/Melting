@@ -81,9 +81,12 @@ public class SongService {
 		Song song = songRepository.findById(songId)
 			.orElseThrow(() -> new BusinessException(ErrorMessage.SONG_NOT_FOUND));
 		if (song.getAlbum() != null) {
-			Double dailyStreamingCount = redisTemplate.opsForZSet().incrementScore(DAILY_STREAMING_KEY, song.getAlbum().getId(), 1);
-			Double monthLyStreamingCount = redisTemplate.opsForZSet().incrementScore(MONTHLY_STREAMING_KEY, song.getAlbum().getId(), 1);
-			log.info("Incremented streaming count for album {}: {}", songId, dailyStreamingCount, monthLyStreamingCount);
+			Double dailyStreamingCount = redisTemplate.opsForZSet()
+				.incrementScore(DAILY_STREAMING_KEY, song.getAlbum().getId(), 1);
+			Double monthLyStreamingCount = redisTemplate.opsForZSet()
+				.incrementScore(MONTHLY_STREAMING_KEY, song.getAlbum().getId(), 1);
+			log.info("Incremented streaming count for album {}: {}", songId, dailyStreamingCount,
+				monthLyStreamingCount);
 		}
 	}
 
