@@ -38,7 +38,7 @@ public class SongController {
 
 	@Operation(summary = "멜팅 곡 생성 API")
 	@PostMapping(value = "/melting", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-	public CompletableFuture<ApiResponse<Void>> createMeltingSong(
+	public ApiResponse<Boolean> createMeltingSong(
 		@ModelAttribute MeltingSongCreateRequestDto meltingSongCreateRequestDto,
 		@AuthenticationPrincipal CustomOAuth2User customOAuth2User) throws Exception {
 
@@ -51,8 +51,9 @@ public class SongController {
 		// 	);
 		// }
 
-		return songService.createMeltingSong(customOAuth2User.getName(), originalSongId, voiceFile)
-			.thenApply(result -> ApiResponse.ok(result));
+		songService.createMeltingSong(customOAuth2User.getName(), originalSongId, voiceFile);
+		// .thenApply(result -> ApiResponse.ok(result));
+		return ApiResponse.ok(null);
 	}
 
 	@Operation(summary = "AI Cover 곡 생성 API")
