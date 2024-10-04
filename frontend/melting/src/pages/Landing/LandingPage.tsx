@@ -36,8 +36,10 @@ export default function LandingPage() {
             <nav className="flex justify-between items-center">
               <h1 className="text-2xl font-bold text-primary-400">MELTING</h1>
               <Button
+                type="button"
                 variant="ghost"
                 className="text-black hover:text-black/50"
+                onClick={handleClick}
               >
                 로그인
               </Button>
