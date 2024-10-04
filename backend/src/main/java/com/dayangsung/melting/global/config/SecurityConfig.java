@@ -9,6 +9,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
@@ -25,6 +26,7 @@ import com.dayangsung.melting.global.handler.LoginSuccessHandler;
 import com.dayangsung.melting.global.util.JwtUtil;
 import com.dayangsung.melting.global.util.RedisUtil;
 
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 
 @Configuration
@@ -79,6 +81,11 @@ public class SecurityConfig {
 			);
 
 		return http.build();
+	}
+
+	@PostConstruct
+	public void enableAuthCtxOnSpawnedThreads() {
+		SecurityContextHolder.setStrategyName(SecurityContextHolder.MODE_INHERITABLETHREADLOCAL);
 	}
 
 	CorsConfigurationSource corsConfigurationSource() {
