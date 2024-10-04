@@ -38,10 +38,10 @@ export default function Footer() {
           const isActive = activeItem === item.href
           const iconColor = isActive ? '#ffaf25' : '#A5A5A5' // primary-400 color code
           return (
-            <NavigationMenuItem key={item.name}>
+            <NavigationMenuItem key={item.name} className="flex-1">
               <NavigationMenuLink
                 href={item.href}
-                className={`flex flex-col items-center p-2 ${
+                className={`flex flex-col items-center justify-center p-2 w-full h-16 ${
                   isActive ? 'text-primary-400' : 'text-muted-foreground'
                 } hover:text-primary-300 transition-colors`}
               >
