@@ -5,7 +5,7 @@ import {
   CustomError,
 } from './axiosInstance'
 import {
-  AlbumCreateRequestDto,
+  // AlbumCreateRequestDto,
   AddAlbumLikesData,
   CommentRequestDto,
   CreateAlbumData,
@@ -16,6 +16,15 @@ import {
   GetAllCommentsData,
   GetAllGenresData,
   WriteCommentData,
+  CreateAlbumPayload,
+  CreateAlbumError,
+  GetHot5AlbumsData,
+  GetHot5AlbumsError,
+  GetMonthlyAlbumsData,
+  GetMonthlyAlbumsError,
+  GetSteadyAlbumsData,
+  GetSteadyAlbumsError,
+  AlbumRankingResponseDto,
 } from '@/types/album.ts'
 
 const instance = createAxiosInstance('albums')
@@ -41,13 +50,26 @@ export const albumApi = {
   },
 
   // 앨범 생성
-  createAlbum: async (data: AlbumCreateRequestDto) => {
+  createAlbum: async (data: CreateAlbumPayload) => {
+    const formData = new FormData()
+
+    // FormData에 데이터를 추가합니다.
+    formData.append('albumCoverImage', data.albumCoverImage)
+
+    // albumCreateRequestDto의 모든 필드를 FormData에 추가합니다.
+    formData.append(
+      'albumCreateRequestDto',
+      new Blob([JSON.stringify(data.albumCreateRequestDto)], {
+        type: 'application/json',
+      }),
+    )
+
     try {
-      const response = await instance.post<CreateAlbumData>('/', data)
+      const response = await api.post<CreateAlbumData>('', formData)
       return response.data
     } catch (error) {
       console.error('앨범 생성 중 오류 발생:', error)
-      throw error
+      throw error as CreateAlbumError
     }
   },
 
@@ -137,6 +159,42 @@ export const albumApi = {
     } catch (error) {
       console.error('장르 목록 가져오기 오류:', error)
       throw error as CustomError
+    }
+  },
+
+  // 가장 인기 있는 5개의 앨범 가져오기
+  getHot5Albums: async (): Promise<AlbumRankingResponseDto[]> => {
+    try {
+      const response = await api.get<GetHot5AlbumsData>('/daily')
+      return response.data as AlbumRankingResponseDto[]
+    } catch (error) {
+      console.error('가장 인기 있는 5개의 앨범 가져오기 중 오류 발생:', error)
+      throw error as GetHot5AlbumsError
+    }
+  },
+
+  // 월간 앨범 목록 가져오기
+  getMonthlyAlbums: async (): Promise<AlbumRankingResponseDto[]> => {
+    try {
+      const response = await api.get<GetMonthlyAlbumsData>('/monthly')
+      return response.data as AlbumRankingResponseDto[]
+    } catch (error) {
+      console.error('월간 앨범 목록 가져오기 중 오류 발생:', error)
+      throw error as GetMonthlyAlbumsError
+    }
+  },
+
+  // 지속적으로 인기 있는 앨범 목록 가져오기
+  getSteadyAlbums: async (): Promise<AlbumRankingResponseDto[]> => {
+    try {
+      const response = await api.get<GetSteadyAlbumsData>('/steady')
+      return response.data as AlbumRankingResponseDto[]
+    } catch (error) {
+      console.error(
+        '지속적으로 인기 있는 앨범 목록 가져오기 중 오류 발생:',
+        error,
+      )
+      throw error as GetSteadyAlbumsError
     }
   },
 }

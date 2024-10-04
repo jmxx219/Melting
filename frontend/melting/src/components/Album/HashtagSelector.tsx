@@ -1,6 +1,7 @@
 // src/components/Album/HashtagSelector.tsx
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
+
 import { useAlbumContext } from '@/contexts/AlbumContext'
 import {
   AlertDialog,
@@ -14,6 +15,7 @@ import {
 import { searchHashtags } from '@/apis/albumApi'
 import SearchInput from '../Album/SearchInput'
 import SearchDropdown from '../Album/SearchDropdown'
+import useDebounce from '@/hooks/useDebounce'
 
 interface HashtagSelectorProps {
   onHashtagsChange?: (hashtags: string[]) => void
@@ -35,6 +37,8 @@ export default function HashtagSelector({
   const [suggestions, setSuggestions] = useState<string[]>([])
   const [isDropdownOpen, setIsDropdownOpen] = useState(false)
   const [showWarning, setShowWarning] = useState(false)
+  const debouncedInput = useDebounce(input, 300)
+  const composingRef = useRef(false)
 
   const selectedHashtags = useAlbumContextFlag
     ? albumContext?.selectedHashtags
@@ -51,8 +55,11 @@ export default function HashtagSelector({
 
   useEffect(() => {
     const fetchSuggestions = async () => {
-      if (input.length > 0) {
-        const results = await searchHashtags(input.replace(/^#/, ''))
+      if (debouncedInput.length > 0) {
+        const searchTerm = debouncedInput.startsWith('#')
+          ? debouncedInput.slice(1)
+          : debouncedInput
+        const results = await searchHashtags(searchTerm)
         setSuggestions(results)
         setIsDropdownOpen(true)
       } else {
@@ -61,7 +68,7 @@ export default function HashtagSelector({
       }
     }
     fetchSuggestions()
-  }, [input])
+  }, [debouncedInput])
 
   useEffect(() => {
     if (!useAlbumContextFlag && onHashtagsChange) {
@@ -71,11 +78,13 @@ export default function HashtagSelector({
 
   const addHashtag = (tag: string) => {
     if (selectedHashtags && setSelectedHashtags) {
+      const newTag = tag.startsWith('#') ? tag.slice(1) : tag
       if (
         selectedHashtags.length < maxHashtags &&
-        !selectedHashtags.includes(tag)
+        !selectedHashtags.includes(newTag) &&
+        newTag.trim() !== ''
       ) {
-        setSelectedHashtags([...selectedHashtags, tag])
+        setSelectedHashtags([...selectedHashtags, newTag])
         setInput('')
         setSuggestions([])
         setIsDropdownOpen(false)
@@ -91,9 +100,28 @@ export default function HashtagSelector({
     }
   }
 
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter' && !composingRef.current) {
+      e.preventDefault()
+      const newTag = input.trim()
+      if (newTag.length > 1) {
+        // '#'만 있는 경우를 방지
+        addHashtag(newTag)
+      }
+    }
+  }
+
+  const handleCompositionStart = () => {
+    composingRef.current = true
+  }
+
+  const handleCompositionEnd = () => {
+    composingRef.current = false
+  }
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value
-    setInput(value.startsWith('#') ? value : '#' + value)
+    setInput(value)
   }
 
   if (!selectedHashtags || !setSelectedHashtags) {
@@ -107,6 +135,9 @@ export default function HashtagSelector({
         selectedHashtags={selectedHashtags}
         onInputChange={handleInputChange}
         onRemoveHashtag={removeHashtag}
+        onKeyDown={handleKeyDown}
+        onCompositionStart={handleCompositionStart}
+        onCompositionEnd={handleCompositionEnd}
       />
       <SearchDropdown
         isOpen={isDropdownOpen}

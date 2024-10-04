@@ -40,7 +40,7 @@ export default function MusicList({
               )}
               <Avatar className="h-10 mx-1">
                 <AvatarImage
-                  src={song.albumCoverImgUrl}
+                  src={song.albumCoverImageUrl}
                   alt={`${song.songTitle} cover`}
                 />
               </Avatar>

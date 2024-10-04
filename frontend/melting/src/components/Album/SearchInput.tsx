@@ -5,6 +5,9 @@ interface SearchInputProps {
   selectedHashtags: string[]
   onInputChange: (e: React.ChangeEvent<HTMLInputElement>) => void
   onRemoveHashtag: (tag: string) => void
+  onKeyDown?: (e: React.KeyboardEvent<HTMLInputElement>) => void
+  onCompositionStart: () => void
+  onCompositionEnd: () => void
 }
 
 export default function SearchInput({
@@ -12,9 +15,12 @@ export default function SearchInput({
   selectedHashtags,
   onInputChange,
   onRemoveHashtag,
+  onKeyDown,
+  onCompositionStart,
+  onCompositionEnd,
 }: SearchInputProps) {
   return (
-    <div className="relative border-b-2 rounded-md p-2 flex flex-wrap items-center">
+    <div className="relative border-b-2 p-2 flex flex-wrap items-center">
       {selectedHashtags.map((tag) => (
         <span
           key={tag}
@@ -28,6 +34,9 @@ export default function SearchInput({
         type="text"
         value={input}
         onChange={onInputChange}
+        onKeyDown={onKeyDown}
+        onCompositionStart={onCompositionStart}
+        onCompositionEnd={onCompositionEnd}
         placeholder={
           selectedHashtags.length === 0 ? '해시태그를 추가해주세요' : ''
         }

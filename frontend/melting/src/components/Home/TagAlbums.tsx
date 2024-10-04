@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 
-import { BestAlbum } from '@/types/album'
+import { AlbumRankingResponseDto } from '@/types/album'
 import Album from '../Community/Album'
 import { Plus } from 'lucide-react'
 
@@ -25,32 +25,33 @@ import {
 import HashtagButton from '../Button/HashtagButton'
 import HashtagSelector from '@/components/Album/HashtagSelector'
 import { AlertDialogCancel } from '@radix-ui/react-alert-dialog'
+// import AlertModal from '@/components/common/AlertModal.tsx'
 
-const mockup: BestAlbum[] = [
+const mockup: AlbumRankingResponseDto[] = [
   {
     albumId: 1,
     albumName: '태그 첫 번째 앨범',
-    nickname: '아티스트1',
-    albumCoverImage: '/images/mockup/album0.png',
+    creatorNickname: '아티스트1',
+    albumCoverImageUrl: '/images/mockup/album0.png',
   },
   {
     albumId: 2,
     albumName: '태그 두 번째 앨범',
-    nickname: '아티스트2',
-    albumCoverImage: '/images/mockup/album1.png',
+    creatorNickname: '아티스트2',
+    albumCoverImageUrl: '/images/mockup/album1.png',
   },
   {
     albumId: 3,
     albumName: '태그 세 번째 앨범',
-    nickname: '아티스트3',
-    albumCoverImage: '/images/mockup/album2.png',
+    creatorNickname: '아티스트3',
+    albumCoverImageUrl: '/images/mockup/album2.png',
   },
 ]
 
 export default function TagAlbum() {
   const [tags, setTags] = useState<string[]>([])
   const [selectedTag, setSelectedTag] = useState<string | null>(null)
-  const [albums, setAlbums] = useState<BestAlbum[]>([])
+  const [albums, setAlbums] = useState<AlbumRankingResponseDto[]>([])
   const [isDialogOpen, setIsDialogOpen] = useState(false)
   const [selectedHashtags, setSelectedHashtags] = useState<string[]>([])
   const [showWarning, setShowWarning] = useState(false)
@@ -104,6 +105,10 @@ export default function TagAlbum() {
   const handleTagClick = (tag: string) => {
     setSelectedTag(tag)
   }
+
+  // const handleCloseDialog = () => {
+  //   setShowWarning(false)
+  // }
 
   return (
     <>
@@ -175,7 +180,14 @@ export default function TagAlbum() {
             </div>
           )}
         </div>
-
+        {/*{isDialogOpen && (*/}
+        {/*  <AlertModal*/}
+        {/*    title={''}*/}
+        {/*    messages={['정말 삭제하시겠습니까?']}*/}
+        {/*    isOpen={showWarning}*/}
+        {/*    onClose={handleCloseDialog}*/}
+        {/*  />*/}
+        {/*)}*/}
         <AlertDialog open={showWarning} onOpenChange={setShowWarning}>
           <AlertDialogContent className="h-60 border-2 border-primary-400">
             <AlertDialogHeader className="flex items-center justify-center">

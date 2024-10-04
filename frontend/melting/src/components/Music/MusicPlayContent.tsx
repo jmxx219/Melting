@@ -76,7 +76,7 @@ export default function MusicPlayContent({
     <div className="flex flex-col h-full">
       <div className="flex-1 py-5">
         <img
-          src={song.albumCoverImgUrl}
+          src={song.albumCoverImageUrl}
           alt="Album cover"
           className="w-full rounded-lg mb-2"
         />
