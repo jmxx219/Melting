@@ -14,15 +14,16 @@ import com.dayangsung.melting.domain.album.service.AlbumService;
 import com.dayangsung.melting.domain.hashtag.entity.MemberHashtag;
 import com.dayangsung.melting.domain.hashtag.service.HashtagService;
 import com.dayangsung.melting.domain.likes.service.LikesService;
-import com.dayangsung.melting.domain.member.dto.SongListDto;
 import com.dayangsung.melting.domain.member.dto.response.MemberResponseDto;
-import com.dayangsung.melting.domain.member.dto.response.MemberSongResponseDto;
+import com.dayangsung.melting.domain.member.dto.response.MemberSongCountsResponseDto;
 import com.dayangsung.melting.domain.member.entity.Member;
 import com.dayangsung.melting.domain.member.enums.Gender;
 import com.dayangsung.melting.domain.member.repository.MemberRepository;
 import com.dayangsung.melting.domain.originalsong.entity.OriginalSong;
+import com.dayangsung.melting.domain.song.dto.SongListDto;
 import com.dayangsung.melting.domain.song.dto.SongMypageDto;
 import com.dayangsung.melting.domain.song.dto.response.SongLikesPageResponseDto;
+import com.dayangsung.melting.domain.song.dto.response.SongMypagePageResponseDto;
 import com.dayangsung.melting.domain.song.entity.Song;
 import com.dayangsung.melting.domain.song.repository.SongRepository;
 import com.dayangsung.melting.domain.song.service.SongService;
@@ -98,8 +99,7 @@ public class MemberService {
 		CookieUtil.deleteCookie(request, response, "refresh_token");
 	}
 
-	@Transactional
-	public MemberSongResponseDto getMemberSongs(String email) {
+	public SongMypagePageResponseDto getMemberSongs(String email, int page, int size) {
 		Member member = memberRepository.findByEmail(email)
 			.orElseThrow(() -> new BusinessException(ErrorMessage.MEMBER_NOT_FOUND));
 
@@ -135,7 +135,20 @@ public class MemberService {
 			))
 			.collect(Collectors.toList());
 
-		return MemberSongResponseDto.of(mySongList, member.isAiCoverEnabled());
+		int start = page * size;
+		int end = Math.min((page + 1) * size, mySongList.size());
+		List<SongListDto> pagedSongList = mySongList.subList(start, end);
+
+		return SongMypagePageResponseDto.of(
+			pagedSongList,
+			member.isAiCoverEnabled(),
+			page == (mySongList.size() - 1) / size,
+			page,
+			size,
+			(mySongList.size() + size - 1) / size,
+			(long)mySongList.size(),
+			pagedSongList.size()
+		);
 	}
 
 	@Transactional
@@ -213,5 +226,16 @@ public class MemberService {
 		Member member = memberRepository.findByEmail(email)
 			.orElseThrow(() -> new BusinessException(ErrorMessage.MEMBER_NOT_FOUND));
 		return songService.getMemberLikesSongs(member.getId(), sort, page, size);
+	}
+
+	public MemberSongCountsResponseDto getMemberSongsCounts(String email) {
+		Member member = memberRepository.findByEmail(email)
+			.orElseThrow(() -> new BusinessException(ErrorMessage.MEMBER_NOT_FOUND));
+
+		int songCount = member.getCoverCount();
+
+		return MemberSongCountsResponseDto.builder()
+			.songcounts(songCount)
+			.build();
 	}
 }
