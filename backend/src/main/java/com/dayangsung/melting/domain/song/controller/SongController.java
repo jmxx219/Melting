@@ -4,7 +4,6 @@ import java.util.concurrent.CompletableFuture;
 
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -39,8 +38,7 @@ public class SongController {
 
 	@Operation(summary = "멜팅 곡 생성 API")
 	@PostMapping(value = "/melting", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-	@Async
-	public CompletableFuture<ResponseEntity<ApiResponse<Void>>> createMeltingSong(
+	public CompletableFuture<ApiResponse<Void>> createMeltingSong(
 		@ModelAttribute MeltingSongCreateRequestDto meltingSongCreateRequestDto,
 		@AuthenticationPrincipal CustomOAuth2User customOAuth2User) throws Exception {
 
@@ -54,12 +52,11 @@ public class SongController {
 		// }
 
 		return songService.createMeltingSong(customOAuth2User.getName(), originalSongId, voiceFile)
-			.thenApply(result -> ResponseEntity.ok(ApiResponse.ok(result)));
+			.thenApply(result -> ApiResponse.ok(result));
 	}
 
 	@Operation(summary = "AI Cover 곡 생성 API")
 	@PostMapping(value = "/aicover")
-	@Async
 	public CompletableFuture<ResponseEntity<ApiResponse<Void>>> createAicoverSong(
 		@RequestBody AiCoverSongCreateRequestDto aiCoverSongCreateRequestDto,
 		@AuthenticationPrincipal CustomOAuth2User customOAuth2User) throws Exception {
