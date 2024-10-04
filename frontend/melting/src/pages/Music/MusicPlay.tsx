@@ -15,12 +15,15 @@ export default function MusicPlay({}: Props) {
     songTitle: 'Blueming',
     artist: '아이유',
     nickname: '노원핵주먹',
-    albumCoverImgUrl: 'https://github.com/shadcn.png',
+    albumCoverImageUrl: 'https://github.com/shadcn.png',
     lyrics:
       'dsadsd\n dasdasdada\n dasdasdas\n dsadsd\n dasdasdada\n dasdasdas dsadsd\n dasdasdada\n dasdasdasdsadsd\n dasdasdada\n dasdasdasdsadsd\n dasdasdada\n dasdasdasdsadsd\n dasdasdada\n dasdasdasdsadsd\n dasdasdada\n dasdasdasdsadsd\n dasdasdada\n dasdasdasdsadsd\n dasdasdada\n dasdasdasdsadsd\n dasdasdada\n dasdasdasdsadsd\n dasdasdada\n dasdasdasdsadsd\n dasdasdada\n dasdasdasdsadsd\n dasdasdada\n dasdasdasdsadsd\n dasdasdada\n dasdasdasdsadsd\n dasdasdada\n dasdasdasdsadsd\n dasdasdada\n dasdasdasdsadsd\n dasdasdada\n dasdasdasdsadsd\n dasdasdada\n dasdasdas ',
     audioSrc:
       'https://d35fpwscei7sb8.cloudfront.net/audio/original_song/mr/1.mp3',
     like: 0,
+    songType: 'melting',
+    aiCoverSongId: 1,
+    meltingSongId: 2,
   }
 
   const navigate = useNavigate()

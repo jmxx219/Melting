@@ -14,11 +14,15 @@ export default function MusicRecord() {
     songId: 1,
     songTitle: 'Blueming',
     artist: '아이유',
-    albumCoverImgUrl: 'https://github.com/shadcn.png',
+    albumCoverImageUrl: 'https://github.com/shadcn.png',
     lyrics:
       'dsadsd\n dasdasdada\n dasdasdas\n dsadsd\n dasdasdada\n dasdasdas dsadsd\n dasdasdada\n dasdasdasdsadsd\n dasdasdada\n dasdasdasdsadsd\n dasdasdada\n dasdasdasdsadsd\n dasdasdada\n dasdasdasdsadsd\n dasdasdada\n dasdasdasdsadsd\n dasdasdada\n dasdasdasdsadsd\n dasdasdada\n dasdasdasdsadsd\n dasdasdada\n dasdasdasdsadsd\n dasdasdada\n dasdasdasdsadsd\n dasdasdada\n dasdasdasdsadsd\n dasdasdada\n dasdasdasdsadsd\n dasdasdada\n dasdasdasdsadsd\n dasdasdada\n dasdasdasdsadsd\n dasdasdada\n dasdasdasdsadsd\n dasdasdada\n dasdasdasdsadsd\n dasdasdada\n dasdasdas ',
     audioSrc:
       'https://d35fpwscei7sb8.cloudfront.net/audio/original_song/mr/1.mp3',
+    nickname: '쏠랑쏠랑',
+    songType: 'melting',
+    aiCoverSongId: 1,
+    meltingSongId: 2,
   }
   // const [song, setSong] = useState<MusicRecord>({
   //   songId: 1,
