@@ -18,34 +18,46 @@ export default function AlbumPlayMain({}: Props) {
       songId: 1,
       songTitle: 'Blueming',
       artist: '아이유',
-      albumCoverImgUrl: 'https://github.com/shadcn.png',
+      albumCoverImageUrl: 'https://github.com/shadcn.png',
       lyrics:
         'dsadsd\n dasdasdada\n dasdasdas\n dsadsd\n dasdasdada\n dasdasdas dsadsd\n dasdasdada\n dasdasdasdsadsd\n dasdasdada\n dasdasdasdsadsd\n dasdasdada\n dasdasdasdsadsd\n dasdasdada\n dasdasdasdsadsd\n dasdasdada\n dasdasdasdsadsd\n dasdasdada\n dasdasdasdsadsd\n dasdasdada\n dasdasdasdsadsd\n dasdasdada\n dasdasdasdsadsd\n dasdasdada\n dasdasdasdsadsd\n dasdasdada\n dasdasdasdsadsd\n dasdasdada\n dasdasdasdsadsd\n dasdasdada\n dasdasdasdsadsd\n dasdasdada\n dasdasdasdsadsd\n dasdasdada\n dasdasdasdsadsd\n dasdasdada\n dasdasdasdsadsd\n dasdasdada\n dasdasdas ',
       audioSrc:
         'https://d35fpwscei7sb8.cloudfront.net/audio/original_song/mr/1.mp3',
       like: 0,
+      nickname: '쏠랑쏠랑',
+      songType: 'melting',
+      aiCoverSongId: 1,
+      meltingSongId: 2,
     },
     {
       songId: 1,
       songTitle: 'Blueming2',
       artist: '아이유',
-      albumCoverImgUrl: 'https://github.com/shadcn.png',
+      albumCoverImageUrl: 'https://github.com/shadcn.png',
       lyrics:
         'dsadsd\n dasdasdada\n dasdasdas\n dsadsd\n dasdasdada\n dasdasdas dsadsd\n dasdasdada\n dasdasdasdsadsd\n dasdasdada\n dasdasdasdsadsd\n dasdasdada\n dasdasdasdsadsd\n dasdasdada\n dasdasdasdsadsd\n dasdasdada\n dasdasdasdsadsd\n dasdasdada\n dasdasdasdsadsd\n dasdasdada\n dasdasdasdsadsd\n dasdasdada\n dasdasdasdsadsd\n dasdasdada\n dasdasdasdsadsd\n dasdasdada\n dasdasdasdsadsd\n dasdasdada\n dasdasdasdsadsd\n dasdasdada\n dasdasdasdsadsd\n dasdasdada\n dasdasdasdsadsd\n dasdasdada\n dasdasdasdsadsd\n dasdasdada\n dasdasdasdsadsd\n dasdasdada\n dasdasdas ',
       audioSrc:
         'https://d35fpwscei7sb8.cloudfront.net/audio/original_song/mr/2.mp3',
       like: 0,
+      nickname: '쏠랑쏠랑',
+      songType: 'melting',
+      aiCoverSongId: 1,
+      meltingSongId: 2,
     },
     {
       songId: 1,
       songTitle: 'Blueming3',
       artist: '아이유',
-      albumCoverImgUrl: 'https://github.com/shadcn.png',
+      albumCoverImageUrl: 'https://github.com/shadcn.png',
       lyrics:
         'dsadsd\n dasdasdada\n dasdasdas\n dsadsd\n dasdasdada\n dasdasdas dsadsd\n dasdasdada\n dasdasdasdsadsd\n dasdasdada\n dasdasdasdsadsd\n dasdasdada\n dasdasdasdsadsd\n dasdasdada\n dasdasdasdsadsd\n dasdasdada\n dasdasdasdsadsd\n dasdasdada\n dasdasdasdsadsd\n dasdasdada\n dasdasdasdsadsd\n dasdasdada\n dasdasdasdsadsd\n dasdasdada\n dasdasdasdsadsd\n dasdasdada\n dasdasdasdsadsd\n dasdasdada\n dasdasdasdsadsd\n dasdasdada\n dasdasdasdsadsd\n dasdasdada\n dasdasdasdsadsd\n dasdasdada\n dasdasdasdsadsd\n dasdasdada\n dasdasdasdsadsd\n dasdasdada\n dasdasdas ',
       audioSrc:
         'https://d35fpwscei7sb8.cloudfront.net/audio/original_song/mr/3.mp3',
       like: 0,
+      nickname: '쏠랑쏠랑',
+      songType: 'melting',
+      aiCoverSongId: 1,
+      meltingSongId: 2,
     },
   ]
 
