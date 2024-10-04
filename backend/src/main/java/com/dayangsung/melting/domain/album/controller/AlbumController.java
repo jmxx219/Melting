@@ -19,13 +19,16 @@ import org.springframework.web.multipart.MultipartFile;
 import com.dayangsung.melting.domain.album.dto.request.AlbumCreateRequestDto;
 import com.dayangsung.melting.domain.album.dto.request.AlbumUpdateRequestDto;
 import com.dayangsung.melting.domain.album.dto.request.openai.AiCoverImageRequestDto;
+import com.dayangsung.melting.domain.album.dto.request.openai.AiDescriptionRequestDto;
 import com.dayangsung.melting.domain.album.dto.response.AlbumDetailsResponseDto;
 import com.dayangsung.melting.domain.album.dto.response.AlbumSearchPageResponseDto;
 import com.dayangsung.melting.domain.album.service.AlbumCoverImageService;
+import com.dayangsung.melting.domain.album.service.AlbumDescriptionService;
 import com.dayangsung.melting.domain.album.service.AlbumService;
 import com.dayangsung.melting.domain.auth.CustomOAuth2User;
 import com.dayangsung.melting.domain.genre.dto.response.GenreResponseDto;
 import com.dayangsung.melting.global.common.response.ApiResponse;
+import com.fasterxml.jackson.core.JsonProcessingException;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -38,6 +41,7 @@ public class AlbumController {
 
 	private final AlbumService albumService;
 	private final AlbumCoverImageService albumCoverImageService;
+	private final AlbumDescriptionService albumDescriptionService;
 
 	@GetMapping
 	public ApiResponse<AlbumSearchPageResponseDto> getAlbums(
@@ -101,6 +105,13 @@ public class AlbumController {
 			@RequestBody AiCoverImageRequestDto aiCoverImageRequestDto) throws IOException {
 		String base64Image = albumCoverImageService.createAiCoverImage(aiCoverImageRequestDto.songs());
 		return ApiResponse.ok(base64Image);
+	}
+
+	@PostMapping("/{albumId}/descriptions")
+	public ApiResponse<String> createAiDescription(@PathVariable Long albumId,
+			@RequestBody AiDescriptionRequestDto aiDescriptionRequestDto) throws JsonProcessingException {
+		String description = albumDescriptionService.createAiDescription(albumId, aiDescriptionRequestDto);
+		return ApiResponse.ok(description);
 	}
 
 	@GetMapping("/genres")
