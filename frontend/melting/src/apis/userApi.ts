@@ -18,9 +18,10 @@ import {
   GetMemberAlbumsError,
   GetMemberLikesAlbumsError,
   AlbumMyPageResponseDto,
-  ApiResponseAlbumMyPageResponseDto,
+  MemberSongResponseDto,
+  GetMemberSongsData,
+  GetMemberSongsError,
 } from '@/types/user'
-
 const instance = createAxiosInstance('members')
 const api = createApi<ApiResponse>(instance)
 
@@ -133,6 +134,14 @@ export const userApi = {
     } catch (error) {
       console.error('회원 좋아요한 앨범 조회 오류:', error)
       throw error as GetMemberLikesAlbumsError
+    }
+  },
+  getMemberSongs: async (): Promise<MemberSongResponseDto> => {
+    try {
+      const response = await api.get<GetMemberSongsData>('')
+      return response.data as MemberSongResponseDto
+    } catch (error) {
+      throw error as GetMemberSongsError
     }
   },
 }

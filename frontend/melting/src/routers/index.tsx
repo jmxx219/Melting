@@ -11,6 +11,7 @@ import MyPageRoutes from './MyPageRoutes'
 import OAuthRedirectHandler from '@/utils/OAuthUtil.ts'
 import ProtectedRoute from './ProtectRouter'
 import { AuthProvider } from '@/contexts/AuthContext'
+import LandingPage from '@/pages/Landing/LandingPage.tsx'
 
 const Loading = () => <div>Loading...</div>
 
@@ -20,6 +21,7 @@ export default function AppRoutes() {
       <Router>
         <Suspense fallback={<Loading />}>
           <Routes>
+            <Route path="/" element={<LandingPage />} />
             <Route path="/login" element={<LoginPage />} />
             <Route
               path="/login/callback/:provider"

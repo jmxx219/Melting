@@ -14,13 +14,13 @@ export interface MemberUpdateRequestDto {
 }
 
 export interface MemberInitRequestDto {
-  nickname?: string
-  gender?: string
+  nickname: string
+  gender: string
 }
 
 export interface MemberResponseDto {
-  nickname?: string
-  profileImageUrl?: string
+  nickname: string
+  profileImageUrl: string
 }
 
 export interface ApiResponseBoolean {
@@ -123,3 +123,38 @@ export type GetMemberLikesAlbumsData = ApiResponseAlbumMyPageResponseDto
 export type GetMemberAlbumsError = ErrorResponse
 
 export type GetMemberLikesAlbumsError = ErrorResponse
+export interface SongMypageDto {
+  /** @format int64 */
+  songId?: number
+  albumCoverImageUrl?: string
+  songType?: 'MELTING' | 'AICOVER'
+  /** @format int32 */
+  likeCount?: number
+  isLiked?: boolean
+  isCreated?: boolean
+  /** @format date-time */
+  lastModifiedAt?: string
+}
+
+export interface SongListDto {
+  /** @format int64 */
+  originalSongId?: number
+  songTitle?: string
+  artist?: string
+  songList?: SongMypageDto[]
+}
+
+export interface MemberSongResponseDto {
+  mySongList?: SongListDto[]
+  isPossibleAiCover?: boolean
+}
+
+export interface ApiResponseMemberSongResponseDto {
+  status?: string
+  data?: MemberSongResponseDto
+  errorMessage?: string
+}
+
+export type GetMemberSongsData = ApiResponseMemberSongResponseDto
+
+export type GetMemberSongsError = ErrorResponse
