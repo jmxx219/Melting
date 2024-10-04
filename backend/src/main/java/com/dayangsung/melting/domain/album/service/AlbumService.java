@@ -262,6 +262,16 @@ public class AlbumService {
 		return top5AlbumLikes.stream().map(AlbumRankingResponseDto::of).toList();
 	}
 
+	public List<AlbumRankingResponseDto> getHot5Albums() {
+		List<Album> hot5Albums = redisUtil.getTop5AlbumsStreaming(true);
+		return hot5Albums.stream().map(AlbumRankingResponseDto::of).toList();
+	}
+
+	public List<AlbumRankingResponseDto> getMonthlyTop5Albums() {
+		List<Album> monthlyTop5Albums = redisUtil.getTop5AlbumsStreaming(false);
+		return monthlyTop5Albums.stream().map(AlbumRankingResponseDto::of).toList();
+	}
+
 	public List<GenreResponseDto> getAllGenres() {
 		return genreService.findAll();
 	}

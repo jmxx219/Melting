@@ -124,6 +124,18 @@ public class AlbumController {
 		return ApiResponse.ok(steadyAlbums);
 	}
 
+	@GetMapping("/daily")
+	public ApiResponse<List<AlbumRankingResponseDto>> getHot5Albums() {
+		List<AlbumRankingResponseDto> hot5Albums = albumService.getHot5Albums();
+		return ApiResponse.ok(hot5Albums);
+	}
+
+	@GetMapping("/monthly")
+	public ApiResponse<List<AlbumRankingResponseDto>> getMonthlyAlbums() {
+		List<AlbumRankingResponseDto> monthlyAlbums = albumService.getMonthlyTop5Albums();
+		return ApiResponse.ok(monthlyAlbums);
+	}
+
 	@PostMapping("/{albumId}/likes")
 	public ApiResponse<Integer> addAlbumLikes(@PathVariable Long albumId,
 		@AuthenticationPrincipal CustomOAuth2User customOAuth2User) {
