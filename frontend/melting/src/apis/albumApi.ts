@@ -16,6 +16,8 @@ import {
   GetAllCommentsData,
   GetAllGenresData,
   WriteCommentData,
+  CreateAlbumPayload,
+  CreateAlbumError,
 } from '@/types/album.ts'
 
 const instance = createAxiosInstance('albums')
@@ -27,10 +29,12 @@ export const albumApi = {
     sort?: 'LATEST' | 'POPULAR'
   }) => {
     try {
-      const response =
-        await instance.get<GetAlbumsInCommunityMainPageData>('/', {
+      const response = await instance.get<GetAlbumsInCommunityMainPageData>(
+        '/',
+        {
           params: query,
-        })
+        },
+      )
       return response.data
     } catch (error) {
       console.error('앨범 목록을 가져오는 중 오류 발생:', error)
@@ -39,13 +43,26 @@ export const albumApi = {
   },
 
   // 앨범 생성
-  createAlbum: async (data: AlbumCreateRequestDto) => {
+  createAlbum: async (data: CreateAlbumPayload) => {
+    const formData = new FormData()
+
+    // FormData에 데이터를 추가합니다.
+    formData.append('albumCoverImage', data.albumCoverImage)
+
+    // albumCreateRequestDto의 모든 필드를 FormData에 추가합니다.
+    formData.append(
+      'albumCreateRequestDto',
+      new Blob([JSON.stringify(data.albumCreateRequestDto)], {
+        type: 'application/json',
+      }),
+    )
+
     try {
-      const response = await instance.post<CreateAlbumData>('/', data)
+      const response = await instance.post<CreateAlbumData>('', formData)
       return response.data
     } catch (error) {
       console.error('앨범 생성 중 오류 발생:', error)
-      throw error
+      throw error as CreateAlbumError
     }
   },
 

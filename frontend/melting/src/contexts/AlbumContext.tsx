@@ -23,6 +23,8 @@ interface AlbumContextType {
   setSelectedHashtags: (hashtags: string[]) => void
   selectedCover: string | null
   setSelectedCover: (cover: string | null) => void
+  selectedCoverFile: File | null
+  setSelectedCoverFile: (cover: File | null) => void
 }
 
 // 기본값은 null이 아닌 적절한 기본 상태를 설정하거나 undefined로 설정
@@ -48,6 +50,7 @@ export const AlbumProvider = ({ children }: AlbumProviderProps) => {
   const [selectedGenres, setSelectedGenres] = useState<string[]>([])
   const [selectedHashtags, setSelectedHashtags] = useState<string[]>([])
   const [selectedCover, setSelectedCover] = useState<string | null>(null)
+  const [selectedCoverFile, setSelectedCoverFile] = useState<File | null>(null)
 
   useEffect(() => {
     if (selectedSongs.length > 0 && titleSongIndex === null) {
@@ -74,6 +77,8 @@ export const AlbumProvider = ({ children }: AlbumProviderProps) => {
         setSelectedHashtags,
         selectedCover,
         setSelectedCover,
+        selectedCoverFile,
+        setSelectedCoverFile,
       }}
     >
       {children}
