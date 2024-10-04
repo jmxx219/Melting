@@ -13,11 +13,10 @@ import {
   UpdateMemberInfoPayload,
   UpdateMemberInfoData,
   MemberResponseDto,
+  MemberSongResponseDto,
   GetMemberSongsData,
   GetMemberSongsError,
 } from '@/types/user'
-import { MemberSongResponseDto } from '@/typeApis/data-contracts.ts'
-
 const instance = createAxiosInstance('members')
 const api = createApi<ApiResponse>(instance)
 
