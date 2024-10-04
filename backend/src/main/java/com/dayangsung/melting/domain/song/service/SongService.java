@@ -90,9 +90,9 @@ public class SongService {
 		}
 	}
 
-	@Async
+	// @Async
 	@Transactional
-	public CompletableFuture<Void> createMeltingSong(
+	public void createMeltingSong(
 		String email, Long originalSongId, MultipartFile voiceFile) throws IOException {
 
 		OriginalSong originalSong = originalSongRepository.findById(originalSongId).orElseThrow(RuntimeException::new);
@@ -140,7 +140,8 @@ public class SongService {
 			.build();
 
 		redisTemplate.convertAndSend("melting_song_channel", meltingRedisPubDto);
-		return CompletableFuture.completedFuture(null);
+		// return CompletableFuture.completedFuture(null);
+		// return true;
 	}
 
 	private static String getFilename(Member member, Song savedSong) {
