@@ -29,7 +29,7 @@ export default function MusicList({
         songs.map((song, index) => (
           <Card
             key={song.originalSongId}
-            className={`border-0 rounded-none shadow-none ${selectId === song.originalSongId ? 'bg-[#FFF3DF]' : ''}`}
+            className={`mb-2 border-0 rounded-none shadow-none ${selectId === song.originalSongId ? 'bg-[#FFF3DF]' : ''}`}
             onClick={() => onSelectSong(song.originalSongId)}
           >
             <CardContent className="flex items-center p-0 py-2">
@@ -40,8 +40,8 @@ export default function MusicList({
               )}
               <Avatar className="h-10 mx-1">
                 <AvatarImage
-                  src={song.albumCoverImageUrl}
-                  alt={`${song.songTitle} cover`}
+                  src={song.coverImageUrl}
+                  alt={`${song.title} cover`}
                 />
               </Avatar>
               <div className="flex-grow px-2">
