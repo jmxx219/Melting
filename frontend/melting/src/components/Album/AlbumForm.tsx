@@ -173,7 +173,7 @@ export default function AlbumForm() {
         <Label htmlFor="hashtag" className="font-semibold">
           해시태그<span className="text-primary-400 ml-1">*</span>
         </Label>
-        <HashtagSelector useAlbumContextFlag={true} maxHashtags={5} />
+        <HashtagSelector useAlbumContextFlag={true} maxHashtags={3} />
       </div>
       <div>
         <Label htmlFor="hashtag" className="font-semibold">
