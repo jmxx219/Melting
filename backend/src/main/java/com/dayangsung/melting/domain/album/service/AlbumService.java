@@ -99,8 +99,8 @@ public class AlbumService {
 				likesService.getSongLikesCount(songId)));
 		}
 
-		for (Long genreId : albumCreateRequestDto.genres()) {
-			Genre genre = genreRepository.findById(genreId)
+		for (String genreContent : albumCreateRequestDto.genres()) {
+			Genre genre = genreRepository.findByContent(genreContent)
 				.orElseThrow(() -> new BusinessException(ErrorMessage.GENRE_NOT_FOUND));
 			AlbumGenre albumGenre = AlbumGenre.builder().album(album).genre(genre).build();
 			albumGenreRepository.save(albumGenre);
@@ -114,9 +114,13 @@ public class AlbumService {
 			albumHashtagRepository.save(albumHashtag);
 			album.addHashtag(albumHashtag);
 		}
-
 		album = albumRepository.save(album);
-		String albumCoverImageUrl = awsS3Service.uploadAlbumCoverImage(albumCoverImage, album.getId());
+		String albumCoverImageUrl;
+		if (albumCoverImage != null) {
+			albumCoverImageUrl = awsS3Service.uploadAlbumCoverImage(albumCoverImage, album.getId());
+		} else {
+			albumCoverImageUrl = awsS3Service.getDefaultAlbumCoverImage(albumCreateRequestDto.defaultCoverNumber());
+		}
 		album.updateAlbumCoverImageUrl(albumCoverImageUrl);
 		album = albumRepository.save(album);
 
