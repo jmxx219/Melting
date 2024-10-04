@@ -53,7 +53,7 @@ public class AlbumController {
 	@PostMapping
 	public ApiResponse<AlbumDetailsResponseDto> createAlbum(
 		@RequestPart AlbumCreateRequestDto albumCreateRequestDto,
-		@RequestPart MultipartFile albumCoverImage,
+		@RequestPart(required = false) MultipartFile albumCoverImage,
 		@AuthenticationPrincipal CustomOAuth2User customOAuth2User) {
 		AlbumDetailsResponseDto albumDetailsResponseDto =
 			albumService.createAlbum(albumCreateRequestDto, albumCoverImage, customOAuth2User.getName());
