@@ -4,15 +4,18 @@ import { useNavigate } from 'react-router-dom'
 import { Button } from '../ui/button'
 import { ScrollArea } from '../ui/scroll-area'
 import AudioPlayer, { AudioPlayerHandle } from './AudioPlayer'
+import { songApi } from '@/apis/songApi'
 
 interface MusciRecordProps {
-  lyrics: string
-  audioSrc: string
+  lyrics?: string
+  audioSrc?: string
+  originalSongId?: number
 }
 
 export default function MusciRecordContent({
-  lyrics,
-  audioSrc,
+  lyrics = '',
+  audioSrc = '',
+  originalSongId = -1,
 }: MusciRecordProps) {
   const [isRecording, setIsRecording] = useState(false)
   const [isEnd, setIsEnd] = useState(false)
@@ -41,7 +44,8 @@ export default function MusciRecordContent({
     const blob = new Blob(chunksRef.current, { type: 'audio/webm' })
     console.log('Recorded audio file size:', blob.size, 'bytes')
     console.log('Recorded audio file type:', blob.type)
-    // 여기서 blob을 사용하거나 저장하는 로직을 추가할 수 있습니다.
+
+    return blob
   }, [])
 
   const resetRecording = useCallback(() => {
@@ -55,11 +59,14 @@ export default function MusciRecordContent({
     navigate('/music/list', { state: { type: 'melting' } })
   }, [navigate, resetRecording])
 
-  const handleComplete = useCallback(() => {
+  const handleComplete = useCallback(async () => {
     if (isEnd && !isRecording) {
-      navigate('/music/play', { state: { songId: 0 } })
+      // 녹음이 완료된 경우, API로 전송
+      const recordedBlob = processRecordedAudio()
+
+      const response = songApi.meltingApi(originalSongId, recordedBlob)
     }
-  }, [isEnd, isRecording, navigate])
+  }, [isEnd, isRecording, processRecordedAudio, navigate])
 
   const startRecording = useCallback(async () => {
     try {

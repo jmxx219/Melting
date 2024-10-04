@@ -12,41 +12,62 @@
 import {
   AddAlbumLikesData,
   AddAlbumLikesError,
+  AddMemberHashtagData,
+  AddMemberHashtagError,
   AddSongLikesData,
   AddSongLikesError,
-  AddVoiceData,
-  AddVoiceError,
-  AlbumCreateRequestDto,
+  AI커버곡등록요청,
   AlbumUpdateRequestDto,
   CommentRequestDto,
+  CreateAicoverSongData,
+  CreateAicoverSongError,
   CreateAlbumData,
   CreateAlbumError,
+  CreateAlbumPayload,
+  CreateMeltingSongData,
+  CreateMeltingSongError,
+  DeleteAlbumData,
+  DeleteAlbumError,
   DeleteAlbumLikesData,
   DeleteAlbumLikesError,
   DeleteCommentData,
   DeleteCommentError,
+  DeleteMemberHashtagData,
+  DeleteMemberHashtagError,
   DeleteSongLikesData,
   DeleteSongLikesError,
   GetAlbumDetailsData,
   GetAlbumDetailsError,
   GetAlbumLikesCountData,
   GetAlbumLikesCountError,
-  GetAlbumsInCommunityMainPageData,
-  GetAlbumsInCommunityMainPageError,
+  GetAlbumsData,
+  GetAlbumsError,
   GetAllCommentsData,
   GetAllCommentsError,
+  GetAllGenresData,
+  GetAllGenresError,
+  GetMemberAlbumsData,
+  GetMemberAlbumsError,
+  GetMemberHashtagsData,
+  GetMemberHashtagsError,
   GetMemberInfoData,
   GetMemberInfoError,
+  GetMemberLikesAlbumsData,
+  GetMemberLikesAlbumsError,
+  GetMemberLikesSongsData,
+  GetMemberLikesSongsError,
   GetMemberSongsData,
   GetMemberSongsError,
   GetOriginalSongInfoData,
   GetOriginalSongInfoError,
-  GetSearchListData,
-  GetSearchListError,
+  GetSearchPageData,
+  GetSearchPageError,
   GetSongDetailsData,
   GetSongDetailsError,
   GetSongLikesCountData,
   GetSongLikesCountError,
+  GetSongsForAlbumCreationData,
+  GetSongsForAlbumCreationError,
   InitMemberInfoData,
   InitMemberInfoError,
   InitMemberInfoPayload,
@@ -54,13 +75,13 @@ import {
   LogoutError,
   ModifyCommentData,
   ModifyCommentError,
-  ReissueData,
-  ReissueError,
-  SearchAlbumsByKeywordData,
-  SearchAlbumsByKeywordError,
-  Type보이스등록요청,
-  UpdateAlbumData,
-  UpdateAlbumError,
+  SearchAlbumsData,
+  SearchAlbumsError,
+  ToggleIsPublicData,
+  ToggleIsPublicError,
+  Type멜팅곡등록요청,
+  UpdateAlbumDescriptionData,
+  UpdateAlbumDescriptionError,
   UpdateMemberInfoData,
   UpdateMemberInfoError,
   UpdateMemberInfoPayload,
@@ -122,31 +143,16 @@ export class Api<
   /**
    * No description
    *
-   * @tags auth-controller
-   * @name Reissue
-   * @request POST:/api/v1/members/reissue
-   * @response `200` `ReissueData` OK
+   * @tags song-controller
+   * @name CreateMeltingSong
+   * @summary 멜팅 곡 생성 API
+   * @request POST:/api/v1/songs/melting
+   * @response `200` `CreateMeltingSongData` OK
    * @response `500` `ErrorResponse` Internal Server Error
    */
-  reissue = (params: RequestParams = {}) =>
-    this.request<ReissueData, ReissueError>({
-      path: `/api/v1/members/reissue`,
-      method: 'POST',
-      ...params,
-    })
-  /**
-   * No description
-   *
-   * @tags voice-controller
-   * @name AddVoice
-   * @summary 사용자 보이스 등록 API
-   * @request POST:/api/v1/members/me/voices
-   * @response `200` `AddVoiceData` OK
-   * @response `500` `ErrorResponse` Internal Server Error
-   */
-  addVoice = (data: Type보이스등록요청, params: RequestParams = {}) =>
-    this.request<AddVoiceData, AddVoiceError>({
-      path: `/api/v1/members/me/voices`,
+  createMeltingSong = (data: Type멜팅곡등록요청, params: RequestParams = {}) =>
+    this.request<CreateMeltingSongData, CreateMeltingSongError>({
+      path: `/api/v1/songs/melting`,
       method: 'POST',
       body: data,
       type: ContentType.FormData,
@@ -155,23 +161,108 @@ export class Api<
   /**
    * No description
    *
-   * @tags album-controller
-   * @name GetAlbumsInCommunityMainPage
-   * @request GET:/api/v1/albums
-   * @response `200` `GetAlbumsInCommunityMainPageData` OK
+   * @tags song-controller
+   * @name CreateAicoverSong
+   * @summary AI Cover 곡 생성 API
+   * @request POST:/api/v1/songs/aicover
+   * @response `200` `CreateAicoverSongData` OK
    * @response `500` `ErrorResponse` Internal Server Error
    */
-  getAlbumsInCommunityMainPage = (
-    query?: {
-      /** @default "latest" */
-      sort?: 'LATEST' | 'POPULAR'
+  createAicoverSong = (data: AI커버곡등록요청, params: RequestParams = {}) =>
+    this.request<CreateAicoverSongData, CreateAicoverSongError>({
+      path: `/api/v1/songs/aicover`,
+      method: 'POST',
+      body: data,
+      type: ContentType.Json,
+      ...params,
+    })
+  /**
+   * No description
+   *
+   * @tags member-controller
+   * @name GetMemberHashtags
+   * @request GET:/api/v1/members/me/hashtags
+   * @response `200` `GetMemberHashtagsData` OK
+   * @response `500` `ErrorResponse` Internal Server Error
+   */
+  getMemberHashtags = (params: RequestParams = {}) =>
+    this.request<GetMemberHashtagsData, GetMemberHashtagsError>({
+      path: `/api/v1/members/me/hashtags`,
+      method: 'GET',
+      ...params,
+    })
+  /**
+   * No description
+   *
+   * @tags member-controller
+   * @name AddMemberHashtag
+   * @request POST:/api/v1/members/me/hashtags
+   * @response `200` `AddMemberHashtagData` OK
+   * @response `500` `ErrorResponse` Internal Server Error
+   */
+  addMemberHashtag = (
+    query: {
+      content: string
     },
     params: RequestParams = {},
   ) =>
-    this.request<
-      GetAlbumsInCommunityMainPageData,
-      GetAlbumsInCommunityMainPageError
-    >({
+    this.request<AddMemberHashtagData, AddMemberHashtagError>({
+      path: `/api/v1/members/me/hashtags`,
+      method: 'POST',
+      query: query,
+      ...params,
+    })
+  /**
+   * No description
+   *
+   * @tags member-controller
+   * @name DeleteMemberHashtag
+   * @request DELETE:/api/v1/members/me/hashtags
+   * @response `200` `DeleteMemberHashtagData` OK
+   * @response `500` `ErrorResponse` Internal Server Error
+   */
+  deleteMemberHashtag = (
+    query: {
+      content: string
+    },
+    params: RequestParams = {},
+  ) =>
+    this.request<DeleteMemberHashtagData, DeleteMemberHashtagError>({
+      path: `/api/v1/members/me/hashtags`,
+      method: 'DELETE',
+      query: query,
+      ...params,
+    })
+  /**
+   * No description
+   *
+   * @tags album-controller
+   * @name GetAlbums
+   * @request GET:/api/v1/albums
+   * @response `200` `GetAlbumsData` OK
+   * @response `500` `ErrorResponse` Internal Server Error
+   */
+  getAlbums = (
+    query?: {
+      /**
+       * @format int32
+       * @default 0
+       */
+      sort?: number
+      /**
+       * @format int32
+       * @default 0
+       */
+      page?: number
+      /**
+       * @format int32
+       * @default 10
+       */
+      size?: number
+    },
+    params: RequestParams = {},
+  ) =>
+    this.request<GetAlbumsData, GetAlbumsError>({
       path: `/api/v1/albums`,
       method: 'GET',
       query: query,
@@ -186,12 +277,12 @@ export class Api<
    * @response `200` `CreateAlbumData` OK
    * @response `500` `ErrorResponse` Internal Server Error
    */
-  createAlbum = (data: AlbumCreateRequestDto, params: RequestParams = {}) =>
+  createAlbum = (data: CreateAlbumPayload, params: RequestParams = {}) =>
     this.request<CreateAlbumData, CreateAlbumError>({
       path: `/api/v1/albums`,
       method: 'POST',
       body: data,
-      type: ContentType.Json,
+      type: ContentType.FormData,
       ...params,
     })
   /**
@@ -258,7 +349,7 @@ export class Api<
       page?: number
       /**
        * @format int32
-       * @default 25
+       * @default 10
        */
       size?: number
     },
@@ -362,21 +453,51 @@ export class Api<
    * No description
    *
    * @tags album-controller
-   * @name UpdateAlbum
-   * @request PATCH:/api/v1/albums/{albumId}
-   * @response `200` `UpdateAlbumData` OK
+   * @name DeleteAlbum
+   * @request DELETE:/api/v1/albums/{albumId}
+   * @response `200` `DeleteAlbumData` OK
    * @response `500` `ErrorResponse` Internal Server Error
    */
-  updateAlbum = (
+  deleteAlbum = (albumId: number, params: RequestParams = {}) =>
+    this.request<DeleteAlbumData, DeleteAlbumError>({
+      path: `/api/v1/albums/${albumId}`,
+      method: 'DELETE',
+      ...params,
+    })
+  /**
+   * No description
+   *
+   * @tags album-controller
+   * @name UpdateAlbumDescription
+   * @request PATCH:/api/v1/albums/{albumId}
+   * @response `200` `UpdateAlbumDescriptionData` OK
+   * @response `500` `ErrorResponse` Internal Server Error
+   */
+  updateAlbumDescription = (
     albumId: number,
     data: AlbumUpdateRequestDto,
     params: RequestParams = {},
   ) =>
-    this.request<UpdateAlbumData, UpdateAlbumError>({
+    this.request<UpdateAlbumDescriptionData, UpdateAlbumDescriptionError>({
       path: `/api/v1/albums/${albumId}`,
       method: 'PATCH',
       body: data,
       type: ContentType.Json,
+      ...params,
+    })
+  /**
+   * No description
+   *
+   * @tags album-controller
+   * @name ToggleIsPublic
+   * @request PATCH:/api/v1/albums/{albumId}/toggle
+   * @response `200` `ToggleIsPublicData` OK
+   * @response `500` `ErrorResponse` Internal Server Error
+   */
+  toggleIsPublic = (albumId: number, params: RequestParams = {}) =>
+    this.request<ToggleIsPublicData, ToggleIsPublicError>({
+      path: `/api/v1/albums/${albumId}/toggle`,
+      method: 'PATCH',
       ...params,
     })
   /**
@@ -424,6 +545,37 @@ export class Api<
    * No description
    *
    * @tags song-controller
+   * @name GetSongsForAlbumCreation
+   * @request GET:/api/v1/songs
+   * @response `200` `GetSongsForAlbumCreationData` OK
+   * @response `500` `ErrorResponse` Internal Server Error
+   */
+  getSongsForAlbumCreation = (
+    query: {
+      keyword: string
+      /**
+       * @format int32
+       * @default 0
+       */
+      page?: number
+      /**
+       * @format int32
+       * @default 10
+       */
+      size?: number
+    },
+    params: RequestParams = {},
+  ) =>
+    this.request<GetSongsForAlbumCreationData, GetSongsForAlbumCreationError>({
+      path: `/api/v1/songs`,
+      method: 'GET',
+      query: query,
+      ...params,
+    })
+  /**
+   * No description
+   *
+   * @tags song-controller
    * @name GetSongDetails
    * @summary 곡 상세조회(스트리밍) API
    * @request GET:/api/v1/songs/{songId}
@@ -440,18 +592,28 @@ export class Api<
    * No description
    *
    * @tags original-song-controller
-   * @name GetSearchList
+   * @name GetSearchPage
    * @request GET:/api/v1/original-songs
-   * @response `200` `GetSearchListData` OK
+   * @response `200` `GetSearchPageData` OK
    * @response `500` `ErrorResponse` Internal Server Error
    */
-  getSearchList = (
+  getSearchPage = (
     query: {
       keyword: string
+      /**
+       * @format int32
+       * @default 0
+       */
+      page?: number
+      /**
+       * @format int32
+       * @default 10
+       */
+      size?: number
     },
     params: RequestParams = {},
   ) =>
-    this.request<GetSearchListData, GetSearchListError>({
+    this.request<GetSearchPageData, GetSearchPageError>({
       path: `/api/v1/original-songs`,
       method: 'GET',
       query: query,
@@ -498,7 +660,7 @@ export class Api<
    *
    * @tags member-controller
    * @name GetMemberSongs
-   * @summary 사용자가 생성한 곡 목록
+   * @summary 마이페이지에서 사용자가 생성한 곡 목록
    * @request GET:/api/v1/members/me/songs
    * @response `200` `GetMemberSongsData` OK
    * @response `500` `ErrorResponse` Internal Server Error
@@ -507,6 +669,111 @@ export class Api<
     this.request<GetMemberSongsData, GetMemberSongsError>({
       path: `/api/v1/members/me/songs`,
       method: 'GET',
+      ...params,
+    })
+  /**
+   * No description
+   *
+   * @tags member-controller
+   * @name GetMemberLikesSongs
+   * @request GET:/api/v1/members/me/likes/songs
+   * @response `200` `GetMemberLikesSongsData` OK
+   * @response `500` `ErrorResponse` Internal Server Error
+   */
+  getMemberLikesSongs = (
+    query?: {
+      /**
+       * @format int32
+       * @default 0
+       */
+      sort?: number
+      /**
+       * @format int32
+       * @default 0
+       */
+      page?: number
+      /**
+       * @format int32
+       * @default 10
+       */
+      size?: number
+    },
+    params: RequestParams = {},
+  ) =>
+    this.request<GetMemberLikesSongsData, GetMemberLikesSongsError>({
+      path: `/api/v1/members/me/likes/songs`,
+      method: 'GET',
+      query: query,
+      ...params,
+    })
+  /**
+   * No description
+   *
+   * @tags member-controller
+   * @name GetMemberLikesAlbums
+   * @request GET:/api/v1/members/me/likes/albums
+   * @response `200` `GetMemberLikesAlbumsData` OK
+   * @response `500` `ErrorResponse` Internal Server Error
+   */
+  getMemberLikesAlbums = (
+    query?: {
+      /**
+       * @format int32
+       * @default 0
+       */
+      sort?: number
+      /**
+       * @format int32
+       * @default 0
+       */
+      page?: number
+      /**
+       * @format int32
+       * @default 10
+       */
+      size?: number
+    },
+    params: RequestParams = {},
+  ) =>
+    this.request<GetMemberLikesAlbumsData, GetMemberLikesAlbumsError>({
+      path: `/api/v1/members/me/likes/albums`,
+      method: 'GET',
+      query: query,
+      ...params,
+    })
+  /**
+   * No description
+   *
+   * @tags member-controller
+   * @name GetMemberAlbums
+   * @request GET:/api/v1/members/me/albums
+   * @response `200` `GetMemberAlbumsData` OK
+   * @response `500` `ErrorResponse` Internal Server Error
+   */
+  getMemberAlbums = (
+    query?: {
+      /**
+       * @format int32
+       * @default 0
+       */
+      sort?: number
+      /**
+       * @format int32
+       * @default 0
+       */
+      page?: number
+      /**
+       * @format int32
+       * @default 10
+       */
+      size?: number
+    },
+    params: RequestParams = {},
+  ) =>
+    this.request<GetMemberAlbumsData, GetMemberAlbumsError>({
+      path: `/api/v1/members/me/albums`,
+      method: 'GET',
+      query: query,
       ...params,
     })
   /**
@@ -528,22 +795,47 @@ export class Api<
    * No description
    *
    * @tags album-controller
-   * @name SearchAlbumsByKeyword
+   * @name SearchAlbums
    * @request GET:/api/v1/albums/search
-   * @response `200` `SearchAlbumsByKeywordData` OK
+   * @response `200` `SearchAlbumsData` OK
    * @response `500` `ErrorResponse` Internal Server Error
    */
-  searchAlbumsByKeyword = (
+  searchAlbums = (
     query: {
-      keyword: string
-      type: string[]
+      /**
+       * @format int32
+       * @default 0
+       */
+      page?: number
+      /**
+       * @format int32
+       * @default 10
+       */
+      size?: number
+      keyword?: string
+      options: string[]
     },
     params: RequestParams = {},
   ) =>
-    this.request<SearchAlbumsByKeywordData, SearchAlbumsByKeywordError>({
+    this.request<SearchAlbumsData, SearchAlbumsError>({
       path: `/api/v1/albums/search`,
       method: 'GET',
       query: query,
+      ...params,
+    })
+  /**
+   * No description
+   *
+   * @tags album-controller
+   * @name GetAllGenres
+   * @request GET:/api/v1/albums/genres
+   * @response `200` `GetAllGenresData` OK
+   * @response `500` `ErrorResponse` Internal Server Error
+   */
+  getAllGenres = (params: RequestParams = {}) =>
+    this.request<GetAllGenresData, GetAllGenresError>({
+      path: `/api/v1/albums/genres`,
+      method: 'GET',
       ...params,
     })
 }
