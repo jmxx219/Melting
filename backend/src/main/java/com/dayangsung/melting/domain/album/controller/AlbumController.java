@@ -137,9 +137,8 @@ public class AlbumController {
 	}
 
 	@PostMapping("/{albumId}/likes")
-	public ApiResponse<Integer> addAlbumLikes(@PathVariable Long albumId,
-		@AuthenticationPrincipal CustomOAuth2User customOAuth2User) {
-		Integer albumLikesCount = albumService.increaseAlbumLikes(albumId, customOAuth2User.getName());
+	public ApiResponse<Integer> addAlbumLikes(@PathVariable Long albumId) {
+		Integer albumLikesCount = albumService.increaseAlbumLikes(albumId, "ssafy@ssafy.com");
 		return ApiResponse.ok(albumLikesCount);
 	}
 

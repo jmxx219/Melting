@@ -2,6 +2,7 @@ package com.dayangsung.melting.global.util;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
@@ -70,10 +71,10 @@ public class RedisUtil {
 			Set<ZSetOperations.TypedTuple<Object>> albumScores =
 				zSetOperations.reverseRangeWithScores("album_likes", offset, offset + 4);
 			if (albumScores == null || albumScores.isEmpty()) {
-				throw new BusinessException(ErrorMessage.REDIS_SCORE_EMPTY);
+				break;
 			}
 			for (ZSetOperations.TypedTuple<Object> albumScore : albumScores) {
-				Album album = albumRepository.findById((Long)albumScore.getValue())
+				Album album = albumRepository.findById(Long.parseLong(Objects.requireNonNull(albumScore.getValue()).toString()))
 					.orElseThrow(() -> new BusinessException(ErrorMessage.ALBUM_NOT_FOUND));
 				if (!album.getIsDeleted() && album.getIsPublic()) {
 					topAlbums.add(album);
@@ -115,9 +116,6 @@ public class RedisUtil {
 			}
 			index++;
 		}
-		if (hotAlbums.size() < 5) {
-			throw new BusinessException(ErrorMessage.REDIS_SCORE_EMPTY);
-		}
 
 		return hotAlbums;
 	}
@@ -136,12 +134,27 @@ public class RedisUtil {
 
 	private void storeRankingList(String sortedSetKey, String listKey) {
 		ZSetOperations<String, Object> zSetOperations = redisTemplate.opsForZSet();
-		Set<Object> sortedSetValues = zSetOperations.range(sortedSetKey, 0, -1);
-		if (sortedSetValues != null) {
-			List<String> valueList = sortedSetValues.stream()
-				.map(Object::toString)
-				.toList();
-			redisTemplate.opsForList().rightPushAll(listKey, valueList);
+		Set<ZSetOperations.TypedTuple<Object>> sortedSetValues = zSetOperations.reverseRangeWithScores(sortedSetKey, 0, -1);
+		int offset = 0;
+		List<Long> valueList = new ArrayList<>();
+		while (valueList.size() < 5) {
+			Set<ZSetOperations.TypedTuple<Object>> albumScores =
+				zSetOperations.reverseRangeWithScores(sortedSetKey, offset, offset + 4);
+			if (albumScores == null || albumScores.isEmpty()) {
+				break;
+			}
+			for (ZSetOperations.TypedTuple<Object> albumScore : albumScores) {
+				Album album = albumRepository.findById(Long.parseLong(Objects.requireNonNull(albumScore.getValue()).toString()))
+					.orElseThrow(() -> new BusinessException(ErrorMessage.ALBUM_NOT_FOUND));
+				if (!album.getIsDeleted() && album.getIsPublic()) {
+					valueList.add(album.getId());
+				}
+				if (valueList.size() == 5) {
+					break;
+				}
+			}
+			offset += 5;
 		}
+		redisTemplate.opsForList().rightPushAll(listKey, valueList);
 	}
 }
