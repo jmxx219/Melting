@@ -50,7 +50,7 @@ public class SongController {
 
 		songService.createMeltingSong(customOAuth2User.getName(), originalSongId, voiceFile);
 		// .thenApply(result -> ApiResponse.ok(result));
-		return ApiResponse.ok(null);
+		return ApiResponse.ok(true);
 	}
 
 	@Operation(summary = "AI Cover 곡 생성 API")
@@ -62,7 +62,7 @@ public class SongController {
 		Long originalSongId = aiCoverSongCreateRequestDto.originalSongId();
 
 		songService.createAiCoverSong(customOAuth2User.getName(), originalSongId);
-		return ApiResponse.ok(null);
+		return ApiResponse.ok(true);
 	}
 
 	@Operation(summary = "곡 상세조회(스트리밍) API")
