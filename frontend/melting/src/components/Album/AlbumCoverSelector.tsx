@@ -4,6 +4,7 @@ import { Image, Loader } from 'lucide-react'
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area'
 import AI from '../Icon/AI'
 import { useAlbumContext } from '@/contexts/AlbumContext'
+import { urlToFile } from '@/utils/fileUtil.ts'
 
 interface ImageInfo {
   id: string
@@ -13,23 +14,24 @@ interface ImageInfo {
 }
 
 export default function AlbumCoverSelector() {
-  const { selectedCover, setSelectedCover } = useAlbumContext()
+  const { selectedCover, setSelectedCover, setSelectedCoverFile } =
+    useAlbumContext()
   const [images, setImages] = useState<ImageInfo[]>([
     {
       id: 'default1',
-      url: 'https://d35fpwscei7sb8.cloudfront.net/image/original_album_cover/1.jpg',
+      url: 'https://d35fpwscei7sb8.cloudfront.net/image/generated_album_cover/default_cover_image_01.png',
       description: '기본 이미지 1',
       type: 'default',
     },
     {
       id: 'default2',
-      url: 'https://d35fpwscei7sb8.cloudfront.net/image/original_album_cover/2.jpg',
+      url: 'https://d35fpwscei7sb8.cloudfront.net/image/generated_album_cover/default_cover_image_02.png',
       description: '기본 이미지 2',
       type: 'default',
     },
     {
       id: 'default3',
-      url: 'https://d35fpwscei7sb8.cloudfront.net/image/original_album_cover/3.jpg',
+      url: 'https://d35fpwscei7sb8.cloudfront.net/image/generated_album_cover/default_cover_image_03.png',
       description: '기본 이미지 3',
       type: 'default',
     },
@@ -49,6 +51,7 @@ export default function AlbumCoverSelector() {
         }
         setImages((prevImages) => [newImage, ...prevImages])
         setSelectedCover(newImage.url)
+        setSelectedCoverFile(file)
       }
       reader.readAsDataURL(file)
     }
@@ -63,18 +66,28 @@ export default function AlbumCoverSelector() {
     setTimeout(() => {
       const newImage: ImageInfo = {
         id: `ai_${Date.now()}`,
-        url: 'https://d35fpwscei7sb8.cloudfront.net/image/original_album_cover/4.jpg',
+        url: 'https://d35fpwscei7sb8.cloudfront.net/image/generated_album_cover/default_cover_image_04.png',
         description: 'AI 생성 이미지',
         type: 'ai',
       }
       setImages((prevImages) => [newImage, ...prevImages])
       setSelectedCover(newImage.url)
+      // setSelectedCoverFile(newImage)
       setIsGeneratingAi(false)
     }, 3000)
   }
 
-  const handleImageSelect = (image: ImageInfo) => {
+  const handleImageSelect = async (image: ImageInfo) => {
     setSelectedCover(image.url)
+
+    if (image.type === 'default') {
+      // 기본 이미지의 경우 URL을 File 객체로 변환
+      const file = await urlToFile(image.url, `${image.id}.jpg`, 'image/jpeg')
+      setSelectedCoverFile(file)
+    } else {
+      // 사용자 등록 이미지나 AI 이미지는 이미 File 객체임
+      setSelectedCoverFile(new File([], 'default-image.jpg')) // AI 이미지 처리
+    }
   }
 
   return (
