@@ -30,8 +30,6 @@ export const songApi = {
         },
       })
 
-      console.log(response.data)
-
       return response.data
     } catch (error) {
       throw error as CustomError

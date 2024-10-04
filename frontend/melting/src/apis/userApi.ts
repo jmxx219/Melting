@@ -1,4 +1,9 @@
 import {
+  GetMeltingCountsData,
+  GetMeltingCountsError,
+  MemberSongCountsResponseDto,
+} from '@/typeApis/[name]/data-contracts'
+import {
   createAxiosInstance,
   createApi,
   ApiResponse,
@@ -117,6 +122,15 @@ export const userApi = {
       return response.data as MemberSongResponseDto
     } catch (error) {
       throw error as GetMemberSongsError
+    }
+  },
+  getUserCoverCnt: async (): Promise<MemberSongCountsResponseDto> => {
+    try {
+      const response = await api.get<GetMeltingCountsData>('/me/songcounts')
+      return response.data as MemberSongCountsResponseDto
+    } catch (error) {
+      console.error('Failed to fetch songs for album creation:', error)
+      throw error as GetMeltingCountsError
     }
   },
 }

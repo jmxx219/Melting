@@ -1,6 +1,6 @@
 import {
   OriginalSongResponseDto,
-  PageOriginalSongSearchResponseDto,
+  OriginalSongSearchResponseDto,
 } from '@/typeApis/data-contracts'
 import {
   ApiResponse,
@@ -12,13 +12,23 @@ import {
 const instance = createAxiosInstance('originalSongs')
 const api = createApi<ApiResponse>(instance)
 
+type PageSongSearchDto = {
+  isLast: boolean
+  numberOfElements: number
+  originalSongPage: OriginalSongSearchResponseDto[]
+  pageNumber: number
+  pageSize: number
+  totalElements: number
+  totalPages: number
+}
+
 export const musicApi = {
   originSongList: async (
     keyword: string,
     page?: number,
-  ): Promise<PageOriginalSongSearchResponseDto> => {
+  ): Promise<PageSongSearchDto> => {
     try {
-      const response = await api.get<PageOriginalSongSearchResponseDto>(
+      const response = await api.get<PageSongSearchDto>(
         `/original-songs?keyword=${encodeURIComponent(keyword)}&page=${page}&size=10`,
       )
       return response.data
