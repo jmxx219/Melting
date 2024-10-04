@@ -1,9 +1,6 @@
 package com.dayangsung.melting.domain.song.controller;
 
-import java.util.concurrent.CompletableFuture;
-
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -58,14 +55,14 @@ public class SongController {
 
 	@Operation(summary = "AI Cover 곡 생성 API")
 	@PostMapping(value = "/aicover")
-	public CompletableFuture<ResponseEntity<ApiResponse<Void>>> createAicoverSong(
+	public ApiResponse<Boolean> createAicoverSong(
 		@RequestBody AiCoverSongCreateRequestDto aiCoverSongCreateRequestDto,
 		@AuthenticationPrincipal CustomOAuth2User customOAuth2User) throws Exception {
 
 		Long originalSongId = aiCoverSongCreateRequestDto.originalSongId();
 
-		return songService.createAiCoverSong(customOAuth2User.getName(), originalSongId)
-			.thenApply(result -> ResponseEntity.ok(ApiResponse.ok(result)));
+		songService.createAiCoverSong(customOAuth2User.getName(), originalSongId);
+		return ApiResponse.ok(null);
 	}
 
 	@Operation(summary = "곡 상세조회(스트리밍) API")
