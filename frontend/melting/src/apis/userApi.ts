@@ -13,7 +13,10 @@ import {
   UpdateMemberInfoPayload,
   UpdateMemberInfoData,
   MemberResponseDto,
+  GetMemberSongsData,
+  GetMemberSongsError,
 } from '@/types/user'
+import { MemberSongResponseDto } from '@/typeApis/data-contracts.ts'
 
 const instance = createAxiosInstance('members')
 const api = createApi<ApiResponse>(instance)
@@ -106,6 +109,15 @@ export const userApi = {
     } catch (error) {
       console.error('회원 정보 수정 오류:', error)
       throw error as CustomError
+    }
+  },
+
+  getMemberSongs: async (): Promise<MemberSongResponseDto> => {
+    try {
+      const response = await api.get<GetMemberSongsData>('')
+      return response.data as MemberSongResponseDto
+    } catch (error) {
+      throw error as GetMemberSongsError
     }
   },
 }
