@@ -40,8 +40,8 @@ export default function MusicList({
               )}
               <Avatar className="h-10 mx-1">
                 <AvatarImage
-                  src={song.coverImageUrl}
-                  alt={`${song.title} cover`}
+                  src={song.albumCoverImageUrl}
+                  alt={`${song.songTitle} cover`}
                 />
               </Avatar>
               <div className="flex-grow px-2">

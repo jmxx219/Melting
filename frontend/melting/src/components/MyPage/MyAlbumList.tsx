@@ -13,7 +13,7 @@ interface AlbumData {
 }
 
 interface MyAlbumListProps {
-  sortOption: 'date' | 'popularity'
+  sortOption: 'LATEST' | 'POPULAR'
   viewType: 'my' | 'liked'
 }
 
