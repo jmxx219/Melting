@@ -19,13 +19,19 @@ export interface BestAlbum {
 }
 
 export interface AlbumCreateRequestDto {
-  albumName?: string
-  albumDescription?: string
-  songs?: number[]
+  albumName: string
+  albumDescription: string
+  songs: number[]
   /** @format int64 */
-  titleSongId?: number
-  genres?: number[]
-  hashtags?: string[]
+  titleSongId: number
+  genres: string[]
+  hashtags: string[]
+}
+
+export interface CreateAlbumPayload {
+  albumCreateRequestDto: AlbumCreateRequestDto
+  /** @format binary */
+  albumCoverImage: File
 }
 
 export interface AlbumMainResponseDto {
