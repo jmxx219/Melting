@@ -96,11 +96,10 @@ public class AlbumController {
 		return ApiResponse.ok(toggledIsPublic);
 	}
 
-	@PostMapping("/{albumId}/covers")
-	public ApiResponse<String> createAiAlbumCoverImage(@PathVariable Long albumId,
+	@PostMapping("/covers")
+	public ApiResponse<String> createAiAlbumCoverImage(
 			@RequestBody AiCoverImageRequestDto aiCoverImageRequestDto) throws IOException {
-		List<Long> songs = aiCoverImageRequestDto.songs();
-		String base64Image = albumCoverImageService.createAiCoverImage(albumId, songs);
+		String base64Image = albumCoverImageService.createAiCoverImage(aiCoverImageRequestDto.songs());
 		return ApiResponse.ok(base64Image);
 	}
 

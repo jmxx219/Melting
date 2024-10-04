@@ -23,7 +23,7 @@ public class AlbumCoverImageService {
 	private final AlbumRepository albumRepository;
 
 	@Transactional
-	public String createAiCoverImage(Long albumId, List<Long> originalSongs) throws IOException {
+	public String createAiCoverImage(List<Long> originalSongs) throws IOException {
 		String[] result = openAiImageService.createAiCoverImage(originalSongs);
 		// // S3에 저장할 시
 		// String url = awsS3Service.uploadBase64ImageToS3(result[0], result[1]);
@@ -36,15 +36,9 @@ public class AlbumCoverImageService {
 	}
 
 	private void saveAlbumCoverImage(Long albumId, String albumCoverImageUrl, String fileName) {
-
-		// Album에 AI album cover image 저장
 		Album album = albumRepository.findById(albumId)
 			.orElseThrow();
-
-		// 앨범의 커버 이미지 업데이트
 		album.updateAlbumCoverImageUrl(albumCoverImageUrl);
-
-		// 변경된 앨범 저장
 		albumRepository.save(album);
 	}
 }
