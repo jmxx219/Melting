@@ -55,6 +55,10 @@ spring:
       max-request-size: 20MB
   jwt:
     secret: ${JWT_SECRET}
+  elasticsearch:
+    username: ${SPRING.ELASTICSEARCH.USERNAME}
+    password: ${SPRING.ELASTICSEARCH.PASSWORD}
+    uris:
 
 logging:
   level:
