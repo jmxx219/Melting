@@ -8,6 +8,7 @@ public record AlbumCreateRequestDto(
 	List<Long> songs,
 	Long titleSongId,
 	List<String> genres,
-	List<String> hashtags
+	List<String> hashtags,
+	Integer defaultCoverNumber
 ) {
 }

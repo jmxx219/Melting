@@ -108,6 +108,10 @@ public class AwsS3Service {
 		return CLOUDFRONTURL + "/image/generated_album_cover/default_image.png";
 	}
 
+	public String getDefaultAlbumCoverImage(Integer number) {
+		return CLOUDFRONTURL + "/image/generated_album_cover/default_cover_image_" + number + ".png";
+	}
+
 	public String getOriginalSongMrUrl(Long originalSongId) {
 		return CLOUDFRONTURL + "/audio/original_song/mr/" + originalSongId + MP3EXTENSION;
 	}
@@ -148,5 +152,4 @@ public class AwsS3Service {
 		amazonS3.putObject(new PutObjectRequest(bucket, fileName, inputStream, metadata));
 		return CLOUDFRONTURL + "/" + fileName;
 	}
-
 }

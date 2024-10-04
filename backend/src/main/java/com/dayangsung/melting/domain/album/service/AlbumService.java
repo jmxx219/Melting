@@ -114,9 +114,13 @@ public class AlbumService {
 			albumHashtagRepository.save(albumHashtag);
 			album.addHashtag(albumHashtag);
 		}
-
 		album = albumRepository.save(album);
-		String albumCoverImageUrl = awsS3Service.uploadAlbumCoverImage(albumCoverImage, album.getId());
+		String albumCoverImageUrl;
+		if (albumCoverImage != null) {
+			albumCoverImageUrl = awsS3Service.uploadAlbumCoverImage(albumCoverImage, album.getId());
+		} else {
+			albumCoverImageUrl = awsS3Service.getDefaultAlbumCoverImage(albumCreateRequestDto.defaultCoverNumber());
+		}
 		album.updateAlbumCoverImageUrl(albumCoverImageUrl);
 		album = albumRepository.save(album);
 
