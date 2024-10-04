@@ -1,12 +1,12 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
-import { BestAlbum } from '@/types/album'
+import { AlbumRankingResponseDto } from '@/types/album'
 // import Play from '../Icon/Play'
 import { Play } from 'lucide-react'
 
 interface AlbumProps {
-  album: BestAlbum
+  album: AlbumRankingResponseDto
 }
 
 export default function Album({ album }: AlbumProps) {
@@ -22,7 +22,7 @@ export default function Album({ album }: AlbumProps) {
     <div className="w-[150px] h-full">
       <div className="relative w-36 h-36">
         <img
-          src={album.albumCoverImage}
+          src={album.albumCoverImageUrl}
           alt={`${album.albumName}`}
           className="w-full h-full object-cover rounded-lg"
         />
@@ -39,9 +39,11 @@ export default function Album({ album }: AlbumProps) {
           />
         </button>
       </div>
-      <div className="mt-2 text-left">
+      <div className="my-2 text-left">
         <h3 className="text-sm font-bold truncate">{album.albumName}</h3>
-        <p className="text-xs text-gray-500 truncate">{album.nickname}</p>
+        <p className="text-xs text-gray-500 truncate">
+          {album.creatorNickname}
+        </p>
       </div>
     </div>
   )

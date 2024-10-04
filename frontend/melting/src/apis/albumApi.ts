@@ -18,6 +18,13 @@ import {
   WriteCommentData,
   CreateAlbumPayload,
   CreateAlbumError,
+  GetHot5AlbumsData,
+  GetHot5AlbumsError,
+  GetMonthlyAlbumsData,
+  GetMonthlyAlbumsError,
+  GetSteadyAlbumsData,
+  GetSteadyAlbumsError,
+  AlbumRankingResponseDto,
 } from '@/types/album.ts'
 
 const instance = createAxiosInstance('albums')
@@ -58,7 +65,7 @@ export const albumApi = {
     )
 
     try {
-      const response = await instance.post<CreateAlbumData>('', formData)
+      const response = await api.post<CreateAlbumData>('', formData)
       return response.data
     } catch (error) {
       console.error('앨범 생성 중 오류 발생:', error)
@@ -152,6 +159,42 @@ export const albumApi = {
     } catch (error) {
       console.error('장르 목록 가져오기 오류:', error)
       throw error as CustomError
+    }
+  },
+
+  // 가장 인기 있는 5개의 앨범 가져오기
+  getHot5Albums: async (): Promise<AlbumRankingResponseDto[]> => {
+    try {
+      const response = await api.get<GetHot5AlbumsData>('/daily')
+      return response.data as AlbumRankingResponseDto[]
+    } catch (error) {
+      console.error('가장 인기 있는 5개의 앨범 가져오기 중 오류 발생:', error)
+      throw error as GetHot5AlbumsError
+    }
+  },
+
+  // 월간 앨범 목록 가져오기
+  getMonthlyAlbums: async (): Promise<AlbumRankingResponseDto[]> => {
+    try {
+      const response = await api.get<GetMonthlyAlbumsData>('/monthly')
+      return response.data as AlbumRankingResponseDto[]
+    } catch (error) {
+      console.error('월간 앨범 목록 가져오기 중 오류 발생:', error)
+      throw error as GetMonthlyAlbumsError
+    }
+  },
+
+  // 지속적으로 인기 있는 앨범 목록 가져오기
+  getSteadyAlbums: async (): Promise<AlbumRankingResponseDto[]> => {
+    try {
+      const response = await api.get<GetSteadyAlbumsData>('/steady')
+      return response.data as AlbumRankingResponseDto[]
+    } catch (error) {
+      console.error(
+        '지속적으로 인기 있는 앨범 목록 가져오기 중 오류 발생:',
+        error,
+      )
+      throw error as GetSteadyAlbumsError
     }
   },
 }

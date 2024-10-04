@@ -11,13 +11,6 @@ export interface AlbumForm {
   albumCoverImage: File | null
 }
 
-export interface BestAlbum {
-  albumId: number
-  albumName: string
-  nickname: string
-  albumCoverImage: string
-}
-
 export interface AlbumCreateRequestDto {
   albumName: string
   albumDescription: string
@@ -167,3 +160,29 @@ export interface GenreResponseDto {
 export type GetAllGenresData = ApiResponseListGenreResponseDto
 
 export type GetAllGenresError = ErrorResponse
+
+export interface AlbumRankingResponseDto {
+  /** @format int64 */
+  albumId: number
+  albumName: string
+  creatorNickname: string
+  albumCoverImageUrl: string
+}
+
+export interface ApiResponseListAlbumRankingResponseDto {
+  status?: string
+  data?: AlbumRankingResponseDto[]
+  errorMessage?: string
+}
+
+export type GetSteadyAlbumsData = ApiResponseListAlbumRankingResponseDto
+
+export type GetSteadyAlbumsError = ErrorResponse
+
+export type GetMonthlyAlbumsData = ApiResponseListAlbumRankingResponseDto
+
+export type GetMonthlyAlbumsError = ErrorResponse
+
+export type GetHot5AlbumsData = ApiResponseListAlbumRankingResponseDto
+
+export type GetHot5AlbumsError = ErrorResponse
