@@ -5,6 +5,7 @@ import { Button } from '../ui/button'
 import { ScrollArea } from '../ui/scroll-area'
 import AudioPlayer, { AudioPlayerHandle } from './AudioPlayer'
 import { songApi } from '@/apis/songApi'
+import AlertModal from '../Common/AlertModal'
 
 interface MusciRecordProps {
   lyrics?: string
@@ -18,12 +19,21 @@ export default function MusciRecordContent({
   originalSongId = -1,
 }: MusciRecordProps) {
   const [isRecording, setIsRecording] = useState(false)
+  const [isDialogOpen, setIsDialogOpen] = useState(false)
   const [isEnd, setIsEnd] = useState(false)
   const mediaRecorderRef = useRef<MediaRecorder | null>(null)
   const streamRef = useRef<MediaStream | null>(null)
   const chunksRef = useRef<Blob[]>([])
   const audioPlayerRef = useRef<AudioPlayerHandle>(null)
   const navigate = useNavigate()
+  const dialogMessages = [
+    '멜팅하기가 완료되었습니다.',
+    '내가 등록한 곡&앨범 에서 확인 가능합니다.',
+  ]
+  const handleCloseDialog = () => {
+    setIsDialogOpen(false)
+    navigate('/mypage/my')
+  }
 
   const stopMicrophoneUsage = useCallback(() => {
     if (
@@ -64,7 +74,11 @@ export default function MusciRecordContent({
       // 녹음이 완료된 경우, API로 전송
       const recordedBlob = processRecordedAudio()
 
-      const response = songApi.meltingApi(originalSongId, recordedBlob)
+      const response = await songApi.meltingApi(originalSongId, recordedBlob)
+
+      if (response) {
+        setIsDialogOpen(true)
+      }
     }
   }, [isEnd, isRecording, processRecordedAudio, navigate])
 
@@ -139,6 +153,7 @@ export default function MusciRecordContent({
       </div>
       <AudioPlayer
         ref={audioPlayerRef}
+        disabled={false}
         audioSrc={audioSrc}
         onEnded={handleAudioEnded}
       />
@@ -162,6 +177,14 @@ export default function MusciRecordContent({
           취소
         </span>
       </div>
+      {isDialogOpen && (
+        <AlertModal
+          title="멜팅 완료"
+          messages={dialogMessages}
+          isOpen={isDialogOpen}
+          onClose={handleCloseDialog}
+        />
+      )}
     </div>
   )
 }

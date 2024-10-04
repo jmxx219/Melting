@@ -1,7 +1,6 @@
 import {
-  GetOriginalSongInfoData,
   OriginalSongResponseDto,
-  OriginalSongSearchPageResponseDto,
+  PageOriginalSongSearchResponseDto,
 } from '@/typeApis/data-contracts'
 import {
   ApiResponse,
@@ -17,9 +16,9 @@ export const musicApi = {
   originSongList: async (
     keyword: string,
     page?: number,
-  ): Promise<OriginalSongSearchPageResponseDto> => {
+  ): Promise<PageOriginalSongSearchResponseDto> => {
     try {
-      const response = await api.get<OriginalSongSearchPageResponseDto>(
+      const response = await api.get<PageOriginalSongSearchResponseDto>(
         `/original-songs?keyword=${encodeURIComponent(keyword)}&page=${page}&size=10`,
       )
       return response.data
