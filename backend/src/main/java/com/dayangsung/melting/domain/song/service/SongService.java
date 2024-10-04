@@ -18,7 +18,6 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.reactive.function.client.WebClient;
 
 import com.dayangsung.melting.domain.likes.service.LikesService;
 import com.dayangsung.melting.domain.member.entity.Member;
@@ -54,10 +53,10 @@ public class SongService {
 	private final LikesService likesService;
 	private final RedisTemplate<String, Object> redisTemplate;
 
-	private static final String STREAMING_COUNT_KEY = "song:streaming:counts";
+	private static final String DAILY_STREAMING_KEY = "album:streaming:daily";
+	private static final String MONTHLY_STREAMING_KEY = "album:streaming:monthly";
 	private final OriginalSongRepository originalSongRepository;
 	private final MemberRepository memberRepository;
-	private final WebClient webClient;
 
 	public SongDetailsResponseDto getSongDetails(Long songId, String email) {
 		Song song = songRepository.findById(songId)
@@ -79,9 +78,13 @@ public class SongService {
 	// Todo : 트랜잭션 적용 필요
 	@DistributedLock(value = "#songId")
 	public void incrementStreamingCount(Long songId) {
-		String key = STREAMING_COUNT_KEY;
-		Double streamingCount = redisTemplate.opsForZSet().incrementScore(key, songId.toString(), 1);
-		log.info("Incremented streaming count for song {}: {}", songId, streamingCount);
+		Song song = songRepository.findById(songId)
+			.orElseThrow(() -> new BusinessException(ErrorMessage.SONG_NOT_FOUND));
+		if (song.getAlbum() != null) {
+			Double dailyStreamingCount = redisTemplate.opsForZSet().incrementScore(DAILY_STREAMING_KEY, song.getAlbum().getId(), 1);
+			Double monthLyStreamingCount = redisTemplate.opsForZSet().incrementScore(MONTHLY_STREAMING_KEY, song.getAlbum().getId(), 1);
+			log.info("Incremented streaming count for album {}: {}", songId, dailyStreamingCount, monthLyStreamingCount);
+		}
 	}
 
 	@Async

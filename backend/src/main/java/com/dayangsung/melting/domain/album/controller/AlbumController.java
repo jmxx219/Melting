@@ -20,11 +20,13 @@ import com.dayangsung.melting.domain.album.dto.request.AlbumCreateRequestDto;
 import com.dayangsung.melting.domain.album.dto.request.AlbumUpdateRequestDto;
 import com.dayangsung.melting.domain.album.dto.request.openai.AiCoverImageRequestDto;
 import com.dayangsung.melting.domain.album.dto.response.AlbumDetailsResponseDto;
+import com.dayangsung.melting.domain.album.dto.response.AlbumRankingResponseDto;
 import com.dayangsung.melting.domain.album.dto.response.AlbumSearchPageResponseDto;
 import com.dayangsung.melting.domain.album.service.AlbumCoverImageService;
 import com.dayangsung.melting.domain.album.service.AlbumService;
 import com.dayangsung.melting.domain.auth.CustomOAuth2User;
 import com.dayangsung.melting.domain.genre.dto.response.GenreResponseDto;
+import com.dayangsung.melting.domain.genre.service.GenreService;
 import com.dayangsung.melting.global.common.response.ApiResponse;
 
 import lombok.RequiredArgsConstructor;
@@ -114,6 +116,24 @@ public class AlbumController {
 	public ApiResponse<Integer> getAlbumLikesCount(@PathVariable Long albumId) {
 		Integer albumLikesCount = albumService.getAlbumLikesCount(albumId);
 		return ApiResponse.ok(albumLikesCount);
+	}
+
+	@GetMapping("/steady")
+	public ApiResponse<List<AlbumRankingResponseDto>> getSteadyAlbums() {
+		List<AlbumRankingResponseDto> steadyAlbums = albumService.getSteadyAlbums();
+		return ApiResponse.ok(steadyAlbums);
+	}
+
+	@GetMapping("/daily")
+	public ApiResponse<List<AlbumRankingResponseDto>> getHot5Albums() {
+		List<AlbumRankingResponseDto> hot5Albums = albumService.getHot5Albums();
+		return ApiResponse.ok(hot5Albums);
+	}
+
+	@GetMapping("/monthly")
+	public ApiResponse<List<AlbumRankingResponseDto>> getMonthlyAlbums() {
+		List<AlbumRankingResponseDto> monthlyAlbums = albumService.getMonthlyTop5Albums();
+		return ApiResponse.ok(monthlyAlbums);
 	}
 
 	@PostMapping("/{albumId}/likes")

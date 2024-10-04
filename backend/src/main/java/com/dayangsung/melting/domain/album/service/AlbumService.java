@@ -19,6 +19,7 @@ import com.dayangsung.melting.domain.album.dto.request.AlbumCreateRequestDto;
 import com.dayangsung.melting.domain.album.dto.response.AlbumDetailsResponseDto;
 import com.dayangsung.melting.domain.album.dto.response.AlbumMyPageResponseDto;
 import com.dayangsung.melting.domain.album.dto.response.AlbumMyResponseDto;
+import com.dayangsung.melting.domain.album.dto.response.AlbumRankingResponseDto;
 import com.dayangsung.melting.domain.album.dto.response.AlbumSearchPageResponseDto;
 import com.dayangsung.melting.domain.album.dto.response.AlbumSearchResponseDto;
 import com.dayangsung.melting.domain.album.entity.Album;
@@ -43,6 +44,7 @@ import com.dayangsung.melting.domain.song.repository.SongRepository;
 import com.dayangsung.melting.global.common.enums.ErrorMessage;
 import com.dayangsung.melting.global.common.service.AwsS3Service;
 import com.dayangsung.melting.global.exception.BusinessException;
+import com.dayangsung.melting.global.util.RedisUtil;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -62,6 +64,7 @@ public class AlbumService {
 	private final AlbumHashtagRepository albumHashtagRepository;
 	private final LikesService likesService;
 	private final AwsS3Service awsS3Service;
+	private final RedisUtil redisUtil;
 
 	@Transactional
 	public AlbumDetailsResponseDto createAlbum(AlbumCreateRequestDto albumCreateRequestDto,
@@ -252,6 +255,21 @@ public class AlbumService {
 			likesService.isLikedByAlbumAndMember(album.getId(), memberId),
 			likesService.getAlbumLikesCount(album.getId())));
 		return AlbumMyPageResponseDto.of(albumMyResponseDtoPage);
+	}
+
+	public List<AlbumRankingResponseDto> getSteadyAlbums() {
+		List<Album> top5AlbumLikes = redisUtil.getTop5AlbumLikes();
+		return top5AlbumLikes.stream().map(AlbumRankingResponseDto::of).toList();
+	}
+
+	public List<AlbumRankingResponseDto> getHot5Albums() {
+		List<Album> hot5Albums = redisUtil.getTop5AlbumsStreaming(true);
+		return hot5Albums.stream().map(AlbumRankingResponseDto::of).toList();
+	}
+
+	public List<AlbumRankingResponseDto> getMonthlyTop5Albums() {
+		List<Album> monthlyTop5Albums = redisUtil.getTop5AlbumsStreaming(false);
+		return monthlyTop5Albums.stream().map(AlbumRankingResponseDto::of).toList();
 	}
 
 	public List<GenreResponseDto> getAllGenres() {
