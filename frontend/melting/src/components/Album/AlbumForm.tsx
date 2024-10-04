@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 
 import { Input } from '../ui/input'
 import { Label } from '../ui/label'
@@ -14,6 +15,7 @@ import { AlbumCreateRequestDto, CreateAlbumPayload } from '@/types/album.ts'
 
 export default function AlbumForm() {
   const [releaseDate, setReleaseDate] = useState<string>('')
+  const navigate = useNavigate()
 
   const {
     albumName,
@@ -21,7 +23,7 @@ export default function AlbumForm() {
     albumIntro,
     setAlbumIntro,
     selectedSongs,
-    // titleSongIndex,
+    titleSongIndex,
     selectedGenres,
     selectedHashtags,
     selectedCover,
@@ -83,7 +85,7 @@ export default function AlbumForm() {
         albumName: albumName,
         albumDescription: albumIntro,
         songs: selectedSongs.map((song) => song.songId),
-        titleSongId: selectedSongs[0]?.songId, // titleSongId는 첫 번째 곡으로 가정
+        titleSongId: titleSongIndex || selectedSongs[0]?.songId, // titleSongId는 첫 번째 곡으로 가정
         genres: selectedGenres,
         hashtags: selectedHashtags,
       }
@@ -98,6 +100,7 @@ export default function AlbumForm() {
           // API 호출
           const response = await albumApi.createAlbum(payload)
           console.log('앨범 생성 성공:', response)
+          navigate('/album/detail/{response.albumId}')
         } catch (error) {
           console.error('앨범 생성 중 오류 발생:', error)
         }
