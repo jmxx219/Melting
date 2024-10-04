@@ -24,12 +24,12 @@ export default function AppRoutes() {
               element={<OAuthRedirectHandler />}
             />
             <Route path="/signup" element={<SignupPage />} />
-            <Route element={<ProtectedRoute />}>
-              <Route path="/main" element={<MainPage />} />
-              <Route path="/album/*" element={<AlbumRoutes />} />
-              <Route path="/music/*" element={<MusicRoutes />} />
-              <Route path="/mypage/*" element={<MyPageRoutes />} />
-            </Route>
+            <Route path="/main" element={<MainPage />} />
+            <Route path="/album/*" element={<AlbumRoutes />} />
+            <Route path="/music/*" element={<MusicRoutes />} />
+            <Route path="/mypage/*" element={<MyPageRoutes />} />
+            {/* <Route element={<ProtectedRoute />}>
+            </Route> */}
           </Routes>
         </Suspense>
       </Router>

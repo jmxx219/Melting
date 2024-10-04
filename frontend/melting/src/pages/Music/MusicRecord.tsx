@@ -1,7 +1,11 @@
+import { musicApi } from '@/apis/music/musicApi'
 import Layout from '@/components/Layout'
 import MusicRecordrHeader from '@/components/Layout/MusicRecordrHeader'
 import MusicRecordContent from '@/components/Music/MusicRecordContent'
+import { OriginalSongResponseDto } from '@/typeApis/data-contracts'
 import { Song } from '@/types/song'
+import { useEffect, useState } from 'react'
+import { useLocation } from 'react-router-dom'
 
 interface MusicRecord extends Song {
   lyrics: string
@@ -9,48 +13,29 @@ interface MusicRecord extends Song {
 }
 
 export default function MusicRecord() {
-  // const { songId } = location.state || {}
-  const song: MusicRecord = {
-    songId: 1,
-    songTitle: 'Blueming',
-    artist: '아이유',
-    albumCoverImgUrl: 'https://github.com/shadcn.png',
-    lyrics:
-      'dsadsd\n dasdasdada\n dasdasdas\n dsadsd\n dasdasdada\n dasdasdas dsadsd\n dasdasdada\n dasdasdasdsadsd\n dasdasdada\n dasdasdasdsadsd\n dasdasdada\n dasdasdasdsadsd\n dasdasdada\n dasdasdasdsadsd\n dasdasdada\n dasdasdasdsadsd\n dasdasdada\n dasdasdasdsadsd\n dasdasdada\n dasdasdasdsadsd\n dasdasdada\n dasdasdasdsadsd\n dasdasdada\n dasdasdasdsadsd\n dasdasdada\n dasdasdasdsadsd\n dasdasdada\n dasdasdasdsadsd\n dasdasdada\n dasdasdasdsadsd\n dasdasdada\n dasdasdasdsadsd\n dasdasdada\n dasdasdasdsadsd\n dasdasdada\n dasdasdasdsadsd\n dasdasdada\n dasdasdas ',
-    audioSrc:
-      'https://d35fpwscei7sb8.cloudfront.net/audio/original_song/mr/1.mp3',
-  }
-  // const [song, setSong] = useState<MusicRecord>({
-  //   songId: 1,
-  //   songTitle: 'Blueming',
-  //   artist: '아이유',
-  //   albumCoverImgUrl: 'https://github.com/shadcn.png',
-  //   lyrics:
-  //     'dsadsd\n dasdasdada\n dasdasdas\n dsadsd\n dasdasdada\n dasdasdas dsadsd\n dasdasdada\n dasdasdasdsadsd\n dasdasdada\n dasdasdasdsadsd\n dasdasdada\n dasdasdasdsadsd\n dasdasdada\n dasdasdasdsadsd\n dasdasdada\n dasdasdasdsadsd\n dasdasdada\n dasdasdasdsadsd\n dasdasdada\n dasdasdasdsadsd\n dasdasdada\n dasdasdasdsadsd\n dasdasdada\n dasdasdasdsadsd\n dasdasdada\n dasdasdasdsadsd\n dasdasdada\n dasdasdasdsadsd\n dasdasdada\n dasdasdasdsadsd\n dasdasdada\n dasdasdasdsadsd\n dasdasdada\n dasdasdasdsadsd\n dasdasdada\n dasdasdasdsadsd\n dasdasdada\n dasdasdas ',
-  //   audioSrc:
-  //     'https://d35fpwscei7sb8.cloudfront.net/audio/original_song/mr/1.mp3',
-  // })
-  /*   useEffect(() => {
-    if (songId) {
-      fetch(`/api/songs/${songId}`)
-        .then((response) => {
-          if (!response.ok) {
-            throw new Error('서버에서 데이터를 가져오는데 실패했습니다.')
-          }
-          return response.json()
-        })
-        .then((data: Song) => {
-          setSong(data)
-        })
+  const location = useLocation()
+  const { songId } = location.state || {}
+
+  const [song, setSong] = useState<OriginalSongResponseDto>()
+  useEffect(() => {
+    const fetchInitialSongs = async () => {
+      const response = await musicApi.originalSongDetail(songId)
+      setSong(response)
     }
-  }, [songId]) */
+
+    fetchInitialSongs()
+  }, [])
   return (
     <Layout
       Header={
-        <MusicRecordrHeader artist={song.artist} songTitle={song.songTitle} />
+        <MusicRecordrHeader artist={song?.artist} songTitle={song?.title} />
       }
       children={
-        <MusicRecordContent lyrics={song.lyrics} audioSrc={song.audioSrc} />
+        <MusicRecordContent
+          lyrics={song?.lyrics}
+          audioSrc={song?.mrUrl}
+          originalSongId={songId}
+        />
       }
       showFooter={false}
       isHidden={true}

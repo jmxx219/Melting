@@ -1,3 +1,4 @@
+import { OriginalSongSearchResponseDto } from '@/typeApis/data-contracts'
 import { CoverType } from './constType'
 
 export type Song = {
@@ -10,9 +11,9 @@ export type Song = {
 }
 
 export interface SongListProps {
-  songs: Song[]
+  songs: OriginalSongSearchResponseDto[] | undefined
   showNumbers: boolean
-  selectId: number
+  selectId?: number
 }
 
 export type LikedSongType = {
