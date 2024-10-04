@@ -34,6 +34,7 @@ const fetchSongs = async (searchTerm: string, page: number) => {
   try {
     const response: SongSearchPageResponseDto =
       await songApi.getSongsForAlbumCreation(searchTerm, page, 10)
+    console.log(response)
     const newItems =
       response.songSearchResponseDtoList?.map(convertSongDtoToSong) || []
     return { newItems, isLast: response.isLast }
