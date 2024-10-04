@@ -45,13 +45,11 @@ public class OpenAiImageService {
 	public String[] createAiCoverImage(List<Long> songs) throws JsonProcessingException {
 		List<Song> songList = songService.idListToSongList(songs);
 		List<String> lyricsList = songList.stream()
-			.map(song -> song.getOriginalSong().getLyrics())
+			.map(song -> song.getOriginalSong().getLyrics().replace('\n', ' '))
 			.toList();
 
 		Mono<String> lyricsResult = openAiLyricsSummaryService.summarizeLyrics(lyricsList);
-		String blockedResult = lyricsResult.block();
-
-		String content = jsonParsing(blockedResult);
+		String content = jsonParsing(lyricsResult.block());
 		Mono<String> imageResult = requestImageGeneration(content);
 
 		String fileName = albumImageUploadService.generateFileName("image/generated_album_cover", ".png"); // 포맷을 PNG로 가정
