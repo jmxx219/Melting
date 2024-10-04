@@ -21,7 +21,7 @@ export default function AlbumForm() {
     albumIntro,
     setAlbumIntro,
     selectedSongs,
-    titleSongIndex,
+    // titleSongIndex,
     selectedGenres,
     selectedHashtags,
     selectedCover,

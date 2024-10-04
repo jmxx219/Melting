@@ -5,7 +5,7 @@ import {
   CustomError,
 } from './axiosInstance'
 import {
-  AlbumCreateRequestDto,
+  // AlbumCreateRequestDto,
   AddAlbumLikesData,
   CommentRequestDto,
   CreateAlbumData,
