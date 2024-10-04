@@ -64,6 +64,10 @@ export const albumApi = {
       }),
     )
 
+    for (const [key, value] of formData.entries()) {
+      console.log(key, value)
+    }
+
     try {
       const response = await api.post<CreateAlbumData>('', formData)
       return response.data
