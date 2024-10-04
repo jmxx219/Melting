@@ -51,6 +51,7 @@ public class Album extends BaseEntity {
 	private AlbumCategory category;
 
 	@Size(min = 50, max = 1000)
+	@Column(nullable = false, length = 1000)
 	private String albumDescription;
 
 	private String albumCoverImageUrl;
