@@ -1,52 +1,110 @@
-import { useState } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { ArrowDown } from 'lucide-react'
+
 import { Button } from '@/components/ui/button'
 import SongItem from '@/components/Music/SongItem'
 import { useAlbumContext } from '@/contexts/AlbumContext'
-
-import { Song } from '@/types/song'
+import {
+  Song,
+  SongSearchPageResponseDto,
+  SongSearchResponseDto,
+} from '@/types/song'
 import { CoverType } from '@/types/constType'
 import SearchBar from '../Music/SearchBar'
 import MusicNote from '../Icon/MusicNote'
+import { songApi } from '@/apis/songApi'
+
+const convertSongDtoToSong = (item: SongSearchResponseDto): Song => {
+  // 두 속성 중 하나가 반드시 존재한다는 가정하에 assertion 사용
+  const songId = item.meltingSongId || item.aiCoverSongId!
+  return {
+    songId: songId as number, // Type assertion을 사용하여 songId를 number로 단언
+    albumCoverImageUrl: item.albumCoverImage || '',
+    songTitle: item.originalSongTitle || '',
+    nickname: 'Artist',
+    artist: item.originalSongArtist || '',
+    songType: item.meltingSongId ? 'melting' : 'ai',
+    meltingSongId: item.meltingSongId || null,
+    aiCoverSongId: item.aiCoverSongId || null,
+  }
+}
+
+const fetchSongs = async (searchTerm: string, page: number) => {
+  try {
+    const response: SongSearchPageResponseDto =
+      await songApi.getSongsForAlbumCreation(searchTerm, page, 10)
+    const newItems =
+      response.songSearchResponseDtoList?.map(convertSongDtoToSong) || []
+    return { newItems, isLast: response.isLast }
+  } catch (error) {
+    console.error('Failed to load songs:', error)
+    return { newItems: [], isLast: true }
+  }
+}
 
 export default function SongSearch() {
   const [searchTerm, setSearchTerm] = useState('')
   const [searchResults, setSearchResults] = useState<Song[]>([])
+  const [page, setPage] = useState(0)
+  const [loading, setLoading] = useState(false)
+  const [hasMore, setHasMore] = useState(true)
+  const scrollContainerRef = useRef<HTMLDivElement>(null)
+
   const { selectedSongs, setSelectedSongs } = useAlbumContext()
   const navigate = useNavigate()
 
+  const loadMoreItems = useCallback(async () => {
+    if (loading || !hasMore) return
+    setLoading(true)
+
+    const { newItems, isLast } = await fetchSongs(searchTerm, page)
+    setSearchResults((prev) => [...prev, ...newItems])
+    setHasMore(!isLast)
+    setPage((prev) => prev + 1)
+    setLoading(false)
+  }, [loading, hasMore, page, searchTerm])
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (scrollContainerRef.current) {
+        const { scrollTop, scrollHeight, clientHeight } =
+          scrollContainerRef.current
+        if (scrollHeight - scrollTop <= clientHeight * 1.5) {
+          loadMoreItems()
+        }
+      }
+    }
+
+    const scrollContainer = scrollContainerRef.current
+    if (scrollContainer) {
+      scrollContainer.addEventListener('scroll', handleScroll)
+    }
+
+    return () => {
+      if (scrollContainer) {
+        scrollContainer.removeEventListener('scroll', handleScroll)
+      }
+    }
+  }, [loadMoreItems])
+
   const handleSearch = async () => {
-    // TODO: Implement API call to search for cover songs
-    // For now, we'll use mock data
-    const mockResults: Song[] = [
-      {
-        songId: 1,
-        albumCoverImgUrl: '/api/placeholder/50/50',
-        songTitle: '좋은 날',
-        nickname: '쏠랑쏠랑',
-        artist: 'IU',
-        songType: 'melting',
-      },
-      {
-        songId: 2,
-        albumCoverImgUrl: '/api/placeholder/50/50',
-        songTitle: '좋은 하루는 바다',
-        nickname: '쏠랑쏠랑',
-        artist: '윤하',
-        songType: 'ai',
-      },
-      {
-        songId: 3,
-        albumCoverImgUrl: '/api/placeholder/50/50',
-        songTitle: '좋은 아침',
-        nickname: '쏠랑쏠랑',
-        artist: 'IU',
-        songType: 'melting',
-      },
-    ]
-    setSearchResults(mockResults)
+    setSearchResults([])
+    setPage(0)
+    setHasMore(true)
+    setLoading(true)
+
+    const { newItems, isLast } = await fetchSongs(searchTerm, 0)
+    setSearchResults(newItems)
+    setHasMore(!isLast)
+    setLoading(false)
   }
+
+  useEffect(() => {
+    if (searchTerm.length > 0) {
+      handleSearch()
+    }
+  }, [searchTerm])
 
   const handleSelectSong = (song: Song) => {
     const isSelected = selectedSongs.some((s) => s.songId === song.songId)
@@ -54,27 +112,40 @@ export default function SongSearch() {
     if (isSelected) {
       setSelectedSongs(selectedSongs.filter((s) => s.songId !== song.songId))
     } else {
-      const songInSearchResults = searchResults.find(
-        (s) => s.songId === song.songId,
-      )
-      if (songInSearchResults) {
-        setSelectedSongs([...selectedSongs, songInSearchResults])
-      }
+      setSelectedSongs([...selectedSongs, song])
     }
   }
 
   const handleTypeChange = (songId: number, type: CoverType) => {
     setSearchResults(
       searchResults.map((song) =>
-        song.songId === songId ? { ...song, song_type: type } : song,
+        song.songId === songId
+          ? {
+              ...song,
+              songType: type,
+              songId:
+                type === 'melting' ? song.meltingSongId! : song.aiCoverSongId!,
+            }
+          : song,
       ),
     )
 
     setSelectedSongs(
       selectedSongs.map((song) =>
-        song.songId === songId ? { ...song, song_type: type } : song,
+        song.songId === songId
+          ? {
+              ...song,
+              songType: type,
+              songId:
+                type === 'melting' ? song.meltingSongId! : song.aiCoverSongId!,
+            }
+          : song,
       ),
     )
+  }
+
+  const handleMelting = () => {
+    navigate('/music')
   }
 
   const handleSubmit = () => {
@@ -91,31 +162,45 @@ export default function SongSearch() {
           placeholderText="나의 곡을 검색하세요"
         />
       </div>
-
-      {searchResults.length > 0 ? (
-        <div className="space-y-2">
-          {searchResults.map((song) => (
-            <SongItem
-              key={`${song.songId}-${song.songType}`}
-              {...song}
-              isSelected={selectedSongs.some((s) => s.songId === song.songId)}
-              onSelect={() => handleSelectSong(song)}
-              onTypeChange={(value) => handleTypeChange(song.songId, value)}
-              showTypeSelect
-            />
-          ))}
-        </div>
-      ) : (
-        <p className="text-gray-400 text-left">검색한 곡이 없습니다</p>
-      )}
+      <div
+        ref={scrollContainerRef}
+        className="flex-1 overflow-y-auto"
+        style={{ maxHeight: 'calc(100vh - 600px)' }}
+      >
+        {searchResults.map((song) => (
+          <SongItem
+            key={`${song.songId}`}
+            {...song}
+            isSelected={selectedSongs.some((s) => s.songId === song.songId)}
+            onSelect={() => handleSelectSong(song)}
+            onTypeChange={(value) => handleTypeChange(song.songId, value)}
+            showTypeSelect
+            meltingSongId={song.meltingSongId || null}
+            aiCoverSongId={song.aiCoverSongId || null}
+          />
+        ))}
+        {searchResults.length === 0 && !loading && (
+          <div className="mt-16 text-center">
+            <p>검색한 곡이 없습니다.</p>
+            <Button type="button" onClick={handleMelting} className="mt-4">
+              녹음 하러 가기
+            </Button>
+          </div>
+        )}
+        {loading && <p className="mt-16 text-center">로딩 중...</p>}
+      </div>
 
       <div className="text-sm text-primary-500 space-y-1">
+        <div className="flex flex-wrap items-center">
+          <span>※ 음표(</span>
+          <MusicNote width={15} height={15} fill="#adadad" />
+          <span>)를 클릭하여 곡을 추가/삭제할 수 있습니다.</span>
+        </div>
         <p className="flex items-center">
-          ※ 음표(
+          ※ 선택한 곡(
           <MusicNote width={15} height={15} fill="#da961f" />
-          )를 클릭하여 곡을 추가/삭제할 수 있습니다.
+          )은 아래서 확인 가능합니다.
         </p>
-        <p>※ 선택한 곡은 아래서 확인 가능합니다.</p>
         <p>※ 곡은 최소 1곡에서 최대 10곡까지 등록할 수 있습니다.</p>
       </div>
 

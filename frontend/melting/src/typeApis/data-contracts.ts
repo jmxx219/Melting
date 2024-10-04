@@ -202,25 +202,10 @@ export interface ApiResponseSongDetailsResponseDto {
   errorMessage?: string
 }
 
-export interface ApiResponseOriginalSongSearchPageResponseDto {
+export interface ApiResponsePageOriginalSongSearchResponseDto {
   status?: string
-  data?: OriginalSongSearchPageResponseDto
+  data?: PageOriginalSongSearchResponseDto
   errorMessage?: string
-}
-
-export interface OriginalSongSearchPageResponseDto {
-  originalSongPage?: OriginalSongSearchResponseDto[]
-  isLast?: boolean
-  /** @format int32 */
-  pageNumber?: number
-  /** @format int32 */
-  pageSize?: number
-  /** @format int32 */
-  totalPages?: number
-  /** @format int64 */
-  totalElements?: number
-  /** @format int32 */
-  numberOfElements?: number
 }
 
 export interface OriginalSongSearchResponseDto {
@@ -229,6 +214,43 @@ export interface OriginalSongSearchResponseDto {
   title?: string
   artist?: string
   coverImageUrl?: string
+}
+
+export interface PageOriginalSongSearchResponseDto {
+  /** @format int32 */
+  totalPages?: number
+  /** @format int64 */
+  totalElements?: number
+  first?: boolean
+  last?: boolean
+  /** @format int32 */
+  size?: number
+  content?: OriginalSongSearchResponseDto[]
+  /** @format int32 */
+  number?: number
+  sort?: SortObject
+  /** @format int32 */
+  numberOfElements?: number
+  pageable?: PageableObject
+  empty?: boolean
+}
+
+export interface PageableObject {
+  /** @format int64 */
+  offset?: number
+  sort?: SortObject
+  paged?: boolean
+  /** @format int32 */
+  pageNumber?: number
+  /** @format int32 */
+  pageSize?: number
+  unpaged?: boolean
+}
+
+export interface SortObject {
+  empty?: boolean
+  sorted?: boolean
+  unsorted?: boolean
 }
 
 export interface ApiResponseOriginalSongResponseDto {
@@ -533,7 +555,7 @@ export type GetSongDetailsData = ApiResponseSongDetailsResponseDto
 
 export type GetSongDetailsError = ErrorResponse
 
-export type GetSearchPageData = ApiResponseOriginalSongSearchPageResponseDto
+export type GetSearchPageData = ApiResponsePageOriginalSongSearchResponseDto
 
 export type GetSearchPageError = ErrorResponse
 

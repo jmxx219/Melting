@@ -58,7 +58,7 @@ export default function AlbumDetail({ albumId }: AlbumDetailProps) {
         content: '노래 다 좋네요~ 믿고 듣습니다',
         createdAt: '2024-09-27T04:13:00.712Z',
         profileImg: 'https://github.com/shadcn.png',
-        isMy: false,
+        isMyComment: false,
       },
       {
         commentId: 2,
@@ -66,7 +66,7 @@ export default function AlbumDetail({ albumId }: AlbumDetailProps) {
         content: '노래 좋아요 ㅎㅎ',
         createdAt: '2024-09-26T04:13:00.712Z',
         profileImg: 'https://github.com/shadcn.png',
-        isMy: false,
+        isMyComment: false,
       },
     ],
     commentCnt: 10,

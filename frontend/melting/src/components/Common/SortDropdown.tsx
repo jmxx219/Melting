@@ -10,8 +10,8 @@ import { ChevronDown } from 'lucide-react'
 import { DropdownMenuCheckboxItemProps } from '@radix-ui/react-dropdown-menu'
 
 interface SortDropdownProps {
-  initialSort: 'date' | 'popularity'
-  onSelect: (value: 'date' | 'popularity') => void
+  initialSort: 'LATEST' | 'POPULAR'
+  onSelect: (value: 'LATEST' | 'POPULAR') => void
 }
 
 type Checked = DropdownMenuCheckboxItemProps['checked']
@@ -20,33 +20,33 @@ export default function SortDropdown({
   initialSort,
   onSelect,
 }: SortDropdownProps) {
-  const [selectedSort, setSelectedSort] = useState<'date' | 'popularity'>(
+  const [selectedSort, setSelectedSort] = useState<'LATEST' | 'POPULAR'>(
     initialSort,
   )
   const [isDateChecked, setIsDateChecked] = useState<Checked>(
-    initialSort === 'date',
+    initialSort === 'LATEST',
   )
   const [isPopularityChecked, setIsPopularityChecked] = useState<Checked>(
-    initialSort === 'popularity',
+    initialSort === 'POPULAR',
   )
 
-  const getSortLabel = (sortOption: 'date' | 'popularity') => {
+  const getSortLabel = (sortOption: 'LATEST' | 'POPULAR') => {
     switch (sortOption) {
-      case 'date':
+      case 'LATEST':
         return '최신순'
-      case 'popularity':
+      case 'POPULAR':
         return '인기순'
       default:
         return ''
     }
   }
 
-  const handleSelect = (sortOption: 'date' | 'popularity') => {
+  const handleSelect = (sortOption: 'LATEST' | 'POPULAR') => {
     setSelectedSort(sortOption)
     onSelect(sortOption)
 
     // 상태 업데이트
-    if (sortOption === 'date') {
+    if (sortOption === 'LATEST') {
       setIsDateChecked(true)
       setIsPopularityChecked(false)
     } else {
@@ -75,7 +75,7 @@ export default function SortDropdown({
       >
         <DropdownMenuCheckboxItem
           checked={isDateChecked}
-          onCheckedChange={() => handleSelect('date')}
+          onCheckedChange={() => handleSelect('LATEST')}
           // className={`rounded-full text-xs w-20 mb-2 ${isDateChecked ? 'bg-primary-400 text-white' : 'bg-white text-primary-400'}`}
           className={`rounded-full text-xs w-20 mb-2 `}
         >
@@ -83,7 +83,7 @@ export default function SortDropdown({
         </DropdownMenuCheckboxItem>
         <DropdownMenuCheckboxItem
           checked={isPopularityChecked}
-          onCheckedChange={() => handleSelect('popularity')}
+          onCheckedChange={() => handleSelect('POPULAR')}
           // className={`rounded-full text-xs w-20 ${isPopularityChecked ? 'bg-primary-400 text-white' : 'bg-white text-primary-400'}`}
           className={`rounded-full text-xs w-20`}
         >

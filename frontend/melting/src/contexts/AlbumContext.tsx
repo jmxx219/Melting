@@ -7,7 +7,6 @@ import {
 } from 'react'
 
 import { Song } from '@/types/song'
-import { GenreType } from '@/types/constType'
 
 interface AlbumContextType {
   albumName: string
@@ -18,10 +17,8 @@ interface AlbumContextType {
   setSelectedSongs: (songs: Song[]) => void
   titleSongIndex: number | null
   setTitleSongIndex: (index: number | null) => void
-  selectedGenres: GenreType[]
-  setSelectedGenres: (
-    genres: GenreType[] | ((prev: GenreType[]) => GenreType[]),
-  ) => void
+  selectedGenres: string[]
+  setSelectedGenres: (genres: string[] | ((prev: string[]) => string[])) => void
   selectedHashtags: string[]
   setSelectedHashtags: (hashtags: string[]) => void
   selectedCover: string | null
@@ -48,7 +45,7 @@ export const AlbumProvider = ({ children }: AlbumProviderProps) => {
   const [albumIntro, setAlbumIntro] = useState('')
   const [selectedSongs, setSelectedSongs] = useState<Song[]>([])
   const [titleSongIndex, setTitleSongIndex] = useState<number | null>(null)
-  const [selectedGenres, setSelectedGenres] = useState<GenreType[]>([])
+  const [selectedGenres, setSelectedGenres] = useState<string[]>([])
   const [selectedHashtags, setSelectedHashtags] = useState<string[]>([])
   const [selectedCover, setSelectedCover] = useState<string | null>(null)
 
