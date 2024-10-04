@@ -20,10 +20,11 @@ import com.dayangsung.melting.domain.auth.CustomOAuth2User;
 import com.dayangsung.melting.domain.member.dto.request.MemberInitRequestDto;
 import com.dayangsung.melting.domain.member.dto.request.MemberUpdateRequestDto;
 import com.dayangsung.melting.domain.member.dto.response.MemberResponseDto;
-import com.dayangsung.melting.domain.member.dto.response.MemberSongResponseDto;
+import com.dayangsung.melting.domain.member.dto.response.MemberSongCountsResponseDto;
 import com.dayangsung.melting.domain.member.enums.Gender;
 import com.dayangsung.melting.domain.member.service.MemberService;
 import com.dayangsung.melting.domain.song.dto.response.SongLikesPageResponseDto;
+import com.dayangsung.melting.domain.song.dto.response.SongMypagePageResponseDto;
 import com.dayangsung.melting.global.common.response.ApiResponse;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -89,10 +90,22 @@ public class MemberController {
 
 	@Operation(summary = "마이페이지에서 사용자가 생성한 곡 목록")
 	@GetMapping("/me/songs")
-	public ApiResponse<MemberSongResponseDto> getMemberSongs(
+	public ApiResponse<SongMypagePageResponseDto> getMemberSongs(
+		@RequestParam(defaultValue = "0") int page,
+		@RequestParam(defaultValue = "10") int size,
 		@AuthenticationPrincipal CustomOAuth2User customOAuth2User) {
-		MemberSongResponseDto memberSongResponseDto = memberService.getMemberSongs(customOAuth2User.getName());
-		return ApiResponse.ok(memberSongResponseDto);
+		SongMypagePageResponseDto songMypagePageResponseDto = memberService.getMemberSongs(customOAuth2User.getName(),
+			page, size);
+		return ApiResponse.ok(songMypagePageResponseDto);
+	}
+
+	@Operation(summary = "사용자가 멜팅한 곡 개수 조회", description = "3개 이상이면 AI Cover 가능")
+	@GetMapping("/me/songcounts")
+	public ApiResponse<MemberSongCountsResponseDto> getMeltingCounts(
+		@AuthenticationPrincipal CustomOAuth2User customOAuth2User) {
+		MemberSongCountsResponseDto songCountsResponseDto = memberService.getMemberSongsCounts(
+			customOAuth2User.getName());
+		return ApiResponse.ok(songCountsResponseDto);
 	}
 
 	@GetMapping("/me/hashtags")

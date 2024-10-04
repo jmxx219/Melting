@@ -1,9 +1,8 @@
-package com.dayangsung.melting.domain.member.dto;
+package com.dayangsung.melting.domain.song.dto;
 
 import java.util.List;
 
 import com.dayangsung.melting.domain.originalsong.entity.OriginalSong;
-import com.dayangsung.melting.domain.song.dto.SongMypageDto;
 
 import lombok.Builder;
 
