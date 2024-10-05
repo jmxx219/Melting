@@ -36,12 +36,9 @@ export const albumApi = {
     sort?: 'LATEST' | 'POPULAR'
   }) => {
     try {
-      const response = await instance.get<GetAlbumsInCommunityMainPageData>(
-        '/',
-        {
-          params: query,
-        },
-      )
+      const response = await api.get<GetAlbumsInCommunityMainPageData>('/', {
+        params: query,
+      })
       return response.data
     } catch (error) {
       console.error('앨범 목록을 가져오는 중 오류 발생:', error)
@@ -76,7 +73,7 @@ export const albumApi = {
   // 앨범 좋아요 수 가져오기
   getAlbumLikesCount: async (albumId: number) => {
     try {
-      const response = await instance.get<GetAlbumLikesCountData>(
+      const response = await api.get<GetAlbumLikesCountData>(
         `/${albumId}/likes`,
       )
       return response.data
@@ -89,8 +86,6 @@ export const albumApi = {
   // 앨범 좋아요 추가
   addAlbumLikes: async (albumId: number) => {
     try {
-      console.log(albumId)
-
       const response = await api.post<AddAlbumLikesData>(`/${albumId}/likes`)
       return response.data
     } catch (error) {
@@ -102,7 +97,7 @@ export const albumApi = {
   // 앨범 좋아요 삭제
   deleteAlbumLikes: async (albumId: number) => {
     try {
-      const response = await instance.delete<DeleteAlbumLikesData>(
+      const response = await api.delete<DeleteAlbumLikesData>(
         `/${albumId}/likes`,
       )
       return response.data
@@ -121,7 +116,7 @@ export const albumApi = {
     },
   ) => {
     try {
-      const response = await instance.get<GetAllCommentsData>(
+      const response = await api.get<GetAllCommentsData>(
         `/${albumId}/comments`,
         {
           params: query,
@@ -137,7 +132,7 @@ export const albumApi = {
   // 앨범에 댓글 작성
   writeComment: async (albumId: number, data: CommentRequestDto) => {
     try {
-      const response = await instance.post<WriteCommentData>(
+      const response = await api.post<WriteCommentData>(
         `/${albumId}/comments`,
         data,
       )

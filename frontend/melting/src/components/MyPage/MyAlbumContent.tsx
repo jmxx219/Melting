@@ -34,13 +34,17 @@ export default function MyAlbumContent({ album, viewType }: MyAlbumProps) {
     const newLikedState = !isLiked
     setIsLiked(newLikedState)
     try {
+      let currentLikedCount
       if (newLikedState) {
-        await albumApi.addAlbumLikes(album.albumId)
-        setLikeCount((prevCount) => prevCount + 1)
+        currentLikedCount = (await albumApi.addAlbumLikes(
+          album.albumId,
+        )) as number
       } else {
-        await albumApi.deleteAlbumLikes(album.albumId)
-        setLikeCount((prevCount) => prevCount - 1)
+        currentLikedCount = (await albumApi.deleteAlbumLikes(
+          album.albumId,
+        )) as number
       }
+      setLikeCount(currentLikedCount)
     } catch (error) {
       console.error('좋아요 상태 업데이트 중 오류 발생:', error)
       setIsLiked(!newLikedState)
@@ -113,8 +117,8 @@ export default function MyAlbumContent({ album, viewType }: MyAlbumProps) {
           </button>
           <span>
             {viewType === 'my'
-              ? album.likedCount.toLocaleString()
-              : formatLikeCount(album.likedCount)}
+              ? likeCount.toLocaleString()
+              : formatLikeCount(likeCount)}
           </span>
         </div>
 
