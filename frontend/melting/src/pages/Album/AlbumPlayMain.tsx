@@ -1,65 +1,36 @@
+import { albumApi } from '@/apis/albumApi'
 import Layout from '@/components/Layout'
 import MusicPlayerHeader from '@/components/Layout/MusicPlayerHeader'
 import MusicPlayContent from '@/components/Music/MusicPlayContent'
-import { SongPlay } from '@/types/songPlay'
-import { useCallback, useState } from 'react'
+import { SongDetailsResponseDto } from '@/types/album'
+import { useCallback, useEffect, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
-type Props = {}
 
-export default function AlbumPlayMain({}: Props) {
+export default function AlbumPlayMain() {
   const location = useLocation()
   const { albumId } = location.state || {}
-  const navigate = useNavigate()
 
+  const navigate = useNavigate()
+  const [songs, setSongs] = useState<SongDetailsResponseDto[]>([])
   const [songIdx, setSongIdx] = useState(0)
 
-  const songs: SongPlay[] = [
-    {
-      songId: 1,
-      songTitle: 'Blueming',
-      artist: '아이유',
-      albumCoverImageUrl: 'https://github.com/shadcn.png',
-      lyrics:
-        'dsadsd\n dasdasdada\n dasdasdas\n dsadsd\n dasdasdada\n dasdasdas dsadsd\n dasdasdada\n dasdasdasdsadsd\n dasdasdada\n dasdasdasdsadsd\n dasdasdada\n dasdasdasdsadsd\n dasdasdada\n dasdasdasdsadsd\n dasdasdada\n dasdasdasdsadsd\n dasdasdada\n dasdasdasdsadsd\n dasdasdada\n dasdasdasdsadsd\n dasdasdada\n dasdasdasdsadsd\n dasdasdada\n dasdasdasdsadsd\n dasdasdada\n dasdasdasdsadsd\n dasdasdada\n dasdasdasdsadsd\n dasdasdada\n dasdasdasdsadsd\n dasdasdada\n dasdasdasdsadsd\n dasdasdada\n dasdasdasdsadsd\n dasdasdada\n dasdasdasdsadsd\n dasdasdada\n dasdasdas ',
-      audioSrc:
-        'https://d35fpwscei7sb8.cloudfront.net/audio/original_song/mr/1.mp3',
-      like: 0,
-      nickname: '쏠랑쏠랑',
-      songType: 'melting',
-      aiCoverSongId: 1,
-      meltingSongId: 2,
-    },
-    {
-      songId: 1,
-      songTitle: 'Blueming2',
-      artist: '아이유',
-      albumCoverImageUrl: 'https://github.com/shadcn.png',
-      lyrics:
-        'dsadsd\n dasdasdada\n dasdasdas\n dsadsd\n dasdasdada\n dasdasdas dsadsd\n dasdasdada\n dasdasdasdsadsd\n dasdasdada\n dasdasdasdsadsd\n dasdasdada\n dasdasdasdsadsd\n dasdasdada\n dasdasdasdsadsd\n dasdasdada\n dasdasdasdsadsd\n dasdasdada\n dasdasdasdsadsd\n dasdasdada\n dasdasdasdsadsd\n dasdasdada\n dasdasdasdsadsd\n dasdasdada\n dasdasdasdsadsd\n dasdasdada\n dasdasdasdsadsd\n dasdasdada\n dasdasdasdsadsd\n dasdasdada\n dasdasdasdsadsd\n dasdasdada\n dasdasdasdsadsd\n dasdasdada\n dasdasdasdsadsd\n dasdasdada\n dasdasdasdsadsd\n dasdasdada\n dasdasdas ',
-      audioSrc:
-        'https://d35fpwscei7sb8.cloudfront.net/audio/original_song/mr/2.mp3',
-      like: 0,
-      nickname: '쏠랑쏠랑',
-      songType: 'melting',
-      aiCoverSongId: 1,
-      meltingSongId: 2,
-    },
-    {
-      songId: 1,
-      songTitle: 'Blueming3',
-      artist: '아이유',
-      albumCoverImageUrl: 'https://github.com/shadcn.png',
-      lyrics:
-        'dsadsd\n dasdasdada\n dasdasdas\n dsadsd\n dasdasdada\n dasdasdas dsadsd\n dasdasdada\n dasdasdasdsadsd\n dasdasdada\n dasdasdasdsadsd\n dasdasdada\n dasdasdasdsadsd\n dasdasdada\n dasdasdasdsadsd\n dasdasdada\n dasdasdasdsadsd\n dasdasdada\n dasdasdasdsadsd\n dasdasdada\n dasdasdasdsadsd\n dasdasdada\n dasdasdasdsadsd\n dasdasdada\n dasdasdasdsadsd\n dasdasdada\n dasdasdasdsadsd\n dasdasdada\n dasdasdasdsadsd\n dasdasdada\n dasdasdasdsadsd\n dasdasdada\n dasdasdasdsadsd\n dasdasdada\n dasdasdasdsadsd\n dasdasdada\n dasdasdasdsadsd\n dasdasdada\n dasdasdas ',
-      audioSrc:
-        'https://d35fpwscei7sb8.cloudfront.net/audio/original_song/mr/3.mp3',
-      like: 0,
-      nickname: '쏠랑쏠랑',
-      songType: 'melting',
-      aiCoverSongId: 1,
-      meltingSongId: 2,
-    },
-  ]
+  useEffect(() => {
+    const fetchInitialSongs = async () => {
+      if (!albumId) {
+        console.error('No albumId provided.')
+        return
+      }
+
+      try {
+        const response = await albumApi.getAlbumDetails(albumId)
+        setSongs(response.songs)
+      } catch (error) {
+        console.error('Failed to fetch album details:', error)
+      }
+    }
+
+    fetchInitialSongs()
+  }, [albumId])
 
   const handleNext = useCallback(() => {
     setSongIdx((prevIdx) => (prevIdx + 1) % songs.length)
@@ -68,25 +39,31 @@ export default function AlbumPlayMain({}: Props) {
   const handlePrev = useCallback(() => {
     setSongIdx((prevIdx) => (prevIdx - 1 + songs.length) % songs.length)
   }, [songs.length])
-  const onCloe = () => {
-    navigate('/')
+
+  const onClose = () => {
+    navigate('/main')
   }
+
   return (
     <Layout
       Header={
-        <MusicPlayerHeader
-          artist={`${songs[songIdx].nickname} Original by ${songs[songIdx].artist}`}
-          songTitle={songs[songIdx].songTitle}
-          onClose={onCloe}
-        />
+        songs.length > 0 && (
+          <MusicPlayerHeader
+            artist={`${songs[songIdx].nickname} Original by ${songs[songIdx].artist}`}
+            songTitle={songs[songIdx].songTitle}
+            onClose={onClose}
+          />
+        )
       }
       children={
-        <MusicPlayContent
-          song={songs[songIdx]}
-          isAlbumPlay={true}
-          onNext={handleNext}
-          onPrev={handlePrev}
-        />
+        songs.length > 0 && (
+          <MusicPlayContent
+            song={songs[songIdx]}
+            isAlbumPlay={true}
+            onNext={handleNext}
+            onPrev={handlePrev}
+          />
+        )
       }
       showFooter={false}
       isHidden={true}

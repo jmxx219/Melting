@@ -1,4 +1,4 @@
-import { SongPlay } from '@/types/songPlay'
+import { SongDetailsResponseDto } from '@/types/album'
 import {
   Heart,
   LoaderCircle,
@@ -7,13 +7,13 @@ import {
   SkipBack,
   SkipForward,
 } from 'lucide-react'
+import { useCallback, useEffect, useRef, useState } from 'react'
+import { Button } from '../ui/button'
 import { ScrollArea } from '../ui/scroll-area'
 import AudioPlayer, { AudioPlayerHandle } from './AudioPlayer'
-import { useCallback, useRef, useState, useEffect } from 'react'
-import { Button } from '../ui/button'
 
 type MusicPlayProps = {
-  song: SongPlay
+  song: SongDetailsResponseDto
   isAlbumPlay?: boolean
   onNext?: () => void
   onPrev?: () => void
@@ -34,7 +34,9 @@ export default function MusicPlayContent({
     setIsLoading(true)
     // 가사 로딩을 시뮬레이션하기 위해 setTimeout 사용
     const timer = setTimeout(() => {
-      setLyricsLines(song.lyrics.split('\n'))
+      setLyricsLines(
+        song.lyrics ? song.lyrics.split('\n') : ['가사가 존재하지 않습니다.'],
+      )
       setIsLoading(false)
     }, 500) // 500ms 후에 가사 표시
 
@@ -82,7 +84,7 @@ export default function MusicPlayContent({
         />
         <div className="flex items-center">
           <Heart className="w-6 h-6 text-red-500 mr-1" />
-          <span className="text-sm text-gray-600">{song.like}</span>
+          <span className="text-sm text-gray-600">{song.likedCount}</span>
         </div>
       </div>
       <div className="flex-1 flex justify-center items-center overflow-hidden">
@@ -103,7 +105,7 @@ export default function MusicPlayContent({
       <div className="py-3">
         <AudioPlayer
           ref={audioPlayerRef}
-          audioSrc={song.audioSrc}
+          audioSrc={song.songUrl}
           onEnded={handleAudioEnd}
           onPlay={() => setIsPlaying(true)}
           onPause={() => setIsPlaying(false)}
