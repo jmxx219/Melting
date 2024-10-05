@@ -1,5 +1,9 @@
 import { LikedSongType, Song } from './song'
-import { ErrorResponse, ApiResponseInteger } from '@/types/globalType.ts'
+import {
+  ErrorResponse,
+  ApiResponseInteger,
+  ApiResponseString,
+} from '@/types/globalType.ts'
 import { ApiResponseMemberResponseDto } from '@/types/user.ts'
 
 export interface AlbumForm {
@@ -9,6 +13,14 @@ export interface AlbumForm {
   genre: string[]
   hashtags: string[]
   albumCoverImage: File | null
+}
+
+export interface ImageInfo {
+  id: string
+  url: string
+  file: File | null
+  description: string
+  type: 'user' | 'ai' | 'default'
 }
 
 export interface AlbumCreateRequestDto {
@@ -186,3 +198,11 @@ export type GetMonthlyAlbumsError = ErrorResponse
 export type GetHot5AlbumsData = ApiResponseListAlbumRankingResponseDto
 
 export type GetHot5AlbumsError = ErrorResponse
+
+export interface AiCoverImageRequestDto {
+  songs: number[]
+}
+
+export type CreateAiAlbumCoverImageData = ApiResponseString
+
+export type CreateAiAlbumCoverImageError = ErrorResponse

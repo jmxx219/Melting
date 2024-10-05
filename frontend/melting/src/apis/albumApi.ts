@@ -25,7 +25,12 @@ import {
   GetSteadyAlbumsData,
   GetSteadyAlbumsError,
   AlbumRankingResponseDto,
+  AiCoverImageRequestDto,
 } from '@/types/album.ts'
+import {
+  CreateAiAlbumCoverImageData,
+  CreateAiAlbumCoverImageError,
+} from '@/typeApis/data-contracts.ts'
 
 const instance = createAxiosInstance('albums')
 const api = createApi<ApiResponse>(instance)
@@ -199,6 +204,23 @@ export const albumApi = {
         error,
       )
       throw error as GetSteadyAlbumsError
+    }
+  },
+
+  createAiAlbumCoverImage: async (
+    data: AiCoverImageRequestDto,
+  ): Promise<string> => {
+    try {
+      console.log(data)
+      console.log(data.songs)
+      const response = await api.post<CreateAiAlbumCoverImageData>(
+        '/covers',
+        data,
+      )
+      return response.data as string
+    } catch (error) {
+      console.error('AI 커버 이미지 생성 중 오류 발생:', error)
+      throw error as CreateAiAlbumCoverImageError
     }
   },
 }
