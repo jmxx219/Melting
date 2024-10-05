@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.ExchangeStrategies;
@@ -103,6 +104,8 @@ public class OpenAiDescriptionService {
 				.contentType(MediaType.APPLICATION_JSON)
 				.bodyValue(bodyValue)
 				.retrieve() // 응답을 받아옴
+				.onStatus(HttpStatus.BAD_REQUEST::equals, clientResponse -> clientResponse.bodyToMono(String.class)
+				.flatMap(errorBody -> Mono.error(new RuntimeException("API Error: " + errorBody))))
 				.bodyToMono(String.class);
 	}
 }
