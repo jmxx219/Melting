@@ -24,6 +24,7 @@ import com.dayangsung.melting.domain.album.dto.response.AlbumDetailsResponseDto;
 import com.dayangsung.melting.domain.album.dto.response.AlbumRankingPageResponseDto;
 import com.dayangsung.melting.domain.album.dto.response.AlbumRankingResponseDto;
 import com.dayangsung.melting.domain.album.dto.response.AlbumSearchPageResponseDto;
+import com.dayangsung.melting.domain.album.dto.response.AlbumTrackInfoDto;
 import com.dayangsung.melting.domain.album.service.AlbumCoverImageService;
 import com.dayangsung.melting.domain.album.service.AlbumDescriptionService;
 import com.dayangsung.melting.domain.album.service.AlbumService;
@@ -104,15 +105,15 @@ public class AlbumController {
 
 	@PostMapping("/covers")
 	public ApiResponse<String> createAiAlbumCoverImage(
-			@RequestBody AiCoverImageRequestDto aiCoverImageRequestDto) throws IOException {
+		@RequestBody AiCoverImageRequestDto aiCoverImageRequestDto) throws IOException {
 		String base64Image = albumCoverImageService.createAiCoverImage(aiCoverImageRequestDto.songs());
 		return ApiResponse.ok(base64Image);
 	}
 
-	@PostMapping("/{albumId}/descriptions")
-	public ApiResponse<String> createAiDescription(@PathVariable Long albumId,
-			@RequestBody AiDescriptionRequestDto aiDescriptionRequestDto) throws JsonProcessingException {
-		String description = albumDescriptionService.createAiDescription(albumId, aiDescriptionRequestDto);
+	@PostMapping("/descriptions")
+	public ApiResponse<String> createAiDescription(
+		@RequestBody AiDescriptionRequestDto aiDescriptionRequestDto) throws JsonProcessingException {
+		String description = albumDescriptionService.createAiDescription(aiDescriptionRequestDto);
 		return ApiResponse.ok(description);
 	}
 
@@ -167,5 +168,11 @@ public class AlbumController {
 		@PathVariable("hashtag") String hashtagContent) {
 		AlbumRankingPageResponseDto albumPageByHashtag = albumService.findByHashtag(hashtagContent, page, size);
 		return ApiResponse.ok(albumPageByHashtag);
+	}
+
+	@GetMapping("/{albumId}/tracks")
+	public ApiResponse<List<AlbumTrackInfoDto>> getTrackListInfo(@PathVariable Long albumId) {
+		List<AlbumTrackInfoDto> trackInfo = albumService.getTrackListInfo(albumId);
+		return ApiResponse.ok(trackInfo);
 	}
 }

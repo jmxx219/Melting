@@ -12,7 +12,7 @@ public interface LikesSongRepository extends JpaRepository<LikesSong, Long> {
 
 	Optional<LikesSong> findLikesSongBySongIdAndMemberId(Long songId, Long memberId);
 
-	@Query("SELECT COUNT(ls) > 0 FROM LikesSong ls WHERE ls.member.id = :memberId AND ls.song.id = :songId AND ls.status = true")
+	@Query("SELECT COUNT(ls) > 0 FROM LikesSong ls WHERE ls.member.id = :memberId AND ls.song.id = :songId AND ls.isLiked = true")
 	Boolean existsByMemberIdAndSongIdAndStatusTrue(
 		@Param("memberId") Long memberId,
 		@Param("songId") Long songId);
