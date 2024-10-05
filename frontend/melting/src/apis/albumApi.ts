@@ -25,8 +25,14 @@ import {
   GetSteadyAlbumsData,
   GetSteadyAlbumsError,
   AlbumRankingResponseDto,
+  AiCoverImageRequestDto,
+  CreateAiAlbumCoverImageData,
+  CreateAiAlbumCoverImageError,
   ToggleIsPublicData,
   DeleteAlbumData,
+  GetAlbumDetailsData,
+  GetAlbumDetailsError,
+  AlbumDetailsResponseDto,
 } from '@/types/album.ts'
 import { SortType } from '@/types/constType'
 
@@ -62,9 +68,9 @@ export const albumApi = {
       }),
     )
 
-    for (const [key, value] of formData.entries()) {
-      console.log(key, value)
-    }
+    // for (const [key, value] of formData.entries()) {
+    //   console.log(key, value)
+    // }
 
     try {
       const response = await api.post<CreateAlbumData>('', formData)
@@ -148,6 +154,18 @@ export const albumApi = {
     }
   },
 
+  getAlbumDetails: async (
+    albumId: number,
+  ): Promise<AlbumDetailsResponseDto> => {
+    try {
+      const response = await api.get<GetAlbumDetailsData>(`/${albumId}`)
+      return response.data as AlbumDetailsResponseDto
+    } catch (error) {
+      console.error('앨범 상세 조회 중 오류 발생:', error)
+      throw error as GetAlbumDetailsError
+    }
+  },
+
   getAllGenres: async (): Promise<GenreResponseDto[]> => {
     try {
       const response = await api.get<GetAllGenresData>('/genres')
@@ -195,6 +213,21 @@ export const albumApi = {
         error,
       )
       throw error as GetSteadyAlbumsError
+    }
+  },
+
+  createAiAlbumCoverImage: async (
+    data: AiCoverImageRequestDto,
+  ): Promise<string> => {
+    try {
+      const response = await api.post<CreateAiAlbumCoverImageData>(
+        '/covers',
+        data,
+      )
+      return response.data as string
+    } catch (error) {
+      console.error('AI 커버 이미지 생성 중 오류 발생:', error)
+      throw error as CreateAiAlbumCoverImageError
     }
   },
 
