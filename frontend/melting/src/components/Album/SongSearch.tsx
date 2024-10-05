@@ -2,6 +2,7 @@ import { useState, useEffect, useRef, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { ArrowDown } from 'lucide-react'
 
+import InfiniteScroll from '@/components/Common/InfinityScroll.tsx'
 import { Button } from '@/components/ui/button'
 import SongItem from '@/components/Music/SongItem'
 import AlertModal from '@/components/Common/AlertModal'
@@ -52,7 +53,7 @@ export default function SongSearch() {
   const [loading, setLoading] = useState(false)
   const [hasMore, setHasMore] = useState(true)
   const [isAlertOpen, setIsAlertOpen] = useState(false)
-  const scrollContainerRef = useRef<HTMLDivElement>(null)
+  //const scrollContainerRef = useRef<HTMLDivElement>(null)
 
   const { selectedSongs, setSelectedSongs } = useAlbumContext()
   const navigate = useNavigate()
@@ -67,29 +68,6 @@ export default function SongSearch() {
     setPage((prev) => prev + 1)
     setLoading(false)
   }, [loading, hasMore, page, searchTerm])
-
-  useEffect(() => {
-    const handleScroll = () => {
-      if (scrollContainerRef.current) {
-        const { scrollTop, scrollHeight, clientHeight } =
-          scrollContainerRef.current
-        if (scrollHeight - scrollTop <= clientHeight * 1.5) {
-          loadMoreItems()
-        }
-      }
-    }
-
-    const scrollContainer = scrollContainerRef.current
-    if (scrollContainer) {
-      scrollContainer.addEventListener('scroll', handleScroll)
-    }
-
-    return () => {
-      if (scrollContainer) {
-        scrollContainer.removeEventListener('scroll', handleScroll)
-      }
-    }
-  }, [loadMoreItems])
 
   const handleSearch = async () => {
     setSearchResults([])
@@ -170,33 +148,37 @@ export default function SongSearch() {
           placeholderText="나의 곡을 검색하세요"
         />
       </div>
-      <div
-        ref={scrollContainerRef}
-        className="flex-1 overflow-y-auto"
-        style={{ maxHeight: 'calc(100vh - 600px)' }}
+      <InfiniteScroll
+        loadMore={loadMoreItems}
+        hasMore={hasMore}
+        loading={loading}
       >
-        {searchResults.map((song) => (
-          <SongItem
-            key={`${song.songId}-${song.songType}-${song.meltingSongId || song.aiCoverSongId}`}
-            {...song}
-            isSelected={selectedSongs.some((s) => s.songId === song.songId)}
-            onSelect={() => handleSelectSong(song)}
-            onTypeChange={(value) => handleTypeChange(song.songId, value)}
-            showTypeSelect
-            meltingSongId={song.meltingSongId || null}
-            aiCoverSongId={song.aiCoverSongId || null}
-          />
-        ))}
-        {searchResults.length === 0 && !loading && (
-          <div className="mt-16 text-center">
-            <p>검색한 곡이 없습니다.</p>
-            <Button type="button" onClick={handleMelting} className="mt-4">
-              녹음 하러 가기
-            </Button>
-          </div>
-        )}
-        {loading && <p className="mt-16 text-center">로딩 중...</p>}
-      </div>
+        <div
+          className="flex-1 overflow-y-auto"
+          style={{ maxHeight: 'calc(100vh - 600px)' }}
+        >
+          {searchResults.map((song) => (
+            <SongItem
+              key={`${song.songId}-${song.songType}-${song.meltingSongId || song.aiCoverSongId}`}
+              {...song}
+              isSelected={selectedSongs.some((s) => s.songId === song.songId)}
+              onSelect={() => handleSelectSong(song)}
+              onTypeChange={(value) => handleTypeChange(song.songId, value)}
+              showTypeSelect
+              meltingSongId={song.meltingSongId || null}
+              aiCoverSongId={song.aiCoverSongId || null}
+            />
+          ))}
+          {searchResults.length === 0 && !loading && (
+            <div className="mt-16 text-center">
+              <p>검색한 곡이 없습니다.</p>
+              <Button type="button" onClick={handleMelting} className="mt-4">
+                녹음 하러 가기
+              </Button>
+            </div>
+          )}
+        </div>
+      </InfiniteScroll>
 
       <div className="text-sm text-primary-500 space-y-1">
         <div className="flex flex-wrap items-center">
