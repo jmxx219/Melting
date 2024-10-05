@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import MySongContent from '@/components/MyPage/MySongContent'
 import { SortType } from '@/types/constType'
-import { SongListDto, SongMypageDto } from '@/types/user'
+import { SongListDto } from '@/types/user'
 import { userApi } from '@/apis/userApi'
 
 interface AlbumSongToggleProps {
