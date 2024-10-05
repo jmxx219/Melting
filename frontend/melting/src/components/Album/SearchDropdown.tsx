@@ -10,7 +10,7 @@ export default function SearchDropdown({
   if (suggestions.length === 0) return null
 
   return (
-    <ul className="w-5/6 bg-white rounded-md shadow-lg mt-1 max-h-40 overflow-y-auto">
+    <ul className="w-full bg-white rounded-md shadow-lg mt-1 max-h-40 overflow-y-auto">
       {suggestions.map((suggestion) => (
         <li
           key={suggestion}

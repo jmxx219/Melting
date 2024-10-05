@@ -14,6 +14,7 @@ import SearchDropdown from '../Album/SearchDropdown'
 import useDebounce from '@/hooks/useDebounce'
 import { hashtagApi } from '@/apis/hashtagApi'
 import InfiniteScroll from '@/components/Common/InfinityScroll.tsx'
+import { HashtagPageResponseDto, HashtagResponseDto } from '@/types/hashtag.ts'
 
 interface HashtagSelectorProps {
   onHashtagsChange?: (hashtags: string[]) => void
@@ -59,20 +60,22 @@ export default function HashtagSelector({
       if (searchTerm.length > 0) {
         setLoading(true)
         try {
-          const results = await hashtagApi.searchHashtags(
-            searchTerm,
-            currentPage,
-            10,
-          )
+          const results: HashtagPageResponseDto =
+            await hashtagApi.searchHashtags(searchTerm, currentPage, 10)
 
-          console.log(results)
-          console.log(results.hashtags)
-          if (currentPage === 1) {
-            setSuggestions(results.hashtags)
+          //console.log(results)
+          const hashtagContents =
+            results.hashtags?.map(
+              (hashtag: HashtagResponseDto) => hashtag.content,
+            ) || []
+          //console.log(hashtagContents)
+
+          if (currentPage === 0) {
+            setSuggestions(hashtagContents)
           } else {
-            setSuggestions((prev) => [...prev, ...results.hashtags])
+            setSuggestions((prev) => [...prev, ...hashtagContents])
           }
-          setHasMore(results.hashtags.length === 10)
+          setHasMore(!results.isLast)
           setIsDropdownOpen(true)
         } catch (error) {
           console.error('해시태그 검색 중 오류 발생:', error)
@@ -89,7 +92,7 @@ export default function HashtagSelector({
 
   useEffect(() => {
     setPage(1)
-    fetchSuggestions(debouncedInput, 1)
+    fetchSuggestions(debouncedInput, 0)
   }, [debouncedInput, fetchSuggestions])
 
   const loadMore = useCallback(() => {
