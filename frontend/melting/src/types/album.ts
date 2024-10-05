@@ -1,5 +1,11 @@
-import { LikedSongType, Song } from './song'
-import { ErrorResponse, ApiResponseInteger } from '@/types/globalType.ts'
+import { Song } from './song'
+import {
+  ErrorResponse,
+  ApiResponseInteger,
+  ApiResponseString,
+  ApiResponseBoolean,
+  ApiResponseVoid,
+} from '@/types/globalType.ts'
 import { ApiResponseMemberResponseDto } from '@/types/user.ts'
 
 export interface AlbumForm {
@@ -9,6 +15,14 @@ export interface AlbumForm {
   genre: string[]
   hashtags: string[]
   albumCoverImage: File | null
+}
+
+export interface ImageInfo {
+  id: string
+  url: string
+  file: File | null
+  description: string
+  type: 'user' | 'ai' | 'default'
 }
 
 export interface AlbumCreateRequestDto {
@@ -132,7 +146,7 @@ export interface AlbumDetailInfoType {
   hashtags: string[]
 }
 
-export type AlbumSongType = LikedSongType & {
+export type AlbumSongType = Song & {
   isTitle: boolean
 }
 
@@ -186,3 +200,60 @@ export type GetMonthlyAlbumsError = ErrorResponse
 export type GetHot5AlbumsData = ApiResponseListAlbumRankingResponseDto
 
 export type GetHot5AlbumsError = ErrorResponse
+
+export interface SongDetailsResponseDto {
+  /** @format int64 */
+  songId?: number
+  songTitle?: string
+  nickname?: string
+  artist?: string
+  albumCoverImageUrl?: string
+  isLiked?: boolean
+  /** @format int32 */
+  likedCount?: number
+  songUrl?: string
+  lyrics?: string
+}
+
+export interface AlbumDetailsResponseDto {
+  /** @format int64 */
+  albumId: number
+  albumName: string
+  albumCreatorNickname: string
+  albumCreatorProfileImageUrl: string
+  albumDescription: string
+  /** @format date-time */
+  createdAt: string
+  category: 'SINGLE' | 'MINI' | 'LP'
+  songs: SongDetailsResponseDto[]
+  hashtags: string[]
+  genres: string[]
+  comments: CommentResponseDto[]
+  /** @format int32 */
+  commentCount?: number
+  isLiked?: boolean
+  /** @format int32 */
+  likedCount?: number
+}
+
+export interface ApiResponseAlbumDetailsResponseDto {
+  status?: string
+  data?: AlbumDetailsResponseDto
+  errorMessage?: string
+}
+
+export type GetAlbumDetailsData = ApiResponseAlbumDetailsResponseDto
+
+export type GetAlbumDetailsError = ErrorResponse
+
+export interface AiCoverImageRequestDto {
+  songs: number[]
+}
+
+export type CreateAiAlbumCoverImageData = ApiResponseString
+
+export type CreateAiAlbumCoverImageError = ErrorResponse
+
+export type ToggleIsPublicData = ApiResponseBoolean
+
+export type DeleteAlbumData = ApiResponseVoid

@@ -31,3 +31,15 @@ export interface ApiResponseString {
   data?: string
   errorMessage?: string
 }
+
+export interface ApiResponseBoolean {
+  status: string
+  data: boolean
+  errorMessage?: string
+}
+
+export interface ApiResponseVoid {
+  status?: string
+  data?: object
+  errorMessage?: string
+}

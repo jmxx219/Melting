@@ -2,13 +2,16 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import Heart from '@/components/Icon/Heart'
 import { Play, Crown } from 'lucide-react'
-import { LikedSongType } from '@/types/song'
+import { Song } from '@/types/song'
+import { convertSecondsToMinutes } from '@/utils/timeUtil'
+import { songApi } from '@/apis/songApi'
 
 interface LikedSongProps {
-  song: LikedSongType
+  song: Song
   hasProfileImage?: boolean
   songOrder?: number
   isTitle?: boolean
+  fetchSongs?: () => void
 }
 
 export default function SongContent({
@@ -16,17 +19,33 @@ export default function SongContent({
   hasProfileImage,
   songOrder = 0,
   isTitle,
+  fetchSongs,
 }: LikedSongProps) {
   const navigate = useNavigate()
   const [isLiked, setIsLiked] = useState(song.isLiked)
+  const [likeCount, setLikeCount] = useState(song.likeCount || 0)
 
-  const toggleLike = () => {
-    setIsLiked(!isLiked)
-    // TODO: 좋아요 상태 업데이트 API 호출
+  const toggleLike = async () => {
+    const newLikedState = !isLiked
+    setIsLiked(newLikedState)
+    try {
+      let currentLikedCount
+      if (newLikedState) {
+        currentLikedCount = await songApi.addSongLikes(song.songId)
+      } else {
+        currentLikedCount = await songApi.deleteSongLikes(song.songId)
+        if (fetchSongs) {
+          await fetchSongs()
+        }
+      }
+      setLikeCount(currentLikedCount)
+    } catch (error) {
+      console.error('곡 좋아요 상태 업데이트 중 오류 발생:', error)
+      setIsLiked(!newLikedState)
+    }
   }
 
   const goToPlaySong = (songId: number) => {
-    // TODO: 곡 재생 화면으로 이동
     navigate(`/music/play/`, { state: songId })
   }
 
@@ -38,7 +57,7 @@ export default function SongContent({
     <div className="flex items-center mb-4 gap-3">
       {hasProfileImage ? (
         <img
-          src={song.albumCoverImgUrl}
+          src={song.albumCoverImageUrl}
           alt={song.songTitle}
           className="w-12 h-12 object-cover rounded-full"
         />
@@ -68,7 +87,7 @@ export default function SongContent({
           <Heart fill={'#FFAF25'} fillOpacity={1} />
         </button>
         <div className="ml-1">
-          {song.likeCount > 999 ? '999+' : song.likeCount.toLocaleString()}
+          {likeCount > 999 ? '999+' : likeCount.toLocaleString()}
         </div>
       </div>
 
@@ -76,7 +95,9 @@ export default function SongContent({
         <button type="button" onClick={() => goToPlaySong(song.songId)}>
           <Play size={20} className="text-primary-400 fill-primary-400" />
         </button>
-        <div className="ml-1">{song.executionTime}</div>
+        <div className="ml-1">
+          {convertSecondsToMinutes(song.lengthInSeconds || 0)}
+        </div>
       </div>
     </div>
   )
