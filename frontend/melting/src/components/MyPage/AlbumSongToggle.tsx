@@ -33,7 +33,9 @@ export default function AlbumSongToggle({ viewType }: AlbumSongToggleProps) {
           </button>
         </div>
 
-        <SortDropdown initialSort={sortOption} onSelect={setSortOption} />
+        {(viewType !== view.MY || selectedTab !== 'song') && (
+          <SortDropdown initialSort={sortOption} onSelect={setSortOption} />
+        )}
       </div>
 
       <div>

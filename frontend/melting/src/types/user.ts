@@ -123,14 +123,15 @@ export type GetMemberLikesAlbumsData = ApiResponseAlbumMyPageResponseDto
 export type GetMemberAlbumsError = ErrorResponse
 
 export type GetMemberLikesAlbumsError = ErrorResponse
+
 export interface SongMypageDto {
   /** @format int64 */
-  songId?: number
+  songId: number
   albumCoverImageUrl?: string
-  songType?: 'MELTING' | 'AICOVER'
+  songType: 'MELTING' | 'AICOVER'
   /** @format int32 */
-  likeCount?: number
-  isLiked?: boolean
+  likeCount: number
+  isLiked: boolean
   isCreated?: boolean
   /** @format date-time */
   lastModifiedAt?: string
@@ -144,17 +145,6 @@ export interface SongListDto {
   songList?: SongMypageDto[]
 }
 
-export interface MemberSongResponseDto {
-  mySongList?: SongListDto[]
-  isPossibleAiCover?: boolean
-}
-
-export interface ApiResponseMemberSongResponseDto {
-  status?: string
-  data?: MemberSongResponseDto
-  errorMessage?: string
-}
-
 export interface MemberSongCountsResponseDto {
   /** @format int32 */
   songcounts: number
@@ -166,7 +156,29 @@ export interface ApiResponseMemberSongCountsResponseDto {
   errorMessage?: string
 }
 
-export type GetMemberSongsData = ApiResponseMemberSongResponseDto
+export interface ApiResponseSongMypagePageResponseDto {
+  status?: string
+  data?: SongMypagePageResponseDto
+  errorMessage?: string
+}
+
+export interface SongMypagePageResponseDto {
+  mySongList?: SongListDto[]
+  isPossibleAiCover?: boolean
+  isLast?: boolean
+  /** @format int32 */
+  pageNumber?: number
+  /** @format int32 */
+  pageSize?: number
+  /** @format int32 */
+  totalPages?: number
+  /** @format int64 */
+  totalElements?: number
+  /** @format int32 */
+  numberOfElements?: number
+}
+
+export type GetMemberSongsData = ApiResponseSongMypagePageResponseDto
 
 export type GetMemberSongsError = ErrorResponse
 
