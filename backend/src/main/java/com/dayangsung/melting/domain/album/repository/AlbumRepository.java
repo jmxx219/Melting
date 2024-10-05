@@ -39,4 +39,7 @@ public interface AlbumRepository extends JpaRepository<Album, Long> {
 
 	@Query("SELECT a FROM Album a JOIN a.likesAlbums la WHERE la.member.id = :memberId AND a.isDeleted = false AND a.isPublic = true GROUP BY a.id ORDER BY COUNT(la) DESC")
 	Page<Album> findLikedAlbumsByMemberIdOrderByLikesCountDesc(@Param("memberId") Long memberId, Pageable pageable);
+
+	@Query("SELECT a FROM Album a JOIN a.hashtags ah JOIN ah.hashtag h WHERE h.content = :hashtag ORDER BY a.createdAt DESC")
+	Page<Album> findByHashtag(@Param("hashtag") String hashtag, Pageable pageable);
 }
