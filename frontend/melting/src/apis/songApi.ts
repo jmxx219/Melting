@@ -5,10 +5,15 @@ import {
   CustomError,
 } from '@/apis/axiosInstance.ts'
 import {
+  CreateAicoverSongData,
+  CreateAicoverSongError,
   GetSongsForAlbumCreationData,
   GetSongsForAlbumCreationError,
   SongSearchPageResponseDto,
+  AddSongLikesData,
+  DeleteSongLikesData,
 } from '@/types/song.ts'
+import { ApiResponseBoolean } from '@/types/user'
 
 const instance = createAxiosInstance('songs')
 const api = createApi<ApiResponse>(instance)
@@ -52,6 +57,41 @@ export const songApi = {
     } catch (error) {
       console.error('Failed to fetch songs for album creation:', error)
       throw error as GetSongsForAlbumCreationError
+    }
+  },
+  // 곡 좋아요 추가
+  addSongLikes: async (songId: number) => {
+    try {
+      const response = await api.post<AddSongLikesData>(`/${songId}/likes`)
+      console.log(response)
+      return response.data as number
+    } catch (error) {
+      console.error('곡 좋아요 추가 중 오류 발생:', error)
+      throw error
+    }
+  },
+
+  // 곡 좋아요 삭제
+  deleteSongLikes: async (songId: number) => {
+    try {
+      const response = await api.delete<DeleteSongLikesData>(`/${songId}/likes`)
+      console.log(response)
+      return response.data as number
+    } catch (error) {
+      console.error('곡 좋아요 삭제 중 오류 발생:', error)
+      throw error
+    }
+  },
+
+  aiCover: async (originalSongId: number): Promise<ApiResponseBoolean> => {
+    try {
+      const response = await api.post<CreateAicoverSongData>('/aicover', {
+        originalSongId,
+      })
+      return response.data as ApiResponseBoolean
+    } catch (error) {
+      console.error('Failed to fetch songs for album creation:', error)
+      throw error as CreateAicoverSongError
     }
   },
 }
