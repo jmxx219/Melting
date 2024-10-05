@@ -104,11 +104,11 @@ public class LikesService {
 	}
 
 	public Boolean isLikedBySongAndMember(Long songId, Long memberId) {
-		return likesSongRepository.existsByMemberIdAndSongIdAndStatusTrue(memberId, songId).orElse(false);
+		return likesSongRepository.existsByMemberIdAndSongIdAndStatusTrue(memberId, songId);
 	}
 
 	public Boolean isLikedByAlbumAndMember(Long albumId, Long memberId) {
-		return likesAlbumRepository.existsByMemberIdAndAlbumIdAndStatusTrue(memberId, albumId).orElse(false);
+		return likesAlbumRepository.existsByMemberIdAndAlbumIdAndStatusTrue(memberId, albumId);
 	}
 
 	public void deleteAlbumLikesOnRedis(Long albumId) {
