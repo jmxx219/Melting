@@ -18,6 +18,7 @@ export default function MusicPlay() {
       if (!songId) return
 
       const response = await songApi.getSong(songId)
+
       setSong(response)
     }
 
@@ -32,7 +33,7 @@ export default function MusicPlay() {
   return (
     <Layout
       Header={
-        song && ( // song이 존재할 때만 렌더링
+        song && (
           <MusicPlayerHeader
             artist={`${song.nickname} Original by ${song.artist}`}
             songTitle={song.songTitle}
@@ -40,9 +41,7 @@ export default function MusicPlay() {
           />
         )
       }
-      children={
-        song && <MusicPlayContent song={song} /> // song이 존재할 때만 렌더링
-      }
+      children={song && <MusicPlayContent song={song} />}
       showFooter={false}
       isHidden={true}
     ></Layout>
