@@ -32,7 +32,7 @@ export default function ConfirmDialog({
       <AlertDialogTrigger asChild>
         <button
           type="button"
-          className={`focus:outline-none ${triggerClassName} ${disabled ? 'cursor-not-allowed opacity-50' : ''}`}
+          className={`focus:outline-none ${triggerClassName} ${disabled ? 'cursor-not-allowed' : ''}`}
           onClick={(e) => {
             e.stopPropagation()
           }}
