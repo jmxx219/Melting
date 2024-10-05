@@ -6,16 +6,14 @@ import {
 } from '@/apis/axiosInstance.ts'
 import { SongDetailsResponseDto } from '@/types/album'
 import {
+  AddSongLikesData,
   CreateAicoverSongData,
   CreateAicoverSongError,
+  DeleteSongLikesData,
+  GetSongDetailsError,
   GetSongsForAlbumCreationData,
   GetSongsForAlbumCreationError,
   SongSearchPageResponseDto,
-  AddSongLikesData,
-  DeleteSongLikesData,
-  GetSongDetailsData,
-  GetSongDetailsError,
-  ApiResponseSongDetailsResponseDto,
 } from '@/types/song.ts'
 import { ApiResponseBoolean } from '@/types/user'
 
