@@ -1,5 +1,10 @@
-import { LikedSongType, Song } from './song'
-import { ErrorResponse, ApiResponseInteger } from '@/types/globalType.ts'
+import { Song } from './song'
+import {
+  ErrorResponse,
+  ApiResponseInteger,
+  ApiResponseBoolean,
+  ApiResponseVoid,
+} from '@/types/globalType.ts'
 import { ApiResponseMemberResponseDto } from '@/types/user.ts'
 
 export interface AlbumForm {
@@ -132,7 +137,7 @@ export interface AlbumDetailInfoType {
   hashtags: string[]
 }
 
-export type AlbumSongType = LikedSongType & {
+export type AlbumSongType = Song & {
   isTitle: boolean
 }
 
@@ -186,3 +191,7 @@ export type GetMonthlyAlbumsError = ErrorResponse
 export type GetHot5AlbumsData = ApiResponseListAlbumRankingResponseDto
 
 export type GetHot5AlbumsError = ErrorResponse
+
+export type ToggleIsPublicData = ApiResponseBoolean
+
+export type DeleteAlbumData = ApiResponseVoid

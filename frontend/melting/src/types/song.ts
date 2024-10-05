@@ -1,4 +1,4 @@
-import { ErrorResponse } from '@/types/globalType.ts'
+import { ErrorResponse, ApiResponseInteger } from '@/types/globalType.ts'
 import { CoverType } from './constType'
 import { ApiResponseBoolean } from './user'
 
@@ -8,26 +8,18 @@ export type Song = {
   artist: string
   albumCoverImageUrl: string
   nickname: string
-  songType: CoverType
-  meltingSongId: number | null
-  aiCoverSongId: number | null
+  songType?: CoverType
+  meltingSongId?: number | null
+  aiCoverSongId?: number | null
+  likeCount?: number
+  isLiked?: boolean
+  lengthInSeconds?: number
 }
 
 export interface SongListProps {
   songs: OriginalSongSearchResponseDto[] | undefined
   showNumbers: boolean
   selectId?: number
-}
-
-export type LikedSongType = {
-  songId: number
-  albumCoverImgUrl: string
-  artist: string
-  songTitle: string
-  nickname: string
-  executionTime: string
-  likeCount: number
-  isLiked: boolean
 }
 
 export interface SongSearchResponseDto {
@@ -71,6 +63,9 @@ export interface OriginalSongResponseDto {
   lyrics: string
 }
 
+export type AddSongLikesData = ApiResponseInteger
+
+export type DeleteSongLikesData = ApiResponseInteger
 export interface OriginalSongSearchResponseDto {
   /** @format int64 */
   originalSongId: number

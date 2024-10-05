@@ -8,10 +8,11 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { ChevronDown } from 'lucide-react'
 import { DropdownMenuCheckboxItemProps } from '@radix-ui/react-dropdown-menu'
+import { SortType, sort } from '@/types/constType'
 
 interface SortDropdownProps {
-  initialSort: 'LATEST' | 'POPULAR'
-  onSelect: (value: 'LATEST' | 'POPULAR') => void
+  initialSort: SortType
+  onSelect: (value: SortType) => void
 }
 
 type Checked = DropdownMenuCheckboxItemProps['checked']
@@ -20,33 +21,31 @@ export default function SortDropdown({
   initialSort,
   onSelect,
 }: SortDropdownProps) {
-  const [selectedSort, setSelectedSort] = useState<'LATEST' | 'POPULAR'>(
-    initialSort,
-  )
+  const [selectedSort, setSelectedSort] = useState<SortType>(initialSort)
   const [isDateChecked, setIsDateChecked] = useState<Checked>(
-    initialSort === 'LATEST',
+    initialSort === sort.LATEST,
   )
   const [isPopularityChecked, setIsPopularityChecked] = useState<Checked>(
-    initialSort === 'POPULAR',
+    initialSort === sort.POPULAR,
   )
 
-  const getSortLabel = (sortOption: 'LATEST' | 'POPULAR') => {
+  const getSortLabel = (sortOption: SortType) => {
     switch (sortOption) {
-      case 'LATEST':
+      case sort.LATEST:
         return '최신순'
-      case 'POPULAR':
+      case sort.POPULAR:
         return '인기순'
       default:
         return ''
     }
   }
 
-  const handleSelect = (sortOption: 'LATEST' | 'POPULAR') => {
+  const handleSelect = (sortOption: SortType) => {
     setSelectedSort(sortOption)
     onSelect(sortOption)
 
     // 상태 업데이트
-    if (sortOption === 'LATEST') {
+    if (sortOption === sort.LATEST) {
       setIsDateChecked(true)
       setIsPopularityChecked(false)
     } else {
@@ -75,7 +74,7 @@ export default function SortDropdown({
       >
         <DropdownMenuCheckboxItem
           checked={isDateChecked}
-          onCheckedChange={() => handleSelect('LATEST')}
+          onCheckedChange={() => handleSelect(sort.LATEST)}
           // className={`rounded-full text-xs w-20 mb-2 ${isDateChecked ? 'bg-primary-400 text-white' : 'bg-white text-primary-400'}`}
           className={`rounded-full text-xs w-20 mb-2 `}
         >
@@ -83,7 +82,7 @@ export default function SortDropdown({
         </DropdownMenuCheckboxItem>
         <DropdownMenuCheckboxItem
           checked={isPopularityChecked}
-          onCheckedChange={() => handleSelect('POPULAR')}
+          onCheckedChange={() => handleSelect(sort.POPULAR)}
           // className={`rounded-full text-xs w-20 ${isPopularityChecked ? 'bg-primary-400 text-white' : 'bg-white text-primary-400'}`}
           className={`rounded-full text-xs w-20`}
         >
