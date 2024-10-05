@@ -1,9 +1,4 @@
 import {
-  GetMeltingCountsData,
-  GetMeltingCountsError,
-  MemberSongCountsResponseDto,
-} from '@/typeApis/[name]/data-contracts'
-import {
   createAxiosInstance,
   createApi,
   ApiResponse,
@@ -21,6 +16,9 @@ import {
   MemberSongResponseDto,
   GetMemberSongsData,
   GetMemberSongsError,
+  GetMeltingCountsData,
+  GetMeltingCountsError,
+  MemberSongCountsResponseDto,
 } from '@/types/user'
 const instance = createAxiosInstance('members')
 const api = createApi<ApiResponse>(instance)
