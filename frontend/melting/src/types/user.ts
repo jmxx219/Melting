@@ -173,3 +173,40 @@ export type GetMemberSongsError = ErrorResponse
 export type GetMeltingCountsData = ApiResponseMemberSongCountsResponseDto
 
 export type GetMeltingCountsError = ErrorResponse
+
+export interface ApiResponseSongLikesPageResponseDto {
+  status?: string
+  data?: SongLikesPageResponseDto
+  errorMessage?: string
+}
+
+export interface SongLikesPageResponseDto {
+  songLikesList: SongLikesResponseDto[]
+  isLast?: boolean
+  /** @format int32 */
+  pageNumber?: number
+  /** @format int32 */
+  pageSize?: number
+  /** @format int32 */
+  totalPages?: number
+  /** @format int64 */
+  totalElements?: number
+  /** @format int32 */
+  numberOfElements?: number
+}
+
+export interface SongLikesResponseDto {
+  /** @format int64 */
+  songId: number
+  title: string
+  albumCoverImageUrl: string
+  creatorNickname: string
+  artist: string
+  isLiked: boolean
+  /** @format int32 */
+  likedCount: number
+  /** @format int32 */
+  lengthInSeconds: number
+}
+
+export type GetMemberLikesSongsData = ApiResponseSongLikesPageResponseDto
