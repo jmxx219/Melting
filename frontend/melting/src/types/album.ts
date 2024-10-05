@@ -1,5 +1,9 @@
 import { LikedSongType, Song } from './song'
-import { ErrorResponse, ApiResponseInteger } from '@/types/globalType.ts'
+import {
+  ErrorResponse,
+  ApiResponseInteger,
+  ApiResponseBoolean,
+} from '@/types/globalType.ts'
 import { ApiResponseMemberResponseDto } from '@/types/user.ts'
 
 export interface AlbumForm {
@@ -186,3 +190,5 @@ export type GetMonthlyAlbumsError = ErrorResponse
 export type GetHot5AlbumsData = ApiResponseListAlbumRankingResponseDto
 
 export type GetHot5AlbumsError = ErrorResponse
+
+export type ToggleIsPublicData = ApiResponseBoolean

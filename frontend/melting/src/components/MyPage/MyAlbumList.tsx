@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
 import MyAlbumContent from '@/components/MyPage/MyAlbumContent'
 import { AlbumMyPageResponseDto, AlbumMyResponseDto } from '@/types/user'
 import { userApi } from '@/apis/userApi'
@@ -10,8 +10,6 @@ interface MyAlbumListProps {
 
 export default function MyAlbumList({ viewType }: MyAlbumListProps) {
   const [albums, setAlbums] = useState<AlbumMyResponseDto[]>([])
-  const [pageNumber, setPageNumber] = useState(0)
-  const [totalPages, setTotalPages] = useState(0)
   const [isLast, setIsLast] = useState(false)
   const [loading, setLoading] = useState(false)
 
@@ -29,11 +27,7 @@ export default function MyAlbumList({ viewType }: MyAlbumListProps) {
       if (response.albumInfoList) {
         setAlbums((prev) => [...prev, ...(response.albumInfoList ?? [])])
       }
-
-      console.log(response)
-
-      setPageNumber(response.pageNumber || 0)
-      setTotalPages(response.totalPages || 0)
+      console.log(response.albumInfoList)
       setIsLast(response.isLast || false)
     } catch (error) {
       console.error('앨범 목록 가져오기 실패:', error)
@@ -49,9 +43,9 @@ export default function MyAlbumList({ viewType }: MyAlbumListProps) {
   return (
     <div>
       <div className="album-list">
-        {albums.map((album) => (
+        {albums.map((album, index) => (
           <MyAlbumContent
-            key={album.albumId}
+            key={`${album.albumId}-${index}`}
             album={album}
             viewType={viewType}
           />

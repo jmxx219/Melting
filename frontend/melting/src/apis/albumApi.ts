@@ -25,6 +25,7 @@ import {
   GetSteadyAlbumsData,
   GetSteadyAlbumsError,
   AlbumRankingResponseDto,
+  ToggleIsPublicData,
 } from '@/types/album.ts'
 
 const instance = createAxiosInstance('albums')
@@ -87,6 +88,7 @@ export const albumApi = {
   addAlbumLikes: async (albumId: number) => {
     try {
       const response = await api.post<AddAlbumLikesData>(`/${albumId}/likes`)
+      console.log(response)
       return response.data
     } catch (error) {
       console.error('앨범 좋아요 추가 중 오류 발생:', error)
@@ -190,6 +192,17 @@ export const albumApi = {
         error,
       )
       throw error as GetSteadyAlbumsError
+    }
+  },
+
+  // 앨범 공개/비공개 토글
+  toggleIsPublic: async (albumId: number) => {
+    try {
+      const response = await api.patch<ToggleIsPublicData>(`/${albumId}/toggle`)
+      return response.data
+    } catch (error) {
+      console.error('앨범 공개/비공개 토글 중 오류 발생:', error)
+      throw error
     }
   },
 }

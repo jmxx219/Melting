@@ -18,6 +18,7 @@ export interface ErrorResponse {
     | 'MEMBER_HASHTAG_FULL'
     | 'MEMBER_HASHTAG_EMPTY'
     | 'MEMBER_HASHTAG_EXIST'
+    | 'MEMBER_HASHTAG_BAD_REQUEST'
     | 'SONG_NOT_FOUND'
     | 'SONG_ALREADY_INCLUDED'
     | 'GENRE_NOT_FOUND'
@@ -28,6 +29,9 @@ export interface ErrorResponse {
     | 'SEARCH_QUERY_TOO_SHORT'
     | 'ALBUM_NAME_BLANK_ERROR'
     | 'ALBUM_COVER_IMAGE_BLANK_ERROR'
+    | 'ALBUM_LIKES_NOT_FOUND'
+    | 'REDIS_SCORE_EMPTY'
+    | 'SONG_LIKES_NOT_FOUND'
     | 'INVALID_FILE_TYPE'
     | 'ALBUM_SONGS_EMPTY_ERROR'
 }
@@ -46,9 +50,9 @@ export interface Type멜팅곡등록요청 {
   voiceFile: File
 }
 
-export interface ApiResponseVoid {
+export interface ApiResponseBoolean {
   status?: string
-  data?: object
+  data?: boolean
   errorMessage?: string
 }
 
@@ -69,8 +73,10 @@ export interface AlbumCreateRequestDto {
   songs?: number[]
   /** @format int64 */
   titleSongId?: number
-  genres?: number[]
+  genres?: string[]
   hashtags?: string[]
+  /** @format int32 */
+  defaultCoverNumber?: number
 }
 
 export interface AlbumDetailsResponseDto {
@@ -125,6 +131,18 @@ export interface SongDetailsResponseDto {
   lyrics?: string
 }
 
+export interface AiDescriptionRequestDto {
+  songs?: number[]
+  hashtags?: number[]
+  genres?: number[]
+}
+
+export interface ApiResponseString {
+  status?: string
+  data?: string
+  errorMessage?: string
+}
+
 export interface CommentRequestDto {
   content?: string
 }
@@ -133,6 +151,10 @@ export interface ApiResponseCommentResponseDto {
   status?: string
   data?: CommentResponseDto
   errorMessage?: string
+}
+
+export interface AiCoverImageRequestDto {
+  songs?: number[]
 }
 
 export interface MemberUpdateRequestDto {
@@ -157,12 +179,6 @@ export interface MemberInitRequestDto {
 
 export interface AlbumUpdateRequestDto {
   description?: string
-}
-
-export interface ApiResponseBoolean {
-  status?: string
-  data?: boolean
-  errorMessage?: string
 }
 
 export interface ApiResponseSongSearchPageResponseDto {
@@ -247,15 +263,10 @@ export interface OriginalSongResponseDto {
   lyrics?: string
 }
 
-export interface ApiResponseMemberSongResponseDto {
+export interface ApiResponseSongMypagePageResponseDto {
   status?: string
-  data?: MemberSongResponseDto
+  data?: SongMypagePageResponseDto
   errorMessage?: string
-}
-
-export interface MemberSongResponseDto {
-  mySongList?: SongListDto[]
-  isPossibleAiCover?: boolean
 }
 
 export interface SongListDto {
@@ -277,6 +288,33 @@ export interface SongMypageDto {
   isCreated?: boolean
   /** @format date-time */
   lastModifiedAt?: string
+}
+
+export interface SongMypagePageResponseDto {
+  mySongList?: SongListDto[]
+  isPossibleAiCover?: boolean
+  isLast?: boolean
+  /** @format int32 */
+  pageNumber?: number
+  /** @format int32 */
+  pageSize?: number
+  /** @format int32 */
+  totalPages?: number
+  /** @format int64 */
+  totalElements?: number
+  /** @format int32 */
+  numberOfElements?: number
+}
+
+export interface ApiResponseMemberSongCountsResponseDto {
+  status?: string
+  data?: MemberSongCountsResponseDto
+  errorMessage?: string
+}
+
+export interface MemberSongCountsResponseDto {
+  /** @format int32 */
+  songcounts?: number
 }
 
 export interface ApiResponseSongLikesPageResponseDto {
@@ -349,6 +387,12 @@ export interface ApiResponseAlbumMyPageResponseDto {
   errorMessage?: string
 }
 
+export interface ApiResponseVoid {
+  status?: string
+  data?: object
+  errorMessage?: string
+}
+
 export interface AlbumSearchPageResponseDto {
   albumInfoList?: AlbumSearchResponseDto[]
   isLast?: boolean
@@ -400,6 +444,20 @@ export interface CommentPageResponseDto {
   numberOfElements?: number
 }
 
+export interface AlbumRankingResponseDto {
+  /** @format int64 */
+  albumId?: number
+  albumName?: string
+  creatorNickname?: string
+  albumCoverImageUrl?: string
+}
+
+export interface ApiResponseListAlbumRankingResponseDto {
+  status?: string
+  data?: AlbumRankingResponseDto[]
+  errorMessage?: string
+}
+
 export interface ApiResponseListGenreResponseDto {
   status?: string
   data?: GenreResponseDto[]
@@ -424,11 +482,11 @@ export type DeleteSongLikesData = ApiResponseInteger
 
 export type DeleteSongLikesError = ErrorResponse
 
-export type CreateMeltingSongData = ApiResponseVoid
+export type CreateMeltingSongData = ApiResponseBoolean
 
 export type CreateMeltingSongError = ErrorResponse
 
-export type CreateAicoverSongData = ApiResponseVoid
+export type CreateAicoverSongData = ApiResponseBoolean
 
 export type CreateAicoverSongError = ErrorResponse
 
@@ -451,7 +509,7 @@ export type GetAlbumsError = ErrorResponse
 export interface CreateAlbumPayload {
   albumCreateRequestDto: AlbumCreateRequestDto
   /** @format binary */
-  albumCoverImage: File
+  albumCoverImage?: File
 }
 
 export type CreateAlbumData = ApiResponseAlbumDetailsResponseDto
@@ -470,6 +528,10 @@ export type DeleteAlbumLikesData = ApiResponseInteger
 
 export type DeleteAlbumLikesError = ErrorResponse
 
+export type CreateAiDescriptionData = ApiResponseString
+
+export type CreateAiDescriptionError = ErrorResponse
+
 export type GetAllCommentsData = ApiResponseCommentPageResponseDto
 
 export type GetAllCommentsError = ErrorResponse
@@ -477,6 +539,10 @@ export type GetAllCommentsError = ErrorResponse
 export type WriteCommentData = ApiResponseCommentResponseDto
 
 export type WriteCommentError = ErrorResponse
+
+export type CreateAiAlbumCoverImageData = ApiResponseString
+
+export type CreateAiAlbumCoverImageError = ErrorResponse
 
 export type GetMemberInfoData = ApiResponseMemberResponseDto
 
@@ -546,9 +612,13 @@ export type ValidateNicknameData = ApiResponseBoolean
 
 export type ValidateNicknameError = ErrorResponse
 
-export type GetMemberSongsData = ApiResponseMemberSongResponseDto
+export type GetMemberSongsData = ApiResponseSongMypagePageResponseDto
 
 export type GetMemberSongsError = ErrorResponse
+
+export type GetMeltingCountsData = ApiResponseMemberSongCountsResponseDto
+
+export type GetMeltingCountsError = ErrorResponse
 
 export type GetMemberLikesSongsData = ApiResponseSongLikesPageResponseDto
 
@@ -566,10 +636,22 @@ export type LogoutData = ApiResponseVoid
 
 export type LogoutError = ErrorResponse
 
+export type GetSteadyAlbumsData = ApiResponseListAlbumRankingResponseDto
+
+export type GetSteadyAlbumsError = ErrorResponse
+
 export type SearchAlbumsData = ApiResponseAlbumSearchPageResponseDto
 
 export type SearchAlbumsError = ErrorResponse
 
+export type GetMonthlyAlbumsData = ApiResponseListAlbumRankingResponseDto
+
+export type GetMonthlyAlbumsError = ErrorResponse
+
 export type GetAllGenresData = ApiResponseListGenreResponseDto
 
 export type GetAllGenresError = ErrorResponse
+
+export type GetHot5AlbumsData = ApiResponseListAlbumRankingResponseDto
+
+export type GetHot5AlbumsError = ErrorResponse
