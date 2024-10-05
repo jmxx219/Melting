@@ -1,4 +1,4 @@
-import { ErrorResponse } from '@/types/globalType.ts'
+import { ErrorResponse, ApiResponseInteger } from '@/types/globalType.ts'
 import { CoverType } from './constType'
 
 export type Song = {
@@ -73,3 +73,7 @@ export interface OriginalSongResponseDto {
   mrUrl: string
   lyrics: string
 }
+
+export type AddSongLikesData = ApiResponseInteger
+
+export type DeleteSongLikesData = ApiResponseInteger

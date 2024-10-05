@@ -28,7 +28,7 @@ export default function LikedSongList({ sortOption }: LikedSongListProps) {
   const [isLast, setIsLast] = useState(false)
   const [loading, setLoading] = useState(false)
 
-  const fetchLikedSongs = async () => {
+  const fetchLikedSongs = async (page: number = 0) => {
     setLoading(true)
     try {
       setSongs([])
@@ -57,7 +57,12 @@ export default function LikedSongList({ sortOption }: LikedSongListProps) {
   return (
     <div>
       {songs.map((song) => (
-        <SongContent key={song.songId} song={song} hasProfileImage={true} />
+        <SongContent
+          key={song.songId}
+          song={song}
+          fetchSongs={fetchLikedSongs}
+          hasProfileImage={true}
+        />
       ))}
     </div>
   )

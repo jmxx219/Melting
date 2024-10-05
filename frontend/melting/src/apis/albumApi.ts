@@ -90,15 +90,9 @@ export const albumApi = {
   },
 
   // 앨범 좋아요 추가
-  addAlbumLikes: async (
-    albumId: number,
-    sort?: string | null,
-    page?: number,
-    size?: number,
-  ) => {
+  addAlbumLikes: async (albumId: number) => {
     try {
       const response = await api.post<AddAlbumLikesData>(`/${albumId}/likes`)
-      console.log(response)
       return response.data
     } catch (error) {
       console.error('앨범 좋아요 추가 중 오류 발생:', error)
@@ -107,12 +101,7 @@ export const albumApi = {
   },
 
   // 앨범 좋아요 삭제
-  deleteAlbumLikes: async (
-    albumId: number,
-    sort?: string | null,
-    page?: number,
-    size?: number,
-  ) => {
+  deleteAlbumLikes: async (albumId: number) => {
     try {
       const response = await api.delete<DeleteAlbumLikesData>(
         `/${albumId}/likes`,
