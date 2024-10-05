@@ -26,7 +26,7 @@ export default function MySongContent({
   )
 
   const goToPlaySong = (songId: number) => {
-    navigate(`/music/play`, { state: songId })
+    navigate(`/music/play`, { state: { songId } })
   }
 
   const goToRecordSong = (songId: number) => {
