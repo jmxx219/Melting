@@ -113,7 +113,7 @@ export default function AlbumForm() {
         // API 호출
         const response = await albumApi.createAlbum(payload)
         console.log('앨범 생성 성공:', response)
-        navigate('/album/detail/{response.albumId}')
+        navigate(`/album/detail/${response.album_id}`)
       } catch (error) {
         console.error('앨범 생성 중 오류 발생:', error)
       }

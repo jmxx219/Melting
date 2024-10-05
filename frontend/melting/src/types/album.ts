@@ -57,7 +57,7 @@ export interface ApiResponseListAlbumMainResponseDto {
 
 export interface AlbumUpdateResponseDto {
   /** @format int64 */
-  album_id?: number
+  album_id: number
 }
 
 export interface ApiResponseAlbumUpdateResponseDto {

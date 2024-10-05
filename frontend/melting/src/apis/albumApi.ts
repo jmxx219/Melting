@@ -33,6 +33,7 @@ import {
   GetAlbumDetailsData,
   GetAlbumDetailsError,
   AlbumDetailsResponseDto,
+  AlbumUpdateResponseDto,
 } from '@/types/album.ts'
 import { SortType } from '@/types/constType'
 
@@ -54,7 +55,9 @@ export const albumApi = {
   },
 
   // 앨범 생성
-  createAlbum: async (data: CreateAlbumPayload) => {
+  createAlbum: async (
+    data: CreateAlbumPayload,
+  ): Promise<AlbumUpdateResponseDto> => {
     const formData = new FormData()
 
     // FormData에 데이터를 추가합니다.
@@ -75,7 +78,7 @@ export const albumApi = {
 
     try {
       const response = await api.post<CreateAlbumData>('', formData)
-      return response.data
+      return response.data as AlbumUpdateResponseDto
     } catch (error) {
       console.error('앨범 생성 중 오류 발생:', error)
       throw error as CreateAlbumError
