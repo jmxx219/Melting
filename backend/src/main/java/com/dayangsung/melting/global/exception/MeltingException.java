@@ -5,7 +5,7 @@ import com.dayangsung.melting.global.common.enums.ErrorMessage;
 import lombok.Getter;
 
 @Getter
-public class MeltingException extends RuntimeException {
+public abstract class MeltingException extends RuntimeException {
 
 	private final ErrorMessage errorMessage;
 

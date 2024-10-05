@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
-import com.dayangsung.melting.global.exception.MeltingException;
+import com.dayangsung.melting.global.exception.BusinessException;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -47,7 +47,7 @@ public class RestTemplateUtils {
 			if (e.getStatusCode().is4xxClientError()) {
 				return ResponseEntity.status(e.getStatusCode()).build();
 			} else {
-				throw new MeltingException(EXTERNAL_BAD_REQUEST);
+				throw new BusinessException(EXTERNAL_BAD_REQUEST);
 			}
 		}
 	}
@@ -60,7 +60,7 @@ public class RestTemplateUtils {
 			if (e.getStatusCode().is4xxClientError()) {
 				return ResponseEntity.status(e.getStatusCode()).build();
 			} else {
-				throw new MeltingException(EXTERNAL_BAD_REQUEST);
+				throw new BusinessException(EXTERNAL_BAD_REQUEST);
 			}
 		}
 	}
@@ -71,7 +71,7 @@ public class RestTemplateUtils {
 		try {
 			return restTemplate.exchange(url, HttpMethod.POST, entity, responseType);
 		} catch (HttpClientErrorException e) {
-			throw new MeltingException(EXTERNAL_BAD_REQUEST);
+			throw new BusinessException(EXTERNAL_BAD_REQUEST);
 		}
 	}
 }
