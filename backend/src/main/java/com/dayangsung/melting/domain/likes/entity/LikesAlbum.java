@@ -47,16 +47,16 @@ public class LikesAlbum {
 	@JoinColumn(name = "member_id")
 	private Member member;
 
-	private boolean status;
+	private boolean isLiked;
 
-	public void updateStatus(boolean status) {
-		this.status = status;
+	public void updateIsLiked(boolean isLiked) {
+		this.isLiked = isLiked;
 	}
 
 	@Builder
 	public LikesAlbum(Album album, Member member) {
 		this.album = album;
 		this.member = member;
-		this.status = true;
+		this.isLiked = false;
 	}
 }

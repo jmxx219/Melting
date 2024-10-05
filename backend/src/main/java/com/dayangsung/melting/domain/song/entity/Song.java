@@ -93,4 +93,9 @@ public class Song extends BaseEntity {
 		this.trackNumber = trackNumber;
 		this.isTitle = isTitle;
 	}
+
+	public void addSongLikes(LikesSong likesSong) {
+		this.likesSongs.add(likesSong);
+		likesSong.setSong(this);
+	}
 }
