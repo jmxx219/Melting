@@ -4,6 +4,7 @@ import { ArrowDown } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
 import SongItem from '@/components/Music/SongItem'
+import AlertModal from '@/components/Common/AlertModal'
 import { useAlbumContext } from '@/contexts/AlbumContext'
 import {
   Song,
@@ -34,7 +35,7 @@ const fetchSongs = async (searchTerm: string, page: number) => {
   try {
     const response: SongSearchPageResponseDto =
       await songApi.getSongsForAlbumCreation(searchTerm, page, 10)
-    console.log(response)
+    //console.log(response)
     const newItems =
       response.songSearchResponseDtoList?.map(convertSongDtoToSong) || []
     return { newItems, isLast: response.isLast }
@@ -50,6 +51,7 @@ export default function SongSearch() {
   const [page, setPage] = useState(0)
   const [loading, setLoading] = useState(false)
   const [hasMore, setHasMore] = useState(true)
+  const [isAlertOpen, setIsAlertOpen] = useState(false)
   const scrollContainerRef = useRef<HTMLDivElement>(null)
 
   const { selectedSongs, setSelectedSongs } = useAlbumContext()
@@ -108,6 +110,11 @@ export default function SongSearch() {
   }, [searchTerm])
 
   const handleSelectSong = (song: Song) => {
+    if (selectedSongs.length >= 10) {
+      setIsAlertOpen(true)
+      return
+    }
+
     const isSelected = selectedSongs.some((s) => s.songId === song.songId)
 
     if (isSelected) {
@@ -170,7 +177,7 @@ export default function SongSearch() {
       >
         {searchResults.map((song) => (
           <SongItem
-            key={`${song.songId}`}
+            key={`${song.songId}-${song.songType}-${song.meltingSongId || song.aiCoverSongId}`}
             {...song}
             isSelected={selectedSongs.some((s) => s.songId === song.songId)}
             onSelect={() => handleSelectSong(song)}
@@ -245,6 +252,13 @@ export default function SongSearch() {
       >
         곡 등록하기
       </Button>
+
+      <AlertModal
+        title={''}
+        messages={['곡은 최대 10곡까지만', '선택할 수 있습니다.']}
+        isOpen={isAlertOpen}
+        onClose={() => setIsAlertOpen(false)}
+      />
     </div>
   )
 }
