@@ -8,7 +8,6 @@ export default function MusicSelect() {
   const location = useLocation()
   const navigate = useNavigate()
   const { type } = location.state || {}
-  console.log(type)
 
   return (
     <Layout

@@ -1,12 +1,14 @@
 import { musicApi } from '@/apis/music/musicApi'
+import { songApi } from '@/apis/songApi'
+import { CoverType } from '@/types/constType'
 import { OriginalSongSearchResponseDto } from '@/types/song'
 import { Search } from 'lucide-react'
-import { useEffect, useRef, useState, useCallback } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Button } from '../ui/button'
 import { Input } from '../ui/input'
 import OriginalSongCard from './OriginalSongCard'
-import { CoverType } from '@/types/constType'
+import AlertModal from '../Common/AlertModal'
 
 type MusicSelectListProps = {
   recordType: CoverType
@@ -19,6 +21,15 @@ export default function MusicSelectList({ recordType }: MusicSelectListProps) {
   const [hasMore, setHasMore] = useState<boolean>(true)
   const [loading, setLoading] = useState<boolean>(false)
   const observerRef = useRef<IntersectionObserver | null>(null)
+  const [isDialogOpen, setIsDialogOpen] = useState(false)
+  const dialogMessages = [
+    'AI 커버 생성 요청이 완료되었습니다.',
+    '내가 등록한 곡&앨범 에서 확인 가능합니다.',
+  ]
+  const handleCloseDialog = () => {
+    setIsDialogOpen(false)
+    navigate('/mypage/my')
+  }
 
   const fetchSongs = useCallback(async () => {
     if (loading || !hasMore) return
@@ -73,8 +84,13 @@ export default function MusicSelectList({ recordType }: MusicSelectListProps) {
     setSelectId(songId)
   }
 
-  const recordClick = () => {
+  const recordClick = async () => {
     if (recordType === 'ai') {
+      const response = await songApi.aiCover(selectId)
+
+      if (response) {
+        setIsDialogOpen(true)
+      }
     } else if (recordType === 'melting') {
       navigate('/music/record', { state: { songId: selectId } })
     }
@@ -117,7 +133,7 @@ export default function MusicSelectList({ recordType }: MusicSelectListProps) {
         <div className="w-full">
           {songs.map((song, index) => (
             <div
-              key={song.originalSongId}
+              key={index}
               ref={index === songs.length - 1 ? lastSongRef : null}
             >
               <OriginalSongCard
@@ -132,6 +148,15 @@ export default function MusicSelectList({ recordType }: MusicSelectListProps) {
         </div>
       )}
       {loading && <p>Loading...</p>}
+
+      {isDialogOpen && (
+        <AlertModal
+          title="AI 커버 요청 완료"
+          messages={dialogMessages}
+          isOpen={isDialogOpen}
+          onClose={handleCloseDialog}
+        />
+      )}
     </div>
   )
 }
