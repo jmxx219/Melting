@@ -28,7 +28,6 @@ import com.dayangsung.melting.domain.album.service.AlbumDescriptionService;
 import com.dayangsung.melting.domain.album.service.AlbumService;
 import com.dayangsung.melting.domain.auth.CustomOAuth2User;
 import com.dayangsung.melting.domain.genre.dto.response.GenreResponseDto;
-import com.dayangsung.melting.domain.genre.service.GenreService;
 import com.dayangsung.melting.global.common.response.ApiResponse;
 import com.fasterxml.jackson.core.JsonProcessingException;
 
@@ -109,10 +108,10 @@ public class AlbumController {
 		return ApiResponse.ok(base64Image);
 	}
 
-	@PostMapping("/{albumId}/descriptions")
-	public ApiResponse<String> createAiDescription(@PathVariable Long albumId,
-			@RequestBody AiDescriptionRequestDto aiDescriptionRequestDto) throws JsonProcessingException {
-		String description = albumDescriptionService.createAiDescription(albumId, aiDescriptionRequestDto);
+	@PostMapping("/descriptions")
+	public ApiResponse<String> createAiDescription(
+		@RequestBody AiDescriptionRequestDto aiDescriptionRequestDto) throws JsonProcessingException {
+		String description = albumDescriptionService.createAiDescription(aiDescriptionRequestDto);
 		return ApiResponse.ok(description);
 	}
 
