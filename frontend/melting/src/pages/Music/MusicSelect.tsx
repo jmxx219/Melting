@@ -21,7 +21,7 @@ export default function MusicSelect() {
           }}
         />
       }
-      children={<MusicSelectList />}
+      children={<MusicSelectList recordType={type} />}
       showFooter={false}
     ></Layout>
   )
