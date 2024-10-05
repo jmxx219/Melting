@@ -62,8 +62,16 @@ export default function SongSearch() {
     if (loading || !hasMore) return
     setLoading(true)
 
-    const { newItems, isLast } = await fetchSongs(searchTerm, page)
-    setSearchResults((prev) => [...prev, ...newItems])
+    const { newItems, isLast } = await fetchSongs(page)
+
+    // 이 부분에서 searchResults의 첫 번째 요소를 새로 추가된 결과의 첫 번째 요소로 처리
+    setSearchResults((prev) => {
+      const updatedResults = [...prev, ...newItems]
+
+      // 결과를 정렬하거나 중복을 제거하는 로직을 추가할 수 있습니다.
+      return updatedResults
+    })
+
     setHasMore(!isLast)
     setPage((prev) => prev + 1)
     setLoading(false)
