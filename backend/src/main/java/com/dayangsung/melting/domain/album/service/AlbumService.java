@@ -19,22 +19,17 @@ import com.dayangsung.melting.domain.album.dto.request.AlbumCreateRequestDto;
 import com.dayangsung.melting.domain.album.dto.response.AlbumDetailsResponseDto;
 import com.dayangsung.melting.domain.album.dto.response.AlbumMyPageResponseDto;
 import com.dayangsung.melting.domain.album.dto.response.AlbumMyResponseDto;
+import com.dayangsung.melting.domain.album.dto.response.AlbumRankingPageResponseDto;
 import com.dayangsung.melting.domain.album.dto.response.AlbumRankingResponseDto;
 import com.dayangsung.melting.domain.album.dto.response.AlbumSearchPageResponseDto;
 import com.dayangsung.melting.domain.album.dto.response.AlbumSearchResponseDto;
+import com.dayangsung.melting.domain.album.dto.response.AlbumTrackInfoDto;
 import com.dayangsung.melting.domain.album.entity.Album;
 import com.dayangsung.melting.domain.album.enums.AlbumCategory;
 import com.dayangsung.melting.domain.album.repository.AlbumRepository;
 import com.dayangsung.melting.domain.genre.dto.response.GenreResponseDto;
-import com.dayangsung.melting.domain.genre.entity.AlbumGenre;
-import com.dayangsung.melting.domain.genre.entity.Genre;
-import com.dayangsung.melting.domain.genre.repository.AlbumGenreRepository;
-import com.dayangsung.melting.domain.genre.repository.GenreRepository;
 import com.dayangsung.melting.domain.genre.service.GenreService;
-import com.dayangsung.melting.domain.hashtag.entity.AlbumHashtag;
-import com.dayangsung.melting.domain.hashtag.entity.Hashtag;
-import com.dayangsung.melting.domain.hashtag.repository.AlbumHashtagRepository;
-import com.dayangsung.melting.domain.hashtag.repository.HashtagRepository;
+import com.dayangsung.melting.domain.hashtag.service.HashtagService;
 import com.dayangsung.melting.domain.likes.service.LikesService;
 import com.dayangsung.melting.domain.member.entity.Member;
 import com.dayangsung.melting.domain.member.repository.MemberRepository;
@@ -58,13 +53,10 @@ public class AlbumService {
 	private final AlbumRepository albumRepository;
 	private final SongRepository songRepository;
 	private final GenreService genreService;
-	private final GenreRepository genreRepository;
-	private final AlbumGenreRepository albumGenreRepository;
-	private final HashtagRepository hashtagRepository;
-	private final AlbumHashtagRepository albumHashtagRepository;
 	private final LikesService likesService;
 	private final AwsS3Service awsS3Service;
 	private final RedisUtil redisUtil;
+	private final HashtagService hashtagService;
 
 	@Transactional
 	public AlbumDetailsResponseDto createAlbum(AlbumCreateRequestDto albumCreateRequestDto,
@@ -88,9 +80,7 @@ public class AlbumService {
 			if (song.getAlbum() != null) {
 				throw new BusinessException(ErrorMessage.SONG_ALREADY_INCLUDED);
 			}
-			song.setAlbum(album);
-			song.setTrackNumber(trackNumber);
-			song.setIsTitle(Objects.equals(albumCreateRequestDto.titleSongId(), song.getId()));
+			song.setAlbumInfo(album, trackNumber, Objects.equals(albumCreateRequestDto.titleSongId(), song.getId()));
 			songRepository.save(song);
 			album.addSong(song);
 			songs.add(SongDetailsResponseDto.of(
@@ -100,23 +90,16 @@ public class AlbumService {
 		}
 
 		for (String genreContent : albumCreateRequestDto.genres()) {
-			Genre genre = genreRepository.findByContent(genreContent)
-				.orElseThrow(() -> new BusinessException(ErrorMessage.GENRE_NOT_FOUND));
-			AlbumGenre albumGenre = AlbumGenre.builder().album(album).genre(genre).build();
-			albumGenreRepository.save(albumGenre);
-			album.addGenre(albumGenre);
+			genreService.addAlbumGenre(album, genreContent);
 		}
 
-		for (String content : albumCreateRequestDto.hashtags()) {
-			Hashtag hashtag = hashtagRepository.findByContent(content)
-				.orElseGet(() -> hashtagRepository.save(new Hashtag(content)));
-			AlbumHashtag albumHashtag = AlbumHashtag.builder().album(album).hashtag(hashtag).build();
-			albumHashtagRepository.save(albumHashtag);
-			album.addHashtag(albumHashtag);
+		for (String hashtagContent : albumCreateRequestDto.hashtags()) {
+			hashtagService.addAlbumHashtag(album, hashtagContent);
 		}
+
 		album = albumRepository.save(album);
 		String albumCoverImageUrl;
-		if (albumCoverImage != null) {
+		if (!albumCoverImage.isEmpty()) {
 			albumCoverImageUrl = awsS3Service.uploadAlbumCoverImage(albumCoverImage, album.getId());
 		} else {
 			albumCoverImageUrl = awsS3Service.getDefaultAlbumCoverImage(albumCreateRequestDto.defaultCoverNumber());
@@ -276,6 +259,13 @@ public class AlbumService {
 		return monthlyTop5Albums.stream().map(AlbumRankingResponseDto::of).toList();
 	}
 
+	public AlbumRankingPageResponseDto findByHashtag(String content, int page, int size) {
+		Pageable pageable = PageRequest.of(page, size);
+		Page<AlbumRankingResponseDto> albumPage =
+			albumRepository.findByHashtag(content, pageable).map(AlbumRankingResponseDto::of);
+		return AlbumRankingPageResponseDto.of(albumPage);
+	}
+
 	public List<GenreResponseDto> getAllGenres() {
 		return genreService.findAll();
 	}
@@ -294,5 +284,21 @@ public class AlbumService {
 		Member member = memberRepository.findByEmail(email)
 			.orElseThrow(() -> new BusinessException(ErrorMessage.MEMBER_NOT_FOUND));
 		return likesService.decreaseAlbumLikes(albumId, member.getId());
+	}
+
+	public List<AlbumTrackInfoDto> getTrackListInfo(Long albumId) {
+		Album album = albumRepository.findById(albumId)
+			.orElseThrow(() -> new BusinessException(ErrorMessage.ALBUM_NOT_FOUND));
+		List<AlbumTrackInfoDto> trackInfo = new ArrayList<>();
+		List<Song> songs = album.getSongs();
+		for (int i = 0; i < album.getSongs().size(); i++) {
+			Long currentSongId = songs.get(i).getId();
+			Long previousSongId = i > 0 ? songs.get(i - 1).getId() : null;
+			Long nextSongId = i < songs.size() - 1 ? songs.get(i + 1).getId() : null;
+			AlbumTrackInfoDto trackInfoDto = AlbumTrackInfoDto.of(
+				albumId, currentSongId, previousSongId, nextSongId);
+			trackInfo.add(trackInfoDto);
+		}
+		return trackInfo;
 	}
 }

@@ -59,10 +59,8 @@ public class Song extends BaseEntity {
 	@Column(nullable = false)
 	private String songUrl;
 
-	@Setter
 	private Integer trackNumber;
 
-	@Setter
 	private Boolean isTitle;
 
 	@OneToMany(mappedBy = "song")
@@ -88,5 +86,16 @@ public class Song extends BaseEntity {
 
 	public void updateSongUrl(String songUrl) {
 		this.songUrl = songUrl;
+	}
+
+	public void setAlbumInfo(Album album, Integer trackNumber, Boolean isTitle) {
+		this.album = album;
+		this.trackNumber = trackNumber;
+		this.isTitle = isTitle;
+	}
+
+	public void addSongLikes(LikesSong likesSong) {
+		this.likesSongs.add(likesSong);
+		likesSong.setSong(this);
 	}
 }

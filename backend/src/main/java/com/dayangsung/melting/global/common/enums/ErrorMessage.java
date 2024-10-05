@@ -17,6 +17,10 @@ public enum ErrorMessage {
 	SONG_NOT_FOUND("존재하지 않는 생성곡입니다."),
 	SONG_ALREADY_INCLUDED("이미 다른 앨범에 포함되어 있는 곡입니다."),
 
+	LIKES_CANNOT_BE_NEGATIVE("좋아요 수는 음수가 될 수 없습니다."),
+	ALBUM_ALREADY_LIKED("이미 좋아요 한 앨범입니다."),
+	SONG_ALREADY_LIKED("이미 좋아요 한 곡입니다."),
+
 	GENRE_NOT_FOUND("장르를 찾을 수 없습니다."),
 	HASHTAG_NOT_FOUND("해시태그를 찾을 수 없습니다."),
 	// ALBUM
