@@ -9,6 +9,7 @@ import {
   AccordionTrigger,
 } from '@/components/ui/accordion'
 import { SongListDto, SongMypageDto } from '@/types/user'
+import { songApi } from '@/apis/songApi'
 
 interface MySongProps {
   originalSong: SongListDto
@@ -25,23 +26,36 @@ export default function MySongContent({
   )
 
   const goToPlaySong = (songId: number) => {
-    navigate(`/music/play/`, { state: songId })
+    navigate(`/music/play`, { state: songId })
   }
 
   const goToRecordSong = (songId: number) => {
-    navigate(`/music/record/${songId}`)
+    navigate(`/music/record`, { state: { songId: songId } })
   }
 
-  const toggleLike = (songId: number) => {
-    setMySongs((prevMySongs) =>
-      prevMySongs.map((mySong) =>
-        mySong.songId === songId
-          ? { ...mySong, isLiked: !mySong.isLiked }
-          : mySong,
-      ),
-    )
+  const toggleLike = async (songId: number, isLiked: boolean) => {
+    let currentLikedCount = 0
+    try {
+      if (isLiked) {
+        currentLikedCount = await songApi.deleteSongLikes(songId)
+      } else {
+        currentLikedCount = await songApi.addSongLikes(songId)
+      }
 
-    // TODO: 좋아요 상태 업데이트 API 호출
+      setMySongs((prevMySongs) =>
+        prevMySongs.map((mySong) =>
+          mySong.songId === songId
+            ? {
+                ...mySong,
+                isLiked: !mySong.isLiked,
+                likeCount: currentLikedCount,
+              }
+            : mySong,
+        ),
+      )
+    } catch (error) {
+      console.error('나의 곡 좋아요 상태 업데이트 중 오류 발생:', error)
+    }
   }
 
   return (
@@ -89,7 +103,8 @@ export default function MySongContent({
                       type="button"
                       className="focus:outline-none z-0"
                       onClick={() =>
-                        mySong.isCreated && toggleLike(mySong.songId)
+                        mySong.isCreated &&
+                        toggleLike(mySong.songId, mySong.isLiked!)
                       }
                       disabled={!mySong.isCreated}
                     >
