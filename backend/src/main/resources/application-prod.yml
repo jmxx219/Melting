@@ -91,3 +91,6 @@ openai:
 server:
   tomcat:
     connection-timeout: 30000
+
+mattermost-logger:
+  base-url: ${ERROR_WEBHOOK_URL}

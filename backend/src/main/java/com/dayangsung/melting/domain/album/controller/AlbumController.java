@@ -30,6 +30,7 @@ import com.dayangsung.melting.domain.album.service.AlbumDescriptionService;
 import com.dayangsung.melting.domain.album.service.AlbumService;
 import com.dayangsung.melting.domain.auth.CustomOAuth2User;
 import com.dayangsung.melting.domain.genre.dto.response.GenreResponseDto;
+import com.dayangsung.melting.global.aop.LogExecution;
 import com.dayangsung.melting.global.common.response.ApiResponse;
 import com.fasterxml.jackson.core.JsonProcessingException;
 
@@ -40,6 +41,7 @@ import lombok.extern.slf4j.Slf4j;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/albums")
+@LogExecution
 public class AlbumController {
 
 	private final AlbumService albumService;
