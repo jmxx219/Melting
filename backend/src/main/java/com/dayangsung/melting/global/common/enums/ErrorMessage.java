@@ -31,8 +31,11 @@ public enum ErrorMessage {
 	SONG_LIKES_NOT_FOUND("곡 좋아요 정보를 찾을 수 없습니다."),
 
 	// Song
-	INVALID_FILE_TYPE("올파르지 않은 파일 형식입니다."),
-	ALBUM_SONGS_EMPTY_ERROR("앨범에는 최소 1개의 곡이 필요합니다.");
+	INVALID_FILE_TYPE("올바르지 않은 파일 형식입니다."),
+	ALBUM_SONGS_EMPTY_ERROR("앨범에는 최소 1개의 곡이 필요합니다."),
+
+	// OpenAI
+	REQUEST_ERROR("올바르지 않은 응답입니다.");
 
 	private final String errorMessage;
 
