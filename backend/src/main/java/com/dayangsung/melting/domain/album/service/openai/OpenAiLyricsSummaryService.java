@@ -42,6 +42,8 @@ public class OpenAiLyricsSummaryService {
 						}
 						""", prompt.replace("\"", "\\\"")))
 				.retrieve() // 응답 받아옴
+				.onStatus(HttpStatus.BAD_REQUEST::equals, clientResponse -> clientResponse.bodyToMono(String.class)
+					.flatMap(errorBody -> Mono.error(new RuntimeException("API Error: " + errorBody))))
 				.bodyToMono(String.class); // 문자열로 변환
 		return result;
 	}
