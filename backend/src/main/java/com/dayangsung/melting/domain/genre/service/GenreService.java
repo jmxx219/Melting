@@ -27,8 +27,8 @@ public class GenreService {
 	}
 
 	@Transactional(readOnly = true)
-	public List<Genre> idListToGenreList(List<Long> idList) {
-		return idList.stream().map(genreId -> genreRepository.findById(genreId)
+	public List<Genre> contentListToGenreList(List<String> idList) {
+		return idList.stream().map(content -> genreRepository.findByContent(content)
 			.orElseThrow(() -> new BusinessException(ErrorMessage.GENRE_NOT_FOUND))).toList();
 	}
 }
