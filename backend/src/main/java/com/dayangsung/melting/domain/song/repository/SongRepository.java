@@ -30,9 +30,9 @@ public interface SongRepository extends JpaRepository<Song, Long> {
 		"AND s.member.id = :memberId ")
 	List<Song> findAllSongsForAlbumCreation(@Param("memberId") Long memberId);
 
-	@Query("SELECT s FROM Song s JOIN s.likesSongs ls WHERE ls.member.id = :memberId ORDER BY s.createdAt DESC")
+	@Query("SELECT s FROM Song s JOIN s.likesSongs ls WHERE ls.member.id = :memberId AND ls.status = true ORDER BY s.createdAt DESC")
 	Page<Song> findLikedSongsByMemberIdOrderByCreatedAtDesc(@Param("memberId") Long memberId, Pageable pageable);
 
-	@Query("SELECT s FROM Song s JOIN s.likesSongs ls WHERE ls.member.id = :memberId GROUP BY s.id ORDER BY COUNT(ls) DESC")
+	@Query("SELECT s FROM Song s JOIN s.likesSongs ls WHERE ls.member.id = :memberId AND ls.status = true GROUP BY s.id ORDER BY COUNT(ls) DESC")
 	Page<Song> findLikedSongsByMemberIdOrderByLikesCountDesc(@Param("memberId") Long memberId, Pageable pageable);
 }
