@@ -6,8 +6,13 @@ import { useNavigate } from 'react-router-dom'
 import { Button } from '../ui/button'
 import { Input } from '../ui/input'
 import OriginalSongCard from './OriginalSongCard'
+import { CoverType } from '@/types/constType'
 
-export default function MusicSelectList() {
+type MusicSelectListProps = {
+  recordType: CoverType
+}
+
+export default function MusicSelectList({ recordType }: MusicSelectListProps) {
   const [songs, setSongs] = useState<OriginalSongSearchResponseDto[]>([])
   const [keyword, setKeyword] = useState<string>('')
   const [page, setPage] = useState<number>(0)
@@ -69,7 +74,10 @@ export default function MusicSelectList() {
   }
 
   const recordClick = () => {
-    navigate('/music/record', { state: { songId: selectId } })
+    if (recordType === 'ai') {
+    } else if (recordType === 'melting') {
+      navigate('/music/record', { state: { songId: selectId } })
+    }
   }
 
   const handleKeywordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
