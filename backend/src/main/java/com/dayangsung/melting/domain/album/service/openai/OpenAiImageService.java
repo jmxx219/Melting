@@ -1,8 +1,10 @@
 package com.dayangsung.melting.domain.album.service.openai;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.ExchangeStrategies;
@@ -75,25 +77,24 @@ public class OpenAiImageService {
 						" Please review if there is any awkwardness and if there is any awkwardness, please draw it again with great effort!",
 				prompt);
 
-		// API 요청
-		Mono<String> result = this.webClient.post()
+		Map<String, Object> bodyValue = Map.of(
+			"prompt", enhancedPrompt,
+			"model", "dall-e-3",
+			"n", 1,
+			"quality", "standard",
+			"response_format", "b64_json",
+			"size", "1024x1024",
+			"style", "vivid"
+		);
+
+		return this.webClient.post()
 				.uri("/images/generations")
 				.contentType(MediaType.APPLICATION_JSON)
-				.bodyValue(String.format(""" 
-						{
-						  "prompt": "%s",
-						  "model": "dall-e-3",
-						  "n": 1,
-						  "quality": "standard",
-						  "response_format": "b64_json",
-						  "size": "1024x1024",
-						  "style": "vivid"
-						}
-						""", enhancedPrompt.replace("\"", "\\\"")))
+				.bodyValue(bodyValue)
 				.retrieve()
-				.bodyToMono(String.class); // 문자열로 변환
-
-		return result;
+				.onStatus(HttpStatus.BAD_REQUEST::equals, clientResponse -> clientResponse.bodyToMono(String.class)
+				.flatMap(errorBody -> Mono.error(new RuntimeException("API Error: " + errorBody))))
+				.bodyToMono(String.class);
 	}
 
 }
