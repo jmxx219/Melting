@@ -4,7 +4,6 @@ import { Image, Loader } from 'lucide-react'
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area'
 import AI from '../Icon/AI'
 import { useAlbumContext } from '@/contexts/AlbumContext'
-import { urlToFile } from '@/utils/fileUtil.ts'
 import { base64ToFile, base64ToUrl } from '@/utils/base64Util'
 import { albumApi } from '@/apis/albumApi.ts'
 import { ImageInfo } from '@/types/album.ts'
@@ -84,14 +83,14 @@ export default function AlbumCoverSelector() {
   const handleImageSelect = async (image: ImageInfo) => {
     setSelectedCover(image.url)
 
-    if (image.type === 'default') {
-      // 기본 이미지의 경우 URL을 File 객체로 변환
-      const file = await urlToFile(image.url, `${image.id}.jpg`, 'image/jpeg')
-      setSelectedCoverFile(file)
-    } else {
-      // 사용자 등록 이미지나 AI 이미지는 이미 File 객체임
-      setSelectedCoverFile(new File([], 'default-image.jpg')) // AI 이미지 처리
-    }
+    // if (image.type === 'default') {
+    //   // 기본 이미지의 경우 URL을 File 객체로 변환
+    //   const file = await urlToFile(image.url, `${image.id}.jpg`, 'image/jpeg')
+    //   setSelectedCoverFile(file)
+    // } else {
+    // 사용자 등록 이미지나 AI 이미지는 이미 File 객체임
+    setSelectedCoverFile(new File([], 'default-image.jpg')) // AI 이미지 처리
+    // }
   }
 
   return (
