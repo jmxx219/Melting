@@ -8,38 +8,20 @@ import { urlToFile } from '@/utils/fileUtil.ts'
 import { base64ToFile, base64ToUrl } from '@/utils/base64Util'
 import { albumApi } from '@/apis/albumApi.ts'
 import { ImageInfo } from '@/types/album.ts'
+import ConfirmDialog from '@/components/Common/ConfirmDialog.tsx'
 
 export default function AlbumCoverSelector() {
   const {
+    images,
     selectedSongs,
     selectedCover,
+    setImages,
     setSelectedCover,
     setSelectedCoverFile,
   } = useAlbumContext()
-  const [images, setImages] = useState<ImageInfo[]>([
-    {
-      id: 'default1',
-      url: 'https://d35fpwscei7sb8.cloudfront.net/image/generated_album_cover/default_cover_image_1.png',
-      description: '기본 이미지 1',
-      file: null,
-      type: 'default',
-    },
-    {
-      id: 'default2',
-      url: 'https://d35fpwscei7sb8.cloudfront.net/image/generated_album_cover/default_cover_image_2.png',
-      description: '기본 이미지 2',
-      file: null,
-      type: 'default',
-    },
-    {
-      id: 'default3',
-      url: 'https://d35fpwscei7sb8.cloudfront.net/image/generated_album_cover/default_cover_image_3.png',
-      description: '기본 이미지 3',
-      file: null,
-      type: 'default',
-    },
-  ])
   const [isGeneratingAi, setIsGeneratingAi] = useState(false)
+  const canGenerateAi =
+    selectedSongs.length > 0 && !images.some((img) => img.type === 'ai')
 
   const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0]
@@ -71,12 +53,15 @@ export default function AlbumCoverSelector() {
         songs: selectedSongs.map((song) => song.songId),
       })
 
-      console.log(response)
+      console.log(
+        'Server response (first 100 characters):',
+        response.substring(0, 100),
+      )
 
-      const file = base64ToFile(response, 'cover.jpg')
+      const file = base64ToFile(response, 'cover.jpg', 'image/jpeg')
       setSelectedCoverFile(file)
 
-      const imageUrl = base64ToUrl(response)
+      const imageUrl = base64ToUrl(response, 'image/jpeg')
       setSelectedCover(imageUrl)
 
       if (imageUrl) {
@@ -87,7 +72,7 @@ export default function AlbumCoverSelector() {
           description: 'AI 생성 이미지',
           type: 'ai',
         }
-        setImages((prevImages) => [newImage, ...prevImages])
+        setImages((prevImages: ImageInfo[]) => [newImage, ...prevImages])
       }
     } catch (error) {
       console.error('AI 커버 이미지 생성 중 오류 발생:', error)
@@ -130,25 +115,40 @@ export default function AlbumCoverSelector() {
           onChange={handleImageUpload}
           className="hidden"
         />
-        <div
-          className="flex justify-between items-center relative border-b-2 pb-2 px-2 mt-4 mr-1"
-          onClick={handleAiGeneration}
-        >
-          <div>
-            <span className="text-gray-400">AI 이미지 자동 생성</span>
-          </div>
-          <div
-            className={`${images.some((img) => img.type === 'ai') ? 'text-primary-400' : 'text-gray-400'}`}
-          >
-            <AI
-              width={22}
-              height={22}
-              fill={
-                images.some((img) => img.type === 'ai') ? '#ffaf25' : '#A5A5A5'
-              }
-            />
-          </div>
-        </div>
+        <ConfirmDialog
+          title="AI 앨범 커버 이미지 생성"
+          description="AI를 이용하여 앨범 커버 이미지를 생성하시겠습니까? 이 작업은 한 번만 수행할 수 있습니다."
+          onConfirm={handleAiGeneration}
+          triggerText={
+            <div
+              role="button"
+              className={`flex justify-between items-center relative border-b-2 pb-2 px-2 mt-4 mr-1 ${
+                !canGenerateAi || isGeneratingAi
+                  ? 'cursor-not-allowed'
+                  : 'cursor-pointer'
+              }`}
+            >
+              <div>
+                <span className="text-gray-400">AI 이미지 자동 생성</span>
+              </div>
+              <div
+                className={`${images.some((img) => img.type === 'ai') ? 'text-primary-400' : 'text-gray-400'}`}
+              >
+                <AI
+                  width={22}
+                  height={22}
+                  fill={
+                    images.some((img) => img.type === 'ai')
+                      ? '#ffaf25'
+                      : '#A5A5A5'
+                  }
+                />
+              </div>
+            </div>
+          }
+          triggerClassName="w-full"
+          disabled={!canGenerateAi || isGeneratingAi}
+        />
       </div>
 
       {isGeneratingAi && (
