@@ -6,11 +6,12 @@
 // import SearchBar from '@/components/Music/SearchBar.tsx'
 // import SortDropdown from '@/components/Common/SortDropdown.tsx'
 // import Album from '@/components/Community/Album'
+// import { SortType, sort } from '@/types/constType'
 
 export default function CommunityMain() {
   // const [albums, setAlbums] = useState<BestAlbum[]>([]) // TODO: 나중에 사용할 변수
   // const [searchTerm, setSearchTerm] = useState('')
-  // const [sortOption, setSortOption] = useState<'LATEST' | 'POPULAR'>('LATEST')
+  // const [sortOption, setSortOption] = useState<SortType>(sort.LATEST)
   // const [page, setPage] = useState(1)
   // const [hasMore, setHasMore] = useState(true) // TODO: 나중에 사용할 변수
   // const loaderRef = useRef<HTMLDivElement | null>(null)

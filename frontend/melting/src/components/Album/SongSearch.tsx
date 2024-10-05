@@ -1,9 +1,11 @@
-import { useState, useEffect, useRef, useCallback } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { ArrowDown } from 'lucide-react'
 
+import InfiniteScroll from '@/components/Common/InfinityScroll.tsx'
 import { Button } from '@/components/ui/button'
 import SongItem from '@/components/Music/SongItem'
+import AlertModal from '@/components/Common/AlertModal'
 import { useAlbumContext } from '@/contexts/AlbumContext'
 import {
   Song,
@@ -34,7 +36,7 @@ const fetchSongs = async (searchTerm: string, page: number) => {
   try {
     const response: SongSearchPageResponseDto =
       await songApi.getSongsForAlbumCreation(searchTerm, page, 10)
-    console.log(response)
+    //console.log(response)
     const newItems =
       response.songSearchResponseDtoList?.map(convertSongDtoToSong) || []
     return { newItems, isLast: response.isLast }
@@ -50,7 +52,8 @@ export default function SongSearch() {
   const [page, setPage] = useState(0)
   const [loading, setLoading] = useState(false)
   const [hasMore, setHasMore] = useState(true)
-  const scrollContainerRef = useRef<HTMLDivElement>(null)
+  const [isAlertOpen, setIsAlertOpen] = useState(false)
+  //const scrollContainerRef = useRef<HTMLDivElement>(null)
 
   const { selectedSongs, setSelectedSongs } = useAlbumContext()
   const navigate = useNavigate()
@@ -60,34 +63,19 @@ export default function SongSearch() {
     setLoading(true)
 
     const { newItems, isLast } = await fetchSongs(searchTerm, page)
-    setSearchResults((prev) => [...prev, ...newItems])
+
+    // 이 부분에서 searchResults의 첫 번째 요소를 새로 추가된 결과의 첫 번째 요소로 처리
+    setSearchResults((prev) => {
+      const updatedResults = [...prev, ...newItems]
+
+      // 결과를 정렬하거나 중복을 제거하는 로직을 추가할 수 있습니다.
+      return updatedResults
+    })
+
     setHasMore(!isLast)
     setPage((prev) => prev + 1)
     setLoading(false)
   }, [loading, hasMore, page, searchTerm])
-
-  useEffect(() => {
-    const handleScroll = () => {
-      if (scrollContainerRef.current) {
-        const { scrollTop, scrollHeight, clientHeight } =
-          scrollContainerRef.current
-        if (scrollHeight - scrollTop <= clientHeight * 1.5) {
-          loadMoreItems()
-        }
-      }
-    }
-
-    const scrollContainer = scrollContainerRef.current
-    if (scrollContainer) {
-      scrollContainer.addEventListener('scroll', handleScroll)
-    }
-
-    return () => {
-      if (scrollContainer) {
-        scrollContainer.removeEventListener('scroll', handleScroll)
-      }
-    }
-  }, [loadMoreItems])
 
   const handleSearch = async () => {
     setSearchResults([])
@@ -108,6 +96,11 @@ export default function SongSearch() {
   }, [searchTerm])
 
   const handleSelectSong = (song: Song) => {
+    if (selectedSongs.length >= 10) {
+      setIsAlertOpen(true)
+      return
+    }
+
     const isSelected = selectedSongs.some((s) => s.songId === song.songId)
 
     if (isSelected) {
@@ -163,33 +156,37 @@ export default function SongSearch() {
           placeholderText="나의 곡을 검색하세요"
         />
       </div>
-      <div
-        ref={scrollContainerRef}
-        className="flex-1 overflow-y-auto"
-        style={{ maxHeight: 'calc(100vh - 600px)' }}
+      <InfiniteScroll
+        loadMore={loadMoreItems}
+        hasMore={hasMore}
+        loading={loading}
       >
-        {searchResults.map((song) => (
-          <SongItem
-            key={`${song.songId}`}
-            {...song}
-            isSelected={selectedSongs.some((s) => s.songId === song.songId)}
-            onSelect={() => handleSelectSong(song)}
-            onTypeChange={(value) => handleTypeChange(song.songId, value)}
-            showTypeSelect
-            meltingSongId={song.meltingSongId || null}
-            aiCoverSongId={song.aiCoverSongId || null}
-          />
-        ))}
-        {searchResults.length === 0 && !loading && (
-          <div className="mt-16 text-center">
-            <p>검색한 곡이 없습니다.</p>
-            <Button type="button" onClick={handleMelting} className="mt-4">
-              녹음 하러 가기
-            </Button>
-          </div>
-        )}
-        {loading && <p className="mt-16 text-center">로딩 중...</p>}
-      </div>
+        <div
+          className="flex-1 overflow-y-auto"
+          style={{ maxHeight: 'calc(100vh - 600px)' }}
+        >
+          {searchResults.map((song) => (
+            <SongItem
+              key={`${song.songId}-${song.songType}-${song.meltingSongId || song.aiCoverSongId}`}
+              {...song}
+              isSelected={selectedSongs.some((s) => s.songId === song.songId)}
+              onSelect={() => handleSelectSong(song)}
+              onTypeChange={(value) => handleTypeChange(song.songId, value)}
+              showTypeSelect
+              meltingSongId={song.meltingSongId || null}
+              aiCoverSongId={song.aiCoverSongId || null}
+            />
+          ))}
+          {searchResults.length === 0 && !loading && (
+            <div className="mt-16 text-center">
+              <p>검색한 곡이 없습니다.</p>
+              <Button type="button" onClick={handleMelting} className="mt-4">
+                녹음 하러 가기
+              </Button>
+            </div>
+          )}
+        </div>
+      </InfiniteScroll>
 
       <div className="text-sm text-primary-500 space-y-1">
         <div className="flex flex-wrap items-center">
@@ -226,7 +223,11 @@ export default function SongSearch() {
           selectedSongs.map((song) => (
             <SongItem
               key={`${song.songId}-${song.songType}`}
-              {...song}
+              {...{
+                ...song,
+                meltingSongId: song.meltingSongId ?? null,
+                aiCoverSongId: song.aiCoverSongId ?? null,
+              }}
               isSelected={true}
               onSelect={() => handleSelectSong(song)}
               onTypeChange={(value) => handleTypeChange(song.songId, value)}
@@ -245,6 +246,13 @@ export default function SongSearch() {
       >
         곡 등록하기
       </Button>
+
+      <AlertModal
+        title={''}
+        messages={['곡은 최대 10곡까지만', '선택할 수 있습니다.']}
+        isOpen={isAlertOpen}
+        onClose={() => setIsAlertOpen(false)}
+      />
     </div>
   )
 }

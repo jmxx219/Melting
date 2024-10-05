@@ -20,8 +20,8 @@ export default function AlbumRoutes() {
           <Route path="create/genre-selection" element={<GenreSelection />} />
           <Route path="create/song-selection" element={<SongSelection />} />
           <Route path="play" element={<AlbumPlayMain />} />
-          <Route path="detail" element={<AlbumDetailMain />}></Route>
-          <Route path="comment" element={<CommentMain />}></Route>
+          <Route path="detail/:albumId" element={<AlbumDetailMain />} />
+          <Route path="comment" element={<CommentMain />} />
         </Routes>
       </Suspense>
     </AlbumProvider>
