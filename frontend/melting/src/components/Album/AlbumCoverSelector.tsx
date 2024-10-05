@@ -5,34 +5,37 @@ import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area'
 import AI from '../Icon/AI'
 import { useAlbumContext } from '@/contexts/AlbumContext'
 import { urlToFile } from '@/utils/fileUtil.ts'
-
-interface ImageInfo {
-  id: string
-  url: string
-  description: string
-  type: 'user' | 'ai' | 'default'
-}
+import { base64ToFile, base64ToUrl } from '@/utils/base64Util'
+import { albumApi } from '@/apis/albumApi.ts'
+import { ImageInfo } from '@/types/album.ts'
 
 export default function AlbumCoverSelector() {
-  const { selectedCover, setSelectedCover, setSelectedCoverFile } =
-    useAlbumContext()
+  const {
+    selectedSongs,
+    selectedCover,
+    setSelectedCover,
+    setSelectedCoverFile,
+  } = useAlbumContext()
   const [images, setImages] = useState<ImageInfo[]>([
     {
       id: 'default1',
-      url: 'https://d35fpwscei7sb8.cloudfront.net/image/generated_album_cover/default_cover_image_01.png',
+      url: 'https://d35fpwscei7sb8.cloudfront.net/image/generated_album_cover/default_cover_image_1.png',
       description: '기본 이미지 1',
+      file: null,
       type: 'default',
     },
     {
       id: 'default2',
-      url: 'https://d35fpwscei7sb8.cloudfront.net/image/generated_album_cover/default_cover_image_02.png',
+      url: 'https://d35fpwscei7sb8.cloudfront.net/image/generated_album_cover/default_cover_image_2.png',
       description: '기본 이미지 2',
+      file: null,
       type: 'default',
     },
     {
       id: 'default3',
-      url: 'https://d35fpwscei7sb8.cloudfront.net/image/generated_album_cover/default_cover_image_03.png',
+      url: 'https://d35fpwscei7sb8.cloudfront.net/image/generated_album_cover/default_cover_image_3.png',
       description: '기본 이미지 3',
+      file: null,
       type: 'default',
     },
   ])
@@ -46,6 +49,7 @@ export default function AlbumCoverSelector() {
         const newImage: ImageInfo = {
           id: `user_${Date.now()}`,
           url: reader.result as string,
+          file,
           description: '사용자 등록 이미지',
           type: 'user',
         }
@@ -61,20 +65,35 @@ export default function AlbumCoverSelector() {
     if (images.some((img) => img.type === 'ai')) return
 
     setIsGeneratingAi(true)
-    // AI 이미지 생성 로직 (예: API 호출)
-    // 여기서는 setTimeout으로 시뮬레이션
-    setTimeout(() => {
-      const newImage: ImageInfo = {
-        id: `ai_${Date.now()}`,
-        url: 'https://d35fpwscei7sb8.cloudfront.net/image/generated_album_cover/default_cover_image_04.png',
-        description: 'AI 생성 이미지',
-        type: 'ai',
+    try {
+      // AI 커버 이미지 생성 API 호출
+      const response = await albumApi.createAiAlbumCoverImage({
+        songs: selectedSongs.map((song) => song.songId),
+      })
+
+      console.log(response)
+
+      const file = base64ToFile(response, 'cover.jpg')
+      setSelectedCoverFile(file)
+
+      const imageUrl = base64ToUrl(response)
+      setSelectedCover(imageUrl)
+
+      if (imageUrl) {
+        const newImage: ImageInfo = {
+          id: `ai_${Date.now()}`,
+          url: imageUrl,
+          file: file,
+          description: 'AI 생성 이미지',
+          type: 'ai',
+        }
+        setImages((prevImages) => [newImage, ...prevImages])
       }
-      setImages((prevImages) => [newImage, ...prevImages])
-      setSelectedCover(newImage.url)
-      // setSelectedCoverFile(newImage)
+    } catch (error) {
+      console.error('AI 커버 이미지 생성 중 오류 발생:', error)
+    } finally {
       setIsGeneratingAi(false)
-    }, 3000)
+    }
   }
 
   const handleImageSelect = async (image: ImageInfo) => {
