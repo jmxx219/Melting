@@ -186,3 +186,48 @@ export type GetMonthlyAlbumsError = ErrorResponse
 export type GetHot5AlbumsData = ApiResponseListAlbumRankingResponseDto
 
 export type GetHot5AlbumsError = ErrorResponse
+
+export interface SongDetailsResponseDto {
+  /** @format int64 */
+  songId?: number
+  songTitle?: string
+  nickname?: string
+  artist?: string
+  albumCoverImageUrl?: string
+  isLiked?: boolean
+  /** @format int32 */
+  likedCount?: number
+  songUrl?: string
+  lyrics?: string
+}
+
+export interface AlbumDetailsResponseDto {
+  /** @format int64 */
+  albumId: number
+  albumName: string
+  albumCreatorNickname: string
+  albumCreatorProfileImageUrl: string
+  albumDescription: string
+  /** @format date-time */
+  createdAt: string
+  category: 'SINGLE' | 'MINI' | 'LP'
+  songs: SongDetailsResponseDto[]
+  hashtags: string[]
+  genres: string[]
+  comments: CommentResponseDto[]
+  /** @format int32 */
+  commentCount?: number
+  isLiked?: boolean
+  /** @format int32 */
+  likedCount?: number
+}
+
+export interface ApiResponseAlbumDetailsResponseDto {
+  status?: string
+  data?: AlbumDetailsResponseDto
+  errorMessage?: string
+}
+
+export type GetAlbumDetailsData = ApiResponseAlbumDetailsResponseDto
+
+export type GetAlbumDetailsError = ErrorResponse
