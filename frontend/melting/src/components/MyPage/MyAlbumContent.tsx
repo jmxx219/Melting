@@ -9,10 +9,11 @@ import { AlbumMyResponseDto } from '@/types/user'
 import { convertIsoToDotDate } from '@/utils/dateUtil'
 import { albumApi } from '@/apis/albumApi'
 import { useUserInfo } from '@/hooks/useUserInfo'
+import { ViewType, view } from '@/types/constType'
 
 interface MyAlbumProps {
   album: AlbumMyResponseDto
-  viewType: 'MY' | 'LIKED'
+  viewType: ViewType
   fetchAlbums: () => void
 }
 
@@ -81,7 +82,7 @@ export default function MyAlbumContent({
   }
 
   const isOwner =
-    viewType === 'MY' || album.creatorNickname === userInfo?.nickname
+    viewType === view.MY || album.creatorNickname === userInfo?.nickname
 
   return (
     <div className="relative flex mb-4" onClick={goToAlbumDetail}>

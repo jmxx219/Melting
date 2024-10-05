@@ -28,15 +28,14 @@ import {
   ToggleIsPublicData,
   DeleteAlbumData,
 } from '@/types/album.ts'
+import { SortType } from '@/types/constType'
 
 const instance = createAxiosInstance('albums')
 const api = createApi<ApiResponse>(instance)
 
 export const albumApi = {
   // 커뮤니티 메인 페이지의 앨범 목록 가져오기
-  getAlbumsInCommunityMainPage: async (query?: {
-    sort?: 'LATEST' | 'POPULAR'
-  }) => {
+  getAlbumsInCommunityMainPage: async (query?: { sort?: SortType }) => {
     try {
       const response = await api.get<GetAlbumsInCommunityMainPageData>('/', {
         params: query,

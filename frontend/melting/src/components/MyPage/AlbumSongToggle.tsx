@@ -3,14 +3,15 @@ import MyAlbumList from '@/components/MyPage/MyAlbumList'
 import MySongList from '@/components/MyPage/MySongList'
 import LikedSongList from '@/components/MyPage/LikedSongList'
 import SortDropdown from '@/components/Common/SortDropdown'
+import { SortType, sort, ViewType, view } from '@/types/constType'
 
 interface AlbumSongToggleProps {
-  viewType: 'MY' | 'LIKED'
+  viewType: ViewType
 }
 
 export default function AlbumSongToggle({ viewType }: AlbumSongToggleProps) {
   const [selectedTab, setSelectedTab] = useState<'album' | 'song'>('album')
-  const [sortOption, setSortOption] = useState<'LATEST' | 'POPULAR'>('LATEST')
+  const [sortOption, setSortOption] = useState<SortType>(sort.LATEST)
 
   return (
     <div className="w-full">
@@ -38,7 +39,7 @@ export default function AlbumSongToggle({ viewType }: AlbumSongToggleProps) {
       <div>
         {selectedTab === 'album' ? (
           <MyAlbumList sortOption={sortOption} viewType={viewType} />
-        ) : viewType === 'MY' ? (
+        ) : viewType === view.MY ? (
           <MySongList sortOption={sortOption} />
         ) : (
           <LikedSongList sortOption={sortOption} />
