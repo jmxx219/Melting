@@ -110,10 +110,10 @@ public class AlbumController {
 		return ApiResponse.ok(base64Image);
 	}
 
-	@PostMapping("/{albumId}/descriptions")
-	public ApiResponse<String> createAiDescription(@PathVariable Long albumId,
+	@PostMapping("/descriptions")
+	public ApiResponse<String> createAiDescription(
 		@RequestBody AiDescriptionRequestDto aiDescriptionRequestDto) throws JsonProcessingException {
-		String description = albumDescriptionService.createAiDescription(albumId, aiDescriptionRequestDto);
+		String description = albumDescriptionService.createAiDescription(aiDescriptionRequestDto);
 		return ApiResponse.ok(description);
 	}
 

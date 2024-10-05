@@ -19,10 +19,10 @@ public class AlbumDescriptionService {
 	private final OpenAiDescriptionService openAiDescriptionService;
 
 	@Transactional
-	public String createAiDescription(Long albumId, AiDescriptionRequestDto aiDescriptionRequestDto) throws
+	public String createAiDescription(AiDescriptionRequestDto aiDescriptionRequestDto) throws
 			JsonProcessingException {
 		String result = openAiDescriptionService.createAiDescription(aiDescriptionRequestDto);
-		saveAiDescription(albumId, result);
+		// saveAiDescription(albumId, result);
 		return result;
 	}
 
