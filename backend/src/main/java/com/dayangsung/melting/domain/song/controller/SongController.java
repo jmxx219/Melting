@@ -19,6 +19,7 @@ import com.dayangsung.melting.domain.song.dto.request.MeltingSongCreateRequestDt
 import com.dayangsung.melting.domain.song.dto.response.SongDetailsResponseDto;
 import com.dayangsung.melting.domain.song.dto.response.SongSearchPageResponseDto;
 import com.dayangsung.melting.domain.song.service.SongService;
+import com.dayangsung.melting.global.aop.LogExecution;
 import com.dayangsung.melting.global.common.response.ApiResponse;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -29,6 +30,7 @@ import lombok.extern.slf4j.Slf4j;
 @RestController
 @RequestMapping("/api/v1/songs")
 @RequiredArgsConstructor
+@LogExecution
 public class SongController {
 
 	private final SongService songService;
