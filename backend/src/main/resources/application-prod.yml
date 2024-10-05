@@ -89,5 +89,5 @@ openai:
   api-key: ${OPENAI_API_KEY}
 
 server:
-  tomcat:
-    connection-timeout: 30000
+   tomcat:
+     connection-timeout: 30000
