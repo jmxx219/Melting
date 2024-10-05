@@ -12,7 +12,7 @@ export default function LikedAlbumsAndSongs() {
           buttonArea={<ChevronLeft color="#FFAF25" />}
         />
       }
-      children={<AlbumSongToggle viewType="liked" />}
+      children={<AlbumSongToggle viewType="LIKED" />}
     ></Layout>
   )
 }

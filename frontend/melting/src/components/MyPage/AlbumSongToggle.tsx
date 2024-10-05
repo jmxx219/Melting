@@ -5,7 +5,7 @@ import LikedSongList from '@/components/MyPage/LikedSongList'
 import SortDropdown from '@/components/Common/SortDropdown'
 
 interface AlbumSongToggleProps {
-  viewType: 'my' | 'liked'
+  viewType: 'MY' | 'LIKED'
 }
 
 export default function AlbumSongToggle({ viewType }: AlbumSongToggleProps) {
@@ -38,7 +38,7 @@ export default function AlbumSongToggle({ viewType }: AlbumSongToggleProps) {
       <div>
         {selectedTab === 'album' ? (
           <MyAlbumList sortOption={sortOption} viewType={viewType} />
-        ) : viewType === 'my' ? (
+        ) : viewType === 'MY' ? (
           <MySongList sortOption={sortOption} />
         ) : (
           <LikedSongList sortOption={sortOption} />

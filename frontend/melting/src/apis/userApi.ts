@@ -115,21 +115,41 @@ export const userApi = {
       throw error as CustomError
     }
   },
-  getMemberAlbums: async (): Promise<AlbumMyPageResponseDto> => {
+  getMemberAlbums: async (
+    sort?: string | null,
+    page?: number,
+    size?: number,
+  ): Promise<AlbumMyPageResponseDto> => {
     try {
-      const response = await api.get<GetMemberAlbumsData>('/me/albums')
-      // const response = dummyData
+      const response = await api.get<GetMemberAlbumsData>('/me/albums', {
+        params: {
+          sort,
+          page,
+          size,
+        },
+      })
       return response.data as AlbumMyPageResponseDto
     } catch (error) {
       console.error('회원 앨범 조회 오류:', error)
       throw error as GetMemberAlbumsError
     }
   },
-  getMemberLikesAlbums: async (): Promise<AlbumMyPageResponseDto> => {
+  getMemberLikesAlbums: async (
+    sort?: string | null,
+    page?: number,
+    size?: number,
+  ): Promise<AlbumMyPageResponseDto> => {
     try {
-      const response =
-        await api.get<GetMemberLikesAlbumsData>('/me/likes/albums')
-      // const response = dummyData
+      const response = await api.get<GetMemberLikesAlbumsData>(
+        '/me/likes/albums',
+        {
+          params: {
+            sort,
+            page,
+            size,
+          },
+        },
+      )
       return response.data as AlbumMyPageResponseDto
     } catch (error) {
       console.error('회원 좋아요한 앨범 조회 오류:', error)
