@@ -1,5 +1,6 @@
 import { ErrorResponse, ApiResponseInteger } from '@/types/globalType.ts'
 import { CoverType } from './constType'
+import { ApiResponseBoolean } from './user'
 
 export type Song = {
   songId: number
@@ -52,18 +53,6 @@ export interface ApiResponseSongSearchPageResponseDto {
   errorMessage?: string
 }
 
-export type GetSongsForAlbumCreationData = ApiResponseSongSearchPageResponseDto
-
-export type GetSongsForAlbumCreationError = ErrorResponse
-
-export interface OriginalSongSearchResponseDto {
-  /** @format int64 */
-  originalSongId: number
-  title: string
-  artist: string
-  coverImageUrl: string
-}
-
 export interface OriginalSongResponseDto {
   /** @format int64 */
   originalSongId: number
@@ -77,3 +66,18 @@ export interface OriginalSongResponseDto {
 export type AddSongLikesData = ApiResponseInteger
 
 export type DeleteSongLikesData = ApiResponseInteger
+export interface OriginalSongSearchResponseDto {
+  /** @format int64 */
+  originalSongId: number
+  title: string
+  artist: string
+  coverImageUrl: string
+}
+
+export type GetSongsForAlbumCreationData = ApiResponseSongSearchPageResponseDto
+
+export type GetSongsForAlbumCreationError = ErrorResponse
+
+export type CreateAicoverSongData = ApiResponseBoolean
+
+export type CreateAicoverSongError = ErrorResponse
