@@ -34,9 +34,12 @@ public interface AlbumRepository extends JpaRepository<Album, Long> {
 	@Query("SELECT a FROM Album a LEFT JOIN a.likesAlbums la WHERE a.member.id = :memberId AND a.isDeleted = false GROUP BY a.id ORDER BY COUNT(la) DESC")
 	Page<Album> findByMemberIdAndOrderByLikesCountDesc(@Param("memberId") Long memberId, Pageable pageable);
 
-	@Query("SELECT a FROM Album a JOIN a.likesAlbums la WHERE la.member.id = :memberId AND a.isDeleted = false AND a.isPublic = true ORDER BY a.createdAt DESC")
+	@Query("SELECT a FROM Album a JOIN a.likesAlbums la WHERE la.member.id = :memberId AND a.isDeleted = false AND a.isPublic = true AND la.isLiked = true ORDER BY a.createdAt DESC")
 	Page<Album> findLikedAlbumsByMemberIdOrderByCreatedAtDesc(@Param("memberId") Long memberId, Pageable pageable);
 
-	@Query("SELECT a FROM Album a JOIN a.likesAlbums la WHERE la.member.id = :memberId AND a.isDeleted = false AND a.isPublic = true GROUP BY a.id ORDER BY COUNT(la) DESC")
+	@Query("SELECT a FROM Album a JOIN a.likesAlbums la WHERE la.member.id = :memberId AND a.isDeleted = false AND a.isPublic = true AND la.isLiked = true GROUP BY a.id ORDER BY COUNT(la) DESC")
 	Page<Album> findLikedAlbumsByMemberIdOrderByLikesCountDesc(@Param("memberId") Long memberId, Pageable pageable);
+
+	@Query("SELECT a FROM Album a JOIN a.hashtags ah JOIN ah.hashtag h WHERE h.content = :hashtag ORDER BY a.createdAt DESC")
+	Page<Album> findByHashtag(@Param("hashtag") String hashtag, Pageable pageable);
 }
