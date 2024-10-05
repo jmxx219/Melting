@@ -12,8 +12,8 @@ public interface LikesAlbumRepository extends JpaRepository<LikesAlbum, Long> {
 
 	Optional<LikesAlbum> findLikesAlbumByAlbumIdAndMemberId(Long albumId, Long memberId);
 
-	@Query("SELECT la FROM LikesAlbum la WHERE la.member.id = :memberId AND la.album.id = :albumId AND la.status = true")
-	boolean existsByMemberIdAndAlbumIdAndStatusTrue(
+	@Query("SELECT COUNT(la) > 0 FROM LikesAlbum la WHERE la.member.id = :memberId AND la.album.id = :albumId AND la.status = true")
+	Boolean existsByMemberIdAndAlbumIdAndStatusTrue(
 		@Param("memberId") Long memberId,
 		@Param("albumId") Long albumId);
 }
