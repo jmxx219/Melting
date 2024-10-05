@@ -28,24 +28,24 @@ export default function AlbumDetail({ albumId }: AlbumDetailProps) {
     songs: [
       {
         songId: 1,
-        albumCoverImgUrl:
+        albumCoverImageUrl:
           'https://image.bugsm.co.kr/album/images/200/40955/4095501.jpg?version=20240307012526.0',
         artist: '아이유',
         songTitle: '좋아한 노래 제목 1입니다아아아',
         nickname: '노원핵주먹안녕하세요노원핵주먹안녕하세요',
-        executionTime: '3:14',
+        lengthInSeconds: 282,
         likeCount: 123,
         isLiked: true,
         isTitle: true,
       },
       {
         songId: 2,
-        albumCoverImgUrl:
+        albumCoverImageUrl:
           'https://image.bugsm.co.kr/album/images/200/40955/4095501.jpg?version=20240307012526.0',
         artist: '아이유',
         songTitle: '좋아한 노래 제목 2',
         nickname: '노원핵주먹',
-        executionTime: '3:14',
+        lengthInSeconds: 245,
         likeCount: 12345,
         isLiked: false,
         isTitle: false,

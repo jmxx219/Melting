@@ -25,23 +25,21 @@ import {
   GetSteadyAlbumsData,
   GetSteadyAlbumsError,
   AlbumRankingResponseDto,
+  ToggleIsPublicData,
+  DeleteAlbumData,
 } from '@/types/album.ts'
+import { SortType } from '@/types/constType'
 
 const instance = createAxiosInstance('albums')
 const api = createApi<ApiResponse>(instance)
 
 export const albumApi = {
   // 커뮤니티 메인 페이지의 앨범 목록 가져오기
-  getAlbumsInCommunityMainPage: async (query?: {
-    sort?: 'LATEST' | 'POPULAR'
-  }) => {
+  getAlbumsInCommunityMainPage: async (query?: { sort?: SortType }) => {
     try {
-      const response = await instance.get<GetAlbumsInCommunityMainPageData>(
-        '/',
-        {
-          params: query,
-        },
-      )
+      const response = await api.get<GetAlbumsInCommunityMainPageData>('/', {
+        params: query,
+      })
       return response.data
     } catch (error) {
       console.error('앨범 목록을 가져오는 중 오류 발생:', error)
@@ -80,7 +78,7 @@ export const albumApi = {
   // 앨범 좋아요 수 가져오기
   getAlbumLikesCount: async (albumId: number) => {
     try {
-      const response = await instance.get<GetAlbumLikesCountData>(
+      const response = await api.get<GetAlbumLikesCountData>(
         `/${albumId}/likes`,
       )
       return response.data
@@ -93,9 +91,7 @@ export const albumApi = {
   // 앨범 좋아요 추가
   addAlbumLikes: async (albumId: number) => {
     try {
-      const response = await instance.post<AddAlbumLikesData>(
-        `/${albumId}/likes`,
-      )
+      const response = await api.post<AddAlbumLikesData>(`/${albumId}/likes`)
       return response.data
     } catch (error) {
       console.error('앨범 좋아요 추가 중 오류 발생:', error)
@@ -106,7 +102,7 @@ export const albumApi = {
   // 앨범 좋아요 삭제
   deleteAlbumLikes: async (albumId: number) => {
     try {
-      const response = await instance.delete<DeleteAlbumLikesData>(
+      const response = await api.delete<DeleteAlbumLikesData>(
         `/${albumId}/likes`,
       )
       return response.data
@@ -125,7 +121,7 @@ export const albumApi = {
     },
   ) => {
     try {
-      const response = await instance.get<GetAllCommentsData>(
+      const response = await api.get<GetAllCommentsData>(
         `/${albumId}/comments`,
         {
           params: query,
@@ -141,7 +137,7 @@ export const albumApi = {
   // 앨범에 댓글 작성
   writeComment: async (albumId: number, data: CommentRequestDto) => {
     try {
-      const response = await instance.post<WriteCommentData>(
+      const response = await api.post<WriteCommentData>(
         `/${albumId}/comments`,
         data,
       )
@@ -199,6 +195,28 @@ export const albumApi = {
         error,
       )
       throw error as GetSteadyAlbumsError
+    }
+  },
+
+  // 앨범 공개/비공개 토글
+  toggleIsPublic: async (albumId: number) => {
+    try {
+      const response = await api.patch<ToggleIsPublicData>(`/${albumId}/toggle`)
+      return response.data
+    } catch (error) {
+      console.error('앨범 공개/비공개 토글 중 오류 발생:', error)
+      throw error
+    }
+  },
+
+  // 앨범 삭제
+  deleteAlbum: async (albumId: number) => {
+    try {
+      const response = await api.delete<DeleteAlbumData>(`/${albumId}`)
+      return response.data
+    } catch (error) {
+      console.error('앨범 삭제 중 오류 발생:', error)
+      throw error
     }
   },
 }
