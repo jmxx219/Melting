@@ -33,7 +33,7 @@ public class OpenAiLyricsSummaryService {
 				.contentType(MediaType.APPLICATION_JSON)
 				.bodyValue(String.format("""
 						{
-						    "model": "gpt-3.5-turbo",
+						    "model": "gpt-4o",
 						    "messages": [
 						        {"role": "system", "content": "You are a helpful assistant."},
 						        {"role": "user", "content": "%s"}
