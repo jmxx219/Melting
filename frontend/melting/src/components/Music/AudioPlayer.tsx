@@ -7,6 +7,7 @@ import React, {
 } from 'react'
 
 interface AudioPlayerProps {
+  disabled?: boolean
   audioSrc: string
   onTimeUpdate?: (currentTime: number) => void
   onEnded?: () => void
@@ -21,7 +22,14 @@ export interface AudioPlayerHandle {
 }
 
 function AudioPlayer(
-  { audioSrc, onTimeUpdate, onEnded, onPlay, onPause }: AudioPlayerProps,
+  {
+    disabled = false,
+    audioSrc,
+    onTimeUpdate,
+    onEnded,
+    onPlay,
+    onPause,
+  }: AudioPlayerProps,
   ref: React.Ref<AudioPlayerHandle>,
 ) {
   const [currentTime, setCurrentTime] = useState(0)
@@ -89,12 +97,13 @@ function AudioPlayer(
         max="100"
         value={(currentTime / duration) * 100 || 0}
         onChange={handleProgressChange}
-        className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer progress-bg-orange"
+        className={`w-full h-2 bg-gray-200 rounded-lg appearance-none progress-bg-orange ${!disabled ? 'cursor-pointer' : 'cursor-not-allowed'}`}
         style={{
           background: `linear-gradient(to right, #FFB74D 0%, #FFB74D ${
             (currentTime / duration) * 100
           }%, #FFF3DF ${(currentTime / duration) * 100}%, #FFF3DF 100%)`,
         }}
+        disabled={disabled}
       />
       <div className="flex justify-between text-sm text-gray-500 mt-0.5">
         <span>{formatTime(currentTime)}</span>

@@ -3683,6 +3683,11 @@ webidl-conversions@^3.0.0:
   resolved "https://registry.yarnpkg.com/webidl-conversions/-/webidl-conversions-3.0.1.tgz#24534275e2a7bc6be7bc86611cc16ae0a5654871"
   integrity sha512-2JAn3z8AR6rjK8Sm8orRC0h/bcl/DqL7tRPdGZ4I1CjdF+EaMLmYxBHyXuKL849eucPFhvBoxMsflfOb8kxaeQ==
 
+webm-to-wav-converter@^1.1.0:
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/webm-to-wav-converter/-/webm-to-wav-converter-1.1.0.tgz#01479ce3d2e0ded25d8fb34b656fe0429cc98a3b"
+  integrity sha512-fOtPan5a46N3Lss8mPJ8KGgJ0id+Sa7k8Glj6g7Rlt6SBWsLGjgZ3FIO0P1Y+r/GDe5Z/+fgaDGedS6ORPyksQ==
+
 whatwg-url@^5.0.0:
   version "5.0.0"
   resolved "https://registry.yarnpkg.com/whatwg-url/-/whatwg-url-5.0.0.tgz#966454e8765462e37644d3626f6742ce8b70965d"
