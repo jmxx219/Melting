@@ -6,15 +6,14 @@ import {
 } from '@/apis/axiosInstance.ts'
 import { SongDetailsResponseDto } from '@/types/album'
 import {
+  AddSongLikesData,
   CreateAicoverSongData,
   CreateAicoverSongError,
+  DeleteSongLikesData,
+  GetSongDetailsError,
   GetSongsForAlbumCreationData,
   GetSongsForAlbumCreationError,
   SongSearchPageResponseDto,
-  AddSongLikesData,
-  DeleteSongLikesData,
-  GetSongDetailsData,
-  GetSongDetailsError,
 } from '@/types/song.ts'
 import { ApiResponseBoolean } from '@/types/user'
 
@@ -100,8 +99,8 @@ export const songApi = {
 
   getSong: async (songId: number) => {
     try {
-      const response = await api.get<GetSongDetailsData>(`/${songId}`)
-      return response.data.data as SongDetailsResponseDto
+      const response = await api.get<SongDetailsResponseDto>(`/${songId}`)
+      return response.data as SongDetailsResponseDto
     } catch (error) {
       console.error('Failed to fetch songs for album creation:', error)
       throw error as GetSongDetailsError
