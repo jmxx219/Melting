@@ -35,7 +35,10 @@ public enum ErrorMessage {
 	ALBUM_SONGS_EMPTY_ERROR("앨범에는 최소 1개의 곡이 필요합니다."),
 
 	// OpenAI
-	REQUEST_ERROR("올바르지 않은 응답입니다.");
+	REQUEST_ERROR("올바르지 않은 응답입니다."),
+
+	// Etc
+	EXTERNAL_BAD_REQUEST("외부 요청 오류입니다.");
 
 	private final String errorMessage;
 
