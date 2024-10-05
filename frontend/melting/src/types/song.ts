@@ -7,26 +7,18 @@ export type Song = {
   artist: string
   albumCoverImageUrl: string
   nickname: string
-  songType: CoverType
-  meltingSongId: number | null
-  aiCoverSongId: number | null
+  songType?: CoverType
+  meltingSongId?: number | null
+  aiCoverSongId?: number | null
+  likeCount?: number
+  isLiked?: boolean
+  lengthInSeconds?: number
 }
 
 export interface SongListProps {
   songs: OriginalSongSearchResponseDto[] | undefined
   showNumbers: boolean
   selectId?: number
-}
-
-export type LikedSongType = {
-  songId: number
-  albumCoverImgUrl: string
-  artist: string
-  songTitle: string
-  nickname: string
-  executionTime: string
-  likeCount: number
-  isLiked: boolean
 }
 
 export interface SongSearchResponseDto {

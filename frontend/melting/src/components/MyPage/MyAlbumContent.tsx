@@ -8,6 +8,7 @@ import ConfirmDialog from '@/components/Common/ConfirmDialog'
 import { AlbumMyResponseDto } from '@/types/user'
 import { convertIsoToDotDate } from '@/utils/dateUtil'
 import { albumApi } from '@/apis/albumApi'
+import { useUserInfo } from '@/hooks/useUserInfo'
 
 interface MyAlbumProps {
   album: AlbumMyResponseDto
@@ -20,6 +21,7 @@ export default function MyAlbumContent({
   viewType,
   fetchAlbums,
 }: MyAlbumProps) {
+  const { data: userInfo } = useUserInfo()
   const navigate = useNavigate()
   const [isLiked, setIsLiked] = useState(album.isLiked)
   const [likeCount, setLikeCount] = useState(album.likedCount || 0)
@@ -78,6 +80,9 @@ export default function MyAlbumContent({
     return text.length > maxLength ? text.slice(0, maxLength) + '...' : text
   }
 
+  const isOwner =
+    viewType === 'MY' || album.creatorNickname === userInfo?.nickname
+
   return (
     <div className="relative flex mb-4" onClick={goToAlbumDetail}>
       <div className="relative mr-2 w-24 h-24 flex-shrink-0">
@@ -99,7 +104,7 @@ export default function MyAlbumContent({
         <div className="flex justify-between items-center font-bold text-base relative">
           <span>{truncateText(album.albumName, 20)}</span>
 
-          {viewType === 'MY' && (
+          {isOwner && (
             <ConfirmDialog
               title="앨범 삭제"
               description="정말로 이 앨범을 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다."
@@ -123,16 +128,14 @@ export default function MyAlbumContent({
             />
           </button>
           <span>
-            {viewType === 'MY'
-              ? likeCount.toLocaleString()
-              : formatLikeCount(likeCount)}
+            {isOwner ? likeCount.toLocaleString() : formatLikeCount(likeCount)}
           </span>
         </div>
 
         <div className="flex justify-between items-center text-sm text-gray-400">
           <span>{convertIsoToDotDate(album.createdAt)}</span>
 
-          {viewType === 'MY' && (
+          {isOwner && (
             <div className="flex items-center space-x-2">
               <Switch
                 id={`album-${album.albumId}-switch`}

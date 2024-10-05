@@ -2,10 +2,11 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import Heart from '@/components/Icon/Heart'
 import { Play, Crown } from 'lucide-react'
-import { LikedSongType } from '@/types/song'
+import { Song } from '@/types/song'
+import { convertSecondsToMinutes } from '@/utils/timeUtil'
 
 interface LikedSongProps {
-  song: LikedSongType
+  song: Song
   hasProfileImage?: boolean
   songOrder?: number
   isTitle?: boolean
@@ -26,7 +27,6 @@ export default function SongContent({
   }
 
   const goToPlaySong = (songId: number) => {
-    // TODO: 곡 재생 화면으로 이동
     navigate(`/music/play/`, { state: songId })
   }
 
@@ -38,7 +38,7 @@ export default function SongContent({
     <div className="flex items-center mb-4 gap-3">
       {hasProfileImage ? (
         <img
-          src={song.albumCoverImgUrl}
+          src={song.albumCoverImageUrl}
           alt={song.songTitle}
           className="w-12 h-12 object-cover rounded-full"
         />
@@ -68,7 +68,11 @@ export default function SongContent({
           <Heart fill={'#FFAF25'} fillOpacity={1} />
         </button>
         <div className="ml-1">
-          {song.likeCount > 999 ? '999+' : song.likeCount.toLocaleString()}
+          {song.likeCount !== undefined && song.likeCount !== null
+            ? song.likeCount > 999
+              ? '999+'
+              : song.likeCount.toLocaleString()
+            : '0'}
         </div>
       </div>
 
@@ -76,7 +80,9 @@ export default function SongContent({
         <button type="button" onClick={() => goToPlaySong(song.songId)}>
           <Play size={20} className="text-primary-400 fill-primary-400" />
         </button>
-        <div className="ml-1">{song.executionTime}</div>
+        <div className="ml-1">
+          {convertSecondsToMinutes(song.lengthInSeconds || 0)}
+        </div>
       </div>
     </div>
   )

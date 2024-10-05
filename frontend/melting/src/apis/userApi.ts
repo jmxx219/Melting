@@ -24,6 +24,8 @@ import {
   GetMeltingCountsData,
   GetMeltingCountsError,
   MemberSongCountsResponseDto,
+  GetMemberLikesSongsData,
+  SongLikesPageResponseDto,
 } from '@/types/user'
 const instance = createAxiosInstance('members')
 const api = createApi<ApiResponse>(instance)
@@ -165,6 +167,28 @@ export const userApi = {
       return response.data as MemberSongResponseDto
     } catch (error) {
       throw error as GetMemberSongsError
+    }
+  },
+  getMemberLikesSongs: async (
+    sort?: string | null,
+    page?: number,
+    size?: number,
+  ): Promise<SongLikesPageResponseDto> => {
+    try {
+      const response = await api.get<GetMemberLikesSongsData>(
+        '/me/likes/songs',
+        {
+          params: {
+            sort,
+            page,
+            size,
+          },
+        },
+      )
+      return response.data as SongLikesPageResponseDto
+    } catch (error) {
+      console.error('회원 앨범 조회 오류:', error)
+      throw error as GetMemberAlbumsError
     }
   },
   getUserCoverCnt: async (): Promise<MemberSongCountsResponseDto> => {
