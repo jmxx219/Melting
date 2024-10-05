@@ -52,10 +52,10 @@ export default function AlbumCoverSelector() {
         songs: selectedSongs.map((song) => song.songId),
       })
 
-      console.log(
-        'Server response (first 100 characters):',
-        response.substring(0, 100),
-      )
+      // console.log(
+      //   'Server response (first 100 characters):',
+      //   response.substring(0, 100),
+      // )
 
       const file = base64ToFile(response, 'cover.jpg', 'image/jpeg')
       setSelectedCoverFile(file)
