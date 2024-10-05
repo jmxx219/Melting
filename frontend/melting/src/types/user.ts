@@ -155,6 +155,21 @@ export interface ApiResponseMemberSongResponseDto {
   errorMessage?: string
 }
 
+export interface MemberSongCountsResponseDto {
+  /** @format int32 */
+  songcounts: number
+}
+
+export interface ApiResponseMemberSongCountsResponseDto {
+  status?: string
+  data?: MemberSongCountsResponseDto
+  errorMessage?: string
+}
+
 export type GetMemberSongsData = ApiResponseMemberSongResponseDto
 
 export type GetMemberSongsError = ErrorResponse
+
+export type GetMeltingCountsData = ApiResponseMemberSongCountsResponseDto
+
+export type GetMeltingCountsError = ErrorResponse
