@@ -16,13 +16,6 @@ export default function MusicList({
   onSelectSong,
   onSelectRecord,
 }: ExtendedSongListProps) {
-  if (!songs || songs.length === 0) {
-    return (
-      <div className="w-full h-full flex items-center flex-1 justify-center">
-        <p className="text-[#A5A5A5]">검색한 곡이 없습니다.</p>
-      </div>
-    )
-  }
   return (
     <div className="w-full">
       {songs &&
