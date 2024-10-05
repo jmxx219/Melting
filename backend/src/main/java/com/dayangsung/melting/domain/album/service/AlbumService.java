@@ -23,6 +23,7 @@ import com.dayangsung.melting.domain.album.dto.response.AlbumRankingPageResponse
 import com.dayangsung.melting.domain.album.dto.response.AlbumRankingResponseDto;
 import com.dayangsung.melting.domain.album.dto.response.AlbumSearchPageResponseDto;
 import com.dayangsung.melting.domain.album.dto.response.AlbumSearchResponseDto;
+import com.dayangsung.melting.domain.album.dto.response.AlbumTrackInfoDto;
 import com.dayangsung.melting.domain.album.entity.Album;
 import com.dayangsung.melting.domain.album.enums.AlbumCategory;
 import com.dayangsung.melting.domain.album.repository.AlbumRepository;
@@ -98,7 +99,7 @@ public class AlbumService {
 
 		album = albumRepository.save(album);
 		String albumCoverImageUrl;
-		if (albumCoverImage != null) {
+		if (!albumCoverImage.isEmpty()) {
 			albumCoverImageUrl = awsS3Service.uploadAlbumCoverImage(albumCoverImage, album.getId());
 		} else {
 			albumCoverImageUrl = awsS3Service.getDefaultAlbumCoverImage(albumCreateRequestDto.defaultCoverNumber());
@@ -283,5 +284,21 @@ public class AlbumService {
 		Member member = memberRepository.findByEmail(email)
 			.orElseThrow(() -> new BusinessException(ErrorMessage.MEMBER_NOT_FOUND));
 		return likesService.decreaseAlbumLikes(albumId, member.getId());
+	}
+
+	public List<AlbumTrackInfoDto> getTrackListInfo(Long albumId) {
+		Album album = albumRepository.findById(albumId)
+			.orElseThrow(() -> new BusinessException(ErrorMessage.ALBUM_NOT_FOUND));
+		List<AlbumTrackInfoDto> trackInfo = new ArrayList<>();
+		List<Song> songs = album.getSongs();
+		for (int i = 0; i < album.getSongs().size(); i++) {
+			Long currentSongId = songs.get(i).getId();
+			Long previousSongId = i > 0 ? songs.get(i - 1).getId() : null;
+			Long nextSongId = i < songs.size() - 1 ? songs.get(i + 1).getId() : null;
+			AlbumTrackInfoDto trackInfoDto = AlbumTrackInfoDto.of(
+				albumId, currentSongId, previousSongId, nextSongId);
+			trackInfo.add(trackInfoDto);
+		}
+		return trackInfo;
 	}
 }

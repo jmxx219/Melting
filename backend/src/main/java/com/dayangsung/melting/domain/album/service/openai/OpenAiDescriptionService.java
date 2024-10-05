@@ -62,12 +62,12 @@ public class OpenAiDescriptionService {
 		String lyrics = jsonParsing(summarizedLyrics.block());
 		result.append(lyrics);
 
-		List<String> hashtagList = hashtagService.idListToHashtagList(aiDescriptionRequestDto.hashtags()).stream()
+		List<String> hashtagList = hashtagService.contentListToHashtagList(aiDescriptionRequestDto.hashtags()).stream()
 				.map(Hashtag::getContent)
 				.toList();
 		result.append(hashtagList).append(' ');
 
-		List<String> genreList = genreService.idListToGenreList(aiDescriptionRequestDto.genres()).stream()
+		List<String> genreList = genreService.contentListToGenreList(aiDescriptionRequestDto.genres()).stream()
 				.map(Genre::getContent)
 				.toList();
 		result.append(genreList);
