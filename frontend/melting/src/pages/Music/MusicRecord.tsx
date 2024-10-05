@@ -2,15 +2,9 @@ import { musicApi } from '@/apis/music/musicApi'
 import Layout from '@/components/Layout'
 import MusicRecordrHeader from '@/components/Layout/MusicRecordrHeader'
 import MusicRecordContent from '@/components/Music/MusicRecordContent'
-import { OriginalSongResponseDto } from '@/typeApis/data-contracts'
-import { Song } from '@/types/song'
+import { OriginalSongResponseDto } from '@/types/song'
 import { useEffect, useState } from 'react'
 import { useLocation } from 'react-router-dom'
-
-interface MusicRecord extends Song {
-  lyrics: string
-  audioSrc: string
-}
 
 export default function MusicRecord() {
   const location = useLocation()
@@ -28,7 +22,10 @@ export default function MusicRecord() {
   return (
     <Layout
       Header={
-        <MusicRecordrHeader artist={song?.artist} songTitle={song?.title} />
+        <MusicRecordrHeader
+          artist={song?.artist || 'Unknown Artist'}
+          songTitle={song?.title || 'Unknown Title'}
+        />
       }
       children={
         <MusicRecordContent

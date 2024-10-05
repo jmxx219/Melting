@@ -25,3 +25,6 @@ dist-ssr
 *.sw?
 .idea/*
 mkcert
+
+vite.config.ts
+src/typeApis/

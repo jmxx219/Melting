@@ -64,3 +64,21 @@ export interface ApiResponseSongSearchPageResponseDto {
 export type GetSongsForAlbumCreationData = ApiResponseSongSearchPageResponseDto
 
 export type GetSongsForAlbumCreationError = ErrorResponse
+
+export interface OriginalSongSearchResponseDto {
+  /** @format int64 */
+  originalSongId: number
+  title: string
+  artist: string
+  coverImageUrl: string
+}
+
+export interface OriginalSongResponseDto {
+  /** @format int64 */
+  originalSongId: number
+  title: string
+  artist: string
+  albumCoverUrl: string
+  mrUrl: string
+  lyrics: string
+}

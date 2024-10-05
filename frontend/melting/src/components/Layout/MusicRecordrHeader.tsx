@@ -1,6 +1,6 @@
 type MusicPlayerHeaderProps = {
-  songTitle?: string
-  artist?: string
+  songTitle: string
+  artist: string
 }
 
 export default function MusicRecordrHeader({

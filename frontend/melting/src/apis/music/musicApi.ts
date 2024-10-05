@@ -1,7 +1,7 @@
 import {
   OriginalSongResponseDto,
   OriginalSongSearchResponseDto,
-} from '@/typeApis/data-contracts'
+} from '@/types/song'
 import {
   ApiResponse,
   createApi,

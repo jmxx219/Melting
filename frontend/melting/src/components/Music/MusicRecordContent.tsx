@@ -52,9 +52,6 @@ export default function MusciRecordContent({
 
   const processRecordedAudio = useCallback(() => {
     const blob = new Blob(chunksRef.current, { type: 'audio/webm' })
-    console.log('Recorded audio file size:', blob.size, 'bytes')
-    console.log('Recorded audio file type:', blob.type)
-
     return blob
   }, [])
 
