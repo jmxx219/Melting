@@ -23,7 +23,6 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
-import jakarta.validation.constraints.Size;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -50,8 +49,7 @@ public class Album extends BaseEntity {
 	@Enumerated(EnumType.STRING)
 	private AlbumCategory category;
 
-	@Size(min = 50, max = 1000)
-	@Column(nullable = false, length = 1000)
+	@Column(nullable = false, columnDefinition = "TEXT")
 	private String albumDescription;
 
 	private String albumCoverImageUrl;
