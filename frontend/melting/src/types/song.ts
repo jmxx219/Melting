@@ -1,6 +1,5 @@
-import { OriginalSongSearchResponseDto } from '@/typeApis/data-contracts'
-import { CoverType } from './constType'
 import { ErrorResponse } from '@/types/globalType.ts'
+import { CoverType } from './constType'
 
 export type Song = {
   songId: number
