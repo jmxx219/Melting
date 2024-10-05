@@ -57,7 +57,7 @@ export interface ApiResponseListAlbumMainResponseDto {
 
 export interface AlbumUpdateResponseDto {
   /** @format int64 */
-  album_id: number
+  albumId: number
 }
 
 export interface ApiResponseAlbumUpdateResponseDto {
@@ -259,3 +259,13 @@ export type CreateAiAlbumCoverImageError = ErrorResponse
 export type ToggleIsPublicData = ApiResponseBoolean
 
 export type DeleteAlbumData = ApiResponseVoid
+
+export interface AiDescriptionRequestDto {
+  songs: number[]
+  hashtags: string[]
+  genres: string[]
+}
+
+export type CreateAiDescriptionData = ApiResponseString
+
+export type CreateAiDescriptionError = ErrorResponse
