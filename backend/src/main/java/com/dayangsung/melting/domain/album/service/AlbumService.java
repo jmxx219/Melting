@@ -19,6 +19,7 @@ import com.dayangsung.melting.domain.album.dto.request.AlbumCreateRequestDto;
 import com.dayangsung.melting.domain.album.dto.response.AlbumDetailsResponseDto;
 import com.dayangsung.melting.domain.album.dto.response.AlbumMyPageResponseDto;
 import com.dayangsung.melting.domain.album.dto.response.AlbumMyResponseDto;
+import com.dayangsung.melting.domain.album.dto.response.AlbumRankingPageResponseDto;
 import com.dayangsung.melting.domain.album.dto.response.AlbumRankingResponseDto;
 import com.dayangsung.melting.domain.album.dto.response.AlbumSearchPageResponseDto;
 import com.dayangsung.melting.domain.album.dto.response.AlbumSearchResponseDto;
@@ -26,11 +27,7 @@ import com.dayangsung.melting.domain.album.entity.Album;
 import com.dayangsung.melting.domain.album.enums.AlbumCategory;
 import com.dayangsung.melting.domain.album.repository.AlbumRepository;
 import com.dayangsung.melting.domain.genre.dto.response.GenreResponseDto;
-import com.dayangsung.melting.domain.genre.repository.AlbumGenreRepository;
-import com.dayangsung.melting.domain.genre.repository.GenreRepository;
 import com.dayangsung.melting.domain.genre.service.GenreService;
-import com.dayangsung.melting.domain.hashtag.repository.AlbumHashtagRepository;
-import com.dayangsung.melting.domain.hashtag.repository.HashtagRepository;
 import com.dayangsung.melting.domain.hashtag.service.HashtagService;
 import com.dayangsung.melting.domain.likes.service.LikesService;
 import com.dayangsung.melting.domain.member.entity.Member;
@@ -55,10 +52,6 @@ public class AlbumService {
 	private final AlbumRepository albumRepository;
 	private final SongRepository songRepository;
 	private final GenreService genreService;
-	private final GenreRepository genreRepository;
-	private final AlbumGenreRepository albumGenreRepository;
-	private final HashtagRepository hashtagRepository;
-	private final AlbumHashtagRepository albumHashtagRepository;
 	private final LikesService likesService;
 	private final AwsS3Service awsS3Service;
 	private final RedisUtil redisUtil;
@@ -263,6 +256,13 @@ public class AlbumService {
 	public List<AlbumRankingResponseDto> getMonthlyTop5Albums() {
 		List<Album> monthlyTop5Albums = redisUtil.getTop5AlbumsStreaming(false);
 		return monthlyTop5Albums.stream().map(AlbumRankingResponseDto::of).toList();
+	}
+
+	public AlbumRankingPageResponseDto findByHashtag(String content, int page, int size) {
+		Pageable pageable = PageRequest.of(page, size);
+		Page<AlbumRankingResponseDto> albumPage =
+			albumRepository.findByHashtag(content, pageable).map(AlbumRankingResponseDto::of);
+		return AlbumRankingPageResponseDto.of(albumPage);
 	}
 
 	public List<GenreResponseDto> getAllGenres() {
