@@ -60,9 +60,11 @@ export default function MyAlbumContent({ album, viewType }: MyAlbumProps) {
     }
   }
 
-  const deleteAlbum = () => {
+  const deleteAlbum = async () => {
     // TODO: 앨범 삭제 API 호출
     console.log('앨범 삭제: ', album.albumId)
+
+    await albumApi.deleteAlbum(album.albumId)
 
     if (viewType === 'MY') {
       navigate('/mypage/my')

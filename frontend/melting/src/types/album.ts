@@ -3,6 +3,7 @@ import {
   ErrorResponse,
   ApiResponseInteger,
   ApiResponseBoolean,
+  ApiResponseVoid,
 } from '@/types/globalType.ts'
 import { ApiResponseMemberResponseDto } from '@/types/user.ts'
 
@@ -192,3 +193,5 @@ export type GetHot5AlbumsData = ApiResponseListAlbumRankingResponseDto
 export type GetHot5AlbumsError = ErrorResponse
 
 export type ToggleIsPublicData = ApiResponseBoolean
+
+export type DeleteAlbumData = ApiResponseVoid
