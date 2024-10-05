@@ -226,7 +226,11 @@ export default function SongSearch() {
           selectedSongs.map((song) => (
             <SongItem
               key={`${song.songId}-${song.songType}`}
-              {...song}
+              {...{
+                ...song,
+                meltingSongId: song.meltingSongId ?? null,
+                aiCoverSongId: song.aiCoverSongId ?? null,
+              }}
               isSelected={true}
               onSelect={() => handleSelectSong(song)}
               onTypeChange={(value) => handleTypeChange(song.songId, value)}

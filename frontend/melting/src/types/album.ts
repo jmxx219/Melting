@@ -1,4 +1,4 @@
-import { LikedSongType, Song } from './song'
+import { Song } from './song'
 import {
   ErrorResponse,
   ApiResponseInteger,
@@ -137,7 +137,7 @@ export interface AlbumDetailInfoType {
   hashtags: string[]
 }
 
-export type AlbumSongType = LikedSongType & {
+export type AlbumSongType = Song & {
   isTitle: boolean
 }
 
