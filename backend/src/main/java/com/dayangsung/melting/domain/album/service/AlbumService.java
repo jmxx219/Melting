@@ -99,7 +99,7 @@ public class AlbumService {
 
 		album = albumRepository.save(album);
 		String albumCoverImageUrl;
-		if (albumCoverImage != null) {
+		if (!albumCoverImage.isEmpty()) {
 			albumCoverImageUrl = awsS3Service.uploadAlbumCoverImage(albumCoverImage, album.getId());
 		} else {
 			albumCoverImageUrl = awsS3Service.getDefaultAlbumCoverImage(albumCreateRequestDto.defaultCoverNumber());
