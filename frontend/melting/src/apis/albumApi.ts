@@ -65,9 +65,9 @@ export const albumApi = {
       }),
     )
 
-    for (const [key, value] of formData.entries()) {
-      console.log(key, value)
-    }
+    // for (const [key, value] of formData.entries()) {
+    //   console.log(key, value)
+    // }
 
     try {
       const response = await api.post<CreateAlbumData>('', formData)
@@ -205,8 +205,6 @@ export const albumApi = {
     data: AiCoverImageRequestDto,
   ): Promise<string> => {
     try {
-      console.log(data)
-      console.log(data.songs)
       const response = await api.post<CreateAiAlbumCoverImageData>(
         '/covers',
         data,
