@@ -72,8 +72,9 @@ public class HashtagService {
 
 	@Transactional(readOnly = true)
 	public List<Hashtag> contentListToHashtagList(List<String> idList) {
-		return idList.stream().map(content -> hashtagRepository.findByContent(content)
-			.orElseThrow(() -> new BusinessException(ErrorMessage.HASHTAG_NOT_FOUND))).toList();
+		return idList.stream()
+			.map(content -> Hashtag.builder().content(content).build())
+			.toList();
 	}
 
 	@Transactional
