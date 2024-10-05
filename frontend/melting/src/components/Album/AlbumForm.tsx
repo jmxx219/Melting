@@ -28,6 +28,7 @@ export default function AlbumForm() {
     selectedHashtags,
     selectedCover,
     selectedCoverFile,
+    selectedDefaultCoverIndex,
   } = useAlbumContext()
 
   // 유효성 검사 상태
@@ -80,7 +81,6 @@ export default function AlbumForm() {
   const handleSubmit = async () => {
     if (isFormValid) {
       // Submit logic here
-      console.log('Form submitted')
       const albumCreateRequestDto: AlbumCreateRequestDto = {
         albumName: albumName,
         albumDescription: albumIntro,
@@ -88,22 +88,34 @@ export default function AlbumForm() {
         titleSongId: titleSongIndex || selectedSongs[0]?.songId, // titleSongId는 첫 번째 곡으로 가정
         genres: selectedGenres,
         hashtags: selectedHashtags,
+        defaultCoverNumber: selectedDefaultCoverIndex || undefined,
       }
 
-      if (selectedCoverFile) {
-        const payload: CreateAlbumPayload = {
+      let payload: CreateAlbumPayload
+
+      // 기본 이미지가 선택된 경우
+      if (selectedDefaultCoverIndex) {
+        payload = {
+          albumCreateRequestDto,
+          albumCoverImage: new File([], 'default-image.jpg'), // 빈 파일 설정
+        }
+      } else if (selectedCoverFile) {
+        // 사용자 또는 AI 이미지가 선택된 경우
+        payload = {
           albumCreateRequestDto,
           albumCoverImage: selectedCoverFile,
         }
-
-        try {
-          // API 호출
-          const response = await albumApi.createAlbum(payload)
-          console.log('앨범 생성 성공:', response)
-          navigate('/album/detail/{response.albumId}')
-        } catch (error) {
-          console.error('앨범 생성 중 오류 발생:', error)
-        }
+      } else {
+        console.error('앨범 커버 이미지가 없습니다.')
+        return
+      }
+      try {
+        // API 호출
+        const response = await albumApi.createAlbum(payload)
+        console.log('앨범 생성 성공:', response)
+        navigate('/album/detail/{response.albumId}')
+      } catch (error) {
+        console.error('앨범 생성 중 오류 발생:', error)
       }
     }
   }

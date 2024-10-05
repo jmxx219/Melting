@@ -33,6 +33,8 @@ export interface AlbumCreateRequestDto {
   titleSongId: number
   genres: string[]
   hashtags: string[]
+  /** @format int32 */
+  defaultCoverNumber?: number
 }
 
 export interface CreateAlbumPayload {
