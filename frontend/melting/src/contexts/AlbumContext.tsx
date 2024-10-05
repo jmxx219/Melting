@@ -7,7 +7,9 @@ import {
 } from 'react'
 
 import { Song } from '@/types/song'
+import { ImageInfo } from '@/types/album.ts'
 
+// AlbumContextType에 이미지 관련 속성 추가
 interface AlbumContextType {
   albumName: string
   setAlbumName: (name: string) => void
@@ -25,6 +27,8 @@ interface AlbumContextType {
   setSelectedCover: (cover: string | null) => void
   selectedCoverFile: File | null
   setSelectedCoverFile: (cover: File | null) => void
+  images: ImageInfo[]
+  setImages: React.Dispatch<React.SetStateAction<ImageInfo[]>>
 }
 
 // 기본값은 null이 아닌 적절한 기본 상태를 설정하거나 undefined로 설정
@@ -52,9 +56,34 @@ export const AlbumProvider = ({ children }: AlbumProviderProps) => {
   const [selectedCover, setSelectedCover] = useState<string | null>(null)
   const [selectedCoverFile, setSelectedCoverFile] = useState<File | null>(null)
 
+  // 기본 이미지 상태 설정
+  const [images, setImages] = useState<ImageInfo[]>([
+    {
+      id: 'default1',
+      url: 'https://d35fpwscei7sb8.cloudfront.net/image/generated_album_cover/default_cover_image_1.png',
+      description: '기본 이미지 1',
+      file: null,
+      type: 'default',
+    },
+    {
+      id: 'default2',
+      url: 'https://d35fpwscei7sb8.cloudfront.net/image/generated_album_cover/default_cover_image_2.png',
+      description: '기본 이미지 2',
+      file: null,
+      type: 'default',
+    },
+    {
+      id: 'default3',
+      url: 'https://d35fpwscei7sb8.cloudfront.net/image/generated_album_cover/default_cover_image_3.png',
+      description: '기본 이미지 3',
+      file: null,
+      type: 'default',
+    },
+  ])
+
   useEffect(() => {
     if (selectedSongs.length > 0 && titleSongIndex === null) {
-      setTitleSongIndex(selectedSongs[0].songId) // 첫 번째 곡의 songId로 설정, 오직 titleSongIndex가 null일 때만
+      setTitleSongIndex(selectedSongs[0].songId) // 첫 번째 곡의 songId로 설정
     } else if (selectedSongs.length === 0) {
       setTitleSongIndex(null) // 곡이 없으면 null로 설정
     }
@@ -79,6 +108,8 @@ export const AlbumProvider = ({ children }: AlbumProviderProps) => {
         setSelectedCover,
         selectedCoverFile,
         setSelectedCoverFile,
+        images,
+        setImages,
       }}
     >
       {children}

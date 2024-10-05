@@ -69,7 +69,7 @@ export default function SongSelection() {
             <div
               {...provided.droppableProps}
               ref={provided.innerRef}
-              className={`${selectedSongs.length > 0 ? '' : 'border-b-2'} rounded-md p-2`}
+              className={`${selectedSongs.length > 0 ? '' : 'border-b-2'} p-2`}
             >
               {selectedSongs.length === 0 ? (
                 <div className="flex justify-between items-center text-sm text-gray">
