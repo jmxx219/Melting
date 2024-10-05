@@ -19,13 +19,18 @@ import org.springframework.web.multipart.MultipartFile;
 import com.dayangsung.melting.domain.album.dto.request.AlbumCreateRequestDto;
 import com.dayangsung.melting.domain.album.dto.request.AlbumUpdateRequestDto;
 import com.dayangsung.melting.domain.album.dto.request.openai.AiCoverImageRequestDto;
+import com.dayangsung.melting.domain.album.dto.request.openai.AiDescriptionRequestDto;
 import com.dayangsung.melting.domain.album.dto.response.AlbumDetailsResponseDto;
+import com.dayangsung.melting.domain.album.dto.response.AlbumRankingPageResponseDto;
+import com.dayangsung.melting.domain.album.dto.response.AlbumRankingResponseDto;
 import com.dayangsung.melting.domain.album.dto.response.AlbumSearchPageResponseDto;
 import com.dayangsung.melting.domain.album.service.AlbumCoverImageService;
+import com.dayangsung.melting.domain.album.service.AlbumDescriptionService;
 import com.dayangsung.melting.domain.album.service.AlbumService;
 import com.dayangsung.melting.domain.auth.CustomOAuth2User;
 import com.dayangsung.melting.domain.genre.dto.response.GenreResponseDto;
 import com.dayangsung.melting.global.common.response.ApiResponse;
+import com.fasterxml.jackson.core.JsonProcessingException;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -38,6 +43,7 @@ public class AlbumController {
 
 	private final AlbumService albumService;
 	private final AlbumCoverImageService albumCoverImageService;
+	private final AlbumDescriptionService albumDescriptionService;
 
 	@GetMapping
 	public ApiResponse<AlbumSearchPageResponseDto> getAlbums(
@@ -51,7 +57,7 @@ public class AlbumController {
 	@PostMapping
 	public ApiResponse<AlbumDetailsResponseDto> createAlbum(
 		@RequestPart AlbumCreateRequestDto albumCreateRequestDto,
-		@RequestPart MultipartFile albumCoverImage,
+		@RequestPart(required = false) MultipartFile albumCoverImage,
 		@AuthenticationPrincipal CustomOAuth2User customOAuth2User) {
 		AlbumDetailsResponseDto albumDetailsResponseDto =
 			albumService.createAlbum(albumCreateRequestDto, albumCoverImage, customOAuth2User.getName());
@@ -96,12 +102,18 @@ public class AlbumController {
 		return ApiResponse.ok(toggledIsPublic);
 	}
 
-	@PostMapping("/{albumId}/covers")
-	public ApiResponse<String> createAiAlbumCoverImage(@PathVariable Long albumId,
+	@PostMapping("/covers")
+	public ApiResponse<String> createAiAlbumCoverImage(
 			@RequestBody AiCoverImageRequestDto aiCoverImageRequestDto) throws IOException {
-		List<Long> songs = aiCoverImageRequestDto.songs();
-		String base64Image = albumCoverImageService.createAiCoverImage(albumId, songs);
+		String base64Image = albumCoverImageService.createAiCoverImage(aiCoverImageRequestDto.songs());
 		return ApiResponse.ok(base64Image);
+	}
+
+	@PostMapping("/{albumId}/descriptions")
+	public ApiResponse<String> createAiDescription(@PathVariable Long albumId,
+			@RequestBody AiDescriptionRequestDto aiDescriptionRequestDto) throws JsonProcessingException {
+		String description = albumDescriptionService.createAiDescription(albumId, aiDescriptionRequestDto);
+		return ApiResponse.ok(description);
 	}
 
 	@GetMapping("/genres")
@@ -116,6 +128,24 @@ public class AlbumController {
 		return ApiResponse.ok(albumLikesCount);
 	}
 
+	@GetMapping("/steady")
+	public ApiResponse<List<AlbumRankingResponseDto>> getSteadyAlbums() {
+		List<AlbumRankingResponseDto> steadyAlbums = albumService.getSteadyAlbums();
+		return ApiResponse.ok(steadyAlbums);
+	}
+
+	@GetMapping("/daily")
+	public ApiResponse<List<AlbumRankingResponseDto>> getHot5Albums() {
+		List<AlbumRankingResponseDto> hot5Albums = albumService.getHot5Albums();
+		return ApiResponse.ok(hot5Albums);
+	}
+
+	@GetMapping("/monthly")
+	public ApiResponse<List<AlbumRankingResponseDto>> getMonthlyAlbums() {
+		List<AlbumRankingResponseDto> monthlyAlbums = albumService.getMonthlyTop5Albums();
+		return ApiResponse.ok(monthlyAlbums);
+	}
+
 	@PostMapping("/{albumId}/likes")
 	public ApiResponse<Integer> addAlbumLikes(@PathVariable Long albumId,
 		@AuthenticationPrincipal CustomOAuth2User customOAuth2User) {
@@ -128,5 +158,14 @@ public class AlbumController {
 		@AuthenticationPrincipal CustomOAuth2User customOAuth2User) {
 		Integer albumLikesCount = albumService.decreaseAlbumLikes(albumId, customOAuth2User.getName());
 		return ApiResponse.ok(albumLikesCount);
+	}
+
+	@GetMapping("/hashtags/{hashtag}")
+	public ApiResponse<AlbumRankingPageResponseDto> getAlbumPageContainsHashtag(
+		@RequestParam(defaultValue = "0") int page,
+		@RequestParam(defaultValue = "10") int size,
+		@PathVariable("hashtag") String hashtagContent) {
+		AlbumRankingPageResponseDto albumPageByHashtag = albumService.findByHashtag(hashtagContent, page, size);
+		return ApiResponse.ok(albumPageByHashtag);
 	}
 }

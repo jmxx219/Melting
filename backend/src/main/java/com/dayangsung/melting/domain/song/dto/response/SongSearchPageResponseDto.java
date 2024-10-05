@@ -16,12 +16,12 @@ public record SongSearchPageResponseDto(
 	Long totalElements,
 	Integer numberOfElements
 ) {
-	public static SongSearchPageResponseDto of(Page<SongSearchResponseDto> songPage){
+	public static SongSearchPageResponseDto of(Page<SongSearchResponseDto> songPage) {
 		return SongSearchPageResponseDto.builder()
 			.songSearchResponseDtoList(songPage.getContent())
 			.isLast(songPage.isLast())
-			.pageNumber(songPage.getNumber())
-			.pageSize(songPage.getSize())
+			.pageNumber(songPage.getPageable().getPageNumber())
+			.pageSize(songPage.getPageable().getPageSize())
 			.totalPages(songPage.getTotalPages())
 			.totalElements(songPage.getTotalElements())
 			.numberOfElements(songPage.getNumberOfElements())

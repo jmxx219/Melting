@@ -43,15 +43,14 @@ public class LikesService {
 			.findLikesAlbumByAlbumIdAndMemberId(albumId, memberId).orElseGet(() ->
 				LikesAlbum.builder()
 					.album(albumRepository.findById(albumId)
-						.orElseThrow(RuntimeException::new))
+						.orElseThrow(() -> new BusinessException(ErrorMessage.ALBUM_NOT_FOUND)))
 					.member(memberRepository.findById(memberId)
-						.orElseThrow(RuntimeException::new))
+						.orElseThrow(() -> new BusinessException(ErrorMessage.MEMBER_NOT_FOUND)))
 					.build());
 		if (!album.getLikesAlbums().contains(likesAlbum)) {
 			album.addAlbumLikes(likesAlbum);
 		}
 		Double albumLikesCount = redisTemplate.opsForZSet().incrementScore("album_likes", albumId, 1);
-		likesAlbum.updateStatus(true);
 		likesAlbumRepository.save(likesAlbum);
 
 		return albumLikesCount != null ? albumLikesCount.intValue() : 0;
@@ -61,7 +60,7 @@ public class LikesService {
 	public Integer decreaseAlbumLikes(Long albumId, Long memberId) {
 		LikesAlbum likesAlbum = likesAlbumRepository
 			.findLikesAlbumByAlbumIdAndMemberId(albumId, memberId)
-			.orElseThrow(RuntimeException::new);
+			.orElseThrow(() -> new BusinessException(ErrorMessage.ALBUM_LIKES_NOT_FOUND));
 
 		Double albumLikesCount = redisTemplate.opsForZSet().incrementScore("album_likes", albumId, -1);
 		likesAlbum.updateStatus(false);
@@ -81,13 +80,11 @@ public class LikesService {
 			.findLikesSongBySongIdAndMemberId(songId, memberId).orElseGet(() ->
 				LikesSong.builder()
 					.song(songRepository.findById(songId)
-						.orElseThrow(RuntimeException::new))
+						.orElseThrow(() -> new BusinessException(ErrorMessage.SONG_NOT_FOUND)))
 					.member(memberRepository.findById(memberId)
-						.orElseThrow(RuntimeException::new))
+						.orElseThrow(() -> new BusinessException(ErrorMessage.MEMBER_NOT_FOUND)))
 					.build());
-
 		Double songLikesCount = redisTemplate.opsForZSet().incrementScore("song_likes", songId, 1);
-		likesSong.updateStatus(true);
 		likesSongRepository.save(likesSong);
 
 		return songLikesCount != null ? songLikesCount.intValue() : 0;
@@ -97,7 +94,7 @@ public class LikesService {
 	public Integer decreaseSongLikes(Long songId, Long memberId) {
 		LikesSong likesSong = likesSongRepository
 			.findLikesSongBySongIdAndMemberId(songId, memberId)
-			.orElseThrow(RuntimeException::new);
+			.orElseThrow(() -> new BusinessException(ErrorMessage.SONG_LIKES_NOT_FOUND));
 
 		Double songLikesCount = redisTemplate.opsForZSet().incrementScore("song_likes", songId, -1);
 		likesSong.updateStatus(false);
@@ -107,13 +104,13 @@ public class LikesService {
 	}
 
 	public Boolean isLikedBySongAndMember(Long songId, Long memberId) {
-		return likesSongRepository.existsByMemberIdAndSongIdAndStatusTrue(songId, memberId).orElse(false);
+		return likesSongRepository.existsByMemberIdAndSongIdAndStatusTrue(memberId, songId);
 	}
 
 	public Boolean isLikedByAlbumAndMember(Long albumId, Long memberId) {
-		return likesAlbumRepository.existsByMemberIdAndAlbumIdAndStatusTrue(albumId, memberId).orElse(false);
+		return likesAlbumRepository.existsByMemberIdAndAlbumIdAndStatusTrue(memberId, albumId);
 	}
-	
+
 	public void deleteAlbumLikesOnRedis(Long albumId) {
 		redisTemplate.opsForZSet().remove("song_likes", albumId);
 	}

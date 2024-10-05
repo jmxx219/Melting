@@ -1,10 +1,6 @@
 package com.dayangsung.melting.domain.song.controller;
 
-import java.util.concurrent.CompletableFuture;
-
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -39,8 +35,7 @@ public class SongController {
 
 	@Operation(summary = "멜팅 곡 생성 API")
 	@PostMapping(value = "/melting", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-	@Async
-	public CompletableFuture<ResponseEntity<ApiResponse<Void>>> createMeltingSong(
+	public ApiResponse<Boolean> createMeltingSong(
 		@ModelAttribute MeltingSongCreateRequestDto meltingSongCreateRequestDto,
 		@AuthenticationPrincipal CustomOAuth2User customOAuth2User) throws Exception {
 
@@ -53,21 +48,21 @@ public class SongController {
 		// 	);
 		// }
 
-		return songService.createMeltingSong(customOAuth2User.getName(), originalSongId, voiceFile)
-			.thenApply(result -> ResponseEntity.ok(ApiResponse.ok(result)));
+		songService.createMeltingSong(customOAuth2User.getName(), originalSongId, voiceFile);
+		// .thenApply(result -> ApiResponse.ok(result));
+		return ApiResponse.ok(true);
 	}
 
 	@Operation(summary = "AI Cover 곡 생성 API")
 	@PostMapping(value = "/aicover")
-	@Async
-	public CompletableFuture<ResponseEntity<ApiResponse<Void>>> createAicoverSong(
+	public ApiResponse<Boolean> createAicoverSong(
 		@RequestBody AiCoverSongCreateRequestDto aiCoverSongCreateRequestDto,
 		@AuthenticationPrincipal CustomOAuth2User customOAuth2User) throws Exception {
 
 		Long originalSongId = aiCoverSongCreateRequestDto.originalSongId();
 
-		return songService.createAiCoverSong(customOAuth2User.getName(), originalSongId)
-			.thenApply(result -> ResponseEntity.ok(ApiResponse.ok(result)));
+		songService.createAiCoverSong(customOAuth2User.getName(), originalSongId);
+		return ApiResponse.ok(true);
 	}
 
 	@Operation(summary = "곡 상세조회(스트리밍) API")
@@ -81,10 +76,11 @@ public class SongController {
 
 	@GetMapping
 	public ApiResponse<SongSearchPageResponseDto> getSongsForAlbumCreation(
-		@RequestParam String keyword,
+		@RequestParam(required = false) String keyword,
 		@RequestParam(defaultValue = "0") int page,
 		@RequestParam(defaultValue = "10") int size,
 		@AuthenticationPrincipal CustomOAuth2User customOAuth2User) {
+		log.debug("keyword: {}", keyword);
 		SongSearchPageResponseDto responseDto =
 			songService.getSongsForAlbumCreation(customOAuth2User.getName(), keyword, page, size);
 		return ApiResponse.ok(responseDto);

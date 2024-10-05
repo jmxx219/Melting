@@ -19,21 +19,16 @@ import com.dayangsung.melting.domain.album.dto.request.AlbumCreateRequestDto;
 import com.dayangsung.melting.domain.album.dto.response.AlbumDetailsResponseDto;
 import com.dayangsung.melting.domain.album.dto.response.AlbumMyPageResponseDto;
 import com.dayangsung.melting.domain.album.dto.response.AlbumMyResponseDto;
+import com.dayangsung.melting.domain.album.dto.response.AlbumRankingPageResponseDto;
+import com.dayangsung.melting.domain.album.dto.response.AlbumRankingResponseDto;
 import com.dayangsung.melting.domain.album.dto.response.AlbumSearchPageResponseDto;
 import com.dayangsung.melting.domain.album.dto.response.AlbumSearchResponseDto;
 import com.dayangsung.melting.domain.album.entity.Album;
 import com.dayangsung.melting.domain.album.enums.AlbumCategory;
 import com.dayangsung.melting.domain.album.repository.AlbumRepository;
 import com.dayangsung.melting.domain.genre.dto.response.GenreResponseDto;
-import com.dayangsung.melting.domain.genre.entity.AlbumGenre;
-import com.dayangsung.melting.domain.genre.entity.Genre;
-import com.dayangsung.melting.domain.genre.repository.AlbumGenreRepository;
-import com.dayangsung.melting.domain.genre.repository.GenreRepository;
 import com.dayangsung.melting.domain.genre.service.GenreService;
-import com.dayangsung.melting.domain.hashtag.entity.AlbumHashtag;
-import com.dayangsung.melting.domain.hashtag.entity.Hashtag;
-import com.dayangsung.melting.domain.hashtag.repository.AlbumHashtagRepository;
-import com.dayangsung.melting.domain.hashtag.repository.HashtagRepository;
+import com.dayangsung.melting.domain.hashtag.service.HashtagService;
 import com.dayangsung.melting.domain.likes.service.LikesService;
 import com.dayangsung.melting.domain.member.entity.Member;
 import com.dayangsung.melting.domain.member.repository.MemberRepository;
@@ -43,6 +38,7 @@ import com.dayangsung.melting.domain.song.repository.SongRepository;
 import com.dayangsung.melting.global.common.enums.ErrorMessage;
 import com.dayangsung.melting.global.common.service.AwsS3Service;
 import com.dayangsung.melting.global.exception.BusinessException;
+import com.dayangsung.melting.global.util.RedisUtil;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -56,12 +52,10 @@ public class AlbumService {
 	private final AlbumRepository albumRepository;
 	private final SongRepository songRepository;
 	private final GenreService genreService;
-	private final GenreRepository genreRepository;
-	private final AlbumGenreRepository albumGenreRepository;
-	private final HashtagRepository hashtagRepository;
-	private final AlbumHashtagRepository albumHashtagRepository;
 	private final LikesService likesService;
 	private final AwsS3Service awsS3Service;
+	private final RedisUtil redisUtil;
+	private final HashtagService hashtagService;
 
 	@Transactional
 	public AlbumDetailsResponseDto createAlbum(AlbumCreateRequestDto albumCreateRequestDto,
@@ -85,9 +79,7 @@ public class AlbumService {
 			if (song.getAlbum() != null) {
 				throw new BusinessException(ErrorMessage.SONG_ALREADY_INCLUDED);
 			}
-			song.setAlbum(album);
-			song.setTrackNumber(trackNumber);
-			song.setIsTitle(Objects.equals(albumCreateRequestDto.titleSongId(), song.getId()));
+			song.setAlbumInfo(album, trackNumber, Objects.equals(albumCreateRequestDto.titleSongId(), song.getId()));
 			songRepository.save(song);
 			album.addSong(song);
 			songs.add(SongDetailsResponseDto.of(
@@ -96,24 +88,21 @@ public class AlbumService {
 				likesService.getSongLikesCount(songId)));
 		}
 
-		for (Long genreId : albumCreateRequestDto.genres()) {
-			Genre genre = genreRepository.findById(genreId)
-				.orElseThrow(() -> new BusinessException(ErrorMessage.GENRE_NOT_FOUND));
-			AlbumGenre albumGenre = AlbumGenre.builder().album(album).genre(genre).build();
-			albumGenreRepository.save(albumGenre);
-			album.addGenre(albumGenre);
+		for (String genreContent : albumCreateRequestDto.genres()) {
+			genreService.addAlbumGenre(album, genreContent);
 		}
 
-		for (String content : albumCreateRequestDto.hashtags()) {
-			Hashtag hashtag = hashtagRepository.findByContent(content)
-				.orElseGet(() -> hashtagRepository.save(new Hashtag(content)));
-			AlbumHashtag albumHashtag = AlbumHashtag.builder().album(album).hashtag(hashtag).build();
-			albumHashtagRepository.save(albumHashtag);
-			album.addHashtag(albumHashtag);
+		for (String hashtagContent : albumCreateRequestDto.hashtags()) {
+			hashtagService.addAlbumHashtag(album, hashtagContent);
 		}
 
 		album = albumRepository.save(album);
-		String albumCoverImageUrl = awsS3Service.uploadAlbumCoverImage(albumCoverImage, album.getId());
+		String albumCoverImageUrl;
+		if (albumCoverImage != null) {
+			albumCoverImageUrl = awsS3Service.uploadAlbumCoverImage(albumCoverImage, album.getId());
+		} else {
+			albumCoverImageUrl = awsS3Service.getDefaultAlbumCoverImage(albumCreateRequestDto.defaultCoverNumber());
+		}
 		album.updateAlbumCoverImageUrl(albumCoverImageUrl);
 		album = albumRepository.save(album);
 
@@ -252,6 +241,28 @@ public class AlbumService {
 			likesService.isLikedByAlbumAndMember(album.getId(), memberId),
 			likesService.getAlbumLikesCount(album.getId())));
 		return AlbumMyPageResponseDto.of(albumMyResponseDtoPage);
+	}
+
+	public List<AlbumRankingResponseDto> getSteadyAlbums() {
+		List<Album> top5AlbumLikes = redisUtil.getTop5AlbumLikes();
+		return top5AlbumLikes.stream().map(AlbumRankingResponseDto::of).toList();
+	}
+
+	public List<AlbumRankingResponseDto> getHot5Albums() {
+		List<Album> hot5Albums = redisUtil.getTop5AlbumsStreaming(true);
+		return hot5Albums.stream().map(AlbumRankingResponseDto::of).toList();
+	}
+
+	public List<AlbumRankingResponseDto> getMonthlyTop5Albums() {
+		List<Album> monthlyTop5Albums = redisUtil.getTop5AlbumsStreaming(false);
+		return monthlyTop5Albums.stream().map(AlbumRankingResponseDto::of).toList();
+	}
+
+	public AlbumRankingPageResponseDto findByHashtag(String content, int page, int size) {
+		Pageable pageable = PageRequest.of(page, size);
+		Page<AlbumRankingResponseDto> albumPage =
+			albumRepository.findByHashtag(content, pageable).map(AlbumRankingResponseDto::of);
+		return AlbumRankingPageResponseDto.of(albumPage);
 	}
 
 	public List<GenreResponseDto> getAllGenres() {

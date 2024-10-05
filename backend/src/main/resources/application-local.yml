@@ -25,7 +25,6 @@ spring:
 
   data:
     redis:
-      host: j11a701.p.ssafy.io
       port: 6379
       redisson-prefix: redis://
 
@@ -33,6 +32,12 @@ spring:
     multipart:
       max-file-size: 20MB
       max-request-size: 20MB
+
+  batch:
+    job:
+      enabled: false
+    jdbc:
+      initialize-schema: always
 
 logging:
   level:
