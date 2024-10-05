@@ -6,6 +6,7 @@ import org.springframework.security.web.authentication.SimpleUrlAuthenticationFa
 import org.springframework.stereotype.Component;
 
 import com.dayangsung.melting.global.common.response.ApiResponse;
+import com.dayangsung.melting.global.util.WebHookUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -30,6 +31,10 @@ public class LoginFailureHandler extends SimpleUrlAuthenticationFailureHandler {
 		response.getWriter().write(objectMapper.writeValueAsString(
 			ApiResponse.error("OAuth2 Authentication Failed")
 		));
-		log.error("OAuth2 Authentication Failed: {}", exception.getMessage(), exception);
+
+		String logMessage = String.format("OAuth2 Authentication Failed: %s", exception.getMessage());
+		log.error(logMessage, exception);
+
+		WebHookUtils.sendWebHookMessage(logMessage);
 	}
 }
