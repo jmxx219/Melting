@@ -166,7 +166,12 @@ export const userApi = {
     size?: number,
   ): Promise<SongMypagePageResponseDto> => {
     try {
-      const response = await api.get<GetMemberSongsData>('/me/songs')
+      const response = await api.get<GetMemberSongsData>('/me/songs', {
+        params: {
+          page,
+          size,
+        },
+      })
       return response.data as SongMypagePageResponseDto
     } catch (error) {
       throw error as GetMemberSongsError
