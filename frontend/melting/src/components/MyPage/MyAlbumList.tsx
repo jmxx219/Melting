@@ -16,7 +16,7 @@ export default function MyAlbumList({
   const [isLast, setIsLast] = useState(false)
   const [loading, setLoading] = useState(false)
 
-  const fetchAlbums = async (page: number) => {
+  const fetchAlbums = async (page: number = 0) => {
     setLoading(true)
     try {
       let response: AlbumMyPageResponseDto
@@ -54,6 +54,7 @@ export default function MyAlbumList({
             key={`${album.albumId}-${index}`}
             album={album}
             viewType={viewType}
+            fetchAlbums={fetchAlbums}
           />
         ))}
       </div>

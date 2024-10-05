@@ -12,9 +12,14 @@ import { albumApi } from '@/apis/albumApi'
 interface MyAlbumProps {
   album: AlbumMyResponseDto
   viewType: 'MY' | 'LIKED'
+  fetchAlbums: () => void
 }
 
-export default function MyAlbumContent({ album, viewType }: MyAlbumProps) {
+export default function MyAlbumContent({
+  album,
+  viewType,
+  fetchAlbums,
+}: MyAlbumProps) {
   const navigate = useNavigate()
   const [isLiked, setIsLiked] = useState(album.isLiked)
   const [likeCount, setLikeCount] = useState(album.likedCount || 0)
@@ -61,15 +66,11 @@ export default function MyAlbumContent({ album, viewType }: MyAlbumProps) {
   }
 
   const deleteAlbum = async () => {
-    // TODO: 앨범 삭제 API 호출
-    console.log('앨범 삭제: ', album.albumId)
-
-    await albumApi.deleteAlbum(album.albumId)
-
-    if (viewType === 'MY') {
-      navigate('/mypage/my')
-    } else if (viewType === 'LIKED') {
-      navigate('/mypage/liked')
+    try {
+      await albumApi.deleteAlbum(album.albumId)
+      fetchAlbums()
+    } catch (error) {
+      console.error('삭제 중 오류 발생:', error)
     }
   }
 
