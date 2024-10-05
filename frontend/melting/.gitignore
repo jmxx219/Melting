@@ -26,5 +26,4 @@ dist-ssr
 .idea/*
 mkcert
 
-# vite.config.ts
 src/typeApis/
