@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.dayangsung.melting.domain.hashtag.dto.response.HashtagPageResponseDto;
 import com.dayangsung.melting.domain.hashtag.dto.response.HashtagResponseDto;
 import com.dayangsung.melting.domain.hashtag.service.HashtagService;
+import com.dayangsung.melting.global.aop.LogExecution;
 import com.dayangsung.melting.global.common.response.ApiResponse;
 
 import lombok.RequiredArgsConstructor;
@@ -16,6 +17,7 @@ import lombok.RequiredArgsConstructor;
 @RestController
 @RequestMapping("/api/v1/hashtags")
 @RequiredArgsConstructor
+@LogExecution
 public class HashtagController {
 
 	private final HashtagService hashtagService;

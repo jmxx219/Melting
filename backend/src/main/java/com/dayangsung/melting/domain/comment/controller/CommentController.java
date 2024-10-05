@@ -16,6 +16,7 @@ import com.dayangsung.melting.domain.comment.dto.request.CommentRequestDto;
 import com.dayangsung.melting.domain.comment.dto.response.CommentPageResponseDto;
 import com.dayangsung.melting.domain.comment.dto.response.CommentResponseDto;
 import com.dayangsung.melting.domain.comment.service.CommentService;
+import com.dayangsung.melting.global.aop.LogExecution;
 import com.dayangsung.melting.global.common.response.ApiResponse;
 
 import lombok.RequiredArgsConstructor;
@@ -24,6 +25,7 @@ import lombok.RequiredArgsConstructor;
 @RestController
 @RequestMapping("/api/v1/albums/{albumId}/comments")
 @RequiredArgsConstructor
+@LogExecution
 public class CommentController {
 
 	private final CommentService commentService;

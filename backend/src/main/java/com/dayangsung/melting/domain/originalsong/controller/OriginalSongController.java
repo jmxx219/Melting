@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.dayangsung.melting.domain.originalsong.dto.response.OriginalSongResponseDto;
 import com.dayangsung.melting.domain.originalsong.dto.response.OriginalSongSearchPageResponseDto;
 import com.dayangsung.melting.domain.originalsong.service.OriginalSongService;
+import com.dayangsung.melting.global.aop.LogExecution;
 import com.dayangsung.melting.global.common.response.ApiResponse;
 
 import lombok.RequiredArgsConstructor;
@@ -18,6 +19,7 @@ import lombok.extern.slf4j.Slf4j;
 @RestController
 @RequestMapping("/api/v1/original-songs")
 @RequiredArgsConstructor
+@LogExecution
 public class OriginalSongController {
 
 	private final OriginalSongService originalSongService;
