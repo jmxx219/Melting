@@ -1,5 +1,6 @@
+import { ErrorResponse, ApiResponseInteger } from '@/types/globalType.ts'
 import { CoverType } from './constType'
-import { ErrorResponse } from '@/types/globalType.ts'
+import { ApiResponseBoolean } from './user'
 
 export type Song = {
   songId: number
@@ -7,26 +8,18 @@ export type Song = {
   artist: string
   albumCoverImageUrl: string
   nickname: string
-  songType: CoverType
-  meltingSongId: number | null
-  aiCoverSongId: number | null
+  songType?: CoverType
+  meltingSongId?: number | null
+  aiCoverSongId?: number | null
+  likeCount?: number
+  isLiked?: boolean
+  lengthInSeconds?: number
 }
 
 export interface SongListProps {
-  songs: Song[]
+  songs: OriginalSongSearchResponseDto[] | undefined
   showNumbers: boolean
-  selectId: number
-}
-
-export type LikedSongType = {
-  songId: number
-  albumCoverImgUrl: string
-  artist: string
-  songTitle: string
-  nickname: string
-  executionTime: string
-  likeCount: number
-  isLiked: boolean
+  selectId?: number
 }
 
 export interface SongSearchResponseDto {
@@ -60,6 +53,31 @@ export interface ApiResponseSongSearchPageResponseDto {
   errorMessage?: string
 }
 
+export interface OriginalSongResponseDto {
+  /** @format int64 */
+  originalSongId: number
+  title: string
+  artist: string
+  albumCoverUrl: string
+  mrUrl: string
+  lyrics: string
+}
+
+export type AddSongLikesData = ApiResponseInteger
+
+export type DeleteSongLikesData = ApiResponseInteger
+export interface OriginalSongSearchResponseDto {
+  /** @format int64 */
+  originalSongId: number
+  title: string
+  artist: string
+  coverImageUrl: string
+}
+
 export type GetSongsForAlbumCreationData = ApiResponseSongSearchPageResponseDto
 
 export type GetSongsForAlbumCreationError = ErrorResponse
+
+export type CreateAicoverSongData = ApiResponseBoolean
+
+export type CreateAicoverSongError = ErrorResponse

@@ -108,26 +108,26 @@ export default function AlbumDetail({ albumId }: AlbumDetailProps) {
     return <div>앨범 정보를 찾을 수 없습니다.</div>
   }
 
-  return (
-    <div>
-      <div>
-        {
-          <AlbumDetailInfo
-            albumInfo={album.albumDescription}
-            albumId={albumId}
-          />
-        }
-      </div>
-      <div>
-        <AlbumSong songs={album.songs} />
-      </div>
-      <div>
-        <AlbumCommentList
-          commentCnt={album.commentCount}
-          comments={album.comments}
-          albumId={album.albumId}
-        />
-      </div>
-    </div>
-  )
-}
+    return (
+        <div>
+          <div>
+            {
+              <AlbumDetailInfo
+                  albumInfo={album.albumDescription}
+                  albumId={albumId}
+              />
+            }
+          </div>
+          <div>
+            <AlbumSong songs={album.songs} />
+          </div>
+          <div>
+            <AlbumCommentList
+                commentCnt={album.commentCount}
+                comments={album.comments}
+                albumId={album.albumId}
+            />
+          </div>
+        </div>
+    )
+  }

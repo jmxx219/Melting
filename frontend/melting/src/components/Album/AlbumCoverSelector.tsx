@@ -4,39 +4,23 @@ import { Image, Loader } from 'lucide-react'
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area'
 import AI from '../Icon/AI'
 import { useAlbumContext } from '@/contexts/AlbumContext'
-import { urlToFile } from '@/utils/fileUtil.ts'
-
-interface ImageInfo {
-  id: string
-  url: string
-  description: string
-  type: 'user' | 'ai' | 'default'
-}
+import { base64ToFile, base64ToUrl } from '@/utils/base64Util'
+import { albumApi } from '@/apis/albumApi.ts'
+import { ImageInfo } from '@/types/album.ts'
+import ConfirmDialog from '@/components/Common/ConfirmDialog.tsx'
 
 export default function AlbumCoverSelector() {
-  const { selectedCover, setSelectedCover, setSelectedCoverFile } =
-    useAlbumContext()
-  const [images, setImages] = useState<ImageInfo[]>([
-    {
-      id: 'default1',
-      url: 'https://d35fpwscei7sb8.cloudfront.net/image/generated_album_cover/default_cover_image_01.png',
-      description: '기본 이미지 1',
-      type: 'default',
-    },
-    {
-      id: 'default2',
-      url: 'https://d35fpwscei7sb8.cloudfront.net/image/generated_album_cover/default_cover_image_02.png',
-      description: '기본 이미지 2',
-      type: 'default',
-    },
-    {
-      id: 'default3',
-      url: 'https://d35fpwscei7sb8.cloudfront.net/image/generated_album_cover/default_cover_image_03.png',
-      description: '기본 이미지 3',
-      type: 'default',
-    },
-  ])
+  const {
+    images,
+    selectedSongs,
+    selectedCover,
+    setImages,
+    setSelectedCover,
+    setSelectedCoverFile,
+  } = useAlbumContext()
   const [isGeneratingAi, setIsGeneratingAi] = useState(false)
+  const canGenerateAi =
+    selectedSongs.length > 0 && !images.some((img) => img.type === 'ai')
 
   const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0]
@@ -46,6 +30,7 @@ export default function AlbumCoverSelector() {
         const newImage: ImageInfo = {
           id: `user_${Date.now()}`,
           url: reader.result as string,
+          file,
           description: '사용자 등록 이미지',
           type: 'user',
         }
@@ -61,33 +46,51 @@ export default function AlbumCoverSelector() {
     if (images.some((img) => img.type === 'ai')) return
 
     setIsGeneratingAi(true)
-    // AI 이미지 생성 로직 (예: API 호출)
-    // 여기서는 setTimeout으로 시뮬레이션
-    setTimeout(() => {
-      const newImage: ImageInfo = {
-        id: `ai_${Date.now()}`,
-        url: 'https://d35fpwscei7sb8.cloudfront.net/image/generated_album_cover/default_cover_image_04.png',
-        description: 'AI 생성 이미지',
-        type: 'ai',
+    try {
+      // AI 커버 이미지 생성 API 호출
+      const response = await albumApi.createAiAlbumCoverImage({
+        songs: selectedSongs.map((song) => song.songId),
+      })
+
+      console.log(
+        'Server response (first 100 characters):',
+        response.substring(0, 100),
+      )
+
+      const file = base64ToFile(response, 'cover.jpg', 'image/jpeg')
+      setSelectedCoverFile(file)
+
+      const imageUrl = base64ToUrl(response, 'image/jpeg')
+      setSelectedCover(imageUrl)
+
+      if (imageUrl) {
+        const newImage: ImageInfo = {
+          id: `ai_${Date.now()}`,
+          url: imageUrl,
+          file: file,
+          description: 'AI 생성 이미지',
+          type: 'ai',
+        }
+        setImages((prevImages: ImageInfo[]) => [newImage, ...prevImages])
       }
-      setImages((prevImages) => [newImage, ...prevImages])
-      setSelectedCover(newImage.url)
-      // setSelectedCoverFile(newImage)
+    } catch (error) {
+      console.error('AI 커버 이미지 생성 중 오류 발생:', error)
+    } finally {
       setIsGeneratingAi(false)
-    }, 3000)
+    }
   }
 
   const handleImageSelect = async (image: ImageInfo) => {
     setSelectedCover(image.url)
 
-    if (image.type === 'default') {
-      // 기본 이미지의 경우 URL을 File 객체로 변환
-      const file = await urlToFile(image.url, `${image.id}.jpg`, 'image/jpeg')
-      setSelectedCoverFile(file)
-    } else {
-      // 사용자 등록 이미지나 AI 이미지는 이미 File 객체임
-      setSelectedCoverFile(new File([], 'default-image.jpg')) // AI 이미지 처리
-    }
+    // if (image.type === 'default') {
+    //   // 기본 이미지의 경우 URL을 File 객체로 변환
+    //   const file = await urlToFile(image.url, `${image.id}.jpg`, 'image/jpeg')
+    //   setSelectedCoverFile(file)
+    // } else {
+    // 사용자 등록 이미지나 AI 이미지는 이미 File 객체임
+    setSelectedCoverFile(new File([], 'default-image.jpg')) // AI 이미지 처리
+    // }
   }
 
   return (
@@ -111,25 +114,40 @@ export default function AlbumCoverSelector() {
           onChange={handleImageUpload}
           className="hidden"
         />
-        <div
-          className="flex justify-between items-center relative border-b-2 pb-2 px-2 mt-4 mr-1"
-          onClick={handleAiGeneration}
-        >
-          <div>
-            <span className="text-gray-400">AI 이미지 자동 생성</span>
-          </div>
-          <div
-            className={`${images.some((img) => img.type === 'ai') ? 'text-primary-400' : 'text-gray-400'}`}
-          >
-            <AI
-              width={22}
-              height={22}
-              fill={
-                images.some((img) => img.type === 'ai') ? '#ffaf25' : '#A5A5A5'
-              }
-            />
-          </div>
-        </div>
+        <ConfirmDialog
+          title="AI 앨범 커버 이미지 생성"
+          description="AI를 이용하여 앨범 커버 이미지를 생성하시겠습니까? 이 작업은 한 번만 수행할 수 있습니다."
+          onConfirm={handleAiGeneration}
+          triggerText={
+            <div
+              role="button"
+              className={`flex justify-between items-center relative border-b-2 pb-2 px-2 mt-4 mr-1 ${
+                !canGenerateAi || isGeneratingAi
+                  ? 'cursor-not-allowed'
+                  : 'cursor-pointer'
+              }`}
+            >
+              <div>
+                <span className="text-gray-400">AI 이미지 자동 생성</span>
+              </div>
+              <div
+                className={`${images.some((img) => img.type === 'ai') ? 'text-primary-400' : 'text-gray-400'}`}
+              >
+                <AI
+                  width={22}
+                  height={22}
+                  fill={
+                    images.some((img) => img.type === 'ai')
+                      ? '#ffaf25'
+                      : '#A5A5A5'
+                  }
+                />
+              </div>
+            </div>
+          }
+          triggerClassName="w-full"
+          disabled={!canGenerateAi || isGeneratingAi}
+        />
       </div>
 
       {isGeneratingAi && (
