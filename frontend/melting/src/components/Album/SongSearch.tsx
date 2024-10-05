@@ -62,7 +62,7 @@ export default function SongSearch() {
     if (loading || !hasMore) return
     setLoading(true)
 
-    const { newItems, isLast } = await fetchSongs(page)
+    const { newItems, isLast } = await fetchSongs(searchTerm, page)
 
     // 이 부분에서 searchResults의 첫 번째 요소를 새로 추가된 결과의 첫 번째 요소로 처리
     setSearchResults((prev) => {
