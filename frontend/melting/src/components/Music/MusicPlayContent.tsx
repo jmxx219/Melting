@@ -32,13 +32,12 @@ export default function MusicPlayContent({
 
   useEffect(() => {
     setIsLoading(true)
-    // 가사 로딩을 시뮬레이션하기 위해 setTimeout 사용
     const timer = setTimeout(() => {
       setLyricsLines(
         song.lyrics ? song.lyrics.split('\n') : ['가사가 존재하지 않습니다.'],
       )
       setIsLoading(false)
-    }, 500) // 500ms 후에 가사 표시
+    }, 500)
 
     return () => clearTimeout(timer)
   }, [song])
@@ -80,7 +79,7 @@ export default function MusicPlayContent({
         <img
           src={song.albumCoverImageUrl}
           alt="Album cover"
-          className="w-full rounded-lg mb-2"
+          className="w-full h-full rounded-lg mb-2"
         />
         <div className="flex items-center">
           <Heart className="w-6 h-6 text-red-500 mr-1" />
