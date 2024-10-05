@@ -5,7 +5,7 @@ import { Button } from '../ui/button'
 import { Card, CardContent } from '../ui/card'
 
 interface ExtendedSongListProps extends SongListProps {
-  onSelectSong: (songId: number) => void
+  onSelectSong: (songId: number | undefined) => void
   onSelectRecord: () => void
 }
 
@@ -16,21 +16,14 @@ export default function MusicList({
   onSelectSong,
   onSelectRecord,
 }: ExtendedSongListProps) {
-  if (!songs || songs.length === 0) {
-    return (
-      <div className="w-full h-full flex items-center flex-1 justify-center">
-        <p className="text-[#A5A5A5]">검색한 곡이 없습니다.</p>
-      </div>
-    )
-  }
   return (
     <div className="w-full">
       {songs &&
         songs.map((song, index) => (
           <Card
-            key={song.songId}
-            className={`border-0 rounded-none shadow-none ${selectId === song.songId ? 'bg-[#FFF3DF]' : ''}`}
-            onClick={() => onSelectSong(song.songId)}
+            key={song.originalSongId}
+            className={`mb-2 border-0 rounded-none shadow-none ${selectId === song.originalSongId ? 'bg-[#FFF3DF]' : ''}`}
+            onClick={() => onSelectSong(song.originalSongId)}
           >
             <CardContent className="flex items-center p-0 py-2">
               {showNumbers && (
@@ -40,15 +33,15 @@ export default function MusicList({
               )}
               <Avatar className="h-10 mx-1">
                 <AvatarImage
-                  src={song.albumCoverImageUrl}
-                  alt={`${song.songTitle} cover`}
+                  src={song.coverImageUrl}
+                  alt={`${song.title} cover`}
                 />
               </Avatar>
               <div className="flex-grow px-2">
-                <h3 className="text-sm font-semibold">{song.songTitle}</h3>
+                <h3 className="text-sm font-semibold">{song.title}</h3>
                 <p className="text-sm text-gray-500">{song.artist}</p>
               </div>
-              {selectId == song.songId && (
+              {selectId == song.originalSongId && (
                 <div className="px-2">
                   <Button
                     variant="outline"

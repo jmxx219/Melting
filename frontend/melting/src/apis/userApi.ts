@@ -13,9 +13,19 @@ import {
   UpdateMemberInfoPayload,
   UpdateMemberInfoData,
   MemberResponseDto,
+  GetMemberAlbumsData,
+  GetMemberLikesAlbumsData,
+  GetMemberAlbumsError,
+  GetMemberLikesAlbumsError,
+  AlbumMyPageResponseDto,
   MemberSongResponseDto,
   GetMemberSongsData,
   GetMemberSongsError,
+  GetMeltingCountsData,
+  GetMeltingCountsError,
+  MemberSongCountsResponseDto,
+  GetMemberLikesSongsData,
+  SongLikesPageResponseDto,
 } from '@/types/user'
 const instance = createAxiosInstance('members')
 const api = createApi<ApiResponse>(instance)
@@ -110,13 +120,84 @@ export const userApi = {
       throw error as CustomError
     }
   },
-
+  getMemberAlbums: async (
+    sort?: string | null,
+    page?: number,
+    size?: number,
+  ): Promise<AlbumMyPageResponseDto> => {
+    try {
+      const response = await api.get<GetMemberAlbumsData>('/me/albums', {
+        params: {
+          sort,
+          page,
+          size,
+        },
+      })
+      return response.data as AlbumMyPageResponseDto
+    } catch (error) {
+      console.error('회원 앨범 조회 오류:', error)
+      throw error as GetMemberAlbumsError
+    }
+  },
+  getMemberLikesAlbums: async (
+    sort?: string | null,
+    page?: number,
+    size?: number,
+  ): Promise<AlbumMyPageResponseDto> => {
+    try {
+      const response = await api.get<GetMemberLikesAlbumsData>(
+        '/me/likes/albums',
+        {
+          params: {
+            sort,
+            page,
+            size,
+          },
+        },
+      )
+      return response.data as AlbumMyPageResponseDto
+    } catch (error) {
+      console.error('회원 좋아요한 앨범 조회 오류:', error)
+      throw error as GetMemberLikesAlbumsError
+    }
+  },
   getMemberSongs: async (): Promise<MemberSongResponseDto> => {
     try {
       const response = await api.get<GetMemberSongsData>('')
       return response.data as MemberSongResponseDto
     } catch (error) {
       throw error as GetMemberSongsError
+    }
+  },
+  getMemberLikesSongs: async (
+    sort?: string | null,
+    page?: number,
+    size?: number,
+  ): Promise<SongLikesPageResponseDto> => {
+    try {
+      const response = await api.get<GetMemberLikesSongsData>(
+        '/me/likes/songs',
+        {
+          params: {
+            sort,
+            page,
+            size,
+          },
+        },
+      )
+      return response.data as SongLikesPageResponseDto
+    } catch (error) {
+      console.error('회원 앨범 조회 오류:', error)
+      throw error as GetMemberAlbumsError
+    }
+  },
+  getUserCoverCnt: async (): Promise<MemberSongCountsResponseDto> => {
+    try {
+      const response = await api.get<GetMeltingCountsData>('/me/songcounts')
+      return response.data as MemberSongCountsResponseDto
+    } catch (error) {
+      console.error('Failed to fetch songs for album creation:', error)
+      throw error as GetMeltingCountsError
     }
   },
 }

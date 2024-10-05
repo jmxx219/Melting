@@ -41,6 +41,41 @@ export interface ApiResponseMemberResponseDto {
   errorMessage?: string
 }
 
+export interface ApiResponseAlbumMyPageResponseDto {
+  status?: string
+  data?: AlbumMyPageResponseDto
+  errorMessage?: string
+}
+
+export interface AlbumMyPageResponseDto {
+  albumInfoList: AlbumMyResponseDto[]
+  isLast: boolean
+  /** @format int32 */
+  pageNumber: number
+  /** @format int32 */
+  pageSize: number
+  /** @format int32 */
+  totalPages: number
+  /** @format int64 */
+  totalElements: number
+  /** @format int32 */
+  numberOfElements: number
+}
+
+export interface AlbumMyResponseDto {
+  /** @format int64 */
+  albumId: number
+  albumName: string
+  albumCoverImageUrl: string
+  creatorNickname: string
+  /** @format date-time */
+  createdAt: string
+  isPublic: boolean
+  isLiked: boolean
+  /** @format int32 */
+  likedCount: number
+}
+
 export type ReissueData = ApiResponseString
 
 export type ReissueError = ErrorResponse
@@ -81,6 +116,13 @@ export type UpdateMemberInfoData = ApiResponseMemberResponseDto
 
 export type UpdateMemberInfoError = ErrorResponse
 
+export type GetMemberAlbumsData = ApiResponseAlbumMyPageResponseDto
+
+export type GetMemberLikesAlbumsData = ApiResponseAlbumMyPageResponseDto
+
+export type GetMemberAlbumsError = ErrorResponse
+
+export type GetMemberLikesAlbumsError = ErrorResponse
 export interface SongMypageDto {
   /** @format int64 */
   songId?: number
@@ -113,6 +155,58 @@ export interface ApiResponseMemberSongResponseDto {
   errorMessage?: string
 }
 
+export interface MemberSongCountsResponseDto {
+  /** @format int32 */
+  songcounts: number
+}
+
+export interface ApiResponseMemberSongCountsResponseDto {
+  status?: string
+  data?: MemberSongCountsResponseDto
+  errorMessage?: string
+}
+
 export type GetMemberSongsData = ApiResponseMemberSongResponseDto
 
 export type GetMemberSongsError = ErrorResponse
+
+export type GetMeltingCountsData = ApiResponseMemberSongCountsResponseDto
+
+export type GetMeltingCountsError = ErrorResponse
+
+export interface ApiResponseSongLikesPageResponseDto {
+  status?: string
+  data?: SongLikesPageResponseDto
+  errorMessage?: string
+}
+
+export interface SongLikesPageResponseDto {
+  songLikesList: SongLikesResponseDto[]
+  isLast?: boolean
+  /** @format int32 */
+  pageNumber?: number
+  /** @format int32 */
+  pageSize?: number
+  /** @format int32 */
+  totalPages?: number
+  /** @format int64 */
+  totalElements?: number
+  /** @format int32 */
+  numberOfElements?: number
+}
+
+export interface SongLikesResponseDto {
+  /** @format int64 */
+  songId: number
+  title: string
+  albumCoverImageUrl: string
+  creatorNickname: string
+  artist: string
+  isLiked: boolean
+  /** @format int32 */
+  likedCount: number
+  /** @format int32 */
+  lengthInSeconds: number
+}
+
+export type GetMemberLikesSongsData = ApiResponseSongLikesPageResponseDto
