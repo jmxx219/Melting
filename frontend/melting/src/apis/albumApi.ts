@@ -30,6 +30,9 @@ import {
   CreateAiAlbumCoverImageError,
   ToggleIsPublicData,
   DeleteAlbumData,
+  GetAlbumDetailsData,
+  GetAlbumDetailsError,
+  AlbumDetailsResponseDto,
 } from '@/types/album.ts'
 import { SortType } from '@/types/constType'
 
@@ -148,6 +151,18 @@ export const albumApi = {
     } catch (error) {
       console.error('댓글 작성 중 오류 발생:', error)
       throw error
+    }
+  },
+
+  getAlbumDetails: async (
+    albumId: number,
+  ): Promise<AlbumDetailsResponseDto> => {
+    try {
+      const response = await api.get<GetAlbumDetailsData>(`/${albumId}`)
+      return response.data as AlbumDetailsResponseDto
+    } catch (error) {
+      console.error('앨범 상세 조회 중 오류 발생:', error)
+      throw error as GetAlbumDetailsError
     }
   },
 
