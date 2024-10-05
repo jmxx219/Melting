@@ -3,12 +3,12 @@ import MusicPlayerHeader from '@/components/Layout/MusicPlayerHeader'
 import MusicPlayContent from '@/components/Music/MusicPlayContent'
 import { SongPlay } from '@/types/songPlay'
 import { useCallback, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 type Props = {}
 
 export default function AlbumPlayMain({}: Props) {
-  //   const location = useLocation()
-  //   const { albumId } = location.state || {}
+  const location = useLocation()
+  const { albumId } = location.state || {}
   const navigate = useNavigate()
 
   const [songIdx, setSongIdx] = useState(0)
