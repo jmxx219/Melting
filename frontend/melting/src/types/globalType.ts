@@ -37,3 +37,9 @@ export interface ApiResponseBoolean {
   data: boolean
   errorMessage?: string
 }
+
+export interface ApiResponseVoid {
+  status?: string
+  data?: object
+  errorMessage?: string
+}

@@ -26,6 +26,7 @@ import {
   GetSteadyAlbumsError,
   AlbumRankingResponseDto,
   ToggleIsPublicData,
+  DeleteAlbumData,
 } from '@/types/album.ts'
 
 const instance = createAxiosInstance('albums')
@@ -216,6 +217,17 @@ export const albumApi = {
       return response.data
     } catch (error) {
       console.error('앨범 공개/비공개 토글 중 오류 발생:', error)
+      throw error
+    }
+  },
+
+  // 앨범 삭제
+  deleteAlbum: async (albumId: number) => {
+    try {
+      const response = await api.delete<DeleteAlbumData>(`/${albumId}`)
+      return response.data
+    } catch (error) {
+      console.error('앨범 삭제 중 오류 발생:', error)
       throw error
     }
   },
