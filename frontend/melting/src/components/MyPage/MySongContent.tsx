@@ -76,7 +76,7 @@ export default function MySongContent({
             {mySongs.map((mySong, index) => (
               <div
                 key={mySong.songId}
-                className={`flex justify-between items-center mb-2 ${
+                className={`flex justify-between items-center mb-2 pl-2 ${
                   mySong.isCreated ? '' : 'text-gray-400'
                 }`}
               >
@@ -119,7 +119,7 @@ export default function MySongContent({
                         }
                       />
                     </button>
-                    <span className="w-12 text-center">
+                    <span className="w-12">
                       {mySong.likeCount.toLocaleString()}
                     </span>
                   </div>
