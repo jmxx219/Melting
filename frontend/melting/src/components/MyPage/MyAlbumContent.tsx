@@ -53,7 +53,7 @@ export default function MyAlbumContent({
       }
       setLikeCount(currentLikedCount)
     } catch (error) {
-      console.error('좋아요 상태 업데이트 중 오류 발생:', error)
+      console.error('앨범 좋아요 상태 업데이트 중 오류 발생:', error)
       setIsLiked(!newLikedState)
     }
   }
@@ -70,7 +70,7 @@ export default function MyAlbumContent({
   const deleteAlbum = async () => {
     try {
       await albumApi.deleteAlbum(album.albumId)
-      fetchAlbums()
+      await fetchAlbums()
     } catch (error) {
       console.error('삭제 중 오류 발생:', error)
     }
