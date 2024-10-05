@@ -5,10 +5,13 @@ import {
   CustomError,
 } from '@/apis/axiosInstance.ts'
 import {
+  CreateAicoverSongData,
+  CreateAicoverSongError,
   GetSongsForAlbumCreationData,
   GetSongsForAlbumCreationError,
   SongSearchPageResponseDto,
 } from '@/types/song.ts'
+import { ApiResponseBoolean } from '@/types/user'
 
 const instance = createAxiosInstance('songs')
 const api = createApi<ApiResponse>(instance)
@@ -52,6 +55,19 @@ export const songApi = {
     } catch (error) {
       console.error('Failed to fetch songs for album creation:', error)
       throw error as GetSongsForAlbumCreationError
+    }
+  },
+  aiCover: async (originalSongId: number): Promise<ApiResponseBoolean> => {
+    console.log(originalSongId)
+
+    try {
+      const response = await api.post<CreateAicoverSongData>('/aicover', {
+        originalSongId,
+      })
+      return response.data as ApiResponseBoolean
+    } catch (error) {
+      console.error('Failed to fetch songs for album creation:', error)
+      throw error as CreateAicoverSongError
     }
   },
 }
