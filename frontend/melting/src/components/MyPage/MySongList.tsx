@@ -1,65 +1,51 @@
+import { useState, useEffect } from 'react'
 import MySongContent from '@/components/MyPage/MySongContent'
 import { SortType } from '@/types/constType'
+import { SongListDto, SongMypageDto } from '@/types/user'
+import { userApi } from '@/apis/userApi'
 
 interface AlbumSongToggleProps {
   sortOption: SortType
 }
 
-export default function MySongList({}: AlbumSongToggleProps) {
-  const data = {
-    mySongList: [
-      {
-        originalSongId: 1,
-        artist: '아이유',
-        songTitle: '좋은 날',
-        songList: [
-          {
-            songId: 1,
-            albumCoverImgUrl:
-              'https://image.bugsm.co.kr/album/images/200/40955/4095501.jpg?version=20240307012526.0',
-            songType: 'melting',
-            likeCount: 12345678,
-            isLiked: true,
-            isDone: true,
-          },
-          {
-            songId: 2,
-            albumCoverImgUrl:
-              'https://image.bugsm.co.kr/album/images/200/40955/4095501.jpg?version=20240307012526.0',
-            songType: 'AICover',
-            likeCount: 12345,
-            isLiked: false,
-            isDone: false,
-          },
-        ],
-      },
-      {
-        originalSongId: 2,
-        artist: '아이유',
-        songTitle: '노래 제목 2',
-        songList: [
-          {
-            songId: 3,
-            albumCoverImgUrl:
-              'https://image.bugsm.co.kr/album/images/200/40955/4095501.jpg?version=20240307012526.0',
-            songType: 'AICover',
-            likeCount: 67890,
-            isLiked: false,
-            isDone: true,
-          },
-        ],
-      },
-    ],
-    isPossibleAiCover: true, // AI 커버 가능 여부
+export default function MySongList({ sortOption }: AlbumSongToggleProps) {
+  const [originalSongs, setOriginalSongs] = useState<SongListDto[]>([])
+  const [isPossibleAiCover, setIsPossibleAiCover] = useState<boolean>(false)
+  const [loading, setLoading] = useState<boolean>(false)
+  // const [isLast, setIsLast] = useState(false)
+
+  const fetchMySongs = async () => {
+    setLoading(true)
+    try {
+      const response = await userApi.getMemberSongs()
+      if (response.mySongList) {
+        setOriginalSongs(response.mySongList)
+      }
+      console.log(response)
+      setIsPossibleAiCover(response.isPossibleAiCover ?? false)
+      // setIsLast(response.isLast || false)
+    } catch (error) {
+      console.error('Error fetching songs:', error)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  useEffect(() => {
+    fetchMySongs()
+  }, [sortOption])
+
+  if (loading) {
+    return <div>Loading...</div>
   }
 
   return (
     <div>
-      {data.mySongList.map((song) => (
+      {originalSongs.map((originalSong) => (
         <MySongContent
-          key={song.originalSongId}
-          originalSong={song}
-          isPossibleAiCover={data.isPossibleAiCover}
+          key={originalSong.originalSongId}
+          originalSong={originalSong}
+          isPossibleAiCover={isPossibleAiCover}
         />
       ))}
     </div>
