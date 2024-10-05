@@ -2,6 +2,7 @@ import {
   ApiResponse,
   createApi,
   createAxiosInstance,
+  CustomError,
 } from '@/apis/axiosInstance.ts'
 import {
   GetSongsForAlbumCreationData,
@@ -13,6 +14,27 @@ const instance = createAxiosInstance('songs')
 const api = createApi<ApiResponse>(instance)
 
 export const songApi = {
+  meltingApi: async (
+    originalSongId: number, // 원곡 ID
+    voiceBlob: Blob,
+  ): Promise<boolean | any> => {
+    try {
+      // FormData 생성
+      const formData = new FormData()
+      formData.append('originalSongId', String(originalSongId)) // songId 추가
+      formData.append('voiceFile', voiceBlob, 'voiceFile.webm') // voiceFile 추가
+
+      const response = await api.post('/melting', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data', // multipart 설정
+        },
+      })
+
+      return response.data
+    } catch (error) {
+      throw error as CustomError
+    }
+  },
   getSongsForAlbumCreation: async (
     keyword: string | null,
     page?: number,
