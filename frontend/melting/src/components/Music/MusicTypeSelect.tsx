@@ -10,8 +10,6 @@ export default function MusicTypeSelect({}: Props) {
   useEffect(() => {
     const fetchInitialSongs = async () => {
       const response = await userApi.getUserCoverCnt()
-      console.log(response)
-
       if (!response.songcounts) {
         setCoverCnt(0)
       } else {
@@ -32,7 +30,7 @@ export default function MusicTypeSelect({}: Props) {
         icon={Mic}
       ></MusicTypeButton>
       <MusicTypeButton
-        bgColor="#A5A5A5"
+        bgColor={coverCnt >= 3 ? '#FFAF25' : '#A5A5A5'}
         title={'AI 자동 커버'}
         detail={[
           '사용자의 목소리를 AI가 학습하여',
