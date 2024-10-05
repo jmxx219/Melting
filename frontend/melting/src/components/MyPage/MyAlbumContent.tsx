@@ -51,9 +51,13 @@ export default function MyAlbumContent({ album, viewType }: MyAlbumProps) {
     }
   }
 
-  const handleSwitchChange = (checked: boolean) => {
+  const handleSwitchChange = async (checked: boolean) => {
     setIsPublic(checked)
-    // TODO: 공개/비공개 상태 업데이트 API 호출
+    try {
+      await albumApi.toggleIsPublic(album.albumId)
+    } catch (error) {
+      setIsPublic(!checked)
+    }
   }
 
   const deleteAlbum = () => {

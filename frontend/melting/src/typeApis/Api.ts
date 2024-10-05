@@ -16,11 +16,17 @@ import {
   AddMemberHashtagError,
   AddSongLikesData,
   AddSongLikesError,
+  AiCoverImageRequestDto,
+  AiDescriptionRequestDto,
   AI커버곡등록요청,
   AlbumUpdateRequestDto,
   CommentRequestDto,
+  CreateAiAlbumCoverImageData,
+  CreateAiAlbumCoverImageError,
   CreateAicoverSongData,
   CreateAicoverSongError,
+  CreateAiDescriptionData,
+  CreateAiDescriptionError,
   CreateAlbumData,
   CreateAlbumError,
   CreateAlbumPayload,
@@ -46,6 +52,10 @@ import {
   GetAllCommentsError,
   GetAllGenresData,
   GetAllGenresError,
+  GetHot5AlbumsData,
+  GetHot5AlbumsError,
+  GetMeltingCountsData,
+  GetMeltingCountsError,
   GetMemberAlbumsData,
   GetMemberAlbumsError,
   GetMemberHashtagsData,
@@ -58,6 +68,8 @@ import {
   GetMemberLikesSongsError,
   GetMemberSongsData,
   GetMemberSongsError,
+  GetMonthlyAlbumsData,
+  GetMonthlyAlbumsError,
   GetOriginalSongInfoData,
   GetOriginalSongInfoError,
   GetSearchPageData,
@@ -68,6 +80,8 @@ import {
   GetSongLikesCountError,
   GetSongsForAlbumCreationData,
   GetSongsForAlbumCreationError,
+  GetSteadyAlbumsData,
+  GetSteadyAlbumsError,
   InitMemberInfoData,
   InitMemberInfoError,
   InitMemberInfoPayload,
@@ -98,7 +112,7 @@ export class Api<
   /**
    * No description
    *
-   * @tags likes-controller
+   * @tags song-controller
    * @name GetSongLikesCount
    * @request GET:/api/v1/songs/{songId}/likes
    * @response `200` `GetSongLikesCountData` OK
@@ -113,7 +127,7 @@ export class Api<
   /**
    * No description
    *
-   * @tags likes-controller
+   * @tags song-controller
    * @name AddSongLikes
    * @request POST:/api/v1/songs/{songId}/likes
    * @response `200` `AddSongLikesData` OK
@@ -128,7 +142,7 @@ export class Api<
   /**
    * No description
    *
-   * @tags likes-controller
+   * @tags song-controller
    * @name DeleteSongLikes
    * @request DELETE:/api/v1/songs/{songId}/likes
    * @response `200` `DeleteSongLikesData` OK
@@ -288,7 +302,7 @@ export class Api<
   /**
    * No description
    *
-   * @tags likes-controller
+   * @tags album-controller
    * @name GetAlbumLikesCount
    * @request GET:/api/v1/albums/{albumId}/likes
    * @response `200` `GetAlbumLikesCountData` OK
@@ -303,7 +317,7 @@ export class Api<
   /**
    * No description
    *
-   * @tags likes-controller
+   * @tags album-controller
    * @name AddAlbumLikes
    * @request POST:/api/v1/albums/{albumId}/likes
    * @response `200` `AddAlbumLikesData` OK
@@ -318,7 +332,7 @@ export class Api<
   /**
    * No description
    *
-   * @tags likes-controller
+   * @tags album-controller
    * @name DeleteAlbumLikes
    * @request DELETE:/api/v1/albums/{albumId}/likes
    * @response `200` `DeleteAlbumLikesData` OK
@@ -328,6 +342,27 @@ export class Api<
     this.request<DeleteAlbumLikesData, DeleteAlbumLikesError>({
       path: `/api/v1/albums/${albumId}/likes`,
       method: 'DELETE',
+      ...params,
+    })
+  /**
+   * No description
+   *
+   * @tags album-controller
+   * @name CreateAiDescription
+   * @request POST:/api/v1/albums/{albumId}/descriptions
+   * @response `200` `CreateAiDescriptionData` OK
+   * @response `500` `ErrorResponse` Internal Server Error
+   */
+  createAiDescription = (
+    albumId: number,
+    data: AiDescriptionRequestDto,
+    params: RequestParams = {},
+  ) =>
+    this.request<CreateAiDescriptionData, CreateAiDescriptionError>({
+      path: `/api/v1/albums/${albumId}/descriptions`,
+      method: 'POST',
+      body: data,
+      type: ContentType.Json,
       ...params,
     })
   /**
@@ -377,6 +412,26 @@ export class Api<
   ) =>
     this.request<WriteCommentData, WriteCommentError>({
       path: `/api/v1/albums/${albumId}/comments`,
+      method: 'POST',
+      body: data,
+      type: ContentType.Json,
+      ...params,
+    })
+  /**
+   * No description
+   *
+   * @tags album-controller
+   * @name CreateAiAlbumCoverImage
+   * @request POST:/api/v1/albums/covers
+   * @response `200` `CreateAiAlbumCoverImageData` OK
+   * @response `500` `ErrorResponse` Internal Server Error
+   */
+  createAiAlbumCoverImage = (
+    data: AiCoverImageRequestDto,
+    params: RequestParams = {},
+  ) =>
+    this.request<CreateAiAlbumCoverImageData, CreateAiAlbumCoverImageError>({
+      path: `/api/v1/albums/covers`,
       method: 'POST',
       body: data,
       type: ContentType.Json,
@@ -551,8 +606,8 @@ export class Api<
    * @response `500` `ErrorResponse` Internal Server Error
    */
   getSongsForAlbumCreation = (
-    query: {
-      keyword: string
+    query?: {
+      keyword?: string
       /**
        * @format int32
        * @default 0
@@ -598,8 +653,8 @@ export class Api<
    * @response `500` `ErrorResponse` Internal Server Error
    */
   getSearchPage = (
-    query: {
-      keyword: string
+    query?: {
+      keyword?: string
       /**
        * @format int32
        * @default 0
@@ -665,9 +720,40 @@ export class Api<
    * @response `200` `GetMemberSongsData` OK
    * @response `500` `ErrorResponse` Internal Server Error
    */
-  getMemberSongs = (params: RequestParams = {}) =>
+  getMemberSongs = (
+    query?: {
+      /**
+       * @format int32
+       * @default 0
+       */
+      page?: number
+      /**
+       * @format int32
+       * @default 10
+       */
+      size?: number
+    },
+    params: RequestParams = {},
+  ) =>
     this.request<GetMemberSongsData, GetMemberSongsError>({
       path: `/api/v1/members/me/songs`,
+      method: 'GET',
+      query: query,
+      ...params,
+    })
+  /**
+   * @description 3개 이상이면 AI Cover 가능
+   *
+   * @tags member-controller
+   * @name GetMeltingCounts
+   * @summary 사용자가 멜팅한 곡 개수 조회
+   * @request GET:/api/v1/members/me/songcounts
+   * @response `200` `GetMeltingCountsData` OK
+   * @response `500` `ErrorResponse` Internal Server Error
+   */
+  getMeltingCounts = (params: RequestParams = {}) =>
+    this.request<GetMeltingCountsData, GetMeltingCountsError>({
+      path: `/api/v1/members/me/songcounts`,
       method: 'GET',
       ...params,
     })
@@ -795,6 +881,21 @@ export class Api<
    * No description
    *
    * @tags album-controller
+   * @name GetSteadyAlbums
+   * @request GET:/api/v1/albums/steady
+   * @response `200` `GetSteadyAlbumsData` OK
+   * @response `500` `ErrorResponse` Internal Server Error
+   */
+  getSteadyAlbums = (params: RequestParams = {}) =>
+    this.request<GetSteadyAlbumsData, GetSteadyAlbumsError>({
+      path: `/api/v1/albums/steady`,
+      method: 'GET',
+      ...params,
+    })
+  /**
+   * No description
+   *
+   * @tags album-controller
    * @name SearchAlbums
    * @request GET:/api/v1/albums/search
    * @response `200` `SearchAlbumsData` OK
@@ -827,6 +928,21 @@ export class Api<
    * No description
    *
    * @tags album-controller
+   * @name GetMonthlyAlbums
+   * @request GET:/api/v1/albums/monthly
+   * @response `200` `GetMonthlyAlbumsData` OK
+   * @response `500` `ErrorResponse` Internal Server Error
+   */
+  getMonthlyAlbums = (params: RequestParams = {}) =>
+    this.request<GetMonthlyAlbumsData, GetMonthlyAlbumsError>({
+      path: `/api/v1/albums/monthly`,
+      method: 'GET',
+      ...params,
+    })
+  /**
+   * No description
+   *
+   * @tags album-controller
    * @name GetAllGenres
    * @request GET:/api/v1/albums/genres
    * @response `200` `GetAllGenresData` OK
@@ -835,6 +951,21 @@ export class Api<
   getAllGenres = (params: RequestParams = {}) =>
     this.request<GetAllGenresData, GetAllGenresError>({
       path: `/api/v1/albums/genres`,
+      method: 'GET',
+      ...params,
+    })
+  /**
+   * No description
+   *
+   * @tags album-controller
+   * @name GetHot5Albums
+   * @request GET:/api/v1/albums/daily
+   * @response `200` `GetHot5AlbumsData` OK
+   * @response `500` `ErrorResponse` Internal Server Error
+   */
+  getHot5Albums = (params: RequestParams = {}) =>
+    this.request<GetHot5AlbumsData, GetHot5AlbumsError>({
+      path: `/api/v1/albums/daily`,
       method: 'GET',
       ...params,
     })
