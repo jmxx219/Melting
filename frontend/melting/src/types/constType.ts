@@ -3,9 +3,14 @@ const cover = {
   ai: 'AI',
 } as const
 
-const sort = {
-  latest: 'LATEST',
-  popular: 'POPULAR',
+export const sort = {
+  LATEST: 'LATEST',
+  POPULAR: 'POPULAR',
+} as const
+
+export const view = {
+  MY: 'MY',
+  LIKED: 'LIKED',
 } as const
 
 export const genres = [
@@ -41,3 +46,4 @@ export const genres = [
 export type CoverType = keyof typeof cover
 export type GenreType = (typeof genres)[number]
 export type SortType = keyof typeof sort
+export type ViewType = keyof typeof view
