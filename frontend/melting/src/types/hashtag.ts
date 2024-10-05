@@ -2,8 +2,8 @@ import { ErrorResponse } from '@/types/globalType.ts'
 
 export interface HashtagResponseDto {
   /** @format int64 */
-  id?: number
-  content?: string
+  id: number
+  content: string
 }
 export interface HashtagPageResponseDto {
   hashtags?: HashtagResponseDto[]
