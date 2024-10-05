@@ -15,7 +15,7 @@ export default function Album({ album }: AlbumProps) {
   const albumId = album.albumId
 
   const handlePlayClick = () => {
-    navigate(`/album/play`, { state: albumId })
+    navigate(`/album/play`, { state: { albumId } })
   }
 
   return (
