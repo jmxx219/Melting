@@ -1,7 +1,4 @@
-// src/components/Album/HashtagSelector.tsx
-
-import { useState, useEffect, useRef } from 'react'
-
+import { useState, useEffect, useRef, useCallback } from 'react'
 import { useAlbumContext } from '@/contexts/AlbumContext'
 import {
   AlertDialog,
@@ -12,10 +9,12 @@ import {
   AlertDialogFooter,
   AlertDialogAction,
 } from '@/components/ui/alert-dialog'
-import { searchHashtags } from '@/apis/albumApi'
 import SearchInput from '../Album/SearchInput'
 import SearchDropdown from '../Album/SearchDropdown'
 import useDebounce from '@/hooks/useDebounce'
+import { hashtagApi } from '@/apis/hashtagApi'
+import InfiniteScroll from '@/components/Common/InfinityScroll.tsx'
+import { HashtagPageResponseDto, HashtagResponseDto } from '@/types/hashtag.ts'
 
 interface HashtagSelectorProps {
   onHashtagsChange?: (hashtags: string[]) => void
@@ -39,6 +38,9 @@ export default function HashtagSelector({
   const [showWarning, setShowWarning] = useState(false)
   const debouncedInput = useDebounce(input, 300)
   const composingRef = useRef(false)
+  const [page, setPage] = useState(1)
+  const [hasMore, setHasMore] = useState(true)
+  const [loading, setLoading] = useState(false)
 
   const selectedHashtags = useAlbumContextFlag
     ? albumContext?.selectedHashtags
@@ -53,22 +55,51 @@ export default function HashtagSelector({
     }
   }, [useAlbumContextFlag, albumContext?.selectedHashtags])
 
-  useEffect(() => {
-    const fetchSuggestions = async () => {
-      if (debouncedInput.length > 0) {
-        const searchTerm = debouncedInput.startsWith('#')
-          ? debouncedInput.slice(1)
-          : debouncedInput
-        const results = await searchHashtags(searchTerm)
-        setSuggestions(results)
-        setIsDropdownOpen(true)
+  const fetchSuggestions = useCallback(
+    async (searchTerm: string, currentPage: number) => {
+      if (searchTerm.length > 0) {
+        setLoading(true)
+        try {
+          const results: HashtagPageResponseDto =
+            await hashtagApi.searchHashtags(searchTerm, currentPage, 10)
+
+          //console.log(results)
+          const hashtagContents =
+            results.hashtags?.map(
+              (hashtag: HashtagResponseDto) => hashtag.content,
+            ) || []
+          //console.log(hashtagContents)
+
+          if (currentPage === 0) {
+            setSuggestions(hashtagContents)
+          } else {
+            setSuggestions((prev) => [...prev, ...hashtagContents])
+          }
+          setHasMore(!results.isLast)
+          setIsDropdownOpen(true)
+        } catch (error) {
+          console.error('해시태그 검색 중 오류 발생:', error)
+        } finally {
+          setLoading(false)
+        }
       } else {
         setSuggestions([])
         setIsDropdownOpen(false)
       }
-    }
-    fetchSuggestions()
-  }, [debouncedInput])
+    },
+    [],
+  )
+
+  useEffect(() => {
+    setPage(1)
+    fetchSuggestions(debouncedInput, 0)
+  }, [debouncedInput, fetchSuggestions])
+
+  const loadMore = useCallback(() => {
+    const nextPage = page + 1
+    setPage(nextPage)
+    fetchSuggestions(debouncedInput, nextPage)
+  }, [debouncedInput, fetchSuggestions, page])
 
   useEffect(() => {
     if (!useAlbumContextFlag && onHashtagsChange) {
@@ -105,7 +136,6 @@ export default function HashtagSelector({
       e.preventDefault()
       const newTag = input.trim()
       if (newTag.length > 1) {
-        // '#'만 있는 경우를 방지
         addHashtag(newTag)
       }
     }
@@ -122,10 +152,11 @@ export default function HashtagSelector({
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value
     setInput(value)
+    setPage(1)
   }
 
   if (!selectedHashtags || !setSelectedHashtags) {
-    return null // or some error state
+    return null
   }
 
   return (
@@ -139,11 +170,14 @@ export default function HashtagSelector({
         onCompositionStart={handleCompositionStart}
         onCompositionEnd={handleCompositionEnd}
       />
-      <SearchDropdown
-        isOpen={isDropdownOpen}
-        suggestions={suggestions}
-        onSelectSuggestion={addHashtag}
-      />
+      {isDropdownOpen && (
+        <InfiniteScroll loadMore={loadMore} hasMore={hasMore} loading={loading}>
+          <SearchDropdown
+            suggestions={suggestions}
+            onSelectSuggestion={addHashtag}
+          />
+        </InfiniteScroll>
+      )}
       <AlertDialog open={showWarning} onOpenChange={setShowWarning}>
         <AlertDialogContent>
           <AlertDialogHeader>
