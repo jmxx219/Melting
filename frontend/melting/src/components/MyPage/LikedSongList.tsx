@@ -3,9 +3,10 @@ import { userApi } from '@/apis/userApi'
 import SongContent from '@/components/Common/SongContent'
 import { SongLikesResponseDto } from '@/types/user'
 import { Song } from '@/types/song'
+import { SortType, sort } from '@/types/constType'
 
 interface LikedSongListProps {
-  sortOption: 'LATEST' | 'POPULAR'
+  sortOption: SortType
 }
 
 const convertSongLikesResponseToSong = (
@@ -32,8 +33,8 @@ export default function LikedSongList({ sortOption }: LikedSongListProps) {
     // setLoading(true)
     try {
       setSongs([])
-      const sort = sortOption === 'LATEST' ? '0' : '1'
-      const response = await userApi.getMemberLikesSongs(sort, page, 10)
+      const sortParam = sortOption === sort.LATEST ? '0' : '1'
+      const response = await userApi.getMemberLikesSongs(sortParam, page, 10)
 
       if (response.songLikesList) {
         const convertedSongs = response.songLikesList.map(

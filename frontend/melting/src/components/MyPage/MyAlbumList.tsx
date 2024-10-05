@@ -2,10 +2,11 @@ import { useState, useEffect } from 'react'
 import MyAlbumContent from '@/components/MyPage/MyAlbumContent'
 import { AlbumMyPageResponseDto, AlbumMyResponseDto } from '@/types/user'
 import { userApi } from '@/apis/userApi'
+import { SortType, sort, ViewType, view } from '@/types/constType'
 
 interface MyAlbumListProps {
-  sortOption: 'LATEST' | 'POPULAR'
-  viewType: 'MY' | 'LIKED'
+  sortOption: SortType
+  viewType: ViewType
 }
 
 export default function MyAlbumList({
@@ -20,14 +21,14 @@ export default function MyAlbumList({
     // setLoading(true)
     try {
       let response: AlbumMyPageResponseDto
-      const sort = sortOption === 'LATEST' ? '0' : '1'
+      const sortParam = sortOption === sort.LATEST ? '0' : '1'
 
       setAlbums([])
 
-      if (viewType === 'MY') {
-        response = await userApi.getMemberAlbums(sort, page, 10)
+      if (viewType === view.MY) {
+        response = await userApi.getMemberAlbums(sortParam, page, 10)
       } else {
-        response = await userApi.getMemberLikesAlbums(sort, page, 10)
+        response = await userApi.getMemberLikesAlbums(sortParam, page, 10)
       }
 
       if (response.albumInfoList) {

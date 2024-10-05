@@ -1,7 +1,8 @@
 import MySongContent from '@/components/MyPage/MySongContent'
+import { SortType } from '@/types/constType'
 
 interface AlbumSongToggleProps {
-  sortOption: 'LATEST' | 'POPULAR'
+  sortOption: SortType
 }
 
 export default function MySongList({}: AlbumSongToggleProps) {
