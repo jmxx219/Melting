@@ -4,6 +4,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.dayangsung.melting.domain.voice.service.VoiceService;
+import com.dayangsung.melting.global.aop.LogExecution;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -12,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 @RestController
 @RequestMapping("/api/v1/members")
 @RequiredArgsConstructor
+@LogExecution
 public class VoiceController {
 
 	private final VoiceService voiceService;
