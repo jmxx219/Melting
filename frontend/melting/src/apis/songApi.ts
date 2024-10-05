@@ -58,8 +58,6 @@ export const songApi = {
     }
   },
   aiCover: async (originalSongId: number): Promise<ApiResponseBoolean> => {
-    console.log(originalSongId)
-
     try {
       const response = await api.post<CreateAicoverSongData>('/aicover', {
         originalSongId,
