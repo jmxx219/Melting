@@ -35,7 +35,7 @@ export const createAxiosInstance = (apiPath: ApiPath): AxiosInstance => {
   const instance = axios.create({
     baseURL: `${VITE_API_BASE_URL}${API_PATHS[apiPath]}`,
     withCredentials: true,
-    timeout: 10000, // 10초 타임아웃 설정
+    timeout: 60000, // 60초 타임아웃 설정
   })
 
   // 요청 인터셉터
