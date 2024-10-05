@@ -12,7 +12,7 @@ export default function MyAlbumsAndSongs() {
           buttonArea={<ChevronLeft color="#FFAF25" />}
         />
       }
-      children={<AlbumSongToggle viewType="my" />}
+      children={<AlbumSongToggle viewType="MY" />}
     ></Layout>
   )
 }

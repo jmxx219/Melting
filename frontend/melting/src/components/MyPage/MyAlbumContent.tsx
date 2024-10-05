@@ -11,7 +11,7 @@ import { albumApi } from '@/apis/albumApi'
 
 interface MyAlbumProps {
   album: AlbumMyResponseDto
-  viewType: 'my' | 'liked'
+  viewType: 'MY' | 'LIKED'
 }
 
 export default function MyAlbumContent({ album, viewType }: MyAlbumProps) {
@@ -64,9 +64,9 @@ export default function MyAlbumContent({ album, viewType }: MyAlbumProps) {
     // TODO: 앨범 삭제 API 호출
     console.log('앨범 삭제: ', album.albumId)
 
-    if (viewType === 'my') {
+    if (viewType === 'MY') {
       navigate('/mypage/my')
-    } else if (viewType === 'liked') {
+    } else if (viewType === 'LIKED') {
       navigate('/mypage/liked')
     }
   }
@@ -96,7 +96,7 @@ export default function MyAlbumContent({ album, viewType }: MyAlbumProps) {
         <div className="flex justify-between items-center font-bold text-base relative">
           <span>{truncateText(album.albumName, 20)}</span>
 
-          {viewType === 'my' && (
+          {viewType === 'MY' && (
             <ConfirmDialog
               title="앨범 삭제"
               description="정말로 이 앨범을 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다."
@@ -120,7 +120,7 @@ export default function MyAlbumContent({ album, viewType }: MyAlbumProps) {
             />
           </button>
           <span>
-            {viewType === 'my'
+            {viewType === 'MY'
               ? likeCount.toLocaleString()
               : formatLikeCount(likeCount)}
           </span>
@@ -129,7 +129,7 @@ export default function MyAlbumContent({ album, viewType }: MyAlbumProps) {
         <div className="flex justify-between items-center text-sm text-gray-400">
           <span>{convertIsoToDotDate(album.createdAt)}</span>
 
-          {viewType === 'my' && (
+          {viewType === 'MY' && (
             <div className="flex items-center space-x-2">
               <Switch
                 id={`album-${album.albumId}-switch`}

@@ -85,7 +85,12 @@ export const albumApi = {
   },
 
   // 앨범 좋아요 추가
-  addAlbumLikes: async (albumId: number) => {
+  addAlbumLikes: async (
+    albumId: number,
+    sort?: string | null,
+    page?: number,
+    size?: number,
+  ) => {
     try {
       const response = await api.post<AddAlbumLikesData>(`/${albumId}/likes`)
       console.log(response)
@@ -97,7 +102,12 @@ export const albumApi = {
   },
 
   // 앨범 좋아요 삭제
-  deleteAlbumLikes: async (albumId: number) => {
+  deleteAlbumLikes: async (
+    albumId: number,
+    sort?: string | null,
+    page?: number,
+    size?: number,
+  ) => {
     try {
       const response = await api.delete<DeleteAlbumLikesData>(
         `/${albumId}/likes`,
