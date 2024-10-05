@@ -16,6 +16,7 @@ public record AlbumDetailsResponseDto(
 	Long albumId,
 	String albumName,
 	String albumCreatorNickname,
+	String albumCoverImageUrl,
 	String albumCreatorProfileImageUrl,
 	String albumDescription,
 	LocalDateTime createdAt,
@@ -34,6 +35,7 @@ public record AlbumDetailsResponseDto(
 			.albumId(album.getId())
 			.albumName(album.getAlbumName())
 			.albumCreatorNickname(member.getNickname())
+			.albumCoverImageUrl(album.getAlbumCoverImageUrl())
 			.albumCreatorProfileImageUrl(member.getProfileImageUrl())
 			.albumDescription(album.getAlbumDescription())
 			.category(album.getCategory())
