@@ -4,6 +4,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.dayangsung.melting.domain.album.entity.Album;
 import com.dayangsung.melting.domain.album.repository.AlbumRepository;
@@ -38,11 +39,11 @@ public class CommentService {
 		return CommentPageResponseDto.of(commentResponse);
 	}
 
+	@Transactional
 	public CommentResponseDto writeComment(Long albumId, String email, String content) {
 		Member member = memberRepository.findByEmail(email)
 			.orElseThrow(() -> new BusinessException(ErrorMessage.MEMBER_NOT_FOUND));
-		Album album = albumRepository.findById(albumId)
-			.orElseThrow(() -> new BusinessException(ErrorMessage.ALBUM_NOT_FOUND));
+		Album album = albumRepository.getReferenceById(albumId);
 		Comment comment = commentRepository.save(
 			Comment.builder()
 				.album(album)
@@ -55,6 +56,7 @@ public class CommentService {
 		return CommentResponseDto.of(comment, isMyComment(comment, member.getId()));
 	}
 
+	@Transactional
 	public CommentResponseDto modifyComment(Long commentId, String email, String content) {
 		Member member = memberRepository.findByEmail(email)
 			.orElseThrow(() -> new BusinessException(ErrorMessage.MEMBER_NOT_FOUND));
@@ -64,6 +66,7 @@ public class CommentService {
 		return CommentResponseDto.of(comment, isMyComment(comment, member.getId()));
 	}
 
+	@Transactional
 	public CommentResponseDto deleteComment(Long commentId, String email) {
 		Member member = memberRepository.findByEmail(email)
 			.orElseThrow(() -> new BusinessException(ErrorMessage.MEMBER_NOT_FOUND));
