@@ -11,7 +11,6 @@ import org.springframework.web.reactive.function.client.ExchangeStrategies;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import com.dayangsung.melting.domain.album.service.AlbumCoverImageService;
-import com.dayangsung.melting.domain.album.service.AlbumImageUploadService;
 import com.dayangsung.melting.domain.song.entity.Song;
 import com.dayangsung.melting.domain.song.service.SongService;
 import com.fasterxml.jackson.core.JsonProcessingException;
