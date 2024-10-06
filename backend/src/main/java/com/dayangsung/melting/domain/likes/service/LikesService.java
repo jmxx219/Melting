@@ -38,7 +38,8 @@ public class LikesService {
 
 	@Transactional
 	public Integer increaseAlbumLikes(Long albumId, Long memberId) {
-		Album album = albumRepository.getReferenceById(albumId);
+		Album album = albumRepository.findById(albumId)
+			.orElseThrow(() -> new BusinessException(ErrorMessage.ALBUM_NOT_FOUND));
 		LikesAlbum likesAlbum = likesAlbumRepository
 			.findLikesAlbumByAlbumIdAndMemberId(albumId, memberId).orElseGet(() ->
 				LikesAlbum.builder()
@@ -83,7 +84,8 @@ public class LikesService {
 
 	@Transactional
 	public Integer increaseSongLikes(Long songId, Long memberId) {
-		Song song = songRepository.getReferenceById(songId);
+		Song song = songRepository.findById(songId)
+			.orElseThrow(() -> new BusinessException(ErrorMessage.SONG_NOT_FOUND));
 		LikesSong likesSong = likesSongRepository
 			.findLikesSongBySongIdAndMemberId(songId, memberId).orElseGet(() ->
 				LikesSong.builder()
@@ -129,6 +131,7 @@ public class LikesService {
 		return likesAlbumRepository.existsByMemberIdAndAlbumIdAndStatusTrue(memberId, albumId);
 	}
 
+	@Transactional
 	public void deleteAlbumLikesOnRedis(Long albumId) {
 		redisTemplate.opsForZSet().remove("song_likes", albumId);
 	}
