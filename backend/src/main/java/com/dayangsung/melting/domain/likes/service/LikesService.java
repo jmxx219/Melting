@@ -38,8 +38,7 @@ public class LikesService {
 
 	@Transactional
 	public Integer increaseAlbumLikes(Long albumId, Long memberId) {
-		Album album = albumRepository.findById(albumId)
-			.orElseThrow(() -> new BusinessException(ErrorMessage.ALBUM_NOT_FOUND));
+		Album album = albumRepository.getReferenceById(albumId);
 		LikesAlbum likesAlbum = likesAlbumRepository
 			.findLikesAlbumByAlbumIdAndMemberId(albumId, memberId).orElseGet(() ->
 				LikesAlbum.builder()
@@ -84,8 +83,7 @@ public class LikesService {
 
 	@Transactional
 	public Integer increaseSongLikes(Long songId, Long memberId) {
-		Song song = songRepository.findById(songId)
-			.orElseThrow(() -> new BusinessException(ErrorMessage.SONG_NOT_FOUND));
+		Song song = songRepository.getReferenceById(songId);
 		LikesSong likesSong = likesSongRepository
 			.findLikesSongBySongIdAndMemberId(songId, memberId).orElseGet(() ->
 				LikesSong.builder()

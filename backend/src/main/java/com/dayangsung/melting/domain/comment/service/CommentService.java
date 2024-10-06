@@ -25,8 +25,8 @@ import lombok.extern.slf4j.Slf4j;
 public class CommentService {
 
 	private final CommentRepository commentRepository;
-	private final AlbumRepository albumRepository;
 	private final MemberRepository memberRepository;
+	private final AlbumRepository albumRepository;
 
 	public CommentPageResponseDto getAllComments(Long albumId, String email, int page, int size) {
 		Member member = memberRepository.findByEmail(email)
@@ -41,7 +41,8 @@ public class CommentService {
 	public CommentResponseDto writeComment(Long albumId, String email, String content) {
 		Member member = memberRepository.findByEmail(email)
 			.orElseThrow(() -> new BusinessException(ErrorMessage.MEMBER_NOT_FOUND));
-		Album album = albumRepository.getReferenceById(albumId);
+		Album album = albumRepository.findById(albumId)
+			.orElseThrow(() -> new BusinessException(ErrorMessage.ALBUM_NOT_FOUND));
 		Comment comment = commentRepository.save(
 			Comment.builder()
 				.album(album)
@@ -53,7 +54,7 @@ public class CommentService {
 		}
 		return CommentResponseDto.of(comment, isMyComment(comment, member.getId()));
 	}
-	
+
 	public CommentResponseDto modifyComment(Long commentId, String email, String content) {
 		Member member = memberRepository.findByEmail(email)
 			.orElseThrow(() -> new BusinessException(ErrorMessage.MEMBER_NOT_FOUND));

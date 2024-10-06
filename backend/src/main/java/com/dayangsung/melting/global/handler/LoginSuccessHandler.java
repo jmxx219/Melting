@@ -15,6 +15,8 @@ import com.dayangsung.melting.domain.auth.CustomOAuth2User;
 import com.dayangsung.melting.domain.auth.repository.HttpCookieOAuth2AuthorizationRequestRepository;
 import com.dayangsung.melting.domain.member.entity.Member;
 import com.dayangsung.melting.domain.member.repository.MemberRepository;
+import com.dayangsung.melting.global.common.enums.ErrorMessage;
+import com.dayangsung.melting.global.exception.BusinessException;
 import com.dayangsung.melting.global.util.CookieUtil;
 import com.dayangsung.melting.global.util.JwtUtil;
 import com.dayangsung.melting.global.util.RedisUtil;
@@ -30,8 +32,8 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 public class LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
-	private final JwtUtil jwtUtil;
 	private final HttpCookieOAuth2AuthorizationRequestRepository httpCookieOAuth2AuthorizationRequestRepository;
+	private final JwtUtil jwtUtil;
 	private final RedisUtil redisUtil;
 	private final MemberRepository memberRepository;
 
@@ -52,7 +54,8 @@ public class LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 		redisUtil.saveAccessToken(email, accessToken);
 		redisUtil.saveRefreshToken(email, refreshToken);
 		String determinedTargetUrl = determineTargetUrl(request, response, authentication);
-		Member member = memberRepository.findByEmail(email).orElseThrow(RuntimeException::new);
+		Member member = memberRepository.findByEmail(email)
+			.orElseThrow(() -> new BusinessException(ErrorMessage.MEMBER_NOT_FOUND));
 		if (member.getGender() == null || member.getNickname() == null) {
 			determinedTargetUrl += "?init=false";
 		} else {

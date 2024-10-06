@@ -25,11 +25,11 @@ import com.dayangsung.melting.domain.song.dto.SongMypageDto;
 import com.dayangsung.melting.domain.song.dto.response.SongLikesPageResponseDto;
 import com.dayangsung.melting.domain.song.dto.response.SongMypagePageResponseDto;
 import com.dayangsung.melting.domain.song.entity.Song;
-import com.dayangsung.melting.domain.song.repository.SongRepository;
 import com.dayangsung.melting.domain.song.service.SongService;
 import com.dayangsung.melting.global.common.enums.ErrorMessage;
 import com.dayangsung.melting.global.common.service.AwsS3Service;
 import com.dayangsung.melting.global.exception.BusinessException;
+import com.dayangsung.melting.global.util.AwsS3Util;
 import com.dayangsung.melting.global.util.CookieUtil;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -44,11 +44,11 @@ public class MemberService {
 
 	private final AwsS3Service awsS3Service;
 	private final MemberRepository memberRepository;
-	private final SongRepository songRepository;
 	private final AlbumService albumService;
 	private final LikesService likesService;
 	private final HashtagService hashtagService;
 	private final SongService songService;
+	private final AwsS3Util awsS3Util;
 
 	public Boolean validateNickname(String nickname) {
 		return !memberRepository.existsByNickname(nickname);
@@ -57,7 +57,7 @@ public class MemberService {
 	@Transactional
 	public MemberResponseDto initMemberInfo(MultipartFile profileImage, String nickname, Gender gender, String email) {
 		log.debug("member service nickname {}", nickname);
-		String profileImageUrl = awsS3Service.getDefaultProfileImageUrl();
+		String profileImageUrl = awsS3Util.getDefaultProfileImageUrl();
 		Member member = memberRepository.findByEmail(email)
 			.orElseThrow(() -> new BusinessException(ErrorMessage.MEMBER_NOT_FOUND));
 		if (!profileImage.isEmpty()) {
@@ -99,12 +99,12 @@ public class MemberService {
 		CookieUtil.deleteCookie(request, response, "refresh_token");
 	}
 
+	@Transactional
 	public SongMypagePageResponseDto getMemberSongs(String email, int page, int size) {
 		Member member = memberRepository.findByEmail(email)
 			.orElseThrow(() -> new BusinessException(ErrorMessage.MEMBER_NOT_FOUND));
 
-		List<Song> memberSongs = songRepository.findByMemberId(member.getId());
-
+		List<Song> memberSongs = songService.getSongListByMemberId(member.getId());
 		List<SongListDto> mySongList = memberSongs.stream()
 			.collect(Collectors.groupingBy(Song::getOriginalSong))
 			.entrySet().stream()
@@ -114,7 +114,7 @@ public class MemberService {
 					.map(song -> SongMypageDto.builder()
 						.songId(song.getId())
 						.albumCoverImageUrl(song.getAlbum() != null ? song.getAlbum().getAlbumCoverImageUrl() :
-							awsS3Service.getDefaultCoverImageUrl())
+							awsS3Util.getDefaultCoverImageUrl())
 						.songType(song.getSongType())
 						.likeCount(likesService.getSongLikesCount(song.getId()))
 						.isLiked(likesService.isLikedBySongAndMember(song.getId(), member.getId()))
@@ -202,38 +202,40 @@ public class MemberService {
 
 	@Transactional
 	public void updateMemberModelStatus(String memberId) {
-		Member member = memberRepository.findById(Long.parseLong(memberId)).orElseThrow(RuntimeException::new);
-
+		Member member = memberRepository.findById(Long.parseLong(memberId))
+			.orElseThrow(() -> new BusinessException(ErrorMessage.MEMBER_NOT_FOUND));
 		if (member.getCoverCount() >= 3 && !member.isAiCoverEnabled()) {
 			member.enableAiCover();
 			memberRepository.save(member);
 		}
 	}
 
+	@Transactional
 	public AlbumMyPageResponseDto getMemberAlbums(String email, int sort, int page, int size) {
 		Member member = memberRepository.findByEmail(email)
 			.orElseThrow(() -> new BusinessException(ErrorMessage.MEMBER_NOT_FOUND));
 		return albumService.getMemberAlbums(member.getId(), sort, page, size);
 	}
 
+	@Transactional
 	public AlbumMyPageResponseDto getMemberLikesAlbums(String email, int sort, int page, int size) {
 		Member member = memberRepository.findByEmail(email)
 			.orElseThrow(() -> new BusinessException(ErrorMessage.MEMBER_NOT_FOUND));
 		return albumService.getMemberLikesAlbums(member.getId(), sort, page, size);
 	}
 
+	@Transactional
 	public SongLikesPageResponseDto getMemberLikesSongs(String email, int sort, int page, int size) {
 		Member member = memberRepository.findByEmail(email)
 			.orElseThrow(() -> new BusinessException(ErrorMessage.MEMBER_NOT_FOUND));
 		return songService.getMemberLikesSongs(member.getId(), sort, page, size);
 	}
 
+	@Transactional
 	public MemberSongCountsResponseDto getMemberSongsCounts(String email) {
 		Member member = memberRepository.findByEmail(email)
 			.orElseThrow(() -> new BusinessException(ErrorMessage.MEMBER_NOT_FOUND));
-
 		int songCount = member.getCoverCount();
-
 		return MemberSongCountsResponseDto.builder()
 			.songcounts(songCount)
 			.build();
