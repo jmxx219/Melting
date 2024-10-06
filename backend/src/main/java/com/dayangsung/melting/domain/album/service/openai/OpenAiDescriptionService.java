@@ -33,6 +33,9 @@ public class OpenAiDescriptionService {
 	private final WebClient webClient;
 	private final ObjectMapper jacksonObjectMapper;
 
+	static final String AUTHORIZATION = "Authorization";
+	static final String BEARER = "Bearer ";
+
 	public OpenAiDescriptionService(@Value("${openai.api-key}") String openAiApiKey, SongService songService,
 			HashtagService hashtagService, OpenAiLyricsSummaryService openAiLyricsSummaryService,
 			GenreService genreService, ObjectMapper jacksonObjectMapper) {
@@ -45,7 +48,7 @@ public class OpenAiDescriptionService {
 						.codecs(configurer -> configurer.defaultCodecs().maxInMemorySize(10 * 1024 * 1024))
 						.build())
 				.baseUrl("https://api.openai.com/v1")
-				.defaultHeader("Authorization", "Bearer " + openAiApiKey)
+				.defaultHeader(AUTHORIZATION, BEARER + openAiApiKey)
 				.build();
 		this.jacksonObjectMapper = jacksonObjectMapper;
 	}

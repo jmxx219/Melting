@@ -28,6 +28,9 @@ public class OpenAiImageService {
 	private final WebClient webClient;
 	private final ObjectMapper jacksonObjectMapper;
 
+	static final String AUTHORIZATION = "Authorization";
+	static final String BEARER = "Bearer ";
+
 	public OpenAiImageService(@Value("${openai.api-key}") String openAiApiKey,
 			AlbumImageUploadService albumImageUploadService, OpenAiLyricsSummaryService openAiLyricsSummaryService,
 		SongService songService, ObjectMapper jacksonObjectMapper) {
@@ -39,7 +42,7 @@ public class OpenAiImageService {
 						.codecs(configurer -> configurer.defaultCodecs().maxInMemorySize(10 * 1024 * 1024))
 						.build())
 				.baseUrl("https://api.openai.com/v1")
-				.defaultHeader("Authorization", "Bearer " + openAiApiKey)
+				.defaultHeader(AUTHORIZATION, BEARER + openAiApiKey)
 				.build();
 		this.jacksonObjectMapper = jacksonObjectMapper;
 	}
