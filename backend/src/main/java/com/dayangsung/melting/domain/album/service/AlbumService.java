@@ -38,8 +38,9 @@ import com.dayangsung.melting.domain.song.entity.Song;
 import com.dayangsung.melting.domain.song.repository.SongRepository;
 import com.dayangsung.melting.global.common.enums.ErrorMessage;
 import com.dayangsung.melting.global.common.service.AwsS3Service;
+import com.dayangsung.melting.global.common.service.RedisService;
 import com.dayangsung.melting.global.exception.BusinessException;
-import com.dayangsung.melting.global.util.RedisUtil;
+import com.dayangsung.melting.global.util.AwsS3Util;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -49,21 +50,21 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 public class AlbumService {
 
-	private final MemberRepository memberRepository;
 	private final AlbumRepository albumRepository;
+	private final MemberRepository memberRepository;
 	private final SongRepository songRepository;
 	private final GenreService genreService;
 	private final LikesService likesService;
 	private final AwsS3Service awsS3Service;
-	private final RedisUtil redisUtil;
 	private final HashtagService hashtagService;
+	private final RedisService redisService;
+	private final AwsS3Util awsS3Util;
 
 	@Transactional
 	public AlbumDetailsResponseDto createAlbum(AlbumCreateRequestDto albumCreateRequestDto,
 		MultipartFile albumCoverImage, String email) {
 		Member member = memberRepository.findByEmail(email)
 			.orElseThrow(() -> new BusinessException(ErrorMessage.MEMBER_NOT_FOUND));
-
 		int songCount = albumCreateRequestDto.songs().size();
 		Album album = albumRepository.save(Album.builder()
 			.member(member)
@@ -102,7 +103,7 @@ public class AlbumService {
 		if (!albumCoverImage.isEmpty()) {
 			albumCoverImageUrl = awsS3Service.uploadAlbumCoverImage(albumCoverImage, album.getId());
 		} else {
-			albumCoverImageUrl = awsS3Service.getDefaultAlbumCoverImage(albumCreateRequestDto.defaultCoverNumber());
+			albumCoverImageUrl = awsS3Util.getDefaultAlbumCoverImage(albumCreateRequestDto.defaultCoverNumber());
 		}
 		album.updateAlbumCoverImageUrl(albumCoverImageUrl);
 		album = albumRepository.save(album);
@@ -245,17 +246,17 @@ public class AlbumService {
 	}
 
 	public List<AlbumRankingResponseDto> getSteadyAlbums() {
-		List<Album> top5AlbumLikes = redisUtil.getTop5AlbumLikes();
+		List<Album> top5AlbumLikes = redisService.getTop5AlbumLikes();
 		return top5AlbumLikes.stream().map(AlbumRankingResponseDto::of).toList();
 	}
 
 	public List<AlbumRankingResponseDto> getHot5Albums() {
-		List<Album> hot5Albums = redisUtil.getTop5AlbumsStreaming(true);
+		List<Album> hot5Albums = redisService.getTop5AlbumsStreaming(true);
 		return hot5Albums.stream().map(AlbumRankingResponseDto::of).toList();
 	}
 
 	public List<AlbumRankingResponseDto> getMonthlyTop5Albums() {
-		List<Album> monthlyTop5Albums = redisUtil.getTop5AlbumsStreaming(false);
+		List<Album> monthlyTop5Albums = redisService.getTop5AlbumsStreaming(false);
 		return monthlyTop5Albums.stream().map(AlbumRankingResponseDto::of).toList();
 	}
 
