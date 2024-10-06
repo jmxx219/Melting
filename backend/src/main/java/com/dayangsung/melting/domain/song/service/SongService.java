@@ -1,8 +1,5 @@
 package com.dayangsung.melting.domain.song.service;
 
-import java.io.IOException;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -37,6 +34,7 @@ import com.dayangsung.melting.global.common.enums.ErrorMessage;
 import com.dayangsung.melting.global.common.service.AwsS3Service;
 import com.dayangsung.melting.global.exception.BusinessException;
 import com.dayangsung.melting.global.redisson.DistributedLock;
+import com.dayangsung.melting.global.util.AwsS3Util;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -47,14 +45,19 @@ import lombok.extern.slf4j.Slf4j;
 public class SongService {
 
 	private final SongRepository songRepository;
+	private final MemberRepository memberRepository;
+	private final OriginalSongRepository originalSongRepository;
 	private final AwsS3Service awsS3Service;
 	private final LikesService likesService;
+	private final AwsS3Util awsS3Util;
 	private final RedisTemplate<String, Object> redisTemplate;
 
 	private static final String DAILY_STREAMING_KEY = "album:streaming:daily";
 	private static final String MONTHLY_STREAMING_KEY = "album:streaming:monthly";
-	private final OriginalSongRepository originalSongRepository;
-	private final MemberRepository memberRepository;
+
+	public List<Song> getSongListByMemberId(Long memberId) {
+		return songRepository.findByMemberId(memberId);
+	}
 
 	public SongDetailsResponseDto getSongDetails(Long songId, String email) {
 		Song song = songRepository.findById(songId)
@@ -62,7 +65,7 @@ public class SongService {
 		Member member = memberRepository.findByEmail(email)
 			.orElseThrow(() -> new BusinessException(ErrorMessage.MEMBER_NOT_FOUND));
 
-		String albumCoverImageUrl = awsS3Service.getDefaultCoverImageUrl();
+		String albumCoverImageUrl = awsS3Util.getDefaultCoverImageUrl();
 		if (song.getAlbum() != null) {
 			albumCoverImageUrl = song.getAlbum().getAlbumCoverImageUrl();
 		}
@@ -90,17 +93,16 @@ public class SongService {
 
 	// @Async
 	@Transactional
-	public void createMeltingSong(
-		String email, Long originalSongId, MultipartFile voiceFile) throws IOException {
-
-		OriginalSong originalSong = originalSongRepository.findById(originalSongId).orElseThrow(RuntimeException::new);
-		Member member = memberRepository.findByEmail(email).orElseThrow(RuntimeException::new);
-
-		Song song = songRepository.findByMemberAndOriginalSongAndSongType(member, originalSong, SongType.MELTING)
-			.orElse(null);
+	public void createMeltingSong(String email, Long originalSongId, MultipartFile voiceFile) {
+		Member member = memberRepository.findByEmail(email)
+			.orElseThrow(() -> new BusinessException(ErrorMessage.MEMBER_NOT_FOUND));
+		OriginalSong originalSong = originalSongRepository.findById(originalSongId)
+			.orElseThrow(() -> new BusinessException(ErrorMessage.ORIGINAL_SONG_NOT_FOUND));
+		Song song =
+			songRepository.findByMemberIdAndOriginalSongIdAndSongType(member.getId(), originalSongId, SongType.MELTING)
+				.orElse(null);
 
 		boolean isNewSong = false;
-
 		if (song == null) {
 			song = Song.builder()
 				.originalSong(originalSong)
@@ -114,11 +116,9 @@ public class SongService {
 		}
 
 		Song savedSong = songRepository.save(song);
-		String filename = getFilename(member, savedSong);
 		log.info("{} Song with ID: {}", isNewSong ? "Created new" : "Updated existing", savedSong.getId());
 
-		String userVoiceUrl = awsS3Service.uploadFileToS3(voiceFile, "/audio/member_voice",
-			filename);
+		String userVoiceUrl = awsS3Service.uploadVoice(voiceFile, member.getId(), originalSongId);
 
 		boolean endpoint;
 		if (member.getCoverCount() < 3 && isNewSong) {
@@ -142,27 +142,23 @@ public class SongService {
 		// return true;
 	}
 
-	private static String getFilename(Member member, Song savedSong) {
-		return String.format("m%s_s%s_%s", member.getId(), savedSong.getId(), LocalDateTime.now().format(
-			DateTimeFormatter.ofPattern("yyyyMMddHHmmss")));
-	}
-
 	@Transactional
-	public void createAiCoverSong(
-		String email, Long originalSongId) {
+	public void createAiCoverSong(String email, Long originalSongId) {
 
-		OriginalSong originalSong = originalSongRepository.findById(originalSongId).orElseThrow(RuntimeException::new);
-		Member member = memberRepository.findByEmail(email).orElseThrow(RuntimeException::new);
+		OriginalSong originalSong = originalSongRepository.findById(originalSongId)
+			.orElseThrow(() -> new BusinessException(ErrorMessage.ORIGINAL_SONG_NOT_FOUND));
+		Member member = memberRepository.findByEmail(email)
+			.orElseThrow(() -> new BusinessException(ErrorMessage.MEMBER_NOT_FOUND));
 
 		if (!member.isAiCoverEnabled()) {
-			throw new RuntimeException();
+			throw new BusinessException(ErrorMessage.MEMBER_AICOVER_DISABLE);
 		}
 
-		Song song = songRepository.findByMemberAndOriginalSongAndSongType(member, originalSong, SongType.AICOVER)
+		Song song = songRepository.findByMemberIdAndOriginalSongIdAndSongType(member.getId(), originalSongId,
+				SongType.AICOVER)
 			.orElse(null);
 
 		boolean isNewSong = false;
-
 		if (song == null) {
 			song = Song.builder()
 				.originalSong(originalSong)
@@ -193,7 +189,8 @@ public class SongService {
 
 	@Transactional
 	public void updateSongUrl(String songId, String songUrl) {
-		Song song = songRepository.findById(Long.parseLong(songId)).orElseThrow(RuntimeException::new);
+		Song song = songRepository.findById(Long.parseLong(songId))
+			.orElseThrow(() -> new BusinessException(ErrorMessage.SONG_NOT_FOUND));
 		song.updateSongUrl(songUrl);
 		songRepository.save(song);
 	}
@@ -227,7 +224,7 @@ public class SongService {
 				}
 			}
 			groupedSongsList.add(SongSearchResponseDto.of(
-				originalSong, awsS3Service.getDefaultCoverImageUrl(), meltingSongId, aiCoverSongId));
+				originalSong, awsS3Util.getDefaultCoverImageUrl(), meltingSongId, aiCoverSongId));
 		}
 
 		int start = (int)PageRequest.of(page, size).getOffset();
@@ -246,7 +243,7 @@ public class SongService {
 			songPage = songRepository.findLikedSongsByMemberIdOrderByCreatedAtDesc(memberId, pageable);
 		}
 		Page<SongLikesResponseDto> songLikesResponseDtoPage = songPage.map(song -> SongLikesResponseDto.of(song,
-			song.getAlbum() != null ? song.getAlbum().getAlbumCoverImageUrl() : awsS3Service.getDefaultCoverImageUrl(),
+			song.getAlbum() != null ? song.getAlbum().getAlbumCoverImageUrl() : awsS3Util.getDefaultCoverImageUrl(),
 			likesService.isLikedBySongAndMember(song.getId(), memberId), likesService.getSongLikesCount(song.getId())));
 		return SongLikesPageResponseDto.of(songLikesResponseDtoPage);
 	}

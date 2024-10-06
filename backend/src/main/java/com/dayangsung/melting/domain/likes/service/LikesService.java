@@ -131,6 +131,7 @@ public class LikesService {
 		return likesAlbumRepository.existsByMemberIdAndAlbumIdAndStatusTrue(memberId, albumId);
 	}
 
+	@Transactional
 	public void deleteAlbumLikesOnRedis(Long albumId) {
 		redisTemplate.opsForZSet().remove("song_likes", albumId);
 	}
