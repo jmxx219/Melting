@@ -57,11 +57,11 @@ public class CommentService {
 	}
 
 	@Transactional
-	public CommentResponseDto modifyComment(Long commentId, String email, String content) {
+	public CommentResponseDto updateComment(Long commentId, String email, String content) {
 		Member member = memberRepository.findByEmail(email)
 			.orElseThrow(() -> new BusinessException(ErrorMessage.MEMBER_NOT_FOUND));
 		Comment comment = commentRepository.getReferenceById(commentId);
-		comment.modifyContent(content);
+		comment.updateContent(content);
 		commentRepository.save(comment);
 		return CommentResponseDto.of(comment, isMyComment(comment, member.getId()));
 	}

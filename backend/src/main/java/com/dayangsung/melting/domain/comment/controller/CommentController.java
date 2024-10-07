@@ -52,7 +52,7 @@ public class CommentController {
 	@PatchMapping("/{commentId}")
 	public ApiResponse<CommentResponseDto> modifyComment(@PathVariable Long albumId, @PathVariable Long commentId,
 		@AuthenticationPrincipal String email, @RequestBody CommentRequestDto commentRequestDto) {
-		CommentResponseDto commentResponseDto = commentService.modifyComment(commentId, email,
+		CommentResponseDto commentResponseDto = commentService.updateComment(commentId, email,
 			commentRequestDto.content());
 		return ApiResponse.ok(commentResponseDto);
 	}
