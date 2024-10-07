@@ -85,8 +85,9 @@ public class AlbumController {
 	}
 
 	@DeleteMapping("/{albumId}")
-	public ApiResponse<Void> deleteAlbum(@PathVariable Long albumId) {
-		albumService.deleteAlbum(albumId);
+	public ApiResponse<Void> deleteAlbum(@PathVariable Long albumId,
+		@AuthenticationPrincipal CustomOAuth2User customOAuth2User) {
+		albumService.deleteAlbum(albumId, customOAuth2User.getName());
 		return ApiResponse.ok(null);
 	}
 
@@ -102,8 +103,9 @@ public class AlbumController {
 	}
 
 	@PatchMapping("/{albumId}/toggle")
-	public ApiResponse<Boolean> toggleIsPublic(@PathVariable Long albumId) {
-		Boolean toggledIsPublic = albumService.toggleIsPublic(albumId);
+	public ApiResponse<Boolean> toggleIsPublic(@PathVariable Long albumId,
+		@AuthenticationPrincipal CustomOAuth2User customOAuth2User) {
+		Boolean toggledIsPublic = albumService.toggleIsPublic(albumId, customOAuth2User.getName());
 		return ApiResponse.ok(toggledIsPublic);
 	}
 

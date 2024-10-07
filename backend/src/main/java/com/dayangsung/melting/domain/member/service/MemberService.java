@@ -249,8 +249,6 @@ public class MemberService {
 		Member member = memberRepository.findByEmail(email)
 			.orElseThrow(() -> new BusinessException(ErrorMessage.MEMBER_NOT_FOUND));
 		int songCount = member.getCoverCount();
-		return MemberSongCountsResponseDto.builder()
-			.songcounts(songCount)
-			.build();
+		return MemberSongCountsResponseDto.of(songCount, member.isAiCoverEnabled());
 	}
 }
