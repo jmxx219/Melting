@@ -12,6 +12,7 @@ import com.dayangsung.melting.domain.hashtag.service.HashtagService;
 import com.dayangsung.melting.global.aop.LogExecution;
 import com.dayangsung.melting.global.common.response.ApiResponse;
 
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -22,6 +23,7 @@ public class HashtagController {
 
 	private final HashtagService hashtagService;
 
+	@Operation(summary = "해시태그 키워드로 검색")
 	@GetMapping
 	public ApiResponse<HashtagPageResponseDto> searchHashtags(
 		@RequestParam(defaultValue = "0") int page,
