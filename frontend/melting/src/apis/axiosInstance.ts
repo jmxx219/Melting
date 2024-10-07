@@ -1,10 +1,5 @@
-import axios, {
-  AxiosInstance,
-  AxiosRequestConfig,
-  AxiosResponse,
-  AxiosError,
-} from 'axios'
-import { setLoading } from '@/contexts/LoadingContext'
+import axios, { AxiosInstance, AxiosRequestConfig, AxiosError } from 'axios'
+import { useLoading } from '@/contexts/LoadingContext'
 
 const VITE_API_BASE_URL = import.meta.env.VITE_API_BASE_URL
 
@@ -43,19 +38,32 @@ export const createAxiosInstance = (apiPath: ApiPath): AxiosInstance => {
     ...axiosDefaults,
   })
 
+  const { setLoading } = useLoading()
+  const requests: Record<string, any> = {}
+
   // 요청 인터셉터
   instance.interceptors.request.use(
     (config) => {
-      // 토큰 추가 등의 로직을 넣을 수 있습니다.
+      setLoading(true)
+      const key = `${config.method}:${config.url}`
+      if (requests[key]) {
+        return Promise.reject(new Error('중복된 요청입니다.'))
+      }
+      requests[key] = true
       return config
     },
-    (error) => Promise.reject(error),
+    (error) => {
+      setLoading(false)
+      return Promise.reject(error)
+    },
   )
 
   // 응답 인터셉터
   instance.interceptors.response.use(
     (response) => {
       setLoading(false)
+      const key = `${response.config.method}:${response.config.url}`
+      delete requests[key]
       return {
         ...response,
         data: response.data as ApiResponse,
@@ -63,6 +71,8 @@ export const createAxiosInstance = (apiPath: ApiPath): AxiosInstance => {
     },
     (error: AxiosError<ApiResponse>) => {
       setLoading(false)
+      const key = `${error.config?.method}:${error.config?.url}`
+      delete requests[key]
       return handleAxiosError(error)
     },
   )
