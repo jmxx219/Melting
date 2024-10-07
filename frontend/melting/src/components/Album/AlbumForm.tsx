@@ -93,6 +93,7 @@ export default function AlbumForm() {
             songs: selectedSongs.map((song) => song.songId),
             genres: selectedGenres,
             hashtags: selectedHashtags,
+            albumName,
           }
 
           try {
