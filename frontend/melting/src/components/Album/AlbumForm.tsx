@@ -102,7 +102,6 @@ export default function AlbumForm() {
             generatedIntro = await albumApi.createAiDescription(
               aiDescriptionRequestDto,
             )
-            console.log('AI 소개 생성 성공:', generatedIntro)
             setAlbumIntro(generatedIntro)
           } catch (error) {
             console.error('AI 소개 생성 중 오류 발생:', error)
@@ -142,7 +141,6 @@ export default function AlbumForm() {
 
         // API 호출
         const response = await albumApi.createAlbum(payload)
-        console.log('앨범 생성 성공:', response)
         // 앨범 생성 후 앨범 컨텍스트 초기화
         resetAlbum()
         navigate(`/album/detail/${response.albumId}`, { replace: true })
