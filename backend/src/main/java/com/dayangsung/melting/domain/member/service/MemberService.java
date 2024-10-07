@@ -57,6 +57,9 @@ public class MemberService {
 	@Transactional
 	public MemberResponseDto initMemberInfo(MultipartFile profileImage, String nickname, Gender gender, String email) {
 		log.debug("member service nickname {}", nickname);
+		if (!validateNickname(nickname)) {
+			throw new BusinessException(ErrorMessage.DUPLICATE_NICKNAME);
+		}
 		String profileImageUrl = awsS3Util.getDefaultProfileImageUrl();
 		Member member = memberRepository.findByEmail(email)
 			.orElseThrow(() -> new BusinessException(ErrorMessage.MEMBER_NOT_FOUND));
@@ -76,6 +79,9 @@ public class MemberService {
 
 	@Transactional
 	public MemberResponseDto updateMemberInfo(MultipartFile multipartFile, String nickname, String email) {
+		if (!validateNickname(nickname)) {
+			throw new BusinessException(ErrorMessage.DUPLICATE_NICKNAME);
+		}
 		Member member = memberRepository.findByEmail(email)
 			.orElseThrow(() -> new BusinessException(ErrorMessage.MEMBER_NOT_FOUND));
 		if (nickname == null) {
