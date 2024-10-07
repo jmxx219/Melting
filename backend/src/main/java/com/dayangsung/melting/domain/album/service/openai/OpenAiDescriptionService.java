@@ -90,7 +90,7 @@ public class OpenAiDescriptionService {
 
 
 	private Mono<String> requestAlbumDescriptionGeneration(String summarizedLyrics) {
-		String prompt = String.format("Create a detailed album description (up to 500 characters) based on these summarized lyrics, hashtags and genres : %s"
+		String prompt = String.format("Create a detailed album description (up to 500 characters) based on these summarized lyrics, hashtags and genres. Please answer in Korean. : %s"
 				, summarizedLyrics);
 
 		Map<String, Object> bodyValue = Map.of(
