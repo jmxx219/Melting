@@ -67,9 +67,9 @@ public class RedisService {
 		List<Album> hotAlbums = new ArrayList<>();
 		String key;
 		if (option) {
-			key = DAILY_STREAMING_KEY;
+			key = DAILY_ALBUM_KEY;
 		} else {
-			key = MONTHLY_STREAMING_KEY;
+			key = MONTHLY_ALBUM_KEY;
 		}
 		int index = 0;
 		while (hotAlbums.size() < 5) {
@@ -77,7 +77,8 @@ public class RedisService {
 			if (albumIdObj == null) {
 				break;
 			}
-			Album album = albumRepository.findById((Long)albumIdObj)
+			Long albumId = Long.parseLong(albumIdObj.toString());
+			Album album = albumRepository.findById(albumId)
 				.orElseThrow(() -> new BusinessException(ErrorMessage.ALBUM_NOT_FOUND));
 			if (!album.getIsDeleted() && album.getIsPublic()) {
 				hotAlbums.add(album);
