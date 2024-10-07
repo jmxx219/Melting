@@ -13,22 +13,39 @@ import {
 import { Button } from '../../ui/button'
 import AlbumCover from '../AlbumCover'
 import AlbumUserProfile from './AlbumUserProfile'
+import { albumCategory } from '@/types/constType'
+import { albumApi } from '@/apis/albumApi'
 
 interface AlbumDetailProps {
   albumInfo: AlbumDetailInfoType
   albumId: number
+  isCreator: boolean
+  fetchLike: () => void
 }
 
 export default function AlbumDetailTop({
   albumInfo,
   albumId,
+  isCreator,
+  fetchLike,
 }: AlbumDetailProps) {
   const [showModal, setShowModal] = useState(false)
 
   const truncatedDescription = useMemo(() => {
-    if (albumInfo.description.length <= 100) return albumInfo.description
-    return `${albumInfo.description.slice(0, 100)}...`
-  }, [albumInfo.description])
+    if (albumInfo.albumDescription.length <= 100)
+      return albumInfo.albumDescription
+    return `${albumInfo.albumDescription.slice(0, 100)}...`
+  }, [albumInfo.albumDescription])
+
+  const fetchAlbumLike = async () => {
+    if (albumInfo.isLike) {
+      //좋아요 취소
+      await albumApi.deleteAlbumLikes(albumId)
+    } else {
+      await albumApi.addAlbumLikes(albumId)
+    }
+    fetchLike()
+  }
 
   return (
     <div className="flex flex-col">
@@ -42,9 +59,9 @@ export default function AlbumDetailTop({
       <div className="flex-col mt-2" id="album-info">
         <div className="text-2xl font-bold">{albumInfo.albumName}</div>
         <div className="mt-2 flex space-x-5 text-sm justify-between">
-          <div>{albumInfo.createDate}</div>
+          <div>{albumInfo.createdAt}</div>
           <div className="flex">
-            <div className="px-1">{`${albumInfo.type} ㆍ`}</div>
+            <div className="px-1">{`${albumCategory[albumInfo.category]} ㆍ`}</div>
             {albumInfo.genres.map((genre, index) => (
               <span key={index} className="text-gray-600">
                 {genre}
@@ -54,19 +71,23 @@ export default function AlbumDetailTop({
           </div>
         </div>
         <AlbumUserProfile
-          nickname={albumInfo.nickname}
-          profileImage={albumInfo.profileImage}
+          nickname={albumInfo.albumCreatorNickname}
+          profileImage={albumInfo.albumCreatorProfileImageUrl}
         />
       </div>
       <div className="mt-2 flex">
         <div className="flex flex-1 justify-start items-center">
-          <button type="button" className="focus:outline-nonez-0">
+          <button
+            type="button"
+            className="focus:outline-nonez-0"
+            onClick={fetchAlbumLike}
+          >
             <Heart
               fill={albumInfo.isLike ? '#FFAF25' : '#ADADAD'}
               fillOpacity={albumInfo.isLike ? 1 : 0.4}
             />
           </button>
-          <h3 className="px-1 text-base truncate">{albumInfo.like}</h3>
+          <h3 className="px-1 text-base truncate">{albumInfo.likedCount}</h3>
         </div>
         <div className="flex flex-1 items-center">
           <button type="button" className="focus:outline-nonez-0">
@@ -78,9 +99,11 @@ export default function AlbumDetailTop({
       <div className="mt-10" id="album-description">
         <div className="flex justify-between mt-2 items-center">
           <div className="text-xl font-semibold">앨범 소개</div>
-          <div>
-            <Pencil width={15} height={15}></Pencil>
-          </div>
+          {isCreator && (
+            <div>
+              <Pencil width={15} height={15}></Pencil>
+            </div>
+          )}
         </div>
         <div className="flex text-[#A5A5A5] space-x-3">
           {albumInfo.hashtags.map((tag, index) => (
@@ -89,7 +112,7 @@ export default function AlbumDetailTop({
         </div>
         <div className="flex flex-col justify-center items-center mt-2">
           <p className="w-full text-sm text-gray-700">{truncatedDescription}</p>
-          {albumInfo.description.length > 100 && (
+          {albumInfo.albumDescription.length > 100 && (
             <Button
               variant={'ghost'}
               className="text-black"
@@ -108,7 +131,7 @@ export default function AlbumDetailTop({
                   </div>
                 </AlertDialogTitle>
                 <AlertDialogDescription className="whitespace-pre-wrap">
-                  {albumInfo.description}
+                  {albumInfo.albumDescription}
                 </AlertDialogDescription>
               </AlertDialogHeader>
             </AlertDialogContent>

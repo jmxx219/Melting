@@ -18,9 +18,10 @@ const convertSongLikesResponseToSong = (
     artist: songLikes.artist || '',
     albumCoverImageUrl: songLikes.albumCoverImageUrl || '',
     nickname: songLikes.creatorNickname || '',
-    likeCount: songLikes.likedCount || 0,
+    likedCount: songLikes.likedCount || 0,
     isLiked: songLikes.isLiked || false,
-    lengthInSeconds: songLikes.lengthInSeconds || 0,
+    lengthInSeconds: songLikes.lengthInSeconds,
+    songUrl: '',
   }
 }
 

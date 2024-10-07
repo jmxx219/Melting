@@ -1,4 +1,4 @@
-import { AlbumCommentType } from '@/types/album'
+import { CommentResponseDto } from '@/types/album'
 import {
   differenceInCalendarDays,
   format,
@@ -9,7 +9,7 @@ import {
 import AlbumUserProfile from './AlbumUserProfile'
 
 type AlbumCommentProps = {
-  comment: AlbumCommentType
+  comment: CommentResponseDto
 }
 
 export default function AlbumComment({ comment }: AlbumCommentProps) {
@@ -44,11 +44,11 @@ export default function AlbumComment({ comment }: AlbumCommentProps) {
     <div>
       <div className="flex justify-between items-center">
         <AlbumUserProfile
-          nickname={comment.member}
-          profileImage={comment.profileImg}
+          nickname={comment.writer_nickname}
+          profileImage={comment.writer_profile_image}
         />
         <div className="text-xs text-gray-500">
-          {formatDate(comment.createdAt)}
+          {formatDate(comment.created_at)}
         </div>
       </div>
       <p className="text-sm mt-1">{comment.content}</p>
