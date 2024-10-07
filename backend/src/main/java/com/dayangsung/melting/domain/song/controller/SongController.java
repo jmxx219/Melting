@@ -76,6 +76,7 @@ public class SongController {
 		return ApiResponse.ok(responseDto);
 	}
 
+	@Operation(summary = "앨범 생성 시 추가 가능한 곡 페이지 조회")
 	@GetMapping
 	public ApiResponse<SongSearchPageResponseDto> getSongsForAlbumCreation(
 		@RequestParam(required = false) String keyword,
@@ -88,12 +89,14 @@ public class SongController {
 		return ApiResponse.ok(responseDto);
 	}
 
+	@Operation(summary = "곡 좋아요 개수 조회")
 	@GetMapping("/{songId}/likes")
 	public ApiResponse<Integer> getSongLikesCount(@PathVariable Long songId) {
 		Integer songLikesCount = songService.getSongLikesCount(songId);
 		return ApiResponse.ok(songLikesCount);
 	}
 
+	@Operation(summary = "곡 좋아요 추가")
 	@PostMapping("/{songId}/likes")
 	public ApiResponse<Integer> addSongLikes(@PathVariable Long songId,
 		@AuthenticationPrincipal CustomOAuth2User customOAuth2User) {
@@ -101,6 +104,7 @@ public class SongController {
 		return ApiResponse.ok(songLikesCount);
 	}
 
+	@Operation(summary = "곡 좋아요 취소")
 	@DeleteMapping("/{songId}/likes")
 	public ApiResponse<Integer> deleteSongLikes(@PathVariable Long songId,
 		@AuthenticationPrincipal CustomOAuth2User customOAuth2User) {

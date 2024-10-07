@@ -19,6 +19,7 @@ import com.dayangsung.melting.domain.comment.service.CommentService;
 import com.dayangsung.melting.global.aop.LogExecution;
 import com.dayangsung.melting.global.common.response.ApiResponse;
 
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 
 // TODO : 작성자만 수정 삭제 가능하게 메소드 시큐리티 적용
@@ -30,6 +31,7 @@ public class CommentController {
 
 	private final CommentService commentService;
 
+	@Operation(summary = "앨범에 대한 댓글 페이지 조회")
 	@GetMapping
 	public ApiResponse<CommentPageResponseDto> getAllComments(
 		@PathVariable Long albumId,
@@ -41,6 +43,7 @@ public class CommentController {
 		return ApiResponse.ok(commentResponseDtoList);
 	}
 
+	@Operation(summary = "댓글 작성")
 	@PostMapping
 	public ApiResponse<CommentResponseDto> writeComment(@PathVariable Long albumId,
 		@AuthenticationPrincipal String email, @RequestBody CommentRequestDto commentRequestDto) {
@@ -49,6 +52,7 @@ public class CommentController {
 		return ApiResponse.ok(commentResponseDto);
 	}
 
+	@Operation(summary = "댓글 수정")
 	@PatchMapping("/{commentId}")
 	public ApiResponse<CommentResponseDto> modifyComment(@PathVariable Long albumId, @PathVariable Long commentId,
 		@AuthenticationPrincipal String email, @RequestBody CommentRequestDto commentRequestDto) {
@@ -57,6 +61,7 @@ public class CommentController {
 		return ApiResponse.ok(commentResponseDto);
 	}
 
+	@Operation(summary = "댓글 삭제")
 	@DeleteMapping("/{commentId}")
 	public ApiResponse<CommentResponseDto> deleteComment(@PathVariable Long albumId, @PathVariable Long commentId,
 		@AuthenticationPrincipal String email) {
