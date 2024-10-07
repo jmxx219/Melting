@@ -205,15 +205,15 @@ export type GetHot5AlbumsError = ErrorResponse
 
 export interface SongDetailsResponseDto {
   /** @format int64 */
-  songId?: number
-  songTitle?: string
-  nickname?: string
-  artist?: string
-  albumCoverImageUrl?: string
-  isLiked?: boolean
+  songId: number
+  songTitle: string
+  nickname: string
+  artist: string
+  albumCoverImageUrl: string
+  isLiked: boolean
   /** @format int32 */
-  likedCount?: number
-  songUrl?: string
+  likedCount: number
+  songUrl: string
   lyrics?: string
 }
 
