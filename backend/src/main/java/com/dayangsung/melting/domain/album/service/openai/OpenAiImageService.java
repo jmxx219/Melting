@@ -4,13 +4,14 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.ExchangeStrategies;
 import org.springframework.web.reactive.function.client.WebClient;
 
-import com.dayangsung.melting.domain.album.service.AlbumImageUploadService;
+import com.dayangsung.melting.domain.album.service.AlbumCoverImageService;
 import com.dayangsung.melting.domain.song.entity.Song;
 import com.dayangsung.melting.domain.song.service.SongService;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -23,15 +24,18 @@ import reactor.core.publisher.Mono;
 public class OpenAiImageService {
 
 	private final OpenAiLyricsSummaryService openAiLyricsSummaryService;
-	private final AlbumImageUploadService albumImageUploadService;
+	private final AlbumCoverImageService albumCoverImageService;
+	private final ObjectMapper jacksonObjectMapper;
 	private final SongService songService;
 	private final WebClient webClient;
-	private final ObjectMapper jacksonObjectMapper;
+
+	static final String AUTHORIZATION = "Authorization";
+	static final String BEARER = "Bearer ";
 
 	public OpenAiImageService(@Value("${openai.api-key}") String openAiApiKey,
-			AlbumImageUploadService albumImageUploadService, OpenAiLyricsSummaryService openAiLyricsSummaryService,
+			@Lazy AlbumCoverImageService albumCoverImageService, OpenAiLyricsSummaryService openAiLyricsSummaryService,
 		SongService songService, ObjectMapper jacksonObjectMapper) {
-		this.albumImageUploadService = albumImageUploadService;
+		this.albumCoverImageService = albumCoverImageService;
 		this.openAiLyricsSummaryService = openAiLyricsSummaryService;
 		this.songService = songService;
 		this.webClient = WebClient.builder()
@@ -39,7 +43,7 @@ public class OpenAiImageService {
 						.codecs(configurer -> configurer.defaultCodecs().maxInMemorySize(10 * 1024 * 1024))
 						.build())
 				.baseUrl("https://api.openai.com/v1")
-				.defaultHeader("Authorization", "Bearer " + openAiApiKey)
+				.defaultHeader(AUTHORIZATION, BEARER + openAiApiKey)
 				.build();
 		this.jacksonObjectMapper = jacksonObjectMapper;
 	}
@@ -54,8 +58,8 @@ public class OpenAiImageService {
 		String content = jsonParsing(lyricsResult.block());
 		Mono<String> imageResult = requestImageGeneration(content);
 
-		String fileName = albumImageUploadService.generateFileName("image/generated_album_cover", ".png"); // 포맷을 PNG로 가정
-		String base64Image = albumImageUploadService.parseAiCoverImage(imageResult);
+		String fileName = albumCoverImageService.generateFileName("image/generated_album_cover", ".png"); // 포맷을 PNG로 가정
+		String base64Image = albumCoverImageService.parseAiCoverImage(imageResult);
 
 		return new String[] {base64Image, fileName};
 	}

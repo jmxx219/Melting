@@ -1,12 +1,10 @@
 package com.dayangsung.melting.domain.auth.service;
 
-import org.springframework.http.HttpStatus;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
 import com.dayangsung.melting.domain.auth.CustomOAuth2User;
 import com.dayangsung.melting.domain.auth.dto.response.GoogleResponse;
@@ -15,12 +13,7 @@ import com.dayangsung.melting.domain.auth.dto.response.OAuth2Response;
 import com.dayangsung.melting.domain.auth.enums.ProviderType;
 import com.dayangsung.melting.domain.member.entity.Member;
 import com.dayangsung.melting.domain.member.repository.MemberRepository;
-import com.dayangsung.melting.global.util.CookieUtil;
-import com.dayangsung.melting.global.util.JwtUtil;
-import com.dayangsung.melting.global.util.RedisUtil;
 
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -30,8 +23,6 @@ import lombok.extern.slf4j.Slf4j;
 public class AuthService extends DefaultOAuth2UserService {
 
 	private final MemberRepository memberRepository;
-	private final JwtUtil jwtUtil;
-	private final RedisUtil redisUtil;
 
 	@Override
 	public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
@@ -52,10 +43,10 @@ public class AuthService extends DefaultOAuth2UserService {
 		log.debug("member info: {}, {}, {}", member.getId(), member.getEmail(), member.getProvider());
 
 		return CustomOAuth2User.builder()
-				.id(member.getId())
-				.email(member.getEmail())
-				.provider(member.getProvider())
-				.build();
+			.id(member.getId())
+			.email(member.getEmail())
+			.provider(member.getProvider())
+			.build();
 	}
 
 	private Member insertMemberIfNotExist(OAuth2Response oAuth2Response) {

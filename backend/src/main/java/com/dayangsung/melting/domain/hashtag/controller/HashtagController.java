@@ -26,7 +26,7 @@ public class HashtagController {
 
 	private final HashtagService hashtagService;
 
-	@GetMapping("/search")
+	@GetMapping
 	public ApiResponse<HashtagPageResponseDto> searchHashtags(
 		@RequestParam(name = "page", defaultValue = "0") int page,
 		@RequestParam(name = "size", defaultValue = "10") int size,

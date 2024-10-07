@@ -16,11 +16,14 @@ public class OpenAiLyricsSummaryService {
 
 	private final WebClient webClient;
 
+	static final String AUTHORIZATION = "Authorization";
+	static final String BEARER = "Bearer ";
+
 	public OpenAiLyricsSummaryService(@Value("${openai.api-key}") String openAiApiKey,
 			WebClient.Builder webClientBuilder) {
 		this.webClient = webClientBuilder
 				.baseUrl("https://api.openai.com/v1")
-				.defaultHeader("Authorization", "Bearer " + openAiApiKey)
+				.defaultHeader(AUTHORIZATION, BEARER + openAiApiKey)
 				.build();
 	}
 
