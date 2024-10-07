@@ -36,10 +36,9 @@ public class HashtagSearchService {
 		return hashtags.stream().map(HashtagResponseDto::of).toList();
 	}
 
-	public List<HashtagDocument> searchHashtags(String query) {
-		List<HashtagDocument> list = hashtagDocumentRepository.findByContentContaining(query);
-		list.forEach(System.out::println);
-		return list;
+	public List<HashtagResponseDto> searchHashtags(String query) {
+		List<HashtagDocument> searchedHashtags = hashtagDocumentRepository.findByContentContaining(query);
+		return searchedHashtags.stream().map(HashtagResponseDto::of).toList();
 	}
 
 }

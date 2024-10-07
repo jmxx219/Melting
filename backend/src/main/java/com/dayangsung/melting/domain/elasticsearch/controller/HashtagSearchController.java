@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.dayangsung.melting.domain.elasticsearch.document.HashtagDocument;
 import com.dayangsung.melting.domain.elasticsearch.service.HashtagSearchService;
 import com.dayangsung.melting.domain.hashtag.dto.response.HashtagResponseDto;
+import com.dayangsung.melting.global.common.response.ApiResponse;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -29,8 +30,9 @@ public class HashtagSearchController {
 	}
 
 	@GetMapping("/search")
-	public List<HashtagDocument> searchHashtags(@RequestParam(name = "query") String query) {
+	public ApiResponse<List<HashtagResponseDto>> searchHashtags(@RequestParam(name = "query") String query) {
 		log.info("searchHashtags -> /api/v2/hashtags/search?query={}", query);
-		return hashtagSearchService.searchHashtags(query);
+		List<HashtagResponseDto> searchedHashtags = hashtagSearchService.searchHashtags(query);
+		return ApiResponse.ok(searchedHashtags);
 	}
 }
