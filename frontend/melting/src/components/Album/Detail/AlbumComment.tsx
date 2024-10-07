@@ -44,11 +44,11 @@ export default function AlbumComment({ comment }: AlbumCommentProps) {
     <div>
       <div className="flex justify-between items-center">
         <AlbumUserProfile
-          nickname={comment.writer_nickname}
-          profileImage={comment.writer_profile_image}
+          nickname={comment.writerNickname}
+          profileImage={comment.writerProfileImage}
         />
         <div className="text-xs text-gray-500">
-          {formatDate(comment.created_at)}
+          {formatDate(comment.createdAt)}
         </div>
       </div>
       <p className="text-sm mt-1">{comment.content}</p>

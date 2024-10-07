@@ -79,12 +79,13 @@ export interface ApiResponseCommentResponseDto {
 
 export interface CommentResponseDto {
   /** @format int64 */
-  comment_id: number
-  writer_profile_image: string
-  writer_nickname: string
+  commentId?: number
+  writerProfileImage: string
+  writerNickname: string
   content: string
+  isMyComment: boolean
   /** @format date-time */
-  created_at: string
+  createdAt: string
 }
 
 export interface ApiResponseListCommentResponseDto {
