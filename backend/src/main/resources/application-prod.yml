@@ -53,7 +53,7 @@ spring:
     elasticsearch:
       repositories:
         enabled: true
-      username: ${ENV ELASTICSEARCH_USERNAME}
+      username: ${ELASTICSEARCH_USERNAME}
       password: ${ELASTICSEARCH_PASSWORD}
       uris: ${ELASTICSEARCH_HOST}
   servlet:
