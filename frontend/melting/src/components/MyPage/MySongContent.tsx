@@ -29,8 +29,10 @@ export default function MySongContent({
     navigate(`/music/play`, { state: { songId } })
   }
 
-  const goToRecordSong = (songId: number) => {
-    navigate(`/music/record`, { state: { songId: songId } })
+  const goToRecordSong = () => {
+    navigate(`/music/record`, {
+      state: { songId: originalSong.originalSongId },
+    })
   }
 
   const toggleLike = async (songId: number, isLiked: boolean) => {
@@ -135,7 +137,7 @@ export default function MySongContent({
                     }`}
                     onClick={() => {
                       if (mySong.songType === 'MELTING' || isPossibleAiCover) {
-                        goToRecordSong(mySong.songId)
+                        goToRecordSong()
                       }
                     }}
                     disabled={!mySong.isCreated}
