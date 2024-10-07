@@ -1,13 +1,13 @@
+import { songApi } from '@/apis/songApi'
+import Heart from '@/components/Icon/Heart'
+import { SongDetailsResponseDto } from '@/types/album'
+import { convertSecondsToMinutes } from '@/utils/timeUtil'
+import { Crown, Play } from 'lucide-react'
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import Heart from '@/components/Icon/Heart'
-import { Play, Crown } from 'lucide-react'
-import { Song } from '@/types/song'
-import { convertSecondsToMinutes } from '@/utils/timeUtil'
-import { songApi } from '@/apis/songApi'
 
 interface LikedSongProps {
-  song: Song
+  song: SongDetailsResponseDto
   hasProfileImage?: boolean
   songOrder?: number
   isTitle?: boolean
@@ -23,8 +23,7 @@ export default function SongContent({
 }: LikedSongProps) {
   const navigate = useNavigate()
   const [isLiked, setIsLiked] = useState(song.isLiked)
-  const [likeCount, setLikeCount] = useState(song.likeCount || 0)
-
+  const [likeCount, setLikeCount] = useState(song.likedCount || 0)
   const toggleLike = async () => {
     const newLikedState = !isLiked
     setIsLiked(newLikedState)
@@ -34,9 +33,9 @@ export default function SongContent({
         currentLikedCount = await songApi.addSongLikes(song.songId)
       } else {
         currentLikedCount = await songApi.deleteSongLikes(song.songId)
-        if (fetchSongs) {
-          await fetchSongs()
-        }
+      }
+      if (fetchSongs) {
+        await fetchSongs()
       }
       setLikeCount(currentLikedCount)
     } catch (error) {
@@ -46,7 +45,7 @@ export default function SongContent({
   }
 
   const goToPlaySong = (songId: number) => {
-    navigate(`/music/play/`, { state: songId })
+    navigate(`/music/play`, { state: { songId } })
   }
 
   const truncateText = (text: string, maxLength: number) => {
@@ -84,11 +83,9 @@ export default function SongContent({
 
       <div className="text-sm flex items-center w-14">
         <button type="button" onClick={() => toggleLike()}>
-          <Heart fill={'#FFAF25'} fillOpacity={1} />
+          <Heart fill={song.isLiked ? '#FFAF25' : '#A5A5A5'} fillOpacity={1} />
         </button>
-        <div className="ml-1">
-          {likeCount > 999 ? '999+' : likeCount.toLocaleString()}
-        </div>
+        <div className="ml-1">{likeCount > 999 ? '999+' : likeCount}</div>
       </div>
 
       <div className="text-xs flex items-center w-12 text-gray-400">

@@ -29,6 +29,9 @@ const convertSongDtoToSong = (item: SongSearchResponseDto): Song => {
     songType: item.meltingSongId ? 'melting' : 'ai',
     meltingSongId: item.meltingSongId || null,
     aiCoverSongId: item.aiCoverSongId || null,
+    likedCount: 0,
+    isLiked: false,
+    lengthInSeconds: 0,
   }
 }
 

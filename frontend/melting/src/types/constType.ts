@@ -8,6 +8,12 @@ export const sort = {
   POPULAR: 'POPULAR',
 } as const
 
+export const albumCategory = {
+  SINGLE: '싱글',
+  MINI: '미니',
+  LP: '정규',
+}
+
 export const view = {
   MY: 'MY',
   LIKED: 'LIKED',
@@ -47,3 +53,4 @@ export type CoverType = keyof typeof cover
 export type GenreType = (typeof genres)[number]
 export type SortType = keyof typeof sort
 export type ViewType = keyof typeof view
+export type albumCategoryType = keyof typeof albumCategory

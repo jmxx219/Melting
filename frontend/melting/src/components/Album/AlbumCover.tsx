@@ -18,7 +18,7 @@ export default function AlbumCover({
   const [isHovered, setIsHovered] = useState(false)
   const navigate = useNavigate()
   const handlePlayClick = () => {
-    navigate(`/album/play`, { state: albumId })
+    navigate(`/album/play`, { state: { albumId } })
   }
   return (
     <div className={`w-[${width}px] h-full`}>
