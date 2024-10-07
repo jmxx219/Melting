@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
@@ -32,7 +33,7 @@ public class OpenAiImageService {
 	static final String BEARER = "Bearer ";
 
 	public OpenAiImageService(@Value("${openai.api-key}") String openAiApiKey,
-			AlbumCoverImageService albumCoverImageService, OpenAiLyricsSummaryService openAiLyricsSummaryService,
+			@Lazy AlbumCoverImageService albumCoverImageService, OpenAiLyricsSummaryService openAiLyricsSummaryService,
 		SongService songService, ObjectMapper jacksonObjectMapper) {
 		this.albumCoverImageService = albumCoverImageService;
 		this.openAiLyricsSummaryService = openAiLyricsSummaryService;
