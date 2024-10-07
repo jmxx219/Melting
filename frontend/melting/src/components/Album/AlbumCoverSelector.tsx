@@ -17,6 +17,7 @@ export default function AlbumCoverSelector() {
     setImages,
     setSelectedCover,
     setSelectedCoverFile,
+    setSelectedDefaultCoverIndex,
   } = useAlbumContext()
   const [isGeneratingAi, setIsGeneratingAi] = useState(false)
   const canGenerateAi =
@@ -83,14 +84,19 @@ export default function AlbumCoverSelector() {
   const handleImageSelect = async (image: ImageInfo) => {
     setSelectedCover(image.url)
 
-    // if (image.type === 'default') {
-    //   // 기본 이미지의 경우 URL을 File 객체로 변환
-    //   const file = await urlToFile(image.url, `${image.id}.jpg`, 'image/jpeg')
-    //   setSelectedCoverFile(file)
-    // } else {
-    // 사용자 등록 이미지나 AI 이미지는 이미 File 객체임
-    setSelectedCoverFile(new File([], 'default-image.jpg')) // AI 이미지 처리
-    // }
+    if (image.type === 'default') {
+      // 기본 이미지의 ID에서 마지막 글자를 추출하여 기본 이미지 번호로 설정합니다.
+      const defaultCoverIndex = parseInt(image.id.slice(-1))
+      setSelectedDefaultCoverIndex(defaultCoverIndex)
+    } else {
+      // 기본 이미지가 아닌 경우 null로 설정
+      setSelectedDefaultCoverIndex(null)
+    }
+    if (image.type === 'user' || image.type === 'ai') {
+      setSelectedCoverFile(image.file!)
+    } else {
+      setSelectedCoverFile(new File([], 'default-image.jpg'))
+    }
   }
 
   return (
