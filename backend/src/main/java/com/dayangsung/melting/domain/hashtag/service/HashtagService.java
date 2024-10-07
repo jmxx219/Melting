@@ -101,7 +101,7 @@ public class HashtagService {
 	}
 
 	public HashtagPageResponseDto searchHashtags(Pageable pageable, String keyword) {
-		Page<HashtagDocument> hashtagDocumentPage = hashtagDocumentRepository.findByContentContaining(pageable, keyword);
+		Page<HashtagDocument> hashtagDocumentPage = hashtagDocumentRepository.findByContentStartingWith(pageable, keyword);
 		return HashtagPageResponseDto.from(hashtagDocumentPage);
 	}
 
