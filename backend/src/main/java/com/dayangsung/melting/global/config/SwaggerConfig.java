@@ -25,23 +25,19 @@ public class SwaggerConfig {
 	}
 
 	@Bean
-	GroupedOpenApi voiceApi() {
-		return GroupedOpenApi.builder().group("voice").pathsToMatch("/api/v1/members/me/voices").build();
-	}
-
-	@Bean
 	GroupedOpenApi membersApi() {
 		return GroupedOpenApi.builder().group("members").pathsToMatch("/api/v1/members/**").build();
 	}
 
 	@Bean
 	GroupedOpenApi albumsApi() {
-		return GroupedOpenApi.builder().group("albums").pathsToMatch("/api/v1/albums/*", "/api/v1/albums").build();
+		return GroupedOpenApi.builder().group("albums").pathsToMatch("/api/v1/albums/**")
+			.pathsToExclude("/api/v1/albums/*/comments/**").build();
 	}
 
 	@Bean
 	GroupedOpenApi songsApi() {
-		return GroupedOpenApi.builder().group("songs").pathsToMatch("/api/v1/songs/*").build();
+		return GroupedOpenApi.builder().group("songs").pathsToMatch("/api/v1/songs/**").build();
 	}
 
 	@Bean
@@ -50,12 +46,12 @@ public class SwaggerConfig {
 	}
 
 	@Bean
-	GroupedOpenApi likesApi() {
-		return GroupedOpenApi.builder().group("likes").pathsToMatch("/api/v1/*/*/likes").build();
+	GroupedOpenApi commentsApi() {
+		return GroupedOpenApi.builder().group("comments").pathsToMatch("/api/v1/albums/*/comments/**").build();
 	}
 
 	@Bean
-	GroupedOpenApi commentsApi() {
-		return GroupedOpenApi.builder().group("comments").pathsToMatch("/api/v1/albums/*/comments/**").build();
+	GroupedOpenApi hashtagsApi() {
+		return GroupedOpenApi.builder().group("hashtag").pathsToMatch("/api/v1/hashtags").build();
 	}
 }
