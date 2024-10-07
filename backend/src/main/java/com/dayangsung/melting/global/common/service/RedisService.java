@@ -85,7 +85,7 @@ public class RedisService {
 			}
 			index++;
 		}
-
+		log.debug("{}: {}", key, hotAlbums);
 		return hotAlbums;
 	}
 
