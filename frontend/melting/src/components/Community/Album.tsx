@@ -18,6 +18,10 @@ export default function Album({ album }: AlbumProps) {
     navigate(`/album/play`, { state: { albumId } })
   }
 
+  const handleAlbumClick = () => {
+    navigate(`/album/detail/${albumId}`)
+  }
+
   return (
     <div className="w-[150px] h-full">
       <div className="relative w-36 h-36">
@@ -25,6 +29,7 @@ export default function Album({ album }: AlbumProps) {
           src={album.albumCoverImageUrl}
           alt={`${album.albumName}`}
           className="w-full h-full object-cover rounded-lg"
+          onClick={handleAlbumClick}
         />
         <button
           type="button"
