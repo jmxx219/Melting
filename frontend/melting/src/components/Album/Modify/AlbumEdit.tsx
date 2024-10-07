@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { AlbumUpdateRequestDto } from '@/types/album.ts'
 import { albumApi } from '@/apis/albumApi.ts'
+import { convertDateStringToWord } from '@/utils/dateUtil.ts'
 
 export default function AlbumEdit() {
   const location = useLocation()
@@ -10,10 +11,13 @@ export default function AlbumEdit() {
     location.state || {}
   const [description, setDescription] = useState(albumDescription)
   const [isDescriptionValid, setIsDescriptionValid] = useState(false)
+  let albumDate
 
   console.log(location.state)
 
-  useEffect(() => {}, [])
+  useEffect(() => {
+    albumDate = convertDateStringToWord(releaseDate)
+  }, [])
 
   // 앨범 설명이 처음 값과 다를 경우 유효성 설정
   useEffect(() => {
@@ -67,7 +71,7 @@ export default function AlbumEdit() {
           {`${description.length}/1000`}
         </div>
 
-        <p className="mt-4 text-gray-600">발매 일자: {releaseDate}</p>
+        <p className="mt-4 text-gray-600">발매 일자: {albumDate}</p>
 
         <button
           onClick={handleUpdate}
