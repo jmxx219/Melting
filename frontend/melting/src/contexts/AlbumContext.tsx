@@ -31,6 +31,7 @@ interface AlbumContextType {
   setImages: React.Dispatch<React.SetStateAction<ImageInfo[]>>
   selectedDefaultCoverIndex: number | null
   setSelectedDefaultCoverIndex: (index: number | null) => void
+  resetAlbum: () => void
 }
 
 // 기본값은 null이 아닌 적절한 기본 상태를 설정하거나 undefined로 설정
@@ -60,6 +61,18 @@ export const AlbumProvider = ({ children }: AlbumProviderProps) => {
   const [selectedDefaultCoverIndex, setSelectedDefaultCoverIndex] = useState<
     number | null
   >(null)
+
+  const resetAlbum = () => {
+    setAlbumName('')
+    setAlbumIntro('')
+    setSelectedSongs([])
+    setTitleSongIndex(null)
+    setSelectedGenres([])
+    setSelectedHashtags([])
+    setSelectedCover(null)
+    setSelectedCoverFile(null)
+    setSelectedDefaultCoverIndex(null)
+  }
 
   // 기본 이미지 상태 설정
   const [images, setImages] = useState<ImageInfo[]>([
@@ -117,6 +130,7 @@ export const AlbumProvider = ({ children }: AlbumProviderProps) => {
         setImages,
         selectedDefaultCoverIndex,
         setSelectedDefaultCoverIndex,
+        resetAlbum,
       }}
     >
       {children}
