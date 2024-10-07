@@ -68,17 +68,19 @@ public class AlbumController {
 	}
 
 	@GetMapping("/{albumId}")
-	public ApiResponse<AlbumDetailsResponseDto> getAlbumDetails(@PathVariable Long albumId) {
+	public ApiResponse<AlbumDetailsResponseDto> getAlbumDetails(@PathVariable Long albumId,
+		@AuthenticationPrincipal CustomOAuth2User customOAuth2User) {
 		AlbumDetailsResponseDto albumDetailsResponseDto =
-			albumService.getAlbumDetails(albumId);
+			albumService.getAlbumDetails(albumId, customOAuth2User.getName());
 		return ApiResponse.ok(albumDetailsResponseDto);
 	}
 
 	@PatchMapping("/{albumId}")
 	public ApiResponse<AlbumDetailsResponseDto> updateAlbumDescription(@PathVariable Long albumId,
-		@RequestBody AlbumUpdateRequestDto albumUpdateRequestDto) {
+		@RequestBody AlbumUpdateRequestDto albumUpdateRequestDto,
+		@AuthenticationPrincipal CustomOAuth2User customOAuth2User) {
 		AlbumDetailsResponseDto albumDetailsResponseDto = albumService.updateAlbumDescription(albumId,
-			albumUpdateRequestDto.description());
+			albumUpdateRequestDto.description(), customOAuth2User.getName());
 		return ApiResponse.ok(albumDetailsResponseDto);
 	}
 
