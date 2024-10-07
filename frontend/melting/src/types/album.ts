@@ -274,3 +274,17 @@ export interface AiDescriptionRequestDto {
 export type CreateAiDescriptionData = ApiResponseString
 
 export type CreateAiDescriptionError = ErrorResponse
+
+export interface ApiResponseAlbumDetailsResponseDto {
+  status?: string
+  data?: AlbumDetailsResponseDto
+  errorMessage?: string
+}
+
+export interface AlbumUpdateRequestDto {
+  description: string
+}
+
+export type UpdateAlbumDescriptionData = ApiResponseAlbumDetailsResponseDto
+
+export type UpdateAlbumDescriptionError = ErrorResponse

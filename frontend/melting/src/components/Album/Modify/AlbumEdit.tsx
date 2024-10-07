@@ -1,39 +1,47 @@
 import { useState, useEffect } from 'react'
+import { useLocation, useNavigate } from 'react-router-dom'
+import { AlbumUpdateRequestDto } from '@/types/album.ts'
+import { albumApi } from '@/apis/albumApi.ts'
 
-type AlbumEditProps = {
-  albumId: string
-  albumName: string
-  albumDescription: string
-  releaseDate: string
-  onUpdateAlbum: (albumId: string, albumDescription: string) => void
-}
-
-export default function AlbumEdit({
-  albumId,
-  albumName,
-  albumDescription: initialDescription,
-  releaseDate,
-  onUpdateAlbum,
-}: AlbumEditProps) {
-  const [description, setDescription] = useState(initialDescription)
+export default function AlbumEdit() {
+  const location = useLocation()
+  const navigate = useNavigate()
+  const { albumId, albumName, albumDescription, releaseDate } =
+    location.state || {}
+  const [description, setDescription] = useState(albumDescription)
   const [isDescriptionValid, setIsDescriptionValid] = useState(false)
+
+  console.log(location.state)
+
+  useEffect(() => {}, [])
 
   // 앨범 설명이 처음 값과 다를 경우 유효성 설정
   useEffect(() => {
-    setIsDescriptionValid(description !== initialDescription)
-  }, [description, initialDescription])
+    setIsDescriptionValid(description !== albumDescription)
+  }, [description, albumDescription])
 
   // 앨범 수정 API 요청
-  const handleUpdate = () => {
+  const handleUpdate = async () => {
     if (isDescriptionValid) {
-      onUpdateAlbum(albumId, description)
+      try {
+        const albumUpdateDescription: AlbumUpdateRequestDto = {
+          description,
+        }
+
+        const response = await albumApi.updateAlbumDescription(
+          albumId,
+          albumUpdateDescription,
+        )
+        console.log(response)
+        navigate(`/detail/${albumId}`)
+      } catch (error) {
+        console.error('앨범 수정 중 오류 발생:', error)
+      }
     }
   }
 
   return (
     <div className="flex flex-col items-center p-4">
-      <h1 className="text-2xl font-semibold mb-4">앨범 정보를 수정해주세요</h1>
-
       <div className="w-full max-w-md">
         <label className="block mb-2 text-sm font-bold text-gray-700">
           앨범 명
