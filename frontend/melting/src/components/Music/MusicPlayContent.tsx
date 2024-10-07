@@ -11,6 +11,7 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { Button } from '../ui/button'
 import { ScrollArea } from '../ui/scroll-area'
 import AudioPlayer, { AudioPlayerHandle } from './AudioPlayer'
+import { songApi } from '@/apis/songApi'
 
 type MusicPlayProps = {
   song: SongDetailsResponseDto
@@ -30,6 +31,8 @@ export default function MusicPlayContent({
   const audioPlayerRef = useRef<AudioPlayerHandle>(null)
   const [isPlaying, setIsPlaying] = useState(false)
 
+  const [isLike, setIsLike] = useState<boolean>(song.isLiked)
+  const [likeCnt, setLikeCnt] = useState<number>(song.likedCount)
   useEffect(() => {
     setIsLoading(true)
     const timer = setTimeout(() => {
@@ -73,6 +76,17 @@ export default function MusicPlayContent({
     }
   }, [song, isPlaying])
 
+  const fetchLike = async () => {
+    if (!isLike) {
+      const response = await songApi.addSongLikes(song.songId)
+      setLikeCnt(response)
+    } else {
+      const response = await songApi.deleteSongLikes(song.songId)
+      setLikeCnt(response)
+    }
+    setIsLike(!isLike)
+  }
+
   return (
     <div className="flex flex-col h-full">
       <div className="flex-1 py-5">
@@ -82,8 +96,12 @@ export default function MusicPlayContent({
           className="w-full h-full rounded-lg mb-2"
         />
         <div className="flex items-center">
-          <Heart className="w-6 h-6 text-red-500 mr-1" />
-          <span className="text-sm text-gray-600">{song.likedCount}</span>
+          <Heart
+            fill={isLike ? '#FFAF25' : 'white'}
+            className="w-6 h-6 text-primary-300 mr-1"
+            onClick={fetchLike}
+          />
+          <span className="text-sm text-gray-600">{likeCnt}</span>
         </div>
       </div>
       <div className="flex-1 flex justify-center items-center overflow-hidden">

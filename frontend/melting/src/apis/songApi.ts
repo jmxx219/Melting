@@ -65,7 +65,6 @@ export const songApi = {
   addSongLikes: async (songId: number) => {
     try {
       const response = await api.post<AddSongLikesData>(`/${songId}/likes`)
-      console.log(response)
       return response.data as number
     } catch (error) {
       console.error('곡 좋아요 추가 중 오류 발생:', error)
@@ -77,7 +76,6 @@ export const songApi = {
   deleteSongLikes: async (songId: number) => {
     try {
       const response = await api.delete<DeleteSongLikesData>(`/${songId}/likes`)
-      console.log(response)
       return response.data as number
     } catch (error) {
       console.error('곡 좋아요 삭제 중 오류 발생:', error)
