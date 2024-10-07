@@ -41,7 +41,11 @@ export default function AlbumPlayMain() {
   }, [songs.length])
 
   const onClose = () => {
-    navigate('/main')
+    if (location.key === 'default') {
+      navigate('/main')
+    } else {
+      navigate(-1)
+    }
   }
 
   return (
