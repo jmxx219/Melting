@@ -90,8 +90,6 @@ public class RedisService {
 
 	private void storeRankingList(String sortedSetKey, String listKey) {
 		ZSetOperations<String, Object> zSetOperations = redisTemplate.opsForZSet();
-		Set<ZSetOperations.TypedTuple<Object>> sortedSetValues = zSetOperations.reverseRangeWithScores(sortedSetKey, 0,
-			-1);
 		int offset = 0;
 		List<Long> valueList = new ArrayList<>();
 		while (valueList.size() < 5) {
@@ -118,12 +116,14 @@ public class RedisService {
 
 	public void resetDailyStreamingCount() {
 		log.debug("일별 스트리밍 횟수 초기화");
+		redisTemplate.delete(DAILY_ALBUM_KEY);
 		storeRankingList(DAILY_STREAMING_KEY, DAILY_ALBUM_KEY);
 		redisTemplate.delete(DAILY_STREAMING_KEY);
 	}
 
 	public void resetMonthlyStreamingCount() {
 		log.debug("월별 스트리밍 횟수 초기화");
+		redisTemplate.delete(MONTHLY_ALBUM_KEY);
 		storeRankingList(MONTHLY_STREAMING_KEY, MONTHLY_ALBUM_KEY);
 		redisTemplate.delete(MONTHLY_STREAMING_KEY);
 	}
