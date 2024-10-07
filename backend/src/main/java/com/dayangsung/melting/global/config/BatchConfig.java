@@ -14,7 +14,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.transaction.PlatformTransactionManager;
 
-import com.dayangsung.melting.global.util.RedisUtil;
+import com.dayangsung.melting.global.common.service.RedisService;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,7 +26,7 @@ public class BatchConfig {
 
 	private final JobRepository jobRepository;
 	private final PlatformTransactionManager transactionManager;
-	private final RedisUtil redisUtil;
+	private final RedisService redisService;
 
 	@Bean
 	public Job resetDailyStreamingJob() {
@@ -48,7 +48,7 @@ public class BatchConfig {
 	@StepScope
 	public Tasklet resetDailyStreamingTasklet() {
 		return (contribution, chunkContext) -> {
-			redisUtil.resetDailyStreamingCount();
+			redisService.resetDailyStreamingCount();
 			return RepeatStatus.FINISHED;
 		};
 	}
@@ -73,7 +73,7 @@ public class BatchConfig {
 	@StepScope
 	public Tasklet resetMonthlyStreamingTasklet() {
 		return (contribution, chunkContext) -> {
-			redisUtil.resetMonthlyStreamingCount();
+			redisService.resetMonthlyStreamingCount();
 			return RepeatStatus.FINISHED;
 		};
 	}
