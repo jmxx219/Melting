@@ -18,7 +18,7 @@ import {
   GetMemberAlbumsError,
   GetMemberLikesAlbumsError,
   AlbumMyPageResponseDto,
-  MemberSongResponseDto,
+  SongMypagePageResponseDto,
   GetMemberSongsData,
   GetMemberSongsError,
   GetMeltingCountsData,
@@ -161,10 +161,18 @@ export const userApi = {
       throw error as GetMemberLikesAlbumsError
     }
   },
-  getMemberSongs: async (): Promise<MemberSongResponseDto> => {
+  getMemberSongs: async (
+    page?: number,
+    size?: number,
+  ): Promise<SongMypagePageResponseDto> => {
     try {
-      const response = await api.get<GetMemberSongsData>('')
-      return response.data as MemberSongResponseDto
+      const response = await api.get<GetMemberSongsData>('/me/songs', {
+        params: {
+          page,
+          size,
+        },
+      })
+      return response.data as SongMypagePageResponseDto
     } catch (error) {
       throw error as GetMemberSongsError
     }

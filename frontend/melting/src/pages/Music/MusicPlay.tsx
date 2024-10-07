@@ -1,45 +1,47 @@
+import { songApi } from '@/apis/songApi'
 import Layout from '@/components/Layout'
 import MusicPlayerHeader from '@/components/Layout/MusicPlayerHeader'
 import MusicPlayContent from '@/components/Music/MusicPlayContent'
-import { SongPlay } from '@/types/songPlay'
-import { useNavigate } from 'react-router-dom'
+import { SongDetailsResponseDto } from '@/types/album'
+import { useEffect, useState } from 'react'
+import { useLocation, useNavigate } from 'react-router-dom'
 
-type Props = {}
+export default function MusicPlay() {
+  const location = useLocation()
+  const { songId } = location.state || {}
+  const [song, setSong] = useState<SongDetailsResponseDto | undefined>(
+    undefined,
+  )
 
-export default function MusicPlay({}: Props) {
-  // const location = useLocation()
-  // const {songId} = location.state || {};
+  useEffect(() => {
+    const getSong = async () => {
+      if (!songId) return
 
-  const song: SongPlay = {
-    songId: 1,
-    songTitle: 'Blueming',
-    artist: '아이유',
-    nickname: '노원핵주먹',
-    albumCoverImageUrl: 'https://github.com/shadcn.png',
-    lyrics:
-      'dsadsd\n dasdasdada\n dasdasdas\n dsadsd\n dasdasdada\n dasdasdas dsadsd\n dasdasdada\n dasdasdasdsadsd\n dasdasdada\n dasdasdasdsadsd\n dasdasdada\n dasdasdasdsadsd\n dasdasdada\n dasdasdasdsadsd\n dasdasdada\n dasdasdasdsadsd\n dasdasdada\n dasdasdasdsadsd\n dasdasdada\n dasdasdasdsadsd\n dasdasdada\n dasdasdasdsadsd\n dasdasdada\n dasdasdasdsadsd\n dasdasdada\n dasdasdasdsadsd\n dasdasdada\n dasdasdasdsadsd\n dasdasdada\n dasdasdasdsadsd\n dasdasdada\n dasdasdasdsadsd\n dasdasdada\n dasdasdasdsadsd\n dasdasdada\n dasdasdasdsadsd\n dasdasdada\n dasdasdas ',
-    audioSrc:
-      'https://d35fpwscei7sb8.cloudfront.net/audio/original_song/mr/1.mp3',
-    like: 0,
-    songType: 'melting',
-    aiCoverSongId: 1,
-    meltingSongId: 2,
-  }
+      const response = await songApi.getSong(songId)
+
+      setSong(response)
+    }
+
+    getSong()
+  }, [songId])
 
   const navigate = useNavigate()
-  const onCloe = () => {
-    navigate('/')
+  const onClose = () => {
+    navigate(-1)
   }
+
   return (
     <Layout
       Header={
-        <MusicPlayerHeader
-          artist={`${song.nickname} Original by ${song.artist}`}
-          songTitle={song.songTitle}
-          onClose={onCloe}
-        />
+        song && (
+          <MusicPlayerHeader
+            artist={`${song.nickname} Original by ${song.artist}`}
+            songTitle={song.songTitle}
+            onClose={onClose}
+          />
+        )
       }
-      children={<MusicPlayContent song={song} />}
+      children={song && <MusicPlayContent song={song} />}
       showFooter={false}
       isHidden={true}
     ></Layout>
