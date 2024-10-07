@@ -75,7 +75,7 @@ public class OpenAiDescriptionService {
 				.toList();
 		result.append(genreList);
 
-		Mono<String> descriptionResult = requestAlbumDescriptionGeneration(result.toString());
+		Mono<String> descriptionResult = requestAlbumDescriptionGeneration(aiDescriptionRequestDto.albumName(), result.toString());
 		return jsonParsing(descriptionResult.block());
 	}
 
@@ -89,9 +89,12 @@ public class OpenAiDescriptionService {
 	}
 
 
-	private Mono<String> requestAlbumDescriptionGeneration(String summarizedLyrics) {
-		String prompt = String.format("Create a detailed album description (up to 500 characters) based on these summarized lyrics, keyword and genres. Please answer in Korean. : %s"
-				, summarizedLyrics);
+	private Mono<String> requestAlbumDescriptionGeneration(String albumName, String summarizedLyrics) {
+		String prompt = String.format("Do not listing the lyrics, keywords, and genres."
+						+ "Please integrate them smoothly into the description."
+						+ "Do not use the phrase 'the album' in the description, but mention the album name %s directly."
+						+ "Create a detailed album description (up to 800 characters) based on these summarized lyrics, keyword and genres. Please answer in Korean. : %s"
+				, albumName, summarizedLyrics);
 
 		Map<String, Object> bodyValue = Map.of(
 			"model", "gpt-3.5-turbo",
