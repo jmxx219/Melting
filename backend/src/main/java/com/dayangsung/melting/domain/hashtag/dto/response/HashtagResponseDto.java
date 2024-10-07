@@ -1,6 +1,6 @@
 package com.dayangsung.melting.domain.hashtag.dto.response;
 
-import com.dayangsung.melting.domain.elasticsearch.document.HashtagDocument;
+import com.dayangsung.melting.domain.hashtag.entity.HashtagDocument;
 import com.dayangsung.melting.domain.hashtag.entity.Hashtag;
 
 import lombok.Builder;
