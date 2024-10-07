@@ -9,7 +9,6 @@ import { useLocation, useNavigate } from 'react-router-dom'
 export default function AlbumPlayMain() {
   const location = useLocation()
   const { albumId } = location.state || {}
-
   const navigate = useNavigate()
   const [songs, setSongs] = useState<SongDetailsResponseDto[]>([])
   const [songIdx, setSongIdx] = useState(0)
