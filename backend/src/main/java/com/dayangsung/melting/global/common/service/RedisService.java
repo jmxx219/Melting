@@ -78,6 +78,7 @@ public class RedisService {
 				break;
 			}
 			Long albumId = Long.parseLong(albumIdObj.toString());
+			log.debug("index: {}, albumId: {}", index, albumId);
 			Album album = albumRepository.findById(albumId)
 				.orElseThrow(() -> new BusinessException(ErrorMessage.ALBUM_NOT_FOUND));
 			if (!album.getIsDeleted() && album.getIsPublic()) {
@@ -85,7 +86,7 @@ public class RedisService {
 			}
 			index++;
 		}
-		log.debug("{}: {}", key, hotAlbums);
+		log.debug("key: {}, hotAlbums: {}", key, hotAlbums);
 		return hotAlbums;
 	}
 
