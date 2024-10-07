@@ -1,6 +1,4 @@
 import axios, { AxiosInstance, AxiosRequestConfig, AxiosError } from 'axios'
-import { useLoading } from '@/contexts/LoadingContext'
-
 const VITE_API_BASE_URL = import.meta.env.VITE_API_BASE_URL
 
 type ApiPath = 'members' | 'albums' | 'songs' | 'originalSongs' | 'hashtags'
@@ -32,28 +30,29 @@ const axiosDefaults: AxiosRequestConfig = {
   timeout: 60000,
 }
 
-export const createAxiosInstance = (apiPath: ApiPath): AxiosInstance => {
+export const createAxiosInstance = (
+  apiPath: ApiPath,
+  // setIsLoading: (isLoading: boolean) => void,
+): AxiosInstance => {
   const instance = axios.create({
     baseURL: `${VITE_API_BASE_URL}${API_PATHS[apiPath]}`,
     ...axiosDefaults,
   })
-
-  const { setLoading } = useLoading()
   const requests: Record<string, any> = {}
 
   // 요청 인터셉터
   instance.interceptors.request.use(
     (config) => {
-      setLoading(true)
       const key = `${config.method}:${config.url}`
       if (requests[key]) {
         return Promise.reject(new Error('중복된 요청입니다.'))
       }
       requests[key] = true
+      // setIsLoading(true)
       return config
     },
     (error) => {
-      setLoading(false)
+      // setIsLoading(false)
       return Promise.reject(error)
     },
   )
@@ -61,7 +60,7 @@ export const createAxiosInstance = (apiPath: ApiPath): AxiosInstance => {
   // 응답 인터셉터
   instance.interceptors.response.use(
     (response) => {
-      setLoading(false)
+      // setIsLoading(false)
       const key = `${response.config.method}:${response.config.url}`
       delete requests[key]
       return {
@@ -70,7 +69,7 @@ export const createAxiosInstance = (apiPath: ApiPath): AxiosInstance => {
       }
     },
     (error: AxiosError<ApiResponse>) => {
-      setLoading(false)
+      // setIsLoading(false)
       const key = `${error.config?.method}:${error.config?.url}`
       delete requests[key]
       return handleAxiosError(error)
