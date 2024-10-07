@@ -9,10 +9,12 @@ import com.dayangsung.melting.domain.hashtag.entity.Hashtag;
 
 import lombok.AccessLevel;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 @ToString
+@Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Document(indexName = "hashtags")
 public class HashtagDocument {
