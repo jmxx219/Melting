@@ -33,6 +33,9 @@ public class OpenAiDescriptionService {
 	private final WebClient webClient;
 	private final ObjectMapper jacksonObjectMapper;
 
+	static final String AUTHORIZATION = "Authorization";
+	static final String BEARER = "Bearer ";
+
 	public OpenAiDescriptionService(@Value("${openai.api-key}") String openAiApiKey, SongService songService,
 			HashtagService hashtagService, OpenAiLyricsSummaryService openAiLyricsSummaryService,
 			GenreService genreService, ObjectMapper jacksonObjectMapper) {
@@ -45,7 +48,7 @@ public class OpenAiDescriptionService {
 						.codecs(configurer -> configurer.defaultCodecs().maxInMemorySize(10 * 1024 * 1024))
 						.build())
 				.baseUrl("https://api.openai.com/v1")
-				.defaultHeader("Authorization", "Bearer " + openAiApiKey)
+				.defaultHeader(AUTHORIZATION, BEARER + openAiApiKey)
 				.build();
 		this.jacksonObjectMapper = jacksonObjectMapper;
 	}
@@ -72,7 +75,8 @@ public class OpenAiDescriptionService {
 				.toList();
 		result.append(genreList);
 
-		Mono<String> descriptionResult = requestAlbumDescriptionGeneration(result.toString());
+		Mono<String> descriptionResult = requestAlbumDescriptionGeneration(aiDescriptionRequestDto.albumName(),
+				result.toString());
 		return jsonParsing(descriptionResult.block());
 	}
 
@@ -86,17 +90,21 @@ public class OpenAiDescriptionService {
 	}
 
 
-	private Mono<String> requestAlbumDescriptionGeneration(String summarizedLyrics) {
-		String prompt = String.format("Create a detailed album description (up to 500 characters) based on these summarized lyrics, hashtags and genres : %s"
-				, summarizedLyrics);
+	private Mono<String> requestAlbumDescriptionGeneration(String albumName, String summarizedLyrics) {
+		String prompt = String.format("Do not listing the lyrics, keywords, and genres."
+						+ "Please integrate them smoothly into the description."
+						+ "Do not use the phrase 'the album' in the description, but mention the album name %s directly."
+						+ "The owner of this album is the user, so it should be referred to as the artist, and the name of the original singer should not be mentioned."
+						+ "Create a detailed album description (up to 800 characters) based on these summarized lyrics, keyword and genres. Please answer in Korean. : %s"
+				, albumName, summarizedLyrics);
 
 		Map<String, Object> bodyValue = Map.of(
-			"model", "gpt-3.5-turbo",
-			"messages", List.of(
-				Map.of("role", "system", "content", "You are a helpful assistant."),
-				Map.of("role", "user", "content", prompt)
-			),
-			"temperature", 0.7
+				"model", "gpt-3.5-turbo",
+				"messages", List.of(
+						Map.of("role", "system", "content", "You are a helpful assistant."),
+						Map.of("role", "user", "content", prompt)
+				),
+				"temperature", 0.7
 		);
 
 		return this.webClient.post()
@@ -105,7 +113,7 @@ public class OpenAiDescriptionService {
 				.bodyValue(bodyValue)
 				.retrieve() // 응답을 받아옴
 				.onStatus(HttpStatus.BAD_REQUEST::equals, clientResponse -> clientResponse.bodyToMono(String.class)
-				.flatMap(errorBody -> Mono.error(new RuntimeException("API Error: " + errorBody))))
+						.flatMap(errorBody -> Mono.error(new RuntimeException("API Error: " + errorBody))))
 				.bodyToMono(String.class);
 	}
 }

@@ -9,15 +9,15 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import com.dayangsung.melting.domain.member.entity.Member;
-import com.dayangsung.melting.domain.originalsong.entity.OriginalSong;
 import com.dayangsung.melting.domain.song.entity.Song;
 import com.dayangsung.melting.domain.song.enums.SongType;
 
 public interface SongRepository extends JpaRepository<Song, Long> {
 	List<Song> findByMemberId(Long memberId);
 
-	Optional<Song> findByMemberAndOriginalSongAndSongType(Member member, OriginalSong originalSong, SongType songType);
+	@Query("SELECT s FROM Song s WHERE s.member.id = :memberId AND s.originalSong.id = :originalSongId AND s.songType = :songType")
+	Optional<Song> findByMemberIdAndOriginalSongIdAndSongType(@Param("memberId") Long memberId,
+		@Param("originalSongId") Long originalSongId, @Param("songType") SongType songType);
 
 	@Query("SELECT s FROM Song s " +
 		"WHERE s.album IS NULL " +
