@@ -72,6 +72,7 @@ export const AlbumProvider = ({ children }: AlbumProviderProps) => {
     setSelectedCover(null)
     setSelectedCoverFile(null)
     setSelectedDefaultCoverIndex(null)
+    setImages([])
   }
 
   // 기본 이미지 상태 설정
