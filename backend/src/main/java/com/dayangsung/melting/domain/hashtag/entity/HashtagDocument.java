@@ -1,11 +1,9 @@
-package com.dayangsung.melting.domain.elasticsearch.document;
+package com.dayangsung.melting.domain.hashtag.entity;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.elasticsearch.annotations.Document;
 import org.springframework.data.elasticsearch.annotations.Field;
 import org.springframework.data.elasticsearch.annotations.FieldType;
-
-import com.dayangsung.melting.domain.hashtag.entity.Hashtag;
 
 import lombok.AccessLevel;
 import lombok.Builder;
