@@ -131,6 +131,7 @@ public class AlbumService {
 			.orElseThrow(() -> new BusinessException(ErrorMessage.MEMBER_NOT_FOUND));
 		Album album = albumRepository.findById(albumId)
 			.orElseThrow(() -> new BusinessException(ErrorMessage.ALBUM_NOT_FOUND));
+		validateRequest(album, email);
 		album.updateAlbumDescription(description);
 		albumRepository.save(album);
 		List<SongDetailsResponseDto> songDetails = getSongDetails(album, member.getId());
@@ -204,9 +205,10 @@ public class AlbumService {
 	}
 
 	@Transactional
-	public void deleteAlbum(Long albumId) {
+	public void deleteAlbum(Long albumId, String email) {
 		Album album = albumRepository.findById(albumId)
 			.orElseThrow(() -> new BusinessException(ErrorMessage.ALBUM_NOT_FOUND));
+		validateRequest(album, email);
 		for (Song song : album.getSongs()) {
 			song.removeFromAlbum();
 		}
@@ -216,9 +218,10 @@ public class AlbumService {
 	}
 
 	@Transactional
-	public Boolean toggleIsPublic(Long albumId) {
+	public Boolean toggleIsPublic(Long albumId, String email) {
 		Album album = albumRepository.findById(albumId)
 			.orElseThrow(() -> new BusinessException(ErrorMessage.ALBUM_NOT_FOUND));
+		validateRequest(album, email);
 		Boolean toggledIsPublic = album.toggleIsPublic();
 		albumRepository.save(album);
 		return toggledIsPublic;
@@ -310,5 +313,13 @@ public class AlbumService {
 			trackInfo.add(trackInfoDto);
 		}
 		return trackInfo;
+	}
+
+	private void validateRequest(Album album, String email) {
+		Member member = memberRepository.findByEmail(email)
+			.orElseThrow(() -> new BusinessException(ErrorMessage.MEMBER_NOT_FOUND));
+		if (!album.getMember().getId().equals(member.getId())) {
+			throw new BusinessException(ErrorMessage.BAD_REQUEST);
+		}
 	}
 }
