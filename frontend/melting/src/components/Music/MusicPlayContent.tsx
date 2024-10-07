@@ -104,7 +104,7 @@ export default function MusicPlayContent({
       <div className="py-3">
         <AudioPlayer
           ref={audioPlayerRef}
-          audioSrc={song.songUrl}
+          audioSrc={song.songUrl ?? ''}
           onEnded={handleAudioEnd}
           onPlay={() => setIsPlaying(true)}
           onPause={() => setIsPlaying(false)}
