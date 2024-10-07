@@ -33,6 +33,9 @@ import {
   GetAlbumDetailsData,
   GetAlbumDetailsError,
   AlbumDetailsResponseDto,
+  CreateAiDescriptionData,
+  CreateAiDescriptionError,
+  AiDescriptionRequestDto,
 } from '@/types/album.ts'
 import { SortType } from '@/types/constType'
 
@@ -54,7 +57,9 @@ export const albumApi = {
   },
 
   // 앨범 생성
-  createAlbum: async (data: CreateAlbumPayload) => {
+  createAlbum: async (
+    data: CreateAlbumPayload,
+  ): Promise<AlbumDetailsResponseDto> => {
     const formData = new FormData()
 
     // FormData에 데이터를 추가합니다.
@@ -68,13 +73,14 @@ export const albumApi = {
       }),
     )
 
-    // for (const [key, value] of formData.entries()) {
-    //   console.log(key, value)
-    // }
+    console.log(data.albumCreateRequestDto)
+    for (const [key, value] of formData.entries()) {
+      console.log(key, value)
+    }
 
     try {
       const response = await api.post<CreateAlbumData>('', formData)
-      return response.data
+      return response.data as AlbumDetailsResponseDto
     } catch (error) {
       console.error('앨범 생성 중 오류 발생:', error)
       throw error as CreateAlbumError
@@ -228,6 +234,19 @@ export const albumApi = {
     } catch (error) {
       console.error('AI 커버 이미지 생성 중 오류 발생:', error)
       throw error as CreateAiAlbumCoverImageError
+    }
+  },
+
+  createAiDescription: async (data: AiDescriptionRequestDto) => {
+    try {
+      const response = await api.post<CreateAiDescriptionData>(
+        '/descriptions',
+        data,
+      )
+      return response.data as string
+    } catch (error) {
+      console.error('AI 커버 이미지 생성 중 오류 발생:', error)
+      throw error as CreateAiDescriptionError
     }
   },
 
