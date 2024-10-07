@@ -40,6 +40,7 @@ export default function Album({ album }: AlbumProps) {
         >
           <Play
             className="text-white shadow-2xl"
+            strokeWidth={0}
             fill={isHovered ? '#ffaf25' : '#ffffff'}
           />
         </button>
