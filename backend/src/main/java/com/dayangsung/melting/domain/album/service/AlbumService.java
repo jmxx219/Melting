@@ -125,6 +125,7 @@ public class AlbumService {
 			likesService.getAlbumLikesCount(album.getId()), songDetails, album.getComments().size());
 	}
 
+	@Transactional
 	public AlbumDetailsResponseDto updateAlbumDescription(Long albumId, String description, String email) {
 		Member member = memberRepository.findByEmail(email)
 			.orElseThrow(() -> new BusinessException(ErrorMessage.MEMBER_NOT_FOUND));
@@ -202,6 +203,7 @@ public class AlbumService {
 			.toList();
 	}
 
+	@Transactional
 	public void deleteAlbum(Long albumId) {
 		Album album = albumRepository.findById(albumId)
 			.orElseThrow(() -> new BusinessException(ErrorMessage.ALBUM_NOT_FOUND));
@@ -213,6 +215,7 @@ public class AlbumService {
 		albumRepository.save(album);
 	}
 
+	@Transactional
 	public Boolean toggleIsPublic(Long albumId) {
 		Album album = albumRepository.findById(albumId)
 			.orElseThrow(() -> new BusinessException(ErrorMessage.ALBUM_NOT_FOUND));
@@ -279,12 +282,14 @@ public class AlbumService {
 		return likesService.getAlbumLikesCount(albumId);
 	}
 
+	@Transactional
 	public Integer increaseAlbumLikes(Long albumId, String email) {
 		Member member = memberRepository.findByEmail(email)
 			.orElseThrow(() -> new BusinessException(ErrorMessage.MEMBER_NOT_FOUND));
 		return likesService.increaseAlbumLikes(albumId, member.getId());
 	}
 
+	@Transactional
 	public Integer decreaseAlbumLikes(Long albumId, String email) {
 		Member member = memberRepository.findByEmail(email)
 			.orElseThrow(() -> new BusinessException(ErrorMessage.MEMBER_NOT_FOUND));

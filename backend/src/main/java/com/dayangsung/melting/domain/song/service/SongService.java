@@ -76,7 +76,7 @@ public class SongService {
 			likesService.getSongLikesCount(song.getId()));
 	}
 
-	// Todo : 트랜잭션 적용 필요
+	@Transactional
 	@DistributedLock(value = "#songId")
 	public void incrementStreamingCount(Long songId) {
 		Song song = songRepository.findById(songId)
@@ -253,12 +253,14 @@ public class SongService {
 		return likesService.getSongLikesCount(songId);
 	}
 
+	@Transactional
 	public Integer increaseSongLikes(Long songId, String email) {
 		Member member = memberRepository.findByEmail(email)
 			.orElseThrow(() -> new BusinessException(ErrorMessage.MEMBER_NOT_FOUND));
 		return likesService.increaseSongLikes(songId, member.getId());
 	}
 
+	@Transactional
 	public Integer decreaseSongLikes(Long songId, String email) {
 		Member member = memberRepository.findByEmail(email)
 			.orElseThrow(() -> new BusinessException(ErrorMessage.MEMBER_NOT_FOUND));
