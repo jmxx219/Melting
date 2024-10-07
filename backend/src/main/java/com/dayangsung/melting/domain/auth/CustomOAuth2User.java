@@ -12,7 +12,9 @@ import com.dayangsung.melting.domain.auth.enums.ProviderType;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.ToString;
 
+@ToString
 @RequiredArgsConstructor
 public class CustomOAuth2User implements OAuth2User {
 
