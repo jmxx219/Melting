@@ -10,4 +10,5 @@ import com.dayangsung.melting.domain.hashtag.entity.HashtagDocument;
 
 public interface HashtagDocumentRepository extends ElasticsearchRepository<HashtagDocument, String> {
 	Page<HashtagDocument> findByContentContaining(Pageable pageable, String keyword);
+	Page<HashtagDocument> findByContentStartingWith(Pageable pageable, String keyword);
 }
