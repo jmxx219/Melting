@@ -33,6 +33,7 @@ export default function AlbumForm() {
     selectedCover,
     selectedCoverFile,
     selectedDefaultCoverIndex,
+    resetAlbum,
   } = useAlbumContext()
 
   // 유효성 검사 상태
@@ -142,7 +143,9 @@ export default function AlbumForm() {
         // API 호출
         const response = await albumApi.createAlbum(payload)
         console.log('앨범 생성 성공:', response)
-        navigate(`/album/detail/${response.albumId}`)
+        // 앨범 생성 후 앨범 컨텍스트 초기화
+        resetAlbum()
+        navigate(`/album/detail/${response.albumId}`, { replace: true })
       } catch (error) {
         console.error('앨범 생성 중 오류 발생:', error)
       }
