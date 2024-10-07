@@ -35,7 +35,6 @@ public class HashtagService {
 	private final MemberHashtagRepository memberHashtagRepository;
 	private final AlbumHashtagRepository albumHashtagRepository;
 	private final HashtagDocumentRepository hashtagDocumentRepository;
-	// private final ElasticsearchOperations elasticsearchOperations;
 
 	public Hashtag findHashtagByContent(String content) {
 		return hashtagRepository.findByContent(content)
