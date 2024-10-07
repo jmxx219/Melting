@@ -131,6 +131,7 @@ public class SongService {
 
 		MeltingRedisPubDto meltingRedisPubDto = MeltingRedisPubDto.builder()
 			.userVoiceUrl(userVoiceUrl)
+			.singerVoiceUrl(originalSong.getVoiceUrl())
 			.mrUrl(originalSong.getMrUrl())
 			.memberId(member.getId())
 			.songId(savedSong.getId())
