@@ -8,6 +8,6 @@ public record AiDescriptionRequestDto (
 		List<Long> songs, // Song ID
 		List<String> hashtags, // Hashtag content
 		List<String> genres, // Genre content
-		@JsonProperty("album_name") String albumName
+		String albumName
 ) {
 }
