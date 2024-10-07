@@ -59,6 +59,7 @@ public class SongService {
 		return songRepository.findByMemberId(memberId);
 	}
 
+	@Transactional
 	public SongDetailsResponseDto getSongDetails(Long songId, String email) {
 		Song song = songRepository.findById(songId)
 			.orElseThrow(() -> new BusinessException(ErrorMessage.SONG_NOT_FOUND));
@@ -76,7 +77,6 @@ public class SongService {
 			likesService.getSongLikesCount(song.getId()));
 	}
 
-	@Transactional
 	@DistributedLock(value = "#songId")
 	public void incrementStreamingCount(Long songId) {
 		Song song = songRepository.findById(songId)
