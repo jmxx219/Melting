@@ -23,7 +23,6 @@ public class AwsS3Util {
 	private String bucket;
 	private final AmazonS3 amazonS3;
 	private static final String CLOUD_FRONT_URL = "https://d35fpwscei7sb8.cloudfront.net";
-	private static final String MP3_EXTENSION = ".mp3";
 
 	public String getDefaultProfileImageUrl() {
 		return CLOUD_FRONT_URL + "/image/profile/default_image.png";
@@ -59,6 +58,6 @@ public class AwsS3Util {
 	}
 
 	public String getAwsS3Url(String bucketFolderPath, String fileName) {
-		return CLOUD_FRONT_URL + "/" + bucketFolderPath + "/" + fileName;
+		return CLOUD_FRONT_URL + bucketFolderPath + "/" + fileName;
 	}
 }
