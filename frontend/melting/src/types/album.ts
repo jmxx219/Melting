@@ -7,6 +7,7 @@ import {
   ApiResponseVoid,
 } from '@/types/globalType.ts'
 import { ApiResponseMemberResponseDto } from '@/types/user.ts'
+import { albumCategoryType } from './constType'
 
 export interface AlbumForm {
   tracks: Song[]
@@ -76,12 +77,12 @@ export interface ApiResponseCommentResponseDto {
 
 export interface CommentResponseDto {
   /** @format int64 */
-  comment_id?: number
-  writer_profile_image?: string
-  writer_nickname?: string
-  content?: string
+  comment_id: number
+  writer_profile_image: string
+  writer_nickname: string
+  content: string
   /** @format date-time */
-  created_at?: string
+  created_at: string
 }
 
 export interface ApiResponseListCommentResponseDto {
@@ -134,15 +135,15 @@ export interface AlbumDetailType {
 export interface AlbumDetailInfoType {
   albumCoverImage: string
   albumName: string
-  like: number
+  likedCount: number
   commentCnt: number
   isLike: boolean
-  nickname: string
-  profileImage: string
-  createDate: string
+  albumCreatorNickname: string
+  albumCreatorProfileImageUrl: string
+  createdAt: string
   genres: string[]
-  type: string
-  description: string
+  category: albumCategoryType
+  albumDescription: string
   hashtags: string[]
 }
 
@@ -211,8 +212,9 @@ export interface SongDetailsResponseDto {
   isLiked: boolean
   /** @format int32 */
   likedCount: number
-  songUrl: string
+  songUrl?: string
   lyrics?: string
+  lengthInSeconds: number
 }
 
 export interface AlbumDetailsResponseDto {
@@ -221,6 +223,7 @@ export interface AlbumDetailsResponseDto {
   albumName: string
   albumCreatorNickname: string
   albumCreatorProfileImageUrl: string
+  albumCoverImageUrl: string
   albumDescription: string
   /** @format date-time */
   createdAt: string

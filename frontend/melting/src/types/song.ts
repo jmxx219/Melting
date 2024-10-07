@@ -12,9 +12,10 @@ export type Song = {
   songType?: CoverType
   meltingSongId?: number | null
   aiCoverSongId?: number | null
-  likeCount?: number
-  isLiked?: boolean
-  lengthInSeconds?: number
+  likedCount: number
+  isLiked: boolean
+  lengthInSeconds: number
+  songUrl?: string
 }
 
 export interface SongListProps {

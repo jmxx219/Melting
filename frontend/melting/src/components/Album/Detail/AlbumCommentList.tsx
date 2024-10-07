@@ -1,11 +1,11 @@
 import { Button } from '@/components/ui/button'
-import { AlbumCommentType } from '@/types/album'
+import { CommentResponseDto } from '@/types/album'
 import React from 'react'
-import AlbumComment from './AlbumComment'
 import { useNavigate } from 'react-router-dom'
+import AlbumComment from './AlbumComment'
 
 type AlbumCommentListProps = {
-  comments: AlbumCommentType[]
+  comments: CommentResponseDto[]
   commentCnt: number
   albumId: number
 }
@@ -25,18 +25,15 @@ export default function AlbumCommentList({
         <div className="text-xl font-semibold">
           댓글 {commentCnt > 1000 ? '999+' : comments.length}
         </div>
-        {commentCnt > 5 ? (
-          <Button
-            type="button"
-            variant={'ghost'}
-            className="p-0"
-            onClick={totalShowHandle}
-          >
-            전체보기
-          </Button>
-        ) : (
-          <></>
-        )}
+
+        <Button
+          type="button"
+          variant={'ghost'}
+          className="p-0"
+          onClick={totalShowHandle}
+        >
+          전체보기
+        </Button>
       </div>
       <div className="mt-2">
         {comments.map((comment, index) => (
