@@ -79,20 +79,27 @@ public class MemberService {
 
 	@Transactional
 	public MemberResponseDto updateMemberInfo(MultipartFile multipartFile, String nickname, String email) {
-		if (!validateNickname(nickname)) {
-			throw new BusinessException(ErrorMessage.DUPLICATE_NICKNAME);
-		}
 		Member member = memberRepository.findByEmail(email)
 			.orElseThrow(() -> new BusinessException(ErrorMessage.MEMBER_NOT_FOUND));
-		if (nickname == null) {
-			String profileImageUrl = awsS3Service.uploadProfileImage(multipartFile, member.getId());
-			member.updateProfileImageUrl(profileImageUrl);
-		} else {
-			if (multipartFile.isEmpty()) {
-				member.updateNickname(nickname);
-			} else {
+		if (member.getNickname().equals(nickname)) {
+			if (!multipartFile.isEmpty()) {
 				String profileImageUrl = awsS3Service.uploadProfileImage(multipartFile, member.getId());
 				member.updateMember(profileImageUrl, nickname);
+			}
+		} else {
+			if (!validateNickname(nickname)) {
+				throw new BusinessException(ErrorMessage.DUPLICATE_NICKNAME);
+			}
+			if (nickname == null) {
+				String profileImageUrl = awsS3Service.uploadProfileImage(multipartFile, member.getId());
+				member.updateProfileImageUrl(profileImageUrl);
+			} else {
+				if (multipartFile.isEmpty()) {
+					member.updateNickname(nickname);
+				} else {
+					String profileImageUrl = awsS3Service.uploadProfileImage(multipartFile, member.getId());
+					member.updateMember(profileImageUrl, nickname);
+				}
 			}
 		}
 		memberRepository.save(member);
