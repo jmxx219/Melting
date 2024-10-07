@@ -1,10 +1,4 @@
-import axios, {
-  AxiosInstance,
-  AxiosRequestConfig,
-  AxiosResponse,
-  AxiosError,
-} from 'axios'
-
+import axios, { AxiosInstance, AxiosRequestConfig, AxiosError } from 'axios'
 const VITE_API_BASE_URL = import.meta.env.VITE_API_BASE_URL
 
 type ApiPath = 'members' | 'albums' | 'songs' | 'originalSongs' | 'hashtags'
@@ -31,50 +25,77 @@ interface CustomError {
   data?: any
 }
 
-export const createAxiosInstance = (apiPath: ApiPath): AxiosInstance => {
+const axiosDefaults: AxiosRequestConfig = {
+  withCredentials: true,
+  timeout: 60000,
+}
+
+export const createAxiosInstance = (
+  apiPath: ApiPath,
+  // setIsLoading: (isLoading: boolean) => void,
+): AxiosInstance => {
   const instance = axios.create({
     baseURL: `${VITE_API_BASE_URL}${API_PATHS[apiPath]}`,
-    withCredentials: true,
-    timeout: 60000, // 60초 타임아웃 설정
+    ...axiosDefaults,
   })
+  const requests: Record<string, any> = {}
 
   // 요청 인터셉터
   instance.interceptors.request.use(
     (config) => {
-      // 토큰 추가 등의 로직을 넣을 수 있습니다.
+      const key = `${config.method}:${config.url}`
+      if (requests[key]) {
+        return Promise.reject(new Error('중복된 요청입니다.'))
+      }
+      requests[key] = true
+      // setIsLoading(true)
       return config
     },
-    (error) => Promise.reject(error),
+    (error) => {
+      // setIsLoading(false)
+      return Promise.reject(error)
+    },
   )
 
   // 응답 인터셉터
   instance.interceptors.response.use(
-    (response: AxiosResponse<ApiResponse>) => {
-      // ApiResponse 형식으로 데이터를 변환하여 반환
-      // access 토큰 로직 처리
+    (response) => {
+      // setIsLoading(false)
+      const key = `${response.config.method}:${response.config.url}`
+      delete requests[key]
       return {
         ...response,
         data: response.data as ApiResponse,
       }
     },
     (error: AxiosError<ApiResponse>) => {
-      const customError: CustomError = {
-        message:
-          error.response?.data?.message || 'An unexpected error occurred',
-        status: error.response?.status || 500,
-        data: error.response?.data,
-      }
-      console.error('API 요청 오류:', customError.message)
-
-      if (error.response?.status === 401) {
-        window.location.href = '/login' // 로그인 페이지로 리다이렉트
-      }
-
-      return Promise.reject(customError)
+      // setIsLoading(false)
+      const key = `${error.config?.method}:${error.config?.url}`
+      delete requests[key]
+      return handleAxiosError(error)
     },
   )
 
   return instance
+}
+
+const handleUnauthorized = () => {
+  window.location.href = '/login' // 로그인 페이지로 리다이렉트
+}
+
+const handleAxiosError = (error: AxiosError<ApiResponse>): Promise<never> => {
+  const customError: CustomError = {
+    message: error.response?.data?.message || 'An unexpected error occurred',
+    status: error.response?.status || 500,
+    data: error.response?.data,
+  }
+  console.error('API 요청 오류:', customError.message)
+
+  if (customError.status === 401) {
+    handleUnauthorized()
+  }
+
+  return Promise.reject(customError)
 }
 
 // 타입 안전성을 갖춘 API 메서드들
