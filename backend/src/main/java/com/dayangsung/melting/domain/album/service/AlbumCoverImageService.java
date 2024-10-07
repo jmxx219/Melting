@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.UUID;
 
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,6 +23,7 @@ import reactor.core.publisher.Mono;
 @RequiredArgsConstructor
 public class AlbumCoverImageService {
 
+	@Lazy
 	private final OpenAiImageService openAiImageService;
 	private final AwsS3Service awsS3Service;
 	private final AlbumRepository albumRepository;
