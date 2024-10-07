@@ -268,6 +268,7 @@ export interface AiDescriptionRequestDto {
   songs: number[]
   hashtags: string[]
   genres: string[]
+  albumName: string
 }
 
 export type CreateAiDescriptionData = ApiResponseString
