@@ -32,7 +32,7 @@ export default function Footer() {
   const activeItem = location.pathname
 
   return (
-    <NavigationMenu className="w-full max-w-screen-xl mx-auto">
+    <NavigationMenu className="w-full max-w-screen-xl">
       <NavigationMenuList className="flex justify-between w-full px-4">
         {navItems.map((item) => {
           const isActive = activeItem === item.href

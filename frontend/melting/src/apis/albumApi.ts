@@ -4,6 +4,7 @@ import {
   ApiResponse,
   CustomError,
 } from './axiosInstance'
+import qs from 'qs'
 import {
   // AlbumCreateRequestDto,
   AddAlbumLikesData,
@@ -36,8 +37,14 @@ import {
   CreateAiDescriptionData,
   CreateAiDescriptionError,
   AiDescriptionRequestDto,
+  AlbumSearchPageResponseDto,
 } from '@/types/album.ts'
-import { SortType } from '@/types/constType'
+import {
+  CommunityConditionType,
+  communityVal,
+  sort,
+  SortType,
+} from '@/types/constType'
 
 const instance = createAxiosInstance('albums')
 const api = createApi<ApiResponse>(instance)
@@ -268,6 +275,30 @@ export const albumApi = {
       return response.data
     } catch (error) {
       console.error('앨범 삭제 중 오류 발생:', error)
+      throw error
+    }
+  },
+  getCommunityAlbums: async (query: {
+    sort?: number
+    keyword: string
+    options: CommunityConditionType[]
+    page: number
+  }) => {
+    try {
+      const optionParam = query.options.map((v) => {
+        return communityVal[v]
+      })
+      const response = await api.get<AlbumSearchPageResponseDto>(`/search`, {
+        params: {
+          sort: query?.sort,
+          keyword: query.keyword,
+          options: optionParam.join(','),
+          page: query.page,
+        },
+      })
+      return response.data as AlbumSearchPageResponseDto
+    } catch (error) {
+      console.error('앨범 조회 중 오류 발생:', error)
       throw error
     }
   },
