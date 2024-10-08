@@ -1,4 +1,8 @@
-import { ApiResponseString, ErrorResponse } from '@/types/globalType.ts'
+import {
+  ApiResponseListString,
+  ApiResponseString,
+  ErrorResponse,
+} from '@/types/globalType.ts'
 
 export interface user {
   id: number
@@ -222,3 +226,15 @@ export interface SongLikesResponseDto {
 }
 
 export type GetMemberLikesSongsData = ApiResponseSongLikesPageResponseDto
+
+export type GetMemberHashtagsData = ApiResponseListString
+
+export type GetMemberHashtagsError = ErrorResponse
+
+export type AddMemberHashtagData = ApiResponseListString
+
+export type AddMemberHashtagError = ErrorResponse
+
+export type DeleteMemberHashtagData = ApiResponseListString
+
+export type DeleteMemberHashtagError = ErrorResponse
