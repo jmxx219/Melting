@@ -93,8 +93,8 @@ public class RedisService {
 	private void storeRankingList(String sortedSetKey, String listKey) {
 		ZSetOperations<String, Object> zSetOperations = redisTemplate.opsForZSet();
 		int offset = 0;
-		List<Long> valueList = new ArrayList<>();
-		while (valueList.size() < 5) {
+		int count = 0;
+		while (count < 5) {
 			Set<ZSetOperations.TypedTuple<Object>> albumScores =
 				zSetOperations.reverseRangeWithScores(sortedSetKey, offset, offset + 4);
 			if (albumScores == null || albumScores.isEmpty()) {
@@ -105,15 +105,15 @@ public class RedisService {
 						Long.parseLong(Objects.requireNonNull(albumScore.getValue()).toString()))
 					.orElseThrow(() -> new BusinessException(ErrorMessage.ALBUM_NOT_FOUND));
 				if (!album.getIsDeleted() && album.getIsPublic()) {
-					valueList.add(album.getId());
+					redisTemplate.opsForList().rightPush(listKey, album.getId());
+					count++;
 				}
-				if (valueList.size() == 5) {
+				if (count == 5) {
 					break;
 				}
 			}
 			offset += 5;
 		}
-		redisTemplate.opsForList().rightPushAll(listKey, valueList);
 	}
 
 	public void resetDailyStreamingCount() {

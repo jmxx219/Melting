@@ -28,6 +28,10 @@ spring:
       port: 6379
       redisson-prefix: redis://
 
+    elasticsearch:
+      repositories:
+        enabled: true
+
   servlet:
     multipart:
       max-file-size: 20MB
@@ -38,6 +42,10 @@ spring:
       enabled: false
     jdbc:
       initialize-schema: always
+
+  threads:
+    virtual:
+      enabled: true
 
 logging:
   level:

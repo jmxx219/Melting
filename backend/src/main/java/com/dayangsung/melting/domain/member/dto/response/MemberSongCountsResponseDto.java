@@ -4,6 +4,13 @@ import lombok.Builder;
 
 @Builder
 public record MemberSongCountsResponseDto(
-	Integer songcounts
+	Integer songCounts,
+	Boolean aiCoverEnabled
 ) {
+	public static MemberSongCountsResponseDto of(Integer songCounts, Boolean aiCoverEnabled) {
+		return MemberSongCountsResponseDto.builder()
+			.songCounts(songCounts)
+			.aiCoverEnabled(aiCoverEnabled)
+			.build();
+	}
 }
