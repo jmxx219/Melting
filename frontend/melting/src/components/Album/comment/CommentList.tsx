@@ -45,7 +45,6 @@ export default function CommentList({ albumId }: CommentListProps) {
   }
 
   const handleCommentDelete = async (commentId: number) => {
-    console.log('Deleting comment with ID:', commentId)
     try {
       await albumApi.deleteComment(albumId, commentId)
       setComments((prev) =>
@@ -65,8 +64,7 @@ export default function CommentList({ albumId }: CommentListProps) {
       })
 
       setTotalComments(response.totalElements || 0)
-      const commentPage = response.commentPage || [] // response.commentPage가 undefined일 경우 빈 배열로 처리
-      console.log('댓글 전체 조회', commentPage)
+      const commentPage = response.commentPage || []
       // 더 이상 가져올 댓글이 없는 경우 처리
       if (commentPage.length === 0 && page === 0) {
         setHasMore(false)
@@ -100,7 +98,10 @@ export default function CommentList({ albumId }: CommentListProps) {
       </div>
       <div className="space-y-0">
         {comments.length === 0 ? (
-          <p className="text-gray-500">댓글이 없습니다. 댓글을 작성해보세요!</p>
+          <div className="text-center text-gray-500 mt-20">
+            <p className="mb-2">댓글이 없습니다. </p>
+            <p>댓글을 작성해보세요!</p>
+          </div>
         ) : (
           comments.map((comment, index) => (
             <div key={comment.createdAt}>
