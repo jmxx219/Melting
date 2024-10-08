@@ -1,6 +1,7 @@
 import { useEffect, useState, useCallback, useRef } from 'react'
+import { useInView } from 'react-intersection-observer'
+
 import { AlbumRankingResponseDto } from '@/types/album'
-import Album from '../Community/Album'
 import { Plus } from 'lucide-react'
 import { ScrollArea, ScrollBar } from '../ui/scroll-area'
 import { Button } from '../ui/button'
@@ -20,12 +21,12 @@ import {
   AlertDialogAction,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
-import HashtagButton from '../Button/HashtagButton'
+import Album from '../Community/Album'
 import HashtagSelector from '@/components/Album/HashtagSelector'
+import HashtagButton from '../Button/HashtagButton'
 import { AlertDialogCancel } from '@radix-ui/react-alert-dialog'
 import { userApi } from '@/apis/userApi.ts'
 import { albumApi } from '@/apis/albumApi.ts'
-import { useInView } from 'react-intersection-observer'
 
 export default function TagAlbum() {
   const [tags, setTags] = useState<string[]>([])
@@ -118,14 +119,19 @@ export default function TagAlbum() {
     }
   }
 
-  const removeTag = () => {
+  const removeTag = async () => {
     if (tagToDelete) {
-      setTags(tags.filter((tag) => tag !== tagToDelete))
-      if (selectedTag === tagToDelete) {
-        setSelectedTag(null)
-        setAlbums([])
+      try {
+        await userApi.deleteMemberHashtag({ content: tagToDelete }) // 태그 삭제 API 호출
+        setTags(tags.filter((tag) => tag !== tagToDelete)) // UI에서 태그 제거
+        if (selectedTag === tagToDelete) {
+          setSelectedTag(null)
+          setAlbums([])
+        }
+        setTagToDelete(null)
+      } catch (error) {
+        console.error('태그 삭제 실패:', error)
       }
-      setTagToDelete(null)
     }
   }
 
