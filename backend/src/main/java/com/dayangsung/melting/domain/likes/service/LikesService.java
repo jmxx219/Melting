@@ -15,6 +15,7 @@ import com.dayangsung.melting.domain.song.entity.Song;
 import com.dayangsung.melting.domain.song.repository.SongRepository;
 import com.dayangsung.melting.global.common.enums.ErrorMessage;
 import com.dayangsung.melting.global.exception.BusinessException;
+import com.dayangsung.melting.global.redisson.DistributedLock;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -37,6 +38,7 @@ public class LikesService {
 	}
 
 	@Transactional
+	@DistributedLock(value = "#albumLikes")
 	public Integer increaseAlbumLikes(Long albumId, Long memberId) {
 		Album album = albumRepository.findById(albumId)
 			.orElseThrow(() -> new BusinessException(ErrorMessage.ALBUM_NOT_FOUND));
@@ -61,6 +63,7 @@ public class LikesService {
 	}
 
 	@Transactional
+	@DistributedLock(value = "#albumLikes")
 	public Integer decreaseAlbumLikes(Long albumId, Long memberId) {
 		LikesAlbum likesAlbum = likesAlbumRepository
 			.findLikesAlbumByAlbumIdAndMemberId(albumId, memberId)
@@ -83,6 +86,7 @@ public class LikesService {
 	}
 
 	@Transactional
+	@DistributedLock(value = "#songLikes")
 	public Integer increaseSongLikes(Long songId, Long memberId) {
 		Song song = songRepository.findById(songId)
 			.orElseThrow(() -> new BusinessException(ErrorMessage.SONG_NOT_FOUND));
@@ -107,6 +111,7 @@ public class LikesService {
 	}
 
 	@Transactional
+	@DistributedLock(value = "#songLikes")
 	public Integer decreaseSongLikes(Long songId, Long memberId) {
 		LikesSong likesSong = likesSongRepository
 			.findLikesSongBySongIdAndMemberId(songId, memberId)
