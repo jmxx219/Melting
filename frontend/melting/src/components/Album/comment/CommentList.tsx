@@ -4,23 +4,11 @@ import { useInView } from 'react-intersection-observer'
 import { CommentResponseDto } from '@/types/album'
 import AlbumComment from '@/components/Album/Detail/AlbumComment'
 import CommentModal from '@/components/Album/comment/CommentModal'
+import { albumApi } from '@/apis/albumApi.ts'
 
 type CommentListProps = {
   albumId: number
 }
-
-// 목업 데이터 정의
-const mockComments: CommentResponseDto[] = Array.from(
-  { length: 50 },
-  (_, index) => ({
-    commentId: index + 1,
-    writerProfileImage: 'https://via.placeholder.com/150',
-    writerNickname: `User ${index + 1}`,
-    content: `This is comment number ${index + 1}`,
-    isMyComment: Math.random() < 0.5, // 랜덤하게 본인의 댓글 여부 결정
-    createdAt: new Date().toISOString(),
-  }),
-)
 
 export default function CommentList({ albumId }: CommentListProps) {
   const [comments, setComments] = useState<CommentResponseDto[]>([])
@@ -28,66 +16,63 @@ export default function CommentList({ albumId }: CommentListProps) {
   const [hasMore, setHasMore] = useState(true)
   const { ref, inView } = useInView()
 
-  // const handleCommentSubmit = async (comment: string) => {
-  //   try {
-  //     const newComment = await albumApi.createComment(albumId, { content: comment })
-  //     setComments((prevComments) => [newComment, ...prevComments])
-  //   } catch (error) {
-  //     console.error('댓글 작성 실패:', error)
-  //   }
-  // }
-
-  const handleCommentSubmit = (comment: string) => {
-    console.log('Submitted comment:', comment)
+  const handleCommentSubmit = async (comment: string) => {
+    try {
+      const newComment = await albumApi.writeComment(albumId, {
+        content: comment,
+      })
+      setComments((prevComments) => [newComment, ...prevComments])
+    } catch (error) {
+      console.error('댓글 작성 실패:', error)
+    }
   }
 
-  const handleCommentUpdate = (commentId: number, newContent: string) => {
-    setComments((prevComments) =>
-      prevComments.map((comment) =>
-        comment.commentId === commentId
-          ? { ...comment, content: newContent }
-          : comment,
-      ),
-    )
+  const handleCommentUpdate = async (commentId: number, newContent: string) => {
+    try {
+      await albumApi.modifyComment(albumId, commentId, { content: newContent })
+      setComments((prevComments) =>
+        prevComments.map((comment) =>
+          comment.commentId === commentId
+            ? { ...comment, content: newContent }
+            : comment,
+        ),
+      )
+    } catch (error) {
+      console.error('댓글 수정 실패:', error)
+    }
   }
 
   const handleCommentDelete = async (commentId: number) => {
-    // Implement your API request for deleting the comment
     console.log('Deleting comment with ID:', commentId)
-    setComments((prev) =>
-      prev.filter((comment) => comment.commentId !== commentId),
-    )
+    try {
+      await albumApi.deleteComment(albumId, commentId)
+      setComments((prev) =>
+        prev.filter((comment) => comment.commentId !== commentId),
+      )
+    } catch (error) {
+      console.error('댓글 삭제 실패:', error)
+    }
   }
 
-  // const fetchComments = async () => {
-  //   try {
-  //     const response = await albumApi.getAllComments(albumId, {
-  //       page,
-  //       size: 10,
-  //     })
-  //     if (response.length === 0 && page === 0) {
-  //       // 처음 페이지에서 댓글이 없는 경우
-  //       setHasMore(false)
-  //     } else if (response.length < 10) {
-  //       // 마지막 페이지에 도달하여 더 이상 가져올 댓글이 없는 경우
-  //       setHasMore(false)
-  //     }
-  //     if (response.length > 0) {
-  //       setComments((prevComments) => [...prevComments, ...response])
-  //       setPage((prevPage) => prevPage + 1)
-  //     }
-  //   } catch (error) {
-  //     console.error('댓글을 가져오는 중 오류 발생:', error)
-  //   }
-  // }
+  const fetchComments = async () => {
+    try {
+      const response = await albumApi.getAllComments(albumId, {
+        page,
+        size: 10,
+      })
 
-  const fetchComments = () => {
-    const newComments = mockComments.slice(page * 10, (page + 1) * 10)
-    if (newComments.length === 0) {
-      setHasMore(false) // 더 이상 가져올 댓글이 없으면
-    } else {
-      setComments((prevComments) => [...prevComments, ...newComments])
-      setPage((prevPage) => prevPage + 1)
+      if (response.length === 0 && page === 0) {
+        setHasMore(false)
+      } else if (response.length < 10) {
+        setHasMore(false)
+      }
+
+      if (response.length > 0) {
+        setComments((prevComments) => [...prevComments, ...response])
+        setPage((prevPage) => prevPage + 1)
+      }
+    } catch (error) {
+      console.error('댓글을 가져오는 중 오류 발생:', error)
     }
   }
 
@@ -95,7 +80,7 @@ export default function CommentList({ albumId }: CommentListProps) {
     if (inView && hasMore) {
       fetchComments()
     }
-  }, [inView])
+  }, [inView, hasMore])
 
   return (
     <>
