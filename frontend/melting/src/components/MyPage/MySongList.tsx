@@ -10,7 +10,6 @@ interface AlbumSongToggleProps {
 
 export default function MySongList({ sortOption }: AlbumSongToggleProps) {
   const [originalSongs, setOriginalSongs] = useState<SongListDto[]>([])
-  const [isPossibleAiCover, setIsPossibleAiCover] = useState<boolean>(false)
   const [loading, setLoading] = useState<boolean>(false)
   // const [isLast, setIsLast] = useState(false)
 
@@ -22,7 +21,6 @@ export default function MySongList({ sortOption }: AlbumSongToggleProps) {
         setOriginalSongs(response.mySongList)
       }
       console.log(response)
-      setIsPossibleAiCover(response.isPossibleAiCover ?? false)
       // setIsLast(response.isLast || false)
     } catch (error) {
       console.error('Error fetching songs:', error)
@@ -45,7 +43,6 @@ export default function MySongList({ sortOption }: AlbumSongToggleProps) {
         <MySongContent
           key={originalSong.originalSongId}
           originalSong={originalSong}
-          isPossibleAiCover={isPossibleAiCover}
         />
       ))}
     </div>
