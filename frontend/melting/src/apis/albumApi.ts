@@ -1,8 +1,4 @@
-import {
-  createAxiosInstance,
-  createApi,
-  ApiResponse,
-} from './axiosInstance'
+import { createAxiosInstance, createApi, ApiResponse } from './axiosInstance'
 import {
   // AlbumCreateRequestDto,
   AddAlbumLikesData,
@@ -45,8 +41,14 @@ import {
   GetAllGenresError,
   ModifyCommentData,
   DeleteCommentData,
+  GetAlbumPageContainsHashtagError,
+  DeleteCommentError,
+  WriteCommentError,
+  ModifyCommentError,
+  DeleteAlbumLikesError,
 } from '@/types/album.ts'
 import { SortType } from '@/types/constType'
+import { DeleteAlbumError } from '@/typeApis/data-contracts.ts'
 
 const instance = createAxiosInstance('albums')
 const api = createApi<ApiResponse>(instance)
@@ -129,7 +131,7 @@ export const albumApi = {
       return response.data
     } catch (error) {
       console.error('앨범 좋아요 삭제 중 오류 발생:', error)
-      throw error
+      throw error as DeleteAlbumLikesError
     }
   },
 
@@ -149,7 +151,7 @@ export const albumApi = {
         },
       )
       if (response.data && Array.isArray(response.data)) {
-        return response.data
+        return response.data as CommentResponseDto[]
       } else {
         return [] // 데이터가 없거나 형식이 맞지 않으면 빈 배열 반환
       }
@@ -166,22 +168,10 @@ export const albumApi = {
         `/${albumId}/comments`,
         data,
       )
-      return response.data
+      return response.data as CommentResponseDto
     } catch (error) {
       console.error('댓글 작성 중 오류 발생:', error)
-      throw error
-    }
-  },
-
-  getAlbumDetails: async (
-    albumId: number,
-  ): Promise<AlbumDetailsResponseDto> => {
-    try {
-      const response = await api.get<GetAlbumDetailsData>(`/${albumId}`)
-      return response.data as AlbumDetailsResponseDto
-    } catch (error) {
-      console.error('앨범 상세 조회 중 오류 발생:', error)
-      throw error as GetAlbumDetailsError
+      throw error as WriteCommentError
     }
   },
 
@@ -196,10 +186,10 @@ export const albumApi = {
         `/${albumId}/comments/${commentId}`,
         data,
       )
-      return response.data
+      return response.data as CommentResponseDto
     } catch (error) {
       console.error('댓글 수정 중 오류 발생:', error)
-      throw error
+      throw error as ModifyCommentError
     }
   },
 
@@ -209,10 +199,22 @@ export const albumApi = {
       const response = await instance.delete<DeleteCommentData>(
         `/${albumId}/comments/${commentId}`,
       )
-      return response.data
+      return response.data as CommentResponseDto
     } catch (error) {
       console.error('댓글 삭제 중 오류 발생:', error)
-      throw error
+      throw error as DeleteCommentError
+    }
+  },
+
+  getAlbumDetails: async (
+    albumId: number,
+  ): Promise<AlbumDetailsResponseDto> => {
+    try {
+      const response = await api.get<GetAlbumDetailsData>(`/${albumId}`)
+      return response.data as AlbumDetailsResponseDto
+    } catch (error) {
+      console.error('앨범 상세 조회 중 오류 발생:', error)
+      throw error as GetAlbumDetailsError
     }
   },
 
@@ -345,7 +347,7 @@ export const albumApi = {
       return response.data as AlbumRankingPageResponseDto // 성공 시 응답 데이터 반환
     } catch (error) {
       console.error('해시태그가 포함된 앨범 검색 실패:', error)
-      throw error // 오류 발생 시 예외 처리
+      throw error as GetAlbumPageContainsHashtagError // 오류 발생 시 예외 처리
     }
   },
 }
