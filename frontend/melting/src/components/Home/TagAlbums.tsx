@@ -25,6 +25,7 @@ import {
 import HashtagButton from '../Button/HashtagButton'
 import HashtagSelector from '@/components/Album/HashtagSelector'
 import { AlertDialogCancel } from '@radix-ui/react-alert-dialog'
+import { userApi } from '@/apis/userApi.ts'
 // import AlertModal from '@/components/common/AlertModal.tsx'
 
 const mockup: AlbumRankingResponseDto[] = [
@@ -59,6 +60,19 @@ export default function TagAlbum() {
   const [isLoading, setIsLoading] = useState(false)
 
   useEffect(() => {
+    const fetchTags = async () => {
+      try {
+        const userTags = await userApi.getMemberHashtags()
+        setTags(userTags) // 태그 상태에 저장
+      } catch (error) {
+        console.error('태그 불러오기 실패:', error)
+      }
+    }
+
+    fetchTags() // 태그 조회 API 호출 함수 실행
+  }, [])
+
+  useEffect(() => {
     if (selectedTag) {
       // 태그가 선택되면 API를 호출하여 해당 앨범 목록을 가져옴 (isLoading)
       // fetchAlbumsByTag(selectedTag).then(setAlbums);
@@ -67,13 +81,18 @@ export default function TagAlbum() {
     }
   }, [selectedTag])
 
-  const addTag = () => {
+  const addTag = async () => {
     if (selectedHashtags.length > 0) {
-      const tag = selectedHashtags[0] // 선택된 첫 번째 해시태그를 사용
+      const tag = selectedHashtags[0]
       if (tags.length < 5 && !tags.includes(tag)) {
-        setTags([...tags, tag])
-        setSelectedHashtags([]) // 선택된 해시태그 초기화
-        setIsDialogOpen(false)
+        try {
+          await userApi.addMemberHashtag({ content: tag }) // 태그 추가 API 호출
+          setTags([...tags, tag]) // UI에 태그 추가
+          setSelectedHashtags([]) // 선택된 해시태그 초기화
+          setIsDialogOpen(false)
+        } catch (error) {
+          console.error('태그 추가 실패:', error)
+        }
       }
     }
   }
@@ -140,7 +159,7 @@ export default function TagAlbum() {
                   </DialogTitle>
                 </DialogHeader>
                 <p className="text-primary-400 text-left p-0 m-0">
-                  1개만 설정 가능합니다
+                  1개씩 설정 가능합니다
                 </p>
                 <HashtagSelector
                   onHashtagsChange={handleHashtagsChange}
