@@ -153,7 +153,7 @@ public class AlbumService {
 		return AlbumSearchPageResponseDto.of(albumSearchPage);
 	}
 
-	public AlbumSearchPageResponseDto searchAlbum(int page, int size, String keyword, List<String> options) {
+	public AlbumSearchPageResponseDto searchAlbum(int sort, int page, int size, String keyword, List<String> options) {
 		Set<Album> searchResultSet = new HashSet<>();
 		if (keyword == null || keyword.isEmpty()) {
 			return this.getAlbums(0, page, size);
@@ -161,24 +161,41 @@ public class AlbumService {
 		if (options.size() == 1 && options.getFirst().equals("all")) {
 			options = Arrays.asList("albumName", "songTitle", "hashtag", "genre");
 		}
+		List<Album> findByAlbumName;
 		log.debug("options: {}", options);
 		for (String option : options) {
 			switch (option) {
 				case "albumName":
-					searchResultSet.addAll(
-						albumRepository.findByAlbumNameContaining(keyword, Pageable.unpaged()).getContent());
+					if (sort == 1) {
+						findByAlbumName = albumRepository.findByAlbumNameContainingOrderByPopularity(keyword);
+					} else {
+						findByAlbumName = albumRepository.findByAlbumNameContainingOrderByLatest(keyword);
+					}
+					searchResultSet.addAll(findByAlbumName);
 					break;
 				case "songTitle":
-					searchResultSet.addAll(
-						albumRepository.findBySongTitleContaining(keyword, Pageable.unpaged()).getContent());
+					if (sort == 1) {
+						findByAlbumName = albumRepository.findBySongTitleContainingOrderByPopularity(keyword);
+					} else {
+						findByAlbumName = albumRepository.findBySongTitleContainingOrderByLatest(keyword);
+					}
+					searchResultSet.addAll(findByAlbumName);
 					break;
 				case "hashtag":
-					searchResultSet.addAll(
-						albumRepository.findByHashtagContentContaining(keyword, Pageable.unpaged()).getContent());
+					if (sort == 1) {
+						findByAlbumName = albumRepository.findByHashtagContentContainingOrderByPopularity(keyword);
+					} else {
+						findByAlbumName = albumRepository.findByHashtagContentContainingOrderByLatest(keyword);
+					}
+					searchResultSet.addAll(findByAlbumName);
 					break;
 				case "genre":
-					searchResultSet.addAll(
-						albumRepository.findByGenreNameContaining(keyword, Pageable.unpaged()).getContent());
+					if (sort == 1) {
+						findByAlbumName = albumRepository.findByGenreNameContainingOrderByPopularity(keyword);
+					} else {
+						findByAlbumName = albumRepository.findByGenreNameContainingOrderByLatest(keyword);
+					}
+					searchResultSet.addAll(findByAlbumName);
 					break;
 			}
 		}
