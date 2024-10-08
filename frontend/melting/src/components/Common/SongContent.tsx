@@ -1,14 +1,18 @@
+import { songApi } from '@/apis/songApi'
+import Heart from '@/components/Icon/Heart'
+import { SongDetailsResponseDto } from '@/types/album'
+import { convertSecondsToMinutes } from '@/utils/timeUtil'
+import { Crown, Play } from 'lucide-react'
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import Heart from '@/components/Icon/Heart'
-import { Play, Crown } from 'lucide-react'
-import { LikedSongType } from '@/types/song'
 
 interface LikedSongProps {
-  song: LikedSongType
+  song: SongDetailsResponseDto
   hasProfileImage?: boolean
   songOrder?: number
   isTitle?: boolean
+  fetchSongs?: () => void
+  updateSong?: (songId: number, isLiked: boolean, likedCount: number) => void
 }
 
 export default function SongContent({
@@ -16,18 +20,38 @@ export default function SongContent({
   hasProfileImage,
   songOrder = 0,
   isTitle,
+  fetchSongs,
+  updateSong,
 }: LikedSongProps) {
   const navigate = useNavigate()
   const [isLiked, setIsLiked] = useState(song.isLiked)
+  const [likeCount, setLikeCount] = useState(song.likedCount || 0)
 
-  const toggleLike = () => {
-    setIsLiked(!isLiked)
-    // TODO: 좋아요 상태 업데이트 API 호출
+  const toggleLike = async () => {
+    const newLikedState = !isLiked
+    setIsLiked(newLikedState)
+    try {
+      let currentLikedCount
+      if (newLikedState) {
+        currentLikedCount = await songApi.addSongLikes(song.songId)
+      } else {
+        currentLikedCount = await songApi.deleteSongLikes(song.songId)
+      }
+      if (fetchSongs) {
+        await fetchSongs()
+      }
+      if (updateSong) {
+        updateSong(song.songId, newLikedState, currentLikedCount)
+      }
+      setLikeCount(currentLikedCount)
+    } catch (error) {
+      console.error('곡 좋아요 상태 업데이트 중 오류 발생:', error)
+      setIsLiked(!newLikedState)
+    }
   }
 
   const goToPlaySong = (songId: number) => {
-    // TODO: 곡 재생 화면으로 이동
-    navigate(`/music/play/`, { state: songId })
+    navigate(`/music/play`, { state: { songId } })
   }
 
   const truncateText = (text: string, maxLength: number) => {
@@ -38,7 +62,7 @@ export default function SongContent({
     <div className="flex items-center mb-4 gap-3">
       {hasProfileImage ? (
         <img
-          src={song.albumCoverImgUrl}
+          src={song.albumCoverImageUrl}
           alt={song.songTitle}
           className="w-12 h-12 object-cover rounded-full"
         />
@@ -65,18 +89,18 @@ export default function SongContent({
 
       <div className="text-sm flex items-center w-14">
         <button type="button" onClick={() => toggleLike()}>
-          <Heart fill={'#FFAF25'} fillOpacity={1} />
+          <Heart fill={song.isLiked ? '#FFAF25' : '#A5A5A5'} fillOpacity={1} />
         </button>
-        <div className="ml-1">
-          {song.likeCount > 999 ? '999+' : song.likeCount.toLocaleString()}
-        </div>
+        <div className="ml-1">{likeCount > 999 ? '999+' : likeCount}</div>
       </div>
 
       <div className="text-xs flex items-center w-12 text-gray-400">
         <button type="button" onClick={() => goToPlaySong(song.songId)}>
           <Play size={20} className="text-primary-400 fill-primary-400" />
         </button>
-        <div className="ml-1">{song.executionTime}</div>
+        <div className="ml-1">
+          {convertSecondsToMinutes(song.lengthInSeconds || 0)}
+        </div>
       </div>
     </div>
   )

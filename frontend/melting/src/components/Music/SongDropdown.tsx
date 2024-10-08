@@ -7,22 +7,26 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { ChevronDown } from 'lucide-react'
+import { CoverType } from '@/types/constType.ts'
 
 interface SongDropdownProps {
-  initialType: 'melting' | 'ai'
-  onSelect: (value: 'melting' | 'ai') => void // onSelect를 props로 받음
+  initialType: CoverType
+  onSelect: (value: CoverType) => void
+  disabledOptions: {
+    melting: boolean
+    ai: boolean
+  }
 }
 
 export default function SongDropdown({
   initialType,
   onSelect,
+  disabledOptions,
 }: SongDropdownProps) {
-  const [selectedOption, setSelectedOption] = useState<'melting' | 'ai'>(
-    initialType,
-  )
+  const [selectedOption, setSelectedOption] = useState<CoverType>(initialType)
 
   // 선택한 옵션에 따라 표시되는 텍스트를 매핑하는 함수
-  const getOptionLabel = (option: 'melting' | 'ai') => {
+  const getOptionLabel = (option: CoverType) => {
     switch (option) {
       case 'melting':
         return '#멜팅'
@@ -33,9 +37,15 @@ export default function SongDropdown({
     }
   }
 
-  const handleSelect = (option: 'melting' | 'ai') => {
+  const handleSelect = (option: CoverType) => {
+    if (
+      (option === 'melting' && disabledOptions.melting) ||
+      (option === 'ai' && disabledOptions.ai)
+    ) {
+      return
+    }
     setSelectedOption(option)
-    onSelect(option) // 상위 컴포넌트에 선택된 값을 전달
+    onSelect(option)
   }
 
   return (
@@ -59,14 +69,16 @@ export default function SongDropdown({
       >
         <div className="flex space-x-2">
           <DropdownMenuItem
-            className={`rounded-full text-xs ${selectedOption === 'melting' ? 'bg-primary-400 text-white' : 'bg-white text-primary-400'}`}
+            className={`rounded-full text-xs ${selectedOption === 'melting' ? 'bg-primary-400 text-white' : 'bg-white text-primary-400'} ${disabledOptions.melting ? 'opacity-50 text-gray cursor-not-allowed' : ''}`}
             onClick={() => handleSelect('melting')}
+            disabled={disabledOptions.melting}
           >
             #멜팅
           </DropdownMenuItem>
           <DropdownMenuItem
-            className={`rounded-full text-xs ${selectedOption === 'ai' ? 'bg-primary-400 text-white' : 'bg-white text-primary-400'}`}
+            className={`rounded-full text-xs ${selectedOption === 'ai' ? 'bg-primary-400 text-white' : 'bg-white text-primary-400'} ${disabledOptions.ai ? 'opacity-50 text-gray cursor-not-allowed' : ''}`}
             onClick={() => handleSelect('ai')}
+            disabled={disabledOptions.ai}
           >
             #AI 커버
           </DropdownMenuItem>

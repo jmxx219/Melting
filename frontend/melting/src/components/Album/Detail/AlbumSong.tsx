@@ -1,12 +1,13 @@
 import SongContent from '@/components/Common/SongContent'
-import { AlbumSongType } from '@/types/album'
+import { SongDetailsResponseDto } from '@/types/album'
 import { Clock4 } from 'lucide-react'
 
 type AlbumSongProps = {
-  songs: AlbumSongType[]
+  songs: SongDetailsResponseDto[]
+  fetchSong?: () => void
 }
 
-export default function AlbumSong({ songs }: AlbumSongProps) {
+export default function AlbumSong({ songs, fetchSong }: AlbumSongProps) {
   return (
     <div id="album-song" className="mt-10">
       <div className="flex items-center gap-3 text-gray-400 border-b-2 py-3 mb-3">
@@ -25,8 +26,9 @@ export default function AlbumSong({ songs }: AlbumSongProps) {
           key={song.songId}
           song={song}
           hasProfileImage={false}
-          isTitle={song.isTitle}
+          isTitle={false}
           songOrder={index + 1}
+          fetchSongs={fetchSong}
         />
       ))}
     </div>

@@ -1,66 +1,66 @@
+import { useState, useEffect, useCallback } from 'react'
 import MySongContent from '@/components/MyPage/MySongContent'
+import { SortType } from '@/types/constType'
+import { SongListDto } from '@/types/user'
+import { userApi } from '@/apis/userApi'
+import InfiniteScroll from '@/components/Common/InfinityScroll.tsx'
 
 interface AlbumSongToggleProps {
-  sortOption: 'LATEST' | 'POPULAR'
+  sortOption: SortType
 }
 
-export default function MySongList({}: AlbumSongToggleProps) {
-  const data = {
-    mySongList: [
-      {
-        originalSongId: 1,
-        artist: '아이유',
-        songTitle: '좋은 날',
-        songList: [
-          {
-            songId: 1,
-            albumCoverImgUrl:
-              'https://image.bugsm.co.kr/album/images/200/40955/4095501.jpg?version=20240307012526.0',
-            songType: 'melting',
-            likeCount: 12345678,
-            isLiked: true,
-            isDone: true,
-          },
-          {
-            songId: 2,
-            albumCoverImgUrl:
-              'https://image.bugsm.co.kr/album/images/200/40955/4095501.jpg?version=20240307012526.0',
-            songType: 'AICover',
-            likeCount: 12345,
-            isLiked: false,
-            isDone: false,
-          },
-        ],
-      },
-      {
-        originalSongId: 2,
-        artist: '아이유',
-        songTitle: '노래 제목 2',
-        songList: [
-          {
-            songId: 3,
-            albumCoverImgUrl:
-              'https://image.bugsm.co.kr/album/images/200/40955/4095501.jpg?version=20240307012526.0',
-            songType: 'AICover',
-            likeCount: 67890,
-            isLiked: false,
-            isDone: true,
-          },
-        ],
-      },
-    ],
-    isPossibleAiCover: true, // AI 커버 가능 여부
+const fetchMySongs = async (page: number = 0, pageSize: number = 10) => {
+  try {
+    const response = await userApi.getMemberSongs(page, pageSize)
+    return {
+      newItems: response.mySongList ?? [],
+      isLast: response.isLast ?? true,
+    }
+  } catch (error) {
+    console.error('Error fetching songs:', error)
+    return { newItems: [], isLast: true }
   }
+}
+
+export default function MySongList({ sortOption }: AlbumSongToggleProps) {
+  const [originalSongs, setOriginalSongs] = useState<SongListDto[]>([])
+  const [page, setPage] = useState(0)
+  const [loading, setLoading] = useState(false)
+  const [hasMore, setHasMore] = useState(true)
+
+  const loadMoreItems = useCallback(async () => {
+    if (loading || !hasMore) return
+    setLoading(true)
+
+    const { newItems, isLast } = await fetchMySongs(page)
+
+    setOriginalSongs((prev) => [...prev, ...newItems])
+    setHasMore(!isLast)
+    setPage((prev) => prev + 1)
+    setLoading(false)
+  }, [loading, hasMore, page])
+
+  useEffect(() => {
+    setOriginalSongs([])
+    setPage(0)
+    setHasMore(true)
+    loadMoreItems()
+  }, [sortOption])
 
   return (
     <div>
-      {data.mySongList.map((song) => (
-        <MySongContent
-          key={song.originalSongId}
-          originalSong={song}
-          isPossibleAiCover={data.isPossibleAiCover}
-        />
-      ))}
+      <InfiniteScroll
+        loadMore={loadMoreItems}
+        hasMore={hasMore}
+        loading={loading}
+      >
+        {originalSongs.map((originalSong) => (
+          <MySongContent
+            key={originalSong.originalSongId}
+            originalSong={originalSong}
+          />
+        ))}
+      </InfiniteScroll>
     </div>
   )
 }

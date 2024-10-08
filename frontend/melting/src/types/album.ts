@@ -1,6 +1,13 @@
-import { LikedSongType, Song } from './song'
-import { ErrorResponse, ApiResponseInteger } from '@/types/globalType.ts'
+import { Song } from './song'
+import {
+  ErrorResponse,
+  ApiResponseInteger,
+  ApiResponseString,
+  ApiResponseBoolean,
+  ApiResponseVoid,
+} from '@/types/globalType.ts'
 import { ApiResponseMemberResponseDto } from '@/types/user.ts'
+import { albumCategoryType } from './constType'
 
 export interface AlbumForm {
   tracks: Song[]
@@ -11,21 +18,30 @@ export interface AlbumForm {
   albumCoverImage: File | null
 }
 
-export interface BestAlbum {
-  albumId: number
-  albumName: string
-  nickname: string
-  albumCoverImage: string
+export interface ImageInfo {
+  id: string
+  url: string
+  file: File | null
+  description: string
+  type: 'user' | 'ai' | 'default'
 }
 
 export interface AlbumCreateRequestDto {
-  albumName?: string
-  albumDescription?: string
-  songs?: number[]
+  albumName: string
+  albumDescription: string
+  songs: number[]
   /** @format int64 */
-  titleSongId?: number
-  genres?: number[]
-  hashtags?: string[]
+  titleSongId: number
+  genres: string[]
+  hashtags: string[]
+  /** @format int32 */
+  defaultCoverNumber?: number
+}
+
+export interface CreateAlbumPayload {
+  albumCreateRequestDto: AlbumCreateRequestDto
+  /** @format binary */
+  albumCoverImage: File
 }
 
 export interface AlbumMainResponseDto {
@@ -42,7 +58,7 @@ export interface ApiResponseListAlbumMainResponseDto {
 
 export interface AlbumUpdateResponseDto {
   /** @format int64 */
-  albumId?: number
+  album_id?: number
 }
 
 export interface ApiResponseAlbumUpdateResponseDto {
@@ -130,54 +146,19 @@ export interface AlbumDetailType {
 export interface AlbumDetailInfoType {
   albumCoverImage: string
   albumName: string
-  like: number
+  likedCount: number
   commentCnt: number
   isLike: boolean
-  nickname: string
-  profileImage: string
-  createDate: string
+  albumCreatorNickname: string
+  albumCreatorProfileImageUrl: string
+  createdAt: string
   genres: string[]
-  type: string
-  description: string
+  category: albumCategoryType
+  albumDescription: string
   hashtags: string[]
 }
 
-export interface SongDetailsResponseDto {
-  /** @format int64 */
-  songId?: number
-  songTitle?: string
-  nickname?: string
-  artist?: string
-  albumCoverImageUrl?: string
-  isLiked?: boolean
-  /** @format int32 */
-  likedCount?: number
-  songUrl?: string
-  lyrics?: string
-}
-
-export interface AlbumDetailsResponseDto {
-  /** @format int64 */
-  albumId?: number
-  albumName?: string
-  albumCreatorNickname?: string
-  albumCreatorProfileImageUrl?: string
-  albumDescription?: string
-  /** @format date-time */
-  createdAt?: string
-  category?: 'SINGLE' | 'MINI' | 'LP'
-  songs?: SongDetailsResponseDto[]
-  hashtags?: string[]
-  genres?: string[]
-  comments?: CommentResponseDto[]
-  /** @format int32 */
-  commentCount?: number
-  isLiked?: boolean
-  /** @format int32 */
-  likedCount?: number
-}
-
-export type AlbumSongType = LikedSongType & {
+export type AlbumSongType = Song & {
   isTitle: boolean
 }
 
@@ -205,3 +186,139 @@ export interface GenreResponseDto {
 export type GetAllGenresData = ApiResponseListGenreResponseDto
 
 export type GetAllGenresError = ErrorResponse
+
+export interface AlbumRankingResponseDto {
+  /** @format int64 */
+  albumId: number
+  albumName: string
+  creatorNickname: string
+  albumCoverImageUrl: string
+}
+
+export interface ApiResponseListAlbumRankingResponseDto {
+  status?: string
+  data?: AlbumRankingResponseDto[]
+  errorMessage?: string
+}
+
+export type GetSteadyAlbumsData = ApiResponseListAlbumRankingResponseDto
+
+export type GetSteadyAlbumsError = ErrorResponse
+
+export type GetMonthlyAlbumsData = ApiResponseListAlbumRankingResponseDto
+
+export type GetMonthlyAlbumsError = ErrorResponse
+
+export type GetHot5AlbumsData = ApiResponseListAlbumRankingResponseDto
+
+export type GetHot5AlbumsError = ErrorResponse
+
+export interface SongDetailsResponseDto {
+  /** @format int64 */
+  songId: number
+  songTitle: string
+  nickname: string
+  artist: string
+  albumCoverImageUrl: string
+  isLiked: boolean
+  /** @format int32 */
+  likedCount: number
+  songUrl?: string
+  lyrics?: string
+  lengthInSeconds: number
+}
+
+export interface AlbumDetailsResponseDto {
+  /** @format int64 */
+  albumId: number
+  albumName: string
+  albumCreatorNickname: string
+  albumCreatorProfileImageUrl: string
+  albumCoverImageUrl: string
+  albumDescription: string
+  /** @format date-time */
+  createdAt: string
+  category: 'SINGLE' | 'MINI' | 'LP'
+  songs: SongDetailsResponseDto[]
+  hashtags: string[]
+  genres: string[]
+  comments: CommentResponseDto[]
+  /** @format int32 */
+  commentCount?: number
+  isLiked?: boolean
+  /** @format int32 */
+  likedCount?: number
+}
+
+export interface ApiResponseAlbumDetailsResponseDto {
+  status?: string
+  data?: AlbumDetailsResponseDto
+  errorMessage?: string
+}
+
+export type GetAlbumDetailsData = ApiResponseAlbumDetailsResponseDto
+
+export type GetAlbumDetailsError = ErrorResponse
+
+export interface AiCoverImageRequestDto {
+  songs: number[]
+}
+
+export type CreateAiAlbumCoverImageData = ApiResponseString
+
+export type CreateAiAlbumCoverImageError = ErrorResponse
+
+export type ToggleIsPublicData = ApiResponseBoolean
+
+export type DeleteAlbumData = ApiResponseVoid
+
+export interface AiDescriptionRequestDto {
+  songs: number[]
+  hashtags: string[]
+  genres: string[]
+  albumName: string
+}
+
+export type CreateAiDescriptionData = ApiResponseString
+
+export type CreateAiDescriptionError = ErrorResponse
+
+export interface ApiResponseAlbumDetailsResponseDto {
+  status?: string
+  data?: AlbumDetailsResponseDto
+  errorMessage?: string
+}
+
+export interface AlbumUpdateRequestDto {
+  description: string
+}
+
+export type UpdateAlbumDescriptionData = ApiResponseAlbumDetailsResponseDto
+
+export type UpdateAlbumDescriptionError = ErrorResponse
+
+export interface AlbumRankingPageResponseDto {
+  albums?: AlbumRankingResponseDto[]
+  isLast?: boolean
+  /** @format int32 */
+  pageNumber?: number
+  /** @format int32 */
+  pageSize?: number
+  /** @format int32 */
+  totalPages?: number
+  /** @format int64 */
+  totalElements?: number
+  /** @format int32 */
+  numberOfElements?: number
+}
+
+export interface ApiResponseAlbumRankingPageResponseDto {
+  status?: string
+  data?: AlbumRankingPageResponseDto
+  errorMessage?: string
+}
+
+export type GetAlbumPageContainsHashtagData =
+  ApiResponseAlbumRankingPageResponseDto
+
+export type GetAlbumPageContainsHashtagError = ErrorResponse

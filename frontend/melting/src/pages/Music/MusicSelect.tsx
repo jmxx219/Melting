@@ -8,7 +8,6 @@ export default function MusicSelect() {
   const location = useLocation()
   const navigate = useNavigate()
   const { type } = location.state || {}
-  console.log(type)
 
   return (
     <Layout
@@ -21,7 +20,7 @@ export default function MusicSelect() {
           }}
         />
       }
-      children={<MusicSelectList />}
+      children={<MusicSelectList recordType={type} />}
       showFooter={false}
     ></Layout>
   )
