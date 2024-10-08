@@ -25,12 +25,12 @@ public record AlbumDetailsResponseDto(
 	List<String> hashtags,
 	List<String> genres,
 	List<CommentResponseDto> comments,
-	Integer commentCount,
+	Long commentCount,
 	Boolean isLiked,
 	Integer likedCount
 ) {
 	public static AlbumDetailsResponseDto of(Album album, Member member,
-		Boolean isLiked, Integer albumLikesCount, List<SongDetailsResponseDto> songs, Integer commentCount) {
+		Boolean isLiked, Integer albumLikesCount, List<SongDetailsResponseDto> songs, Long commentCount, List<CommentResponseDto> comments) {
 		return AlbumDetailsResponseDto.builder()
 			.albumId(album.getId())
 			.albumName(album.getAlbumName())
@@ -47,9 +47,7 @@ public record AlbumDetailsResponseDto(
 			.genres(album.getGenres().stream()
 				.map(albumGenre -> albumGenre.getGenre().getContent())
 				.toList())
-			.comments(album.getComments().stream()
-				.map(comment -> CommentResponseDto.of(comment, comment.getMember().getId().equals(member.getId())))
-				.toList())
+			.comments(comments)
 			.commentCount(commentCount)
 			.isLiked(isLiked)
 			.likedCount(albumLikesCount)
