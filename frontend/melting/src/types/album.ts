@@ -1,13 +1,13 @@
-import { Song } from './song'
 import {
-  ErrorResponse,
+  ApiResponseBoolean,
   ApiResponseInteger,
   ApiResponseString,
-  ApiResponseBoolean,
   ApiResponseVoid,
+  ErrorResponse,
 } from '@/types/globalType.ts'
 import { ApiResponseMemberResponseDto } from '@/types/user.ts'
 import { albumCategoryType } from './constType'
+import { Song } from './song'
 
 export interface AlbumForm {
   tracks: Song[]
@@ -277,6 +277,35 @@ export interface ApiResponseAlbumDetailsResponseDto {
   errorMessage?: string
 }
 
+export interface ApiResponseAlbumSearchPageResponseDto {
+  status?: string
+  data?: AlbumSearchPageResponseDto
+  errorMessage?: string
+}
+export interface AlbumSearchPageResponseDto {
+  albumInfoList: AlbumRankingResponseDto[]
+  isLast: boolean
+  /** @format int32 */
+  pageNumber: number
+  /** @format int32 */
+  pageSize: number
+  /** @format int32 */
+  totalPages: number
+  /** @format int64 */
+  totalElements: number
+  /** @format int32 */
+  numberOfElements: number
+}
+
+export interface AlbumSearchResponseDto {
+  /** @format int64 */
+  albumId?: number
+  albumName?: string
+  creatorNickname?: string
+  /** @format date-time */
+  createdAt?: string
+}
+
 export type GetAlbumDetailsData = ApiResponseAlbumDetailsResponseDto
 
 export type GetAlbumDetailsError = ErrorResponse
@@ -343,3 +372,4 @@ export type GetAlbumPageContainsHashtagData =
   ApiResponseAlbumRankingPageResponseDto
 
 export type GetAlbumPageContainsHashtagError = ErrorResponse
+export type SearchAlbumsData = ApiResponseAlbumSearchPageResponseDto

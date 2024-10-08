@@ -12,6 +12,7 @@ import { SortType, sort } from '@/types/constType'
 
 interface SortDropdownProps {
   initialSort: SortType
+  showText?: boolean
   onSelect: (value: SortType) => void
 }
 
@@ -19,6 +20,7 @@ type Checked = DropdownMenuCheckboxItemProps['checked']
 
 export default function SortDropdown({
   initialSort,
+  showText = true,
   onSelect,
 }: SortDropdownProps) {
   const [selectedSort, setSelectedSort] = useState<SortType>(initialSort)
@@ -63,7 +65,9 @@ export default function SortDropdown({
           className="flex items-center border-none  rounded-3xl pl-2 pr-1 py-0 h-7"
         >
           <div className="flex justify-center items-center">
-            <span className="text-sm">{getSortLabel(selectedSort)}</span>
+            {showText && (
+              <span className="text-sm">{getSortLabel(selectedSort)}</span>
+            )}
             <ChevronDown />
           </div>
         </Button>
