@@ -1,10 +1,13 @@
+import { useQueryClient } from '@tanstack/react-query'
 import { ArrowRight } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { useNavigate } from 'react-router-dom'
 import ProfileImage from '@/components/Common/ProfileImage'
 import { useUserInfo } from '@/hooks/useUserInfo'
+import { userApi } from '@/apis/userApi'
 
 export default function MyPageSelect() {
+  const queryClient = useQueryClient()
   const { data: userInfo } = useUserInfo()
   const navigate = useNavigate()
 
@@ -20,12 +23,16 @@ export default function MyPageSelect() {
     navigate('/mypage/profile/edit')
   }
 
-  const handleLogout = () => {
-    // TODO: 로그아웃
-  }
-
-  const handleAccountDelete = () => {
-    // TODO: 회원 탈퇴
+  const handleLogout = async () => {
+    console.log('handleLogout')
+    try {
+      await userApi.logout()
+      queryClient.resetQueries({ queryKey: ['userInfo'] })
+      navigate('/login')
+      console.log(userInfo)
+    } catch (error) {
+      console.error('로그아웃 실패:', error)
+    }
   }
 
   if (!userInfo) {
@@ -76,25 +83,27 @@ export default function MyPageSelect() {
           type="button"
           className="w-full justify-between h-12 rounded-2xl text-primary-400 bg-transparent text-left"
           onClick={handleProfileEdit}
+          variant={'hover_none'}
         >
           회원 정보 수정
         </Button>
         <hr className="w-11/12 border-gray-300 my-1 mx-auto" />
         <Button
           type="button"
-          className="w-full justify-between h-12 rounded-2xl text-primary-400 bg-transparent text-left"
+          className="hover_none w-full justify-between h-12 rounded-2xl text-primary-400 bg-transparent text-left"
           onClick={handleLogout}
+          variant={'hover_none'}
         >
           로그아웃
         </Button>
-        <hr className="w-11/12 border-gray-300 my-1 mx-auto" />
+        {/* <hr className="w-11/12 border-gray-300 my-1 mx-auto" />
         <Button
           type="button"
           className="w-full justify-between h-12 rounded-2xl text-gray-400 bg-transparent text-left"
           onClick={handleAccountDelete}
         >
           회원 탈퇴
-        </Button>
+        </Button> */}
       </div>
     </div>
   )
