@@ -43,6 +43,10 @@ spring:
     jdbc:
       initialize-schema: always
 
+  threads:
+    virtual:
+      enabled: true
+
 logging:
   level:
     com:
