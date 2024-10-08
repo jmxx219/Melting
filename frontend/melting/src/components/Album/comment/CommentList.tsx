@@ -12,6 +12,7 @@ type CommentListProps = {
 
 export default function CommentList({ albumId }: CommentListProps) {
   const [comments, setComments] = useState<CommentResponseDto[]>([])
+  const [totalComments, setTotalComments] = useState(0)
   const [page, setPage] = useState(0)
   const [hasMore, setHasMore] = useState(true)
   const { ref, inView } = useInView()
@@ -22,6 +23,7 @@ export default function CommentList({ albumId }: CommentListProps) {
         content: comment,
       })
       setComments((prevComments) => [newComment, ...prevComments])
+      setTotalComments((prevState) => prevState + 1)
     } catch (error) {
       console.error('댓글 작성 실패:', error)
     }
@@ -49,6 +51,7 @@ export default function CommentList({ albumId }: CommentListProps) {
       setComments((prev) =>
         prev.filter((comment) => comment.commentId !== commentId),
       )
+      setTotalComments((prevComments) => prevComments - 1)
     } catch (error) {
       console.error('댓글 삭제 실패:', error)
     }
@@ -61,15 +64,20 @@ export default function CommentList({ albumId }: CommentListProps) {
         size: 10,
       })
 
-      if (response.length === 0 && page === 0) {
+      setTotalComments(response.totalElements || 0)
+      const commentPage = response.commentPage || [] // response.commentPage가 undefined일 경우 빈 배열로 처리
+      console.log('댓글 전체 조회', commentPage)
+      // 더 이상 가져올 댓글이 없는 경우 처리
+      if (commentPage.length === 0 && page === 0) {
         setHasMore(false)
-      } else if (response.length < 10) {
+      } else if (commentPage.length < 10) {
         setHasMore(false)
       }
 
-      if (response.length > 0) {
-        setComments((prevComments) => [...prevComments, ...response])
-        setPage((prevPage) => prevPage + 1)
+      // 댓글이 있는 경우 상태 업데이트
+      if (commentPage.length > 0) {
+        setComments((prevComments) => [...prevComments, ...commentPage]) // commentPage의 데이터를 추가
+        setPage((prevPage) => prevPage + 1) // 페이지 증가
       }
     } catch (error) {
       console.error('댓글을 가져오는 중 오류 발생:', error)
@@ -86,7 +94,7 @@ export default function CommentList({ albumId }: CommentListProps) {
     <>
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-md font-bold text-gray">
-          댓글 {comments.length > 999 ? '999+' : comments.length}
+          댓글 {totalComments > 999 ? '999+' : totalComments}
         </h2>
         <CommentModal onSubmit={handleCommentSubmit} />
       </div>
@@ -95,7 +103,7 @@ export default function CommentList({ albumId }: CommentListProps) {
           <p className="text-gray-500">댓글이 없습니다. 댓글을 작성해보세요!</p>
         ) : (
           comments.map((comment, index) => (
-            <div key={comment.commentId}>
+            <div key={comment.createdAt}>
               <AlbumComment
                 comment={comment}
                 albumId={albumId}
