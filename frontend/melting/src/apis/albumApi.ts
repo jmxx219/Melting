@@ -1,48 +1,53 @@
 import {
-  createAxiosInstance,
-  createApi,
-  ApiResponse,
-  CustomError,
-} from './axiosInstance'
-import {
   // AlbumCreateRequestDto,
   AddAlbumLikesData,
+  AiCoverImageRequestDto,
+  AiDescriptionRequestDto,
+  AlbumDetailsResponseDto,
+  AlbumRankingPageResponseDto,
+  AlbumRankingResponseDto,
+  AlbumSearchPageResponseDto,
+  AlbumUpdateRequestDto,
   CommentRequestDto,
+  CreateAiAlbumCoverImageData,
+  CreateAiAlbumCoverImageError,
+  CreateAiDescriptionData,
+  CreateAiDescriptionError,
   CreateAlbumData,
+  CreateAlbumError,
+  CreateAlbumPayload,
+  DeleteAlbumData,
   DeleteAlbumLikesData,
   GenreResponseDto,
+  GetAlbumDetailsData,
+  GetAlbumDetailsError,
   GetAlbumLikesCountData,
+  GetAlbumPageContainsHashtagData,
   GetAlbumsInCommunityMainPageData,
   GetAllCommentsData,
   GetAllGenresData,
-  WriteCommentData,
-  CreateAlbumPayload,
-  CreateAlbumError,
   GetHot5AlbumsData,
   GetHot5AlbumsError,
   GetMonthlyAlbumsData,
   GetMonthlyAlbumsError,
   GetSteadyAlbumsData,
   GetSteadyAlbumsError,
-  AlbumRankingResponseDto,
-  AiCoverImageRequestDto,
-  CreateAiAlbumCoverImageData,
-  CreateAiAlbumCoverImageError,
   ToggleIsPublicData,
-  DeleteAlbumData,
-  GetAlbumDetailsData,
-  GetAlbumDetailsError,
-  AlbumDetailsResponseDto,
-  CreateAiDescriptionData,
-  CreateAiDescriptionError,
-  AiDescriptionRequestDto,
   UpdateAlbumDescriptionData,
   UpdateAlbumDescriptionError,
-  AlbumUpdateRequestDto,
-  GetAlbumPageContainsHashtagData,
-  AlbumRankingPageResponseDto,
+  WriteCommentData,
 } from '@/types/album.ts'
-import { SortType } from '@/types/constType'
+import {
+  CommunityConditionType,
+  communityVal,
+  SortType,
+} from '@/types/constType'
+import {
+  ApiResponse,
+  createApi,
+  createAxiosInstance,
+  CustomError,
+} from './axiosInstance'
 
 const instance = createAxiosInstance('albums')
 const api = createApi<ApiResponse>(instance)
@@ -307,6 +312,28 @@ export const albumApi = {
     } catch (error) {
       console.error('해시태그가 포함된 앨범 검색 실패:', error)
       throw error // 오류 발생 시 예외 처리
+    }
+  },
+  getCommunityAlbums: async (query: {
+    keyword: string
+    options: CommunityConditionType[]
+    page: number
+  }) => {
+    try {
+      const optionParam = query.options.map((v) => {
+        return communityVal[v]
+      })
+      const response = await api.get<AlbumSearchPageResponseDto>(`/search`, {
+        params: {
+          keyword: query.keyword,
+          options: optionParam.join(','),
+          page: query.page,
+        },
+      })
+      return response.data as AlbumSearchPageResponseDto
+    } catch (error) {
+      console.error('앨범 조회 중 오류 발생:', error)
+      throw error
     }
   },
 }
