@@ -29,6 +29,9 @@ import com.dayangsung.melting.domain.album.dto.response.AlbumTrackInfoDto;
 import com.dayangsung.melting.domain.album.entity.Album;
 import com.dayangsung.melting.domain.album.enums.AlbumCategory;
 import com.dayangsung.melting.domain.album.repository.AlbumRepository;
+import com.dayangsung.melting.domain.comment.dto.response.CommentPageResponseDto;
+import com.dayangsung.melting.domain.comment.dto.response.CommentResponseDto;
+import com.dayangsung.melting.domain.comment.service.CommentService;
 import com.dayangsung.melting.domain.genre.dto.response.GenreResponseDto;
 import com.dayangsung.melting.domain.genre.service.GenreService;
 import com.dayangsung.melting.domain.hashtag.service.HashtagService;
@@ -61,6 +64,7 @@ public class AlbumService {
 	private final HashtagService hashtagService;
 	private final RedisService redisService;
 	private final AwsS3Util awsS3Util;
+	private final CommentService commentService;
 
 	@Transactional
 	public AlbumDetailsResponseDto createAlbum(AlbumCreateRequestDto albumCreateRequestDto,
@@ -112,7 +116,7 @@ public class AlbumService {
 
 		return AlbumDetailsResponseDto.of(album, member,
 			likesService.isLikedByAlbumAndMember(album.getId(), member.getId()),
-			likesService.getAlbumLikesCount(album.getId()), songs, 0);
+			likesService.getAlbumLikesCount(album.getId()), songs, 0L, null);
 	}
 
 	public AlbumDetailsResponseDto getAlbumDetails(Long albumId, String email) {
@@ -121,10 +125,12 @@ public class AlbumService {
 		Member member = memberRepository.findByEmail(email)
 			.orElseThrow(() -> new BusinessException(ErrorMessage.MEMBER_NOT_FOUND));
 		List<SongDetailsResponseDto> songDetails = getSongDetails(album, member.getId());
+		CommentPageResponseDto comments =
+			commentService.getAllComments(albumId, email, 0, 5);
 
 		return AlbumDetailsResponseDto.of(album, album.getMember(),
 			likesService.isLikedByAlbumAndMember(album.getId(), member.getId()),
-			likesService.getAlbumLikesCount(album.getId()), songDetails, album.getComments().size());
+			likesService.getAlbumLikesCount(album.getId()), songDetails, comments.totalElements(), comments.commentPage());
 	}
 
 	@Transactional
@@ -137,10 +143,12 @@ public class AlbumService {
 		album.updateAlbumDescription(description);
 		albumRepository.save(album);
 		List<SongDetailsResponseDto> songDetails = getSongDetails(album, member.getId());
+		CommentPageResponseDto comments =
+			commentService.getAllComments(albumId, email, 0, 5);
 
 		return AlbumDetailsResponseDto.of(album, album.getMember(),
 			likesService.isLikedByAlbumAndMember(album.getId(), member.getId()),
-			likesService.getAlbumLikesCount(album.getId()), songDetails, album.getComments().size());
+			likesService.getAlbumLikesCount(album.getId()), songDetails, comments.totalElements(), comments.commentPage());
 	}
 
 	public AlbumSearchPageResponseDto getAlbums(int sort, int page, int size) {
