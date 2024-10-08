@@ -1,4 +1,4 @@
-package com.dayangsung.melting.global.batch.scheduler;
+package com.dayangsung.melting.global.batch;
 
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.JobParameters;
