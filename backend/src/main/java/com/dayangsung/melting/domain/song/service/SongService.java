@@ -182,7 +182,7 @@ public class SongService {
 			.originalSongMrUrl(originalSong.getMrUrl())
 			.originalSongVoiceUrl(originalSong.getVoiceUrl())
 			.memberGender(member.getGender().toString())
-			.originalVoiceGender(member.getGender().toString())
+			.originalVoiceGender(originalSong.getArtistGender().toString())
 			.build();
 
 		redisTemplate.convertAndSend("ai_cover_song_channel", aiCoverRedisPubDto);
