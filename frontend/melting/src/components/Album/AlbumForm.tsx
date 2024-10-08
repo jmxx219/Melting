@@ -16,6 +16,7 @@ import {
   AlbumCreateRequestDto,
   CreateAlbumPayload,
 } from '@/types/album.ts'
+import { convertDateToWord } from '@/utils/dateUtil.ts'
 
 export default function AlbumForm() {
   const [releaseDate, setReleaseDate] = useState<string>('')
@@ -46,8 +47,7 @@ export default function AlbumForm() {
 
   useEffect(() => {
     const today = new Date()
-    const formattedDate = `${today.getFullYear()}년 ${today.getMonth() + 1}월 ${today.getDate()}일`
-
+    const formattedDate = convertDateToWord(today)
     setReleaseDate(formattedDate)
   })
 
