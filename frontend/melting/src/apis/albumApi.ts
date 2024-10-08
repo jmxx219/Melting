@@ -35,20 +35,19 @@ import {
   UpdateAlbumDescriptionError,
   AlbumUpdateRequestDto,
   GetAlbumPageContainsHashtagData,
+  GetAlbumPageContainsHashtagError,
   AlbumRankingPageResponseDto,
   CommentResponseDto,
   GetAllCommentsError,
   GetAllGenresError,
   ModifyCommentData,
   DeleteCommentData,
-  GetAlbumPageContainsHashtagError,
   DeleteCommentError,
   WriteCommentError,
   ModifyCommentError,
   DeleteAlbumLikesError,
 } from '@/types/album.ts'
 import { SortType } from '@/types/constType'
-import { DeleteAlbumError } from '@/typeApis/data-contracts.ts'
 
 const instance = createAxiosInstance('albums')
 const api = createApi<ApiResponse>(instance)
