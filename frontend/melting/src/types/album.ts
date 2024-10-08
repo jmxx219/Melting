@@ -303,4 +303,44 @@ export interface AiDescriptionRequestDto {
 export type CreateAiDescriptionData = ApiResponseString
 
 export type CreateAiDescriptionError = ErrorResponse
+
+export interface ApiResponseAlbumDetailsResponseDto {
+  status?: string
+  data?: AlbumDetailsResponseDto
+  errorMessage?: string
+}
+
+export interface AlbumUpdateRequestDto {
+  description: string
+}
+
+export type UpdateAlbumDescriptionData = ApiResponseAlbumDetailsResponseDto
+
+export type UpdateAlbumDescriptionError = ErrorResponse
+
+export interface AlbumRankingPageResponseDto {
+  albums?: AlbumRankingResponseDto[]
+  isLast?: boolean
+  /** @format int32 */
+  pageNumber?: number
+  /** @format int32 */
+  pageSize?: number
+  /** @format int32 */
+  totalPages?: number
+  /** @format int64 */
+  totalElements?: number
+  /** @format int32 */
+  numberOfElements?: number
+}
+
+export interface ApiResponseAlbumRankingPageResponseDto {
+  status?: string
+  data?: AlbumRankingPageResponseDto
+  errorMessage?: string
+}
+
+export type GetAlbumPageContainsHashtagData =
+  ApiResponseAlbumRankingPageResponseDto
+
+export type GetAlbumPageContainsHashtagError = ErrorResponse
 export type SearchAlbumsData = ApiResponseAlbumSearchPageResponseDto
