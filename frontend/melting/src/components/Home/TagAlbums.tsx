@@ -1,9 +1,7 @@
-import { useEffect, useState } from 'react'
-
+import { useEffect, useState, useCallback, useRef } from 'react'
 import { AlbumRankingResponseDto } from '@/types/album'
 import Album from '../Community/Album'
 import { Plus } from 'lucide-react'
-
 import { ScrollArea, ScrollBar } from '../ui/scroll-area'
 import { Button } from '../ui/button'
 import {
@@ -26,28 +24,8 @@ import HashtagButton from '../Button/HashtagButton'
 import HashtagSelector from '@/components/Album/HashtagSelector'
 import { AlertDialogCancel } from '@radix-ui/react-alert-dialog'
 import { userApi } from '@/apis/userApi.ts'
-// import AlertModal from '@/components/common/AlertModal.tsx'
-
-const mockup: AlbumRankingResponseDto[] = [
-  {
-    albumId: 1,
-    albumName: '태그 첫 번째 앨범',
-    creatorNickname: '아티스트1',
-    albumCoverImageUrl: '/images/mockup/album0.png',
-  },
-  {
-    albumId: 2,
-    albumName: '태그 두 번째 앨범',
-    creatorNickname: '아티스트2',
-    albumCoverImageUrl: '/images/mockup/album1.png',
-  },
-  {
-    albumId: 3,
-    albumName: '태그 세 번째 앨범',
-    creatorNickname: '아티스트3',
-    albumCoverImageUrl: '/images/mockup/album2.png',
-  },
-]
+import { albumApi } from '@/apis/albumApi.ts'
+import { useInView } from 'react-intersection-observer'
 
 export default function TagAlbum() {
   const [tags, setTags] = useState<string[]>([])
@@ -58,26 +36,69 @@ export default function TagAlbum() {
   const [showWarning, setShowWarning] = useState(false)
   const [tagToDelete, setTagToDelete] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(false)
+  const [page, setPage] = useState(0)
+  const [hasMore, setHasMore] = useState(true)
+  const [isError, setIsError] = useState(false)
+  const [retryCount, setRetryCount] = useState(0)
+  const maxRetries = 3
+  const retryDelay = 1000 // 1초
+
+  const scrollAreaRef = useRef<HTMLDivElement>(null)
+  const { ref: inViewRef, inView } = useInView({
+    threshold: 0.1,
+    triggerOnce: false,
+  })
 
   useEffect(() => {
     const fetchTags = async () => {
       try {
         const userTags = await userApi.getMemberHashtags()
-        setTags(userTags) // 태그 상태에 저장
+        setTags(userTags)
       } catch (error) {
         console.error('태그 불러오기 실패:', error)
       }
     }
 
-    fetchTags() // 태그 조회 API 호출 함수 실행
+    fetchTags()
   }, [])
+
+  const fetchAlbums = useCallback(async () => {
+    if (!selectedTag || !hasMore || isLoading) return
+
+    setIsLoading(true)
+    setIsError(false)
+    try {
+      const response = await albumApi.getAlbumPageContainsHashtag(selectedTag, {
+        page,
+        size: 5,
+      })
+      const newAlbums = response.albums || []
+      setAlbums((prevAlbums) => [...prevAlbums, ...newAlbums])
+      setPage((prevPage) => prevPage + 1)
+      setHasMore(newAlbums.length > 0 && !response.isLast)
+      setRetryCount(0) // 성공 시 retry 카운트 리셋
+    } catch (error) {
+      console.error('앨범 조회 실패:', error)
+      setIsError(true)
+      if (retryCount < maxRetries) {
+        setTimeout(() => {
+          setRetryCount((prevCount) => prevCount + 1)
+          setIsLoading(false) // 재시도를 위해 로딩 상태 해제
+        }, retryDelay)
+      }
+    } finally {
+      if (!isError) {
+        setIsLoading(false)
+      }
+    }
+  }, [selectedTag, page, hasMore, isLoading, retryCount])
 
   useEffect(() => {
     if (selectedTag) {
-      // 태그가 선택되면 API를 호출하여 해당 앨범 목록을 가져옴 (isLoading)
-      // fetchAlbumsByTag(selectedTag).then(setAlbums);
-      setAlbums(mockup)
-      setIsLoading(false)
+      setAlbums([])
+      setPage(0)
+      setHasMore(true)
+      fetchAlbums()
     }
   }, [selectedTag])
 
@@ -86,9 +107,9 @@ export default function TagAlbum() {
       const tag = selectedHashtags[0]
       if (tags.length < 5 && !tags.includes(tag)) {
         try {
-          await userApi.addMemberHashtag({ content: tag }) // 태그 추가 API 호출
-          setTags([...tags, tag]) // UI에 태그 추가
-          setSelectedHashtags([]) // 선택된 해시태그 초기화
+          await userApi.addMemberHashtag({ content: tag })
+          setTags([...tags, tag])
+          setSelectedHashtags([])
           setIsDialogOpen(false)
         } catch (error) {
           console.error('태그 추가 실패:', error)
@@ -123,11 +144,16 @@ export default function TagAlbum() {
 
   const handleTagClick = (tag: string) => {
     setSelectedTag(tag)
+    setAlbums([])
+    setPage(0)
+    setHasMore(true)
   }
 
-  // const handleCloseDialog = () => {
-  //   setShowWarning(false)
-  // }
+  useEffect(() => {
+    if (inView && hasMore && !isLoading) {
+      fetchAlbums()
+    }
+  }, [inView, hasMore, isLoading, fetchAlbums])
 
   return (
     <>
@@ -138,7 +164,7 @@ export default function TagAlbum() {
             <HashtagButton
               key={tag}
               text={tag}
-              onClick={handleTagClick}
+              onClick={() => handleTagClick(tag)}
               onContextMenu={handleContextMenu}
             />
           ))}
@@ -170,43 +196,34 @@ export default function TagAlbum() {
             </Dialog>
           )}
         </div>
-        <div className="w-full h-[188px] rounded-md overflow-hidden">
+        <div className="w-full h-[208px] rounded-md overflow-hidden">
           {tags.length === 0 ? (
             <div className="flex flex-col items-center justify-center h-full text-gray-500">
               <p>+ 버튼을 눌러 즐겨찾기할 태그를 설정해보세요. </p>
               <p>최대 5개만 설정이 가능합니다.</p>
             </div>
-          ) : isLoading ? (
-            <div className="flex items-center justify-center h-full">
-              Loading...
-            </div>
-          ) : selectedTag && albums.length > 0 ? (
-            <ScrollArea className="w-full h-full whitespace-nowrap mt-2">
+          ) : selectedTag ? (
+            <ScrollArea
+              className="w-full h-full whitespace-nowrap mt-2"
+              ref={scrollAreaRef}
+            >
               <div className="flex space-x-0">
                 {albums.map((album) => (
                   <Album key={album.albumId} album={album} />
                 ))}
+                {isLoading && <div className="">로딩 중...</div>}
+                {hasMore && !isLoading && (
+                  <div ref={inViewRef} className="w-10 h-10" /> // 트리거 요소
+                )}
               </div>
               <ScrollBar orientation="horizontal" />
             </ScrollArea>
-          ) : selectedTag ? (
-            <div className="flex items-center justify-center h-full text-gray-500">
-              No albums found for this tag.
-            </div>
           ) : (
             <div className="flex items-center justify-center h-full text-gray-500">
               태그를 선택하여 앨범을 확인하세요.
             </div>
           )}
         </div>
-        {/*{isDialogOpen && (*/}
-        {/*  <AlertModal*/}
-        {/*    title={''}*/}
-        {/*    messages={['정말 삭제하시겠습니까?']}*/}
-        {/*    isOpen={showWarning}*/}
-        {/*    onClose={handleCloseDialog}*/}
-        {/*  />*/}
-        {/*)}*/}
         <AlertDialog open={showWarning} onOpenChange={setShowWarning}>
           <AlertDialogContent className="h-60 border-2 border-primary-400">
             <AlertDialogHeader className="flex items-center justify-center">
