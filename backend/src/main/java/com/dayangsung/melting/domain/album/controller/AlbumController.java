@@ -93,13 +93,12 @@ public class AlbumController {
 
 	@GetMapping("/search")
 	public ApiResponse<AlbumSearchPageResponseDto> searchAlbums(
-		@RequestParam(defaultValue = "0") int sort,
 		@RequestParam(defaultValue = "0") int page,
 		@RequestParam(defaultValue = "10") int size,
 		@RequestParam(required = false) String keyword,
 		@RequestParam List<String> options
 	) {
-		AlbumSearchPageResponseDto albumSearchPage = albumService.searchAlbum(sort, page, size, keyword, options);
+		AlbumSearchPageResponseDto albumSearchPage = albumService.searchAlbum(page, size, keyword, options);
 		return ApiResponse.ok(albumSearchPage);
 	}
 
