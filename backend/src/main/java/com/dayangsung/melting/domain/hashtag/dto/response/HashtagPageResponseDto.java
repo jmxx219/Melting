@@ -4,6 +4,8 @@ import java.util.List;
 
 import org.springframework.data.domain.Page;
 
+import com.dayangsung.melting.domain.hashtag.entity.HashtagDocument;
+
 import lombok.Builder;
 
 @Builder
@@ -25,6 +27,23 @@ public record HashtagPageResponseDto(
 			.totalPages(hashtagPage.getTotalPages())
 			.totalElements(hashtagPage.getTotalElements())
 			.numberOfElements(hashtagPage.getNumberOfElements())
+			.build();
+	}
+
+	public static HashtagPageResponseDto from(Page<HashtagDocument> hashtagDocumentPage) {
+		List<HashtagResponseDto> hashtagDtos = hashtagDocumentPage
+			.stream()
+			.map(HashtagResponseDto::of)
+			.toList();
+
+		return HashtagPageResponseDto.builder()
+			.hashtags(hashtagDtos)
+			.isLast(hashtagDocumentPage.isLast())
+			.pageNumber(hashtagDocumentPage.getNumber())
+			.pageSize(hashtagDocumentPage.getSize())
+			.totalPages(hashtagDocumentPage.getTotalPages())
+			.totalElements(hashtagDocumentPage.getTotalElements())
+			.numberOfElements(hashtagDocumentPage.getNumberOfElements())
 			.build();
 	}
 }
