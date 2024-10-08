@@ -28,6 +28,7 @@ public class RedisService {
 	private static final String MONTHLY_STREAMING_KEY = "album:streaming:monthly";
 	private static final String DAILY_ALBUM_KEY = "album:best:daily";
 	private static final String MONTHLY_ALBUM_KEY = "album:best:monthly";
+	private static final String albumLikesKey = "album:likes";
 	private final AlbumRepository albumRepository;
 
 	public List<Album> getTop5AlbumLikes() {
@@ -36,7 +37,7 @@ public class RedisService {
 		int offset = 0;
 		while (topAlbums.size() < 5) {
 			Set<ZSetOperations.TypedTuple<Object>> albumScores =
-				zSetOperations.reverseRangeWithScores("album_likes", offset, offset + 4);
+				zSetOperations.reverseRangeWithScores(albumLikesKey, offset, offset + 4);
 			if (albumScores == null || albumScores.isEmpty()) {
 				break;
 			}
