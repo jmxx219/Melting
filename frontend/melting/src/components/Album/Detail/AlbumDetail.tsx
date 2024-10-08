@@ -95,6 +95,7 @@ export default function AlbumDetail({ albumId }: AlbumDetailProps) {
           commentCnt={album.commentCount || 0}
           comments={album.comments}
           albumId={album.albumId}
+          fetchAlbum={fetchAlbum}
         />
       </div>
     </div>
