@@ -115,7 +115,28 @@ export type DeleteAlbumLikesData = ApiResponseInteger
 
 export type DeleteAlbumLikesError = ErrorResponse
 
-export type GetAllCommentsData = ApiResponseListCommentResponseDto
+export interface CommentPageResponseDto {
+  commentPage?: CommentResponseDto[]
+  isLast?: boolean
+  /** @format int32 */
+  pageNumber?: number
+  /** @format int32 */
+  pageSize?: number
+  /** @format int32 */
+  totalPages?: number
+  /** @format int64 */
+  totalElements?: number
+  /** @format int32 */
+  numberOfElements?: number
+}
+
+export interface ApiResponseCommentPageResponseDto {
+  status?: string
+  data?: CommentPageResponseDto
+  errorMessage?: string
+}
+
+export type GetAllCommentsData = ApiResponseCommentPageResponseDto
 
 export type GetAllCommentsError = ErrorResponse
 
