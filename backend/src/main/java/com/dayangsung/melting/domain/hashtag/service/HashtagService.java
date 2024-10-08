@@ -51,7 +51,6 @@ public class HashtagService {
 		member.addMemberHashtag(memberHashtag);
 		try {
 			memberHashtagRepository.save(memberHashtag);
-			addHashtagDocument(hashtag);
 		} catch (Exception e) {
 			throw new BusinessException(ErrorMessage.MEMBER_HASHTAG_EXIST);
 		}
@@ -86,7 +85,9 @@ public class HashtagService {
 	@Transactional
 	public Hashtag addHashtagIfNotExist(String content) {
 		if (!hashtagRepository.existsByContent(content)) {
-			return hashtagRepository.save(Hashtag.builder().content(content).build());
+			Hashtag savedHashtag = hashtagRepository.save(Hashtag.builder().content(content).build());
+			addHashtagDocument(savedHashtag);
+			return savedHashtag;
 		} else {
 			return hashtagRepository.findByContent(content)
 				.orElseThrow(() -> new BusinessException(ErrorMessage.HASHTAG_NOT_FOUND));
