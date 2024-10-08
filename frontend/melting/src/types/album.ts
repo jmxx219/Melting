@@ -58,7 +58,7 @@ export interface ApiResponseListAlbumMainResponseDto {
 
 export interface AlbumUpdateResponseDto {
   /** @format int64 */
-  albumId: number
+  album_id?: number
 }
 
 export interface ApiResponseAlbumUpdateResponseDto {
@@ -79,7 +79,7 @@ export interface ApiResponseCommentResponseDto {
 
 export interface CommentResponseDto {
   /** @format int64 */
-  commentId?: number
+  commentId: number
   writerProfileImage: string
   writerNickname: string
   content: string
@@ -115,13 +115,42 @@ export type DeleteAlbumLikesData = ApiResponseInteger
 
 export type DeleteAlbumLikesError = ErrorResponse
 
-export type GetAllCommentsData = ApiResponseListCommentResponseDto
+export interface CommentPageResponseDto {
+  commentPage?: CommentResponseDto[]
+  isLast?: boolean
+  /** @format int32 */
+  pageNumber?: number
+  /** @format int32 */
+  pageSize?: number
+  /** @format int32 */
+  totalPages?: number
+  /** @format int64 */
+  totalElements?: number
+  /** @format int32 */
+  numberOfElements?: number
+}
+
+export interface ApiResponseCommentPageResponseDto {
+  status?: string
+  data?: CommentPageResponseDto
+  errorMessage?: string
+}
+
+export type GetAllCommentsData = ApiResponseCommentPageResponseDto
 
 export type GetAllCommentsError = ErrorResponse
 
 export type WriteCommentData = ApiResponseCommentResponseDto
 
 export type WriteCommentError = ErrorResponse
+
+export type DeleteCommentData = ApiResponseCommentResponseDto
+
+export type DeleteCommentError = ErrorResponse
+
+export type ModifyCommentData = ApiResponseCommentResponseDto
+
+export type ModifyCommentError = ErrorResponse
 
 export type GetMemberInfoData = ApiResponseMemberResponseDto
 
