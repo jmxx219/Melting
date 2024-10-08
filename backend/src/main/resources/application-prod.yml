@@ -67,6 +67,9 @@ spring:
       enabled: false
     jdbc:
       initialize-schema: always
+  threads:
+    virtual:
+      enabled: true
 
 fastapi:
   baseurl: ${FASTAPI_BASEURL}
