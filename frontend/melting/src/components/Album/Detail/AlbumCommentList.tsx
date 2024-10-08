@@ -1,7 +1,8 @@
-import { Button } from '@/components/ui/button'
-import { CommentResponseDto } from '@/types/album'
 import React from 'react'
 import { useNavigate } from 'react-router-dom'
+
+import { Button } from '@/components/ui/button'
+import { CommentResponseDto } from '@/types/album'
 import AlbumComment from './AlbumComment'
 
 type AlbumCommentListProps = {
