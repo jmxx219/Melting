@@ -43,3 +43,9 @@ export interface ApiResponseVoid {
   data?: object
   errorMessage?: string
 }
+
+export interface ApiResponseListString {
+  status?: string
+  data?: string[]
+  errorMessage?: string
+}
