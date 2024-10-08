@@ -7,3 +7,12 @@ export function convertIsoToDotDate(isoDateString: string): string {
 
   return `${year}.${month}.${day}`
 }
+
+export function convertDateToWord(date: Date) {
+  return `${date.getFullYear()}년 ${date.getMonth() + 1}월 ${date.getDate()}일`
+}
+
+export function convertDateStringToWord(isoDateString: string) {
+  const date = new Date(isoDateString)
+  return `${date.getFullYear()}년 ${date.getMonth() + 1}월 ${date.getDate()}일`
+}

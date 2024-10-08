@@ -1,6 +1,7 @@
-import { AlbumDetailInfoType } from '@/types/album'
-import { Pencil, X } from 'lucide-react'
 import { useMemo, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
+import { Pencil, X } from 'lucide-react'
+
 import Comment from '../../Icon/Comment'
 import Heart from '../../Icon/Heart'
 import {
@@ -13,6 +14,7 @@ import {
 import { Button } from '../../ui/button'
 import AlbumCover from '../AlbumCover'
 import AlbumUserProfile from './AlbumUserProfile'
+import { AlbumDetailInfoType } from '@/types/album'
 import { albumCategory } from '@/types/constType'
 import { albumApi } from '@/apis/albumApi'
 import { convertIsoToDotDate } from '@/utils/dateUtil'
@@ -30,6 +32,7 @@ export default function AlbumDetailTop({
   isCreator,
   fetchLike,
 }: AlbumDetailProps) {
+  const navigate = useNavigate()
   const [showModal, setShowModal] = useState(false)
 
   const truncatedDescription = useMemo(() => {
@@ -46,6 +49,17 @@ export default function AlbumDetailTop({
       await albumApi.addAlbumLikes(albumId)
     }
     fetchLike()
+  }
+
+  const handleEditClick = () => {
+    navigate(`/album/detail/${albumId}/edit`, {
+      state: {
+        albumId: albumId,
+        albumName: albumInfo.albumName,
+        albumDescription: albumInfo.albumDescription,
+        releaseDate: albumInfo.createdAt,
+      },
+    })
   }
 
   return (
@@ -101,7 +115,7 @@ export default function AlbumDetailTop({
         <div className="flex justify-between mt-2 items-center">
           <div className="text-xl font-semibold">앨범 소개</div>
           {isCreator && (
-            <div>
+            <div onClick={handleEditClick} className="cursor-pointer">
               <Pencil width={15} height={15}></Pencil>
             </div>
           )}
