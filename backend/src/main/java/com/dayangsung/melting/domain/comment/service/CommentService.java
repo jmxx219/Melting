@@ -57,11 +57,12 @@ public class CommentService {
 	}
 
 	@Transactional
-	public CommentResponseDto modifyComment(Long commentId, String email, String content) {
+	public CommentResponseDto updateComment(Long commentId, String email, String content) {
 		Member member = memberRepository.findByEmail(email)
 			.orElseThrow(() -> new BusinessException(ErrorMessage.MEMBER_NOT_FOUND));
 		Comment comment = commentRepository.getReferenceById(commentId);
-		comment.modifyContent(content);
+		validateRequest(comment, member);
+		comment.updateContent(content);
 		commentRepository.save(comment);
 		return CommentResponseDto.of(comment, isMyComment(comment, member.getId()));
 	}
@@ -71,6 +72,7 @@ public class CommentService {
 		Member member = memberRepository.findByEmail(email)
 			.orElseThrow(() -> new BusinessException(ErrorMessage.MEMBER_NOT_FOUND));
 		Comment comment = commentRepository.getReferenceById(commentId);
+		validateRequest(comment, member);
 		comment.deleteComment();
 		commentRepository.save(comment);
 		return CommentResponseDto.of(comment, isMyComment(comment, member.getId()));
@@ -78,5 +80,11 @@ public class CommentService {
 
 	private Boolean isMyComment(Comment comment, Long memberId) {
 		return comment.getMember().getId().equals(memberId);
+	}
+
+	private void validateRequest(Comment comment, Member member) {
+		if (!comment.getMember().getId().equals(member.getId())) {
+			throw new BusinessException(ErrorMessage.BAD_REQUEST);
+		}
 	}
 }

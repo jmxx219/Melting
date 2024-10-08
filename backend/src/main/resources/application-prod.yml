@@ -50,6 +50,12 @@ spring:
       port: 6379
       redisson-prefix: redis://
       password: ${REDIS_PASSWORD}
+    elasticsearch:
+      repositories:
+        enabled: true
+      username: ${ELASTICSEARCH_USERNAME}
+      password: ${ELASTICSEARCH_PASSWORD}
+      uris: ${ELASTICSEARCH_HOST}
   servlet:
     multipart:
       max-file-size: 20MB
@@ -61,6 +67,9 @@ spring:
       enabled: false
     jdbc:
       initialize-schema: always
+  threads:
+    virtual:
+      enabled: true
 
 fastapi:
   baseurl: ${FASTAPI_BASEURL}

@@ -125,11 +125,13 @@ public class AlbumService {
 			likesService.getAlbumLikesCount(album.getId()), songDetails, album.getComments().size());
 	}
 
+	@Transactional
 	public AlbumDetailsResponseDto updateAlbumDescription(Long albumId, String description, String email) {
 		Member member = memberRepository.findByEmail(email)
 			.orElseThrow(() -> new BusinessException(ErrorMessage.MEMBER_NOT_FOUND));
 		Album album = albumRepository.findById(albumId)
 			.orElseThrow(() -> new BusinessException(ErrorMessage.ALBUM_NOT_FOUND));
+		validateRequest(album, email);
 		album.updateAlbumDescription(description);
 		albumRepository.save(album);
 		List<SongDetailsResponseDto> songDetails = getSongDetails(album, member.getId());
@@ -151,7 +153,7 @@ public class AlbumService {
 		return AlbumSearchPageResponseDto.of(albumSearchPage);
 	}
 
-	public AlbumSearchPageResponseDto searchAlbum(int page, int size, String keyword, List<String> options) {
+	public AlbumSearchPageResponseDto searchAlbum(int sort, int page, int size, String keyword, List<String> options) {
 		Set<Album> searchResultSet = new HashSet<>();
 		if (keyword == null || keyword.isEmpty()) {
 			return this.getAlbums(0, page, size);
@@ -159,24 +161,41 @@ public class AlbumService {
 		if (options.size() == 1 && options.getFirst().equals("all")) {
 			options = Arrays.asList("albumName", "songTitle", "hashtag", "genre");
 		}
+		List<Album> findByAlbumName;
 		log.debug("options: {}", options);
 		for (String option : options) {
 			switch (option) {
 				case "albumName":
-					searchResultSet.addAll(
-						albumRepository.findByAlbumNameContaining(keyword, Pageable.unpaged()).getContent());
+					if (sort == 1) {
+						findByAlbumName = albumRepository.findByAlbumNameContainingOrderByPopularity(keyword);
+					} else {
+						findByAlbumName = albumRepository.findByAlbumNameContainingOrderByLatest(keyword);
+					}
+					searchResultSet.addAll(findByAlbumName);
 					break;
 				case "songTitle":
-					searchResultSet.addAll(
-						albumRepository.findBySongTitleContaining(keyword, Pageable.unpaged()).getContent());
+					if (sort == 1) {
+						findByAlbumName = albumRepository.findBySongTitleContainingOrderByPopularity(keyword);
+					} else {
+						findByAlbumName = albumRepository.findBySongTitleContainingOrderByLatest(keyword);
+					}
+					searchResultSet.addAll(findByAlbumName);
 					break;
 				case "hashtag":
-					searchResultSet.addAll(
-						albumRepository.findByHashtagContentContaining(keyword, Pageable.unpaged()).getContent());
+					if (sort == 1) {
+						findByAlbumName = albumRepository.findByHashtagContentContainingOrderByPopularity(keyword);
+					} else {
+						findByAlbumName = albumRepository.findByHashtagContentContainingOrderByLatest(keyword);
+					}
+					searchResultSet.addAll(findByAlbumName);
 					break;
 				case "genre":
-					searchResultSet.addAll(
-						albumRepository.findByGenreNameContaining(keyword, Pageable.unpaged()).getContent());
+					if (sort == 1) {
+						findByAlbumName = albumRepository.findByGenreNameContainingOrderByPopularity(keyword);
+					} else {
+						findByAlbumName = albumRepository.findByGenreNameContainingOrderByLatest(keyword);
+					}
+					searchResultSet.addAll(findByAlbumName);
 					break;
 			}
 		}
@@ -202,9 +221,11 @@ public class AlbumService {
 			.toList();
 	}
 
-	public void deleteAlbum(Long albumId) {
+	@Transactional
+	public void deleteAlbum(Long albumId, String email) {
 		Album album = albumRepository.findById(albumId)
 			.orElseThrow(() -> new BusinessException(ErrorMessage.ALBUM_NOT_FOUND));
+		validateRequest(album, email);
 		for (Song song : album.getSongs()) {
 			song.removeFromAlbum();
 		}
@@ -213,9 +234,11 @@ public class AlbumService {
 		albumRepository.save(album);
 	}
 
-	public Boolean toggleIsPublic(Long albumId) {
+	@Transactional
+	public Boolean toggleIsPublic(Long albumId, String email) {
 		Album album = albumRepository.findById(albumId)
 			.orElseThrow(() -> new BusinessException(ErrorMessage.ALBUM_NOT_FOUND));
+		validateRequest(album, email);
 		Boolean toggledIsPublic = album.toggleIsPublic();
 		albumRepository.save(album);
 		return toggledIsPublic;
@@ -279,12 +302,14 @@ public class AlbumService {
 		return likesService.getAlbumLikesCount(albumId);
 	}
 
+	@Transactional
 	public Integer increaseAlbumLikes(Long albumId, String email) {
 		Member member = memberRepository.findByEmail(email)
 			.orElseThrow(() -> new BusinessException(ErrorMessage.MEMBER_NOT_FOUND));
 		return likesService.increaseAlbumLikes(albumId, member.getId());
 	}
 
+	@Transactional
 	public Integer decreaseAlbumLikes(Long albumId, String email) {
 		Member member = memberRepository.findByEmail(email)
 			.orElseThrow(() -> new BusinessException(ErrorMessage.MEMBER_NOT_FOUND));
@@ -305,5 +330,13 @@ public class AlbumService {
 			trackInfo.add(trackInfoDto);
 		}
 		return trackInfo;
+	}
+
+	private void validateRequest(Album album, String email) {
+		Member member = memberRepository.findByEmail(email)
+			.orElseThrow(() -> new BusinessException(ErrorMessage.MEMBER_NOT_FOUND));
+		if (!album.getMember().getId().equals(member.getId())) {
+			throw new BusinessException(ErrorMessage.BAD_REQUEST);
+		}
 	}
 }

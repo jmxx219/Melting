@@ -1,7 +1,11 @@
 package com.dayangsung.melting.domain.hashtag.controller;
 
+import java.util.List;
+
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -24,10 +28,15 @@ public class HashtagController {
 
 	@GetMapping
 	public ApiResponse<HashtagPageResponseDto> searchHashtags(
-		@RequestParam(defaultValue = "0") int page,
-		@RequestParam(defaultValue = "10") int size,
-		@RequestParam(required = false) String keyword) {
-		Page<HashtagResponseDto> hashtagsPage = hashtagService.searchHashtags(keyword, page, size);
-		return ApiResponse.ok(HashtagPageResponseDto.of(hashtagsPage));
+		@RequestParam(name = "page", defaultValue = "0") int page,
+		@RequestParam(name = "size", defaultValue = "10") int size,
+		@RequestParam(name = "keyword", required = false) String keyword) {
+		HashtagPageResponseDto hashtagsPage = hashtagService.searchHashtags(PageRequest.of(page, size), keyword);
+		return ApiResponse.ok(hashtagsPage);
+	}
+
+	@PostMapping("/index")
+	public List<HashtagResponseDto> indexHashtags() {
+		return hashtagService.migrateDataToElasticsearch();
 	}
 }
