@@ -1,6 +1,5 @@
 import { createAxiosInstance, createApi, ApiResponse } from './axiosInstance'
 import {
-  // AlbumCreateRequestDto,
   AddAlbumLikesData,
   AiCoverImageRequestDto,
   AiDescriptionRequestDto,
@@ -36,10 +35,7 @@ import {
   ToggleIsPublicData,
   UpdateAlbumDescriptionData,
   UpdateAlbumDescriptionError,
-  AlbumUpdateRequestDto,
-  GetAlbumPageContainsHashtagData,
   GetAlbumPageContainsHashtagError,
-  AlbumRankingPageResponseDto,
   CommentResponseDto,
   GetAllCommentsError,
   GetAllGenresError,
@@ -57,12 +53,6 @@ import {
   communityVal,
   SortType,
 } from '@/types/constType'
-import {
-  ApiResponse,
-  createApi,
-  createAxiosInstance,
-  CustomError,
-} from './axiosInstance'
 
 const instance = createAxiosInstance('albums')
 const api = createApi<ApiResponse>(instance)
