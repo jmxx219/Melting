@@ -10,12 +10,14 @@ type AlbumCommentListProps = {
   comments: CommentResponseDto[]
   commentCnt: number
   albumId: number
+  fetchAlbum?: () => void
 }
 
 export default function AlbumCommentList({
   comments,
   commentCnt,
   albumId,
+  fetchAlbum,
 }: AlbumCommentListProps) {
   const navigate = useNavigate()
   const [commentList, setCommentList] = useState<CommentResponseDto[]>(comments)
@@ -42,6 +44,9 @@ export default function AlbumCommentList({
         page: 0,
         size: 5,
       }) // 삭제 후 다시 댓글 5개 조회
+      if (fetchAlbum) {
+        await fetchAlbum()
+      }
       setCommentList(response.commentPage || [])
       setCommentCount((prevCnt) => prevCnt - 1)
     } catch (error) {
