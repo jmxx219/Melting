@@ -228,8 +228,7 @@ export const userApi = {
   addMemberHashtag: async (query: { content: string }) => {
     try {
       const response = await api.post<AddMemberHashtagData>(
-        '/me/hashtags',
-        query,
+        `/me/hashtags?content=${encodeURIComponent(query.content)}`, // 쿼리 스트링으로 content 전달
       )
       return response.data as string[]
     } catch (error) {
