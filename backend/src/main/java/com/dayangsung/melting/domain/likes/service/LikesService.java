@@ -32,8 +32,11 @@ public class LikesService {
 	private final SongRepository songRepository;
 	private final RedisTemplate<String, Object> redisTemplate;
 
+	private static final String albumLikesKey = "album:likes";
+	private static final String songLikesKey = "song:likes";
+
 	public Integer getAlbumLikesCount(Long albumId) {
-		Double albumLikesCount = redisTemplate.opsForZSet().score("album_likes", albumId);
+		Double albumLikesCount = redisTemplate.opsForZSet().score(albumLikesKey, albumId);
 		return albumLikesCount != null ? albumLikesCount.intValue() : 0;
 	}
 
@@ -56,7 +59,7 @@ public class LikesService {
 		if (!album.getLikesAlbums().contains(likesAlbum)) {
 			album.addAlbumLikes(likesAlbum);
 		}
-		Double albumLikesCount = redisTemplate.opsForZSet().incrementScore("album_likes", albumId, 1);
+		Double albumLikesCount = redisTemplate.opsForZSet().incrementScore(albumLikesKey, albumId, 1);
 		likesAlbumRepository.save(likesAlbum);
 
 		return albumLikesCount != null ? albumLikesCount.intValue() : 0;
@@ -69,11 +72,11 @@ public class LikesService {
 			.findLikesAlbumByAlbumIdAndMemberId(albumId, memberId)
 			.orElseThrow(() -> new BusinessException(ErrorMessage.ALBUM_LIKES_NOT_FOUND));
 
-		Double albumLikesCount = redisTemplate.opsForZSet().score("album_likes", albumId);
+		Double albumLikesCount = redisTemplate.opsForZSet().score(albumLikesKey, albumId);
 		if (albumLikesCount == null || albumLikesCount <= 0) {
 			throw new BusinessException(ErrorMessage.LIKES_CANNOT_BE_NEGATIVE);
 		}
-		albumLikesCount = redisTemplate.opsForZSet().incrementScore("album_likes", albumId, -1);
+		albumLikesCount = redisTemplate.opsForZSet().incrementScore(albumLikesKey, albumId, -1);
 		likesAlbum.updateIsLiked(false);
 		likesAlbumRepository.save(likesAlbum);
 
@@ -81,7 +84,7 @@ public class LikesService {
 	}
 
 	public Integer getSongLikesCount(Long songId) {
-		Double songLikesCount = redisTemplate.opsForZSet().score("song_likes", songId);
+		Double songLikesCount = redisTemplate.opsForZSet().score(songLikesKey, songId);
 		return songLikesCount != null ? songLikesCount.intValue() : 0;
 	}
 
@@ -104,7 +107,7 @@ public class LikesService {
 		if (!song.getLikesSongs().contains(likesSong)) {
 			song.addSongLikes(likesSong);
 		}
-		Double songLikesCount = redisTemplate.opsForZSet().incrementScore("song_likes", songId, 1);
+		Double songLikesCount = redisTemplate.opsForZSet().incrementScore(songLikesKey, songId, 1);
 		likesSongRepository.save(likesSong);
 
 		return songLikesCount != null ? songLikesCount.intValue() : 0;
@@ -117,11 +120,11 @@ public class LikesService {
 			.findLikesSongBySongIdAndMemberId(songId, memberId)
 			.orElseThrow(() -> new BusinessException(ErrorMessage.SONG_LIKES_NOT_FOUND));
 
-		Double songLikesCount = redisTemplate.opsForZSet().score("song_likes", songId);
+		Double songLikesCount = redisTemplate.opsForZSet().score(songLikesKey, songId);
 		if (songLikesCount == null || songLikesCount <= 0) {
 			throw new BusinessException(ErrorMessage.LIKES_CANNOT_BE_NEGATIVE);
 		}
-		songLikesCount = redisTemplate.opsForZSet().incrementScore("song_likes", songId, -1);
+		songLikesCount = redisTemplate.opsForZSet().incrementScore(songLikesKey, songId, -1);
 		likesSong.updateIsLiked(false);
 		likesSongRepository.save(likesSong);
 
@@ -138,6 +141,6 @@ public class LikesService {
 
 	@Transactional
 	public void deleteAlbumLikesOnRedis(Long albumId) {
-		redisTemplate.opsForZSet().remove("song_likes", albumId);
+		redisTemplate.opsForZSet().remove(songLikesKey, albumId);
 	}
 }
