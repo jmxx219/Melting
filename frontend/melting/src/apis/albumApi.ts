@@ -39,6 +39,8 @@ import {
   UpdateAlbumDescriptionData,
   UpdateAlbumDescriptionError,
   AlbumUpdateRequestDto,
+  GetAlbumPageContainsHashtagData,
+  AlbumRankingPageResponseDto,
 } from '@/types/album.ts'
 import { SortType } from '@/types/constType'
 
@@ -288,6 +290,23 @@ export const albumApi = {
     } catch (error) {
       console.log('앨범 수정 중 오류 발생:', error)
       throw error as UpdateAlbumDescriptionError
+    }
+  },
+
+  getAlbumPageContainsHashtag: async (
+    hashtag: string, // 해시태그 경로 변수
+    query?: { page?: number; size?: number }, // 쿼리 파라미터 (옵션)
+  ) => {
+    try {
+      // GET 요청 보내기
+      const response = await api.get<GetAlbumPageContainsHashtagData>(
+        `/hashtags/${hashtag}`, // 요청 경로
+        { params: query }, // 쿼리 파라미터 설정
+      )
+      return response.data as AlbumRankingPageResponseDto // 성공 시 응답 데이터 반환
+    } catch (error) {
+      console.error('해시태그가 포함된 앨범 검색 실패:', error)
+      throw error // 오류 발생 시 예외 처리
     }
   },
 }
