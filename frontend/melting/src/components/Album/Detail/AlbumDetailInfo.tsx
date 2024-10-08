@@ -16,6 +16,7 @@ import AlbumUserProfile from './AlbumUserProfile'
 import { albumCategory } from '@/types/constType'
 import { albumApi } from '@/apis/albumApi'
 import { useNavigate } from 'react-router-dom'
+import { convertIsoToDotDate } from '@/utils/dateUtil'
 
 interface AlbumDetailProps {
   albumInfo: AlbumDetailInfoType
@@ -72,7 +73,7 @@ export default function AlbumDetailTop({
       <div className="flex-col mt-2" id="album-info">
         <div className="text-2xl font-bold">{albumInfo.albumName}</div>
         <div className="mt-2 flex space-x-5 text-sm justify-between">
-          <div>{albumInfo.createdAt}</div>
+          <div>{convertIsoToDotDate(albumInfo.createdAt)}</div>
           <div className="flex">
             <div className="px-1">{`${albumCategory[albumInfo.category]} ㆍ`}</div>
             {albumInfo.genres.map((genre, index) => (

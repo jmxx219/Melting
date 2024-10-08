@@ -29,12 +29,13 @@ export default function MyAlbumContent({
   const [isPublic, setIsPublic] = useState(album.isPublic)
 
   const goToAlbumDetail = () => {
-    navigate(`/album/detail`, { state: album.albumId })
+    navigate(`/album/detail/${album.albumId}`)
   }
 
   const goToPlayAlbum = (e: React.MouseEvent) => {
     e.stopPropagation()
-    navigate(`/album/play`, { state: album.albumId })
+
+    navigate(`/album/play`, { state: { albumId: album.albumId } })
   }
 
   const toggleLike = async (e: React.MouseEvent) => {
@@ -53,6 +54,7 @@ export default function MyAlbumContent({
         )) as number
       }
       setLikeCount(currentLikedCount)
+      fetchAlbums()
     } catch (error) {
       console.error('앨범 좋아요 상태 업데이트 중 오류 발생:', error)
       setIsLiked(!newLikedState)
