@@ -317,7 +317,6 @@ export const albumApi = {
     }
   },
   getCommunityAlbums: async (query: {
-    sort?: number
     keyword: string
     options: CommunityConditionType[]
     page: number
@@ -328,7 +327,6 @@ export const albumApi = {
       })
       const response = await api.get<AlbumSearchPageResponseDto>(`/search`, {
         params: {
-          sort: query?.sort,
           keyword: query.keyword,
           options: optionParam.join(','),
           page: query.page,
