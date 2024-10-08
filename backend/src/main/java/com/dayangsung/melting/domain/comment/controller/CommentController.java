@@ -22,7 +22,6 @@ import com.dayangsung.melting.global.common.response.ApiResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 
-// TODO : 작성자만 수정 삭제 가능하게 메소드 시큐리티 적용
 @RestController
 @RequestMapping("/api/v1/albums/{albumId}/comments")
 @RequiredArgsConstructor
@@ -46,26 +45,32 @@ public class CommentController {
 	@Operation(summary = "댓글 작성")
 	@PostMapping
 	public ApiResponse<CommentResponseDto> writeComment(@PathVariable Long albumId,
-		@AuthenticationPrincipal String email, @RequestBody CommentRequestDto commentRequestDto) {
+		@AuthenticationPrincipal CustomOAuth2User customOAuth2User,
+		@RequestBody CommentRequestDto commentRequestDto) {
 		CommentResponseDto commentResponseDto =
-			commentService.writeComment(albumId, email, commentRequestDto.content());
+			commentService.writeComment(albumId, customOAuth2User.getName(), commentRequestDto.content());
 		return ApiResponse.ok(commentResponseDto);
 	}
 
 	@Operation(summary = "댓글 수정")
 	@PatchMapping("/{commentId}")
-	public ApiResponse<CommentResponseDto> modifyComment(@PathVariable Long albumId, @PathVariable Long commentId,
-		@AuthenticationPrincipal String email, @RequestBody CommentRequestDto commentRequestDto) {
-		CommentResponseDto commentResponseDto = commentService.updateComment(commentId, email,
+	public ApiResponse<CommentResponseDto> modifyComment(
+		@PathVariable Long albumId,
+		@PathVariable Long commentId,
+		@AuthenticationPrincipal CustomOAuth2User customOAuth2User,
+		@RequestBody CommentRequestDto commentRequestDto) {
+		CommentResponseDto commentResponseDto = commentService.updateComment(commentId, customOAuth2User.getName(),
 			commentRequestDto.content());
 		return ApiResponse.ok(commentResponseDto);
 	}
 
 	@Operation(summary = "댓글 삭제")
 	@DeleteMapping("/{commentId}")
-	public ApiResponse<CommentResponseDto> deleteComment(@PathVariable Long albumId, @PathVariable Long commentId,
-		@AuthenticationPrincipal String email) {
-		CommentResponseDto commentResponseDto = commentService.deleteComment(commentId, email);
+	public ApiResponse<CommentResponseDto> deleteComment(
+		@PathVariable Long albumId,
+		@PathVariable Long commentId,
+		@AuthenticationPrincipal CustomOAuth2User customOAuth2User) {
+		CommentResponseDto commentResponseDto = commentService.deleteComment(commentId, customOAuth2User.getName());
 		return ApiResponse.ok(commentResponseDto);
 	}
 }
