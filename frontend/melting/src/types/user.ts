@@ -151,7 +151,8 @@ export interface SongListDto {
 
 export interface MemberSongCountsResponseDto {
   /** @format int32 */
-  songcounts: number
+  songCounts: number
+  aiCoverEnabled: boolean
 }
 
 export interface ApiResponseMemberSongCountsResponseDto {
