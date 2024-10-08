@@ -69,7 +69,7 @@ spring:
       initialize-schema: always
   threads:
     virtual:
-      enabled: false
+      enabled: true
 
 fastapi:
   baseurl: ${FASTAPI_BASEURL}
