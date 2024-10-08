@@ -5,15 +5,19 @@ import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.dayangsung.melting.domain.album.entity.Album;
+import com.dayangsung.melting.domain.hashtag.dto.response.HashtagPageResponseDto;
 import com.dayangsung.melting.domain.hashtag.dto.response.HashtagResponseDto;
 import com.dayangsung.melting.domain.hashtag.entity.AlbumHashtag;
 import com.dayangsung.melting.domain.hashtag.entity.Hashtag;
+import com.dayangsung.melting.domain.hashtag.entity.HashtagDocument;
 import com.dayangsung.melting.domain.hashtag.entity.MemberHashtag;
 import com.dayangsung.melting.domain.hashtag.repository.AlbumHashtagRepository;
+import com.dayangsung.melting.domain.hashtag.repository.HashtagDocumentRepository;
 import com.dayangsung.melting.domain.hashtag.repository.HashtagRepository;
 import com.dayangsung.melting.domain.hashtag.repository.MemberHashtagRepository;
 import com.dayangsung.melting.domain.member.entity.Member;
@@ -24,11 +28,13 @@ import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class HashtagService {
 
 	private final HashtagRepository hashtagRepository;
 	private final MemberHashtagRepository memberHashtagRepository;
 	private final AlbumHashtagRepository albumHashtagRepository;
+	private final HashtagDocumentRepository hashtagDocumentRepository;
 
 	public Hashtag findHashtagByContent(String content) {
 		return hashtagRepository.findByContent(content)
@@ -45,6 +51,7 @@ public class HashtagService {
 		member.addMemberHashtag(memberHashtag);
 		try {
 			memberHashtagRepository.save(memberHashtag);
+			addHashtagDocument(hashtag);
 		} catch (Exception e) {
 			throw new BusinessException(ErrorMessage.MEMBER_HASHTAG_EXIST);
 		}
@@ -70,7 +77,6 @@ public class HashtagService {
 		memberHashtagRepository.delete(memberHashtag);
 	}
 
-	@Transactional(readOnly = true)
 	public List<Hashtag> contentListToHashtagList(List<String> idList) {
 		return idList.stream()
 			.map(content -> Hashtag.builder().content(content).build())
@@ -87,14 +93,26 @@ public class HashtagService {
 		}
 	}
 
-	public Page<HashtagResponseDto> searchHashtags(String keyword, int page, int size) {
-		Pageable pageable = PageRequest.of(page, size);
-		Page<Hashtag> hashtags;
-		if (keyword == null || keyword.trim().isEmpty()) {
-			hashtags = hashtagRepository.findAll(pageable);
-		} else {
-			hashtags = hashtagRepository.findByContentContaining(keyword, pageable);
-		}
-		return hashtags.map(HashtagResponseDto::of);
+	@Transactional
+	public void addHashtagDocument(Hashtag hashtag) {
+		HashtagDocument hashtagDocument = HashtagDocument.createHashTagDocument(hashtag);
+		hashtagDocumentRepository.save(hashtagDocument);
 	}
+
+	public HashtagPageResponseDto searchHashtags(Pageable pageable, String keyword) {
+		Page<HashtagDocument> hashtagDocumentPage = hashtagDocumentRepository.findByContentStartingWith(pageable, keyword);
+		return HashtagPageResponseDto.from(hashtagDocumentPage);
+	}
+
+	@Transactional
+	public List<HashtagResponseDto> migrateDataToElasticsearch() {
+		List<Hashtag> hashtags = hashtagRepository.findAll();
+		List<HashtagDocument> documents = hashtags.stream()
+			.map(HashtagDocument::createHashTagDocument)
+			.toList();
+
+		hashtagDocumentRepository.saveAll(documents);
+		return hashtags.stream().map(HashtagResponseDto::of).toList();
+	}
+
 }
