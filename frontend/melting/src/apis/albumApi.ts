@@ -36,6 +36,9 @@ import {
   CreateAiDescriptionData,
   CreateAiDescriptionError,
   AiDescriptionRequestDto,
+  UpdateAlbumDescriptionData,
+  UpdateAlbumDescriptionError,
+  AlbumUpdateRequestDto,
 } from '@/types/album.ts'
 import { SortType } from '@/types/constType'
 
@@ -269,6 +272,22 @@ export const albumApi = {
     } catch (error) {
       console.error('앨범 삭제 중 오류 발생:', error)
       throw error
+    }
+  },
+
+  updateAlbumDescription: async (
+    albumId: number,
+    data: AlbumUpdateRequestDto,
+  ) => {
+    try {
+      const response = await api.patch<UpdateAlbumDescriptionData>(
+        `/${albumId}`,
+        data,
+      )
+      return response.data as AlbumDetailsResponseDto
+    } catch (error) {
+      console.log('앨범 수정 중 오류 발생:', error)
+      throw error as UpdateAlbumDescriptionError
     }
   },
 }
