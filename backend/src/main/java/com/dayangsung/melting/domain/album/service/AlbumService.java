@@ -125,11 +125,13 @@ public class AlbumService {
 			likesService.getAlbumLikesCount(album.getId()), songDetails, album.getComments().size());
 	}
 
+	@Transactional
 	public AlbumDetailsResponseDto updateAlbumDescription(Long albumId, String description, String email) {
 		Member member = memberRepository.findByEmail(email)
 			.orElseThrow(() -> new BusinessException(ErrorMessage.MEMBER_NOT_FOUND));
 		Album album = albumRepository.findById(albumId)
 			.orElseThrow(() -> new BusinessException(ErrorMessage.ALBUM_NOT_FOUND));
+		validateRequest(album, email);
 		album.updateAlbumDescription(description);
 		albumRepository.save(album);
 		List<SongDetailsResponseDto> songDetails = getSongDetails(album, member.getId());
@@ -202,9 +204,11 @@ public class AlbumService {
 			.toList();
 	}
 
-	public void deleteAlbum(Long albumId) {
+	@Transactional
+	public void deleteAlbum(Long albumId, String email) {
 		Album album = albumRepository.findById(albumId)
 			.orElseThrow(() -> new BusinessException(ErrorMessage.ALBUM_NOT_FOUND));
+		validateRequest(album, email);
 		for (Song song : album.getSongs()) {
 			song.removeFromAlbum();
 		}
@@ -213,9 +217,11 @@ public class AlbumService {
 		albumRepository.save(album);
 	}
 
-	public Boolean toggleIsPublic(Long albumId) {
+	@Transactional
+	public Boolean toggleIsPublic(Long albumId, String email) {
 		Album album = albumRepository.findById(albumId)
 			.orElseThrow(() -> new BusinessException(ErrorMessage.ALBUM_NOT_FOUND));
+		validateRequest(album, email);
 		Boolean toggledIsPublic = album.toggleIsPublic();
 		albumRepository.save(album);
 		return toggledIsPublic;
@@ -279,12 +285,14 @@ public class AlbumService {
 		return likesService.getAlbumLikesCount(albumId);
 	}
 
+	@Transactional
 	public Integer increaseAlbumLikes(Long albumId, String email) {
 		Member member = memberRepository.findByEmail(email)
 			.orElseThrow(() -> new BusinessException(ErrorMessage.MEMBER_NOT_FOUND));
 		return likesService.increaseAlbumLikes(albumId, member.getId());
 	}
 
+	@Transactional
 	public Integer decreaseAlbumLikes(Long albumId, String email) {
 		Member member = memberRepository.findByEmail(email)
 			.orElseThrow(() -> new BusinessException(ErrorMessage.MEMBER_NOT_FOUND));
@@ -305,5 +313,13 @@ public class AlbumService {
 			trackInfo.add(trackInfoDto);
 		}
 		return trackInfo;
+	}
+
+	private void validateRequest(Album album, String email) {
+		Member member = memberRepository.findByEmail(email)
+			.orElseThrow(() -> new BusinessException(ErrorMessage.MEMBER_NOT_FOUND));
+		if (!album.getMember().getId().equals(member.getId())) {
+			throw new BusinessException(ErrorMessage.BAD_REQUEST);
+		}
 	}
 }

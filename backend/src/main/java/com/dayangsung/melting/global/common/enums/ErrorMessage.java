@@ -47,7 +47,8 @@ public enum ErrorMessage {
 	REQUEST_ERROR("올바르지 않은 응답입니다."),
 
 	// Etc
-	EXTERNAL_BAD_REQUEST("외부 요청 오류입니다.");
+	EXTERNAL_BAD_REQUEST("외부 요청 오류입니다."),
+	BAD_REQUEST("잘못된 요청입니다.");
 
 	private final String errorMessage;
 
