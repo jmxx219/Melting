@@ -14,7 +14,7 @@ export default function CommentMain({}: Props) {
     <Layout
       Header={
         <DefaultHeader
-          title={''}
+          title={'앨범 댓글'}
           buttonArea={<ChevronLeft color="#FFAF25" />}
         />
       }
