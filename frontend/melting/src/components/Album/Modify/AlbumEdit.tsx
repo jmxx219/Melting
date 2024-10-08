@@ -11,13 +11,14 @@ export default function AlbumEdit() {
     location.state || {}
   const [description, setDescription] = useState(albumDescription)
   const [isDescriptionValid, setIsDescriptionValid] = useState(false)
-  let albumDate
-
-  console.log(location.state)
+  const [albumDate, setAlbumDate] = useState('')
 
   useEffect(() => {
-    albumDate = convertDateStringToWord(releaseDate)
-  }, [])
+    if (releaseDate) {
+      const formattedDate = convertDateStringToWord(releaseDate)
+      setAlbumDate(formattedDate)
+    }
+  }, [releaseDate])
 
   // 앨범 설명이 처음 값과 다를 경우 유효성 설정
   useEffect(() => {
@@ -31,13 +32,8 @@ export default function AlbumEdit() {
         const albumUpdateDescription: AlbumUpdateRequestDto = {
           description,
         }
-
-        const response = await albumApi.updateAlbumDescription(
-          albumId,
-          albumUpdateDescription,
-        )
-        console.log(response)
-        navigate(`/detail/${albumId}`)
+        await albumApi.updateAlbumDescription(albumId, albumUpdateDescription)
+        navigate(`/album/detail/${albumId}`)
       } catch (error) {
         console.error('앨범 수정 중 오류 발생:', error)
       }
@@ -47,38 +43,46 @@ export default function AlbumEdit() {
   return (
     <div className="flex flex-col items-center p-4">
       <div className="w-full max-w-md">
-        <label className="block mb-2 text-sm font-bold text-gray-700">
-          앨범 명
-        </label>
-        <input
-          type="text"
-          value={albumName}
-          disabled
-          className="w-full mb-4 p-2 border-b-2 border-yellow-500 bg-transparent text-lg outline-none"
-        />
-
-        <label className="block mb-2 text-sm font-bold text-gray-700">
-          앨범 소개
-        </label>
-        <textarea
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
-          className="w-full p-2 border border-yellow-500 rounded-md mb-2 resize-none"
-          rows={4}
-          maxLength={1000}
-        />
-        <div className="text-right text-sm text-gray-500">
-          {`${description.length}/1000`}
+        <div className="mb-10">
+          <label className="flex mb-2 text-sm font-bold text-gray-700">
+            <div>앨범 명</div>
+            <div className="text-gray-300">&nbsp; (수정 불가)</div>
+          </label>
+          <input
+            type="text"
+            value={albumName}
+            disabled
+            className="w-full mb-4 p-2 border-b-2 border-primary-400 bg-transparent text-lg outline-none"
+          />
+        </div>
+        <div className="mb-10">
+          <label className="block mb-2 text-sm font-bold text-gray-700">
+            앨범 소개
+          </label>
+          <textarea
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            className="w-full p-2 border-2 border-primary-400 rounded-md mb-2 resize-none"
+            rows={4}
+            maxLength={1000}
+          />
+          <div
+            className={`text-right text-sm ${description.length > 0 ? 'text-primary-400' : 'text-gray-500'}`}
+          >
+            {`${description.length}/1000`}
+          </div>
         </div>
 
-        <p className="mt-4 text-gray-600">발매 일자: {albumDate}</p>
+        <p className="text-center mt-4 text-gray-600">
+          발매 일자: {`${albumDate}`}
+        </p>
 
         <button
           onClick={handleUpdate}
           disabled={!isDescriptionValid}
           className={`w-full mt-6 p-3 rounded-full text-white font-bold ${
             isDescriptionValid
-              ? 'bg-yellow-500 hover:bg-yellow-600'
+              ? 'bg-primary-400 hover:bg-primary-600'
               : 'bg-gray-300 cursor-not-allowed'
           }`}
         >
