@@ -48,7 +48,7 @@ public class AwsS3Service {
 		String id = String.format("m%d_os%d_%s", memberId, originalSongId, timestamp);
 
 		if (voice.isEmpty() || Objects.isNull(voice.getOriginalFilename())) {
-			throw new BusinessException(FILE_IS_EMPTY);
+			throw new BusinessException(ErrorMessage.FILE_IS_EMPTY);
 		}
 		try {
 			return uploadFileToS3(voice, "/audio/member_voice", id);
@@ -68,7 +68,7 @@ public class AwsS3Service {
 
 	public String uploadProfileImage(MultipartFile profileImage, Long memberId) {
 		String profileImageUrl = memberRepository.findById(memberId)
-			.orElseThrow(() -> new BusinessException(MEMBER_NOT_FOUND)).getProfileImageUrl();
+			.orElseThrow(() -> new BusinessException(ErrorMessage.MEMBER_NOT_FOUND)).getProfileImageUrl();
 		if (profileImageUrl != null) {
 			String extension = awsS3Util.getExtension(profileImageUrl);
 			awsS3Util.deleteFile(memberId + extension, "/image/profile");

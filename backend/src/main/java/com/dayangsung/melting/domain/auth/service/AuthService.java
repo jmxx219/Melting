@@ -5,6 +5,7 @@ import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.dayangsung.melting.domain.auth.CustomOAuth2User;
 import com.dayangsung.melting.domain.auth.dto.response.GoogleResponse;
@@ -49,6 +50,7 @@ public class AuthService extends DefaultOAuth2UserService {
 			.build();
 	}
 
+	@Transactional
 	private Member insertMemberIfNotExist(OAuth2Response oAuth2Response) {
 		return memberRepository.findByEmail(oAuth2Response.getEmail())
 			.orElseGet(() -> memberRepository.save(
