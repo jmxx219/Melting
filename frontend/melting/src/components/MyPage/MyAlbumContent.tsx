@@ -14,13 +14,15 @@ import { ViewType, view } from '@/types/constType'
 interface MyAlbumProps {
   album: AlbumMyResponseDto
   viewType: ViewType
-  fetchAlbums: () => void
+  updateAlbum: (albumId: number, isLiked: boolean, likedCount: number) => void
+  onDelete: (albumId: number) => void
 }
 
 export default function MyAlbumContent({
   album,
   viewType,
-  fetchAlbums,
+  updateAlbum,
+  onDelete,
 }: MyAlbumProps) {
   const { data: userInfo } = useUserInfo()
   const navigate = useNavigate()
@@ -54,7 +56,8 @@ export default function MyAlbumContent({
         )) as number
       }
       setLikeCount(currentLikedCount)
-      fetchAlbums()
+
+      updateAlbum(album.albumId, newLikedState, currentLikedCount)
     } catch (error) {
       console.error('앨범 좋아요 상태 업데이트 중 오류 발생:', error)
       setIsLiked(!newLikedState)
@@ -73,7 +76,7 @@ export default function MyAlbumContent({
   const deleteAlbum = async () => {
     try {
       await albumApi.deleteAlbum(album.albumId)
-      await fetchAlbums()
+      onDelete(album.albumId)
     } catch (error) {
       console.error('삭제 중 오류 발생:', error)
     }
