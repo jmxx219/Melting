@@ -20,6 +20,7 @@ const buttonVariants = cva(
         gray: 'bg-gray text-white',
         input: 'border-b-2 border-gray text-gray',
         tag: 'border border-primary-400 bg-white text-primary-400',
+        hover_none: 'bg-primary-400 text-black',
       },
       size: {
         default: 'h-10 px-4 py-2',
