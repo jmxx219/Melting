@@ -46,6 +46,7 @@ import {
   WriteCommentError,
   ModifyCommentError,
   DeleteAlbumLikesError,
+  CommentPageResponseDto,
 } from '@/types/album.ts'
 import { SortType } from '@/types/constType'
 
@@ -141,7 +142,7 @@ export const albumApi = {
       page?: number
       size?: number
     },
-  ): Promise<CommentResponseDto[]> => {
+  ): Promise<CommentPageResponseDto> => {
     try {
       const response = await api.get<GetAllCommentsData>(
         `/${albumId}/comments`,
@@ -149,11 +150,7 @@ export const albumApi = {
           params: query,
         },
       )
-      if (response.data && Array.isArray(response.data)) {
-        return response.data as CommentResponseDto[]
-      } else {
-        return [] // 데이터가 없거나 형식이 맞지 않으면 빈 배열 반환
-      }
+      return response.data as CommentPageResponseDto
     } catch (error) {
       console.error('댓글을 가져오는 중 오류 발생:', error)
       throw error as GetAllCommentsError
