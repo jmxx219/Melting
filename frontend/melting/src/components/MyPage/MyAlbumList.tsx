@@ -1,66 +1,119 @@
-import { useState } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import MyAlbumContent from '@/components/MyPage/MyAlbumContent'
-
-interface AlbumData {
-  id: number
-  coverImage: string
-  albumName: string
-  artistName: string
-  isLiked: boolean
-  likeCount: number
-  releaseDate: string
-  isPublic: boolean
-}
+import { AlbumMyPageResponseDto, AlbumMyResponseDto } from '@/types/user'
+import { userApi } from '@/apis/userApi'
+import { SortType, sort, ViewType, view } from '@/types/constType'
+import InfiniteScroll from '@/components/Common/InfinityScroll.tsx'
 
 interface MyAlbumListProps {
-  sortOption: 'LATEST' | 'POPULAR'
-  viewType: 'my' | 'liked'
+  sortOption: SortType
+  viewType: ViewType
 }
 
-export default function MyAlbumList({ viewType }: MyAlbumListProps) {
-  const [albums] = useState<AlbumData[]>([
-    {
-      id: 1,
-      coverImage:
-        'https://image.bugsm.co.kr/album/images/200/40955/4095501.jpg?version=20240307012526.0',
-      albumName: 'The Winning Cover Cover Cover Cover',
-      artistName: '노원핵주먹',
-      isLiked: true,
-      likeCount: 120,
-      releaseDate: '2024-09-10',
-      isPublic: true,
-    },
-    {
-      id: 2,
-      coverImage:
-        'https://image.bugsm.co.kr/album/images/200/40955/4095501.jpg?version=20240307012526.0',
-      albumName: '좋은 날 Cover',
-      artistName: '노원핵주먹',
-      isLiked: false,
-      likeCount: 1501234,
-      releaseDate: '2022-12-09',
-      isPublic: true,
-    },
-    {
-      id: 3,
-      coverImage:
-        'https://image.bugsm.co.kr/album/images/200/40955/4095501.jpg?version=20240307012526.0',
-      albumName: 'Palette Cover',
-      artistName: '노원핵주먹',
-      isLiked: true,
-      likeCount: 30436,
-      releaseDate: '2021-04-21',
-      isPublic: false,
-    },
-  ])
+const fetchAlbums = async (
+  sortOption: SortType,
+  viewType: ViewType,
+  page: number = 0,
+) => {
+  try {
+    let response: AlbumMyPageResponseDto
+    const sortParam = sortOption === sort.LATEST ? '0' : '1'
+
+    if (viewType === view.MY) {
+      response = await userApi.getMemberAlbums(sortParam, page, 10)
+    } else {
+      response = await userApi.getMemberLikesAlbums(sortParam, page, 10)
+    }
+
+    return {
+      newItems: response.albumInfoList ?? [],
+      isLast: response.isLast, // 마지막 페이지 확인
+    }
+  } catch (error) {
+    console.error('앨범 목록 가져오기 실패:', error)
+    return { newItems: [], isLast: true }
+  }
+}
+
+export default function MyAlbumList({
+  sortOption,
+  viewType,
+}: MyAlbumListProps) {
+  const [albums, setAlbums] = useState<AlbumMyResponseDto[]>([])
+  const [page, setPage] = useState(0)
+  const [loading, setLoading] = useState(false)
+  const [hasMore, setHasMore] = useState(true)
+
+  const loadMoreItems = useCallback(async () => {
+    if (loading || !hasMore) return
+    setLoading(true)
+
+    const { newItems, isLast } = await fetchAlbums(sortOption, viewType, page)
+
+    setAlbums((prev) => {
+      const updatedResults = [...prev, ...newItems]
+      return updatedResults
+    })
+
+    setHasMore(!isLast)
+    setPage((prev) => prev + 1)
+    setLoading(false)
+  }, [loading, hasMore, page, sortOption, viewType])
+
+  const updateAlbum = (
+    albumId: number,
+    isLiked: boolean,
+    likedCount: number,
+  ) => {
+    setAlbums((prevAlbums) =>
+      prevAlbums.map((album) =>
+        album.albumId === albumId ? { ...album, isLiked, likedCount } : album,
+      ),
+    )
+  }
+
+  const deleteAlbum = (albumId: number) => {
+    setAlbums((prevAlbums) =>
+      prevAlbums.filter((album) => album.albumId !== albumId),
+    )
+  }
+
+  useEffect(() => {
+    const loadInitialAlbums = async () => {
+      setAlbums([])
+      setPage(0)
+      setHasMore(true)
+      setLoading(true)
+
+      const { newItems, isLast } = await fetchAlbums(sortOption, viewType, 0)
+
+      setAlbums(newItems)
+      setHasMore(!isLast)
+      setLoading(false)
+    }
+
+    loadInitialAlbums()
+  }, [sortOption, viewType])
 
   return (
     <div>
-      <div className="album-list">
-        {albums.map((album) => (
-          <MyAlbumContent key={album.id} album={album} viewType={viewType} />
-        ))}
-      </div>
+      <InfiniteScroll
+        loadMore={loadMoreItems}
+        hasMore={hasMore}
+        loading={loading}
+      >
+        <div className="album-list">
+          {albums.map((album, index) => (
+            <MyAlbumContent
+              key={`${album.albumId}-${index}`}
+              album={album}
+              viewType={viewType}
+              updateAlbum={updateAlbum}
+              onDelete={deleteAlbum}
+            />
+          ))}
+        </div>
+      </InfiniteScroll>
     </div>
   )
 }

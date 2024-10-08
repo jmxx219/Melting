@@ -4,23 +4,36 @@ import { useNavigate } from 'react-router-dom'
 import { Button } from '../ui/button'
 import { ScrollArea } from '../ui/scroll-area'
 import AudioPlayer, { AudioPlayerHandle } from './AudioPlayer'
+import { songApi } from '@/apis/songApi'
+import AlertModal from '../Common/AlertModal'
 
 interface MusciRecordProps {
-  lyrics: string
-  audioSrc: string
+  lyrics?: string
+  audioSrc?: string
+  originalSongId?: number
 }
 
 export default function MusciRecordContent({
-  lyrics,
-  audioSrc,
+  lyrics = '',
+  audioSrc = '',
+  originalSongId = -1,
 }: MusciRecordProps) {
   const [isRecording, setIsRecording] = useState(false)
+  const [isDialogOpen, setIsDialogOpen] = useState(false)
   const [isEnd, setIsEnd] = useState(false)
   const mediaRecorderRef = useRef<MediaRecorder | null>(null)
   const streamRef = useRef<MediaStream | null>(null)
   const chunksRef = useRef<Blob[]>([])
   const audioPlayerRef = useRef<AudioPlayerHandle>(null)
   const navigate = useNavigate()
+  const dialogMessages = [
+    '멜팅하기가 완료되었습니다.',
+    '내가 등록한 곡&앨범 에서 확인 가능합니다.',
+  ]
+  const handleCloseDialog = () => {
+    setIsDialogOpen(false)
+    navigate('/mypage/my')
+  }
 
   const stopMicrophoneUsage = useCallback(() => {
     if (
@@ -39,9 +52,7 @@ export default function MusciRecordContent({
 
   const processRecordedAudio = useCallback(() => {
     const blob = new Blob(chunksRef.current, { type: 'audio/webm' })
-    console.log('Recorded audio file size:', blob.size, 'bytes')
-    console.log('Recorded audio file type:', blob.type)
-    // 여기서 blob을 사용하거나 저장하는 로직을 추가할 수 있습니다.
+    return blob
   }, [])
 
   const resetRecording = useCallback(() => {
@@ -55,11 +66,18 @@ export default function MusciRecordContent({
     navigate('/music/list', { state: { type: 'melting' } })
   }, [navigate, resetRecording])
 
-  const handleComplete = useCallback(() => {
+  const handleComplete = useCallback(async () => {
     if (isEnd && !isRecording) {
-      navigate('/music/play', { state: { songId: 0 } })
+      // 녹음이 완료된 경우, API로 전송
+      const recordedBlob = processRecordedAudio()
+
+      const response = await songApi.meltingApi(originalSongId, recordedBlob)
+
+      if (response) {
+        setIsDialogOpen(true)
+      }
     }
-  }, [isEnd, isRecording, navigate])
+  }, [isEnd, isRecording, processRecordedAudio, navigate])
 
   const startRecording = useCallback(async () => {
     try {
@@ -132,9 +150,20 @@ export default function MusciRecordContent({
       </div>
       <AudioPlayer
         ref={audioPlayerRef}
+        disabled={false}
         audioSrc={audioSrc}
         onEnded={handleAudioEnded}
       />
+
+      {/* {isEnd && recordedAudioUrl && (
+        <div className="mt-5">
+          <h3 className="text-center text-lg font-bold">녹음된 파일 재생</h3>
+          <AudioPlayer
+            audioSrc={recordedAudioUrl}
+            onEnded={() => console.log('Playback ended')}
+          />
+        </div>
+      )} */}
 
       <div className="text-center">
         <Button
@@ -155,6 +184,14 @@ export default function MusciRecordContent({
           취소
         </span>
       </div>
+      {isDialogOpen && (
+        <AlertModal
+          title="멜팅 완료"
+          messages={dialogMessages}
+          isOpen={isDialogOpen}
+          onClose={handleCloseDialog}
+        />
+      )}
     </div>
   )
 }

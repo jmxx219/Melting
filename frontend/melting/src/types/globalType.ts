@@ -1,5 +1,3 @@
-import { FullRequestParams } from '@/typeApis/http-client.ts'
-
 export interface SVGIconProps {
   width?: number
   height?: number
@@ -42,7 +40,20 @@ export interface ApiResponseString {
   errorMessage?: string
 }
 
-export type RequestParams = Omit<
-  FullRequestParams,
-  'body' | 'method' | 'query' | 'path'
->
+export interface ApiResponseBoolean {
+  status: string
+  data: boolean
+  errorMessage?: string
+}
+
+export interface ApiResponseVoid {
+  status?: string
+  data?: object
+  errorMessage?: string
+}
+
+export interface ApiResponseListString {
+  status?: string
+  data?: string[]
+  errorMessage?: string
+}

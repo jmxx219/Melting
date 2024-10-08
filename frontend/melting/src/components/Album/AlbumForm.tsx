@@ -1,6 +1,5 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-
 import { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 
 import { Input } from '../ui/input'
 import { Label } from '../ui/label'
@@ -11,9 +10,17 @@ import SubmitButton from '../Button/SubmitButton'
 import GenreSelector from './GenreSelector'
 import AlbumCoverSelector from './AlbumCoverSelector'
 import { useAlbumContext } from '@/contexts/AlbumContext'
+import { albumApi } from '@/apis/albumApi.ts'
+import {
+  AiDescriptionRequestDto,
+  AlbumCreateRequestDto,
+  CreateAlbumPayload,
+} from '@/types/album.ts'
+import { convertDateToWord } from '@/utils/dateUtil.ts'
 
 export default function AlbumForm() {
   const [releaseDate, setReleaseDate] = useState<string>('')
+  const navigate = useNavigate()
 
   const {
     albumName,
@@ -21,9 +28,13 @@ export default function AlbumForm() {
     albumIntro,
     setAlbumIntro,
     selectedSongs,
+    titleSongIndex,
     selectedGenres,
     selectedHashtags,
     selectedCover,
+    selectedCoverFile,
+    selectedDefaultCoverIndex,
+    resetAlbum,
   } = useAlbumContext()
 
   // 유효성 검사 상태
@@ -34,17 +45,9 @@ export default function AlbumForm() {
   const [isCoverValid, setIsCoverValid] = useState(false)
   const [isFormValid, setIsFormValid] = useState(false)
 
-  const handleSubmit = () => {
-    if (isFormValid) {
-      // Submit logic here
-      console.log('Form submitted')
-    }
-  }
-
   useEffect(() => {
     const today = new Date()
-    const formattedDate = `${today.getFullYear()}년 ${today.getMonth() + 1}월 ${today.getDate()}일`
-
+    const formattedDate = convertDateToWord(today)
     setReleaseDate(formattedDate)
   })
 
@@ -79,6 +82,73 @@ export default function AlbumForm() {
       setIsFormValid(true)
     }
   }, [isSongValid, isGenreValid, isHashtagValid, isCoverValid])
+
+  const handleSubmit = async () => {
+    if (isFormValid) {
+      try {
+        let generatedIntro = albumIntro
+
+        // albumIntro가 비어 있는 경우 AI 소개 요청 수행
+        if (!albumIntro) {
+          const aiDescriptionRequestDto: AiDescriptionRequestDto = {
+            songs: selectedSongs.map((song) => song.songId),
+            genres: selectedGenres,
+            hashtags: selectedHashtags,
+            albumName,
+          }
+
+          try {
+            // AI 소개 생성 요청
+            generatedIntro = await albumApi.createAiDescription(
+              aiDescriptionRequestDto,
+            )
+            setAlbumIntro(generatedIntro)
+          } catch (error) {
+            console.error('AI 소개 생성 중 오류 발생:', error)
+            return // AI 소개 생성에 실패한 경우 제출 진행 중단
+          }
+        }
+
+        // 앨범 생성 요청 DTO 생성
+        const albumCreateRequestDto: AlbumCreateRequestDto = {
+          albumName: albumName,
+          albumDescription: generatedIntro,
+          songs: selectedSongs.map((song) => song.songId),
+          titleSongId: titleSongIndex || selectedSongs[0]?.songId, // titleSongId는 첫 번째 곡으로 가정
+          genres: selectedGenres,
+          hashtags: selectedHashtags,
+          defaultCoverNumber: selectedDefaultCoverIndex || undefined,
+        }
+
+        let payload: CreateAlbumPayload
+
+        // 기본 이미지가 선택된 경우
+        if (selectedDefaultCoverIndex !== null) {
+          payload = {
+            albumCreateRequestDto,
+            albumCoverImage: new File([], 'default-image.jpg'), // 빈 파일 설정
+          }
+        } else if (selectedCoverFile) {
+          // 사용자 또는 AI 이미지가 선택된 경우
+          payload = {
+            albumCreateRequestDto,
+            albumCoverImage: selectedCoverFile,
+          }
+        } else {
+          console.error('앨범 커버 이미지가 없습니다.')
+          return
+        }
+
+        // API 호출
+        const response = await albumApi.createAlbum(payload)
+        // 앨범 생성 후 앨범 컨텍스트 초기화
+        resetAlbum()
+        navigate(`/album/detail/${response.albumId}`, { replace: true })
+      } catch (error) {
+        console.error('앨범 생성 중 오류 발생:', error)
+      }
+    }
+  }
 
   return (
     <form className="space-y-6">
@@ -148,7 +218,7 @@ export default function AlbumForm() {
         <Label htmlFor="hashtag" className="font-semibold">
           해시태그<span className="text-primary-400 ml-1">*</span>
         </Label>
-        <HashtagSelector useAlbumContextFlag={true} maxHashtags={5} />
+        <HashtagSelector useAlbumContextFlag={true} maxHashtags={3} />
       </div>
       <div>
         <Label htmlFor="hashtag" className="font-semibold">

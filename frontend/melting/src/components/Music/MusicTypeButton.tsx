@@ -6,40 +6,52 @@ interface TypeBtnProps {
   bgColor: string
   title: string
   detail: string[]
-  footer: string
+  isFooter?: boolean
+  footer?: string
   type: CoverType
   icon: LucideIcon
+  disable?: boolean
 }
 
-export default function MusicTypeButton(props: TypeBtnProps) {
+export default function MusicTypeButton({
+  bgColor,
+  title,
+  detail,
+  isFooter = false,
+  footer,
+  type,
+  icon,
+  disable = false,
+}: TypeBtnProps) {
   const navigate = useNavigate()
-  const Icon = props.icon
+  const Icon = icon
 
   const clickEvent: React.MouseEventHandler<HTMLButtonElement> = () => {
-    navigate('/music/list', { state: { type: props.type } })
+    navigate('/music/list', { state: { type: type } })
   }
   return (
     <button
       type="button"
       className="w-full px-5 py-7 flex items-center justify-center text-black font-bold rounded-lg transition-colors "
-      style={{ backgroundColor: props.bgColor }}
+      style={{ backgroundColor: bgColor }}
       onClick={clickEvent}
+      disabled={disable}
     >
       <div className="flex w-full flex-col items-start text-white me-3">
         <div className="text-2xl mb-5 font-semibold flex justify-center items-center">
-          {props.title}
+          {title}
           <div className="ms-2">
             <Icon />
           </div>
         </div>
         <div className="mb-5">
-          {props.detail.map((text, index) => (
+          {detail.map((text, index) => (
             <div className="font-thin text-start text-sm" key={index}>
               {text}
             </div>
           ))}
         </div>
-        <div className="font-thin text-sm">{props.footer}</div>
+        <div className="font-thin text-sm">{isFooter && footer}</div>
       </div>
       <div>
         <ArrowUpRight className="text-white" />

@@ -37,7 +37,8 @@
     "swagger-typescript-api": "^13.0.22",
     "tailwind-merge": "^2.5.2",
     "tailwind-scrollbar-hide": "^1.1.7",
-    "tailwindcss-animate": "^1.0.7"
+    "tailwindcss-animate": "^1.0.7",
+    "webm-to-wav-converter": "^1.1.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.10.0",

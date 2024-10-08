@@ -5,56 +5,80 @@ import Heart from '@/components/Icon/Heart'
 import { X, Play } from 'lucide-react'
 import { formatLikeCount } from '@/utils/numberUtil'
 import ConfirmDialog from '@/components/Common/ConfirmDialog'
-
-interface AlbumData {
-  id: number
-  coverImage: string
-  albumName: string
-  artistName: string
-  isLiked: boolean
-  likeCount: number
-  releaseDate: string
-  isPublic: boolean
-}
+import { AlbumMyResponseDto } from '@/types/user'
+import { convertIsoToDotDate } from '@/utils/dateUtil'
+import { albumApi } from '@/apis/albumApi'
+import { useUserInfo } from '@/hooks/useUserInfo'
+import { ViewType, view } from '@/types/constType'
 
 interface MyAlbumProps {
-  album: AlbumData
-  viewType: 'my' | 'liked'
+  album: AlbumMyResponseDto
+  viewType: ViewType
+  updateAlbum: (albumId: number, isLiked: boolean, likedCount: number) => void
+  onDelete: (albumId: number) => void
 }
 
-export default function MyAlbumContent({ album, viewType }: MyAlbumProps) {
+export default function MyAlbumContent({
+  album,
+  viewType,
+  updateAlbum,
+  onDelete,
+}: MyAlbumProps) {
+  const { data: userInfo } = useUserInfo()
   const navigate = useNavigate()
   const [isLiked, setIsLiked] = useState(album.isLiked)
+  const [likeCount, setLikeCount] = useState(album.likedCount || 0)
   const [isPublic, setIsPublic] = useState(album.isPublic)
 
   const goToAlbumDetail = () => {
-    navigate(`/album/${album.id}`)
+    navigate(`/album/detail/${album.albumId}`)
   }
 
   const goToPlayAlbum = (e: React.MouseEvent) => {
     e.stopPropagation()
-    // TODO: 앨범 재생 화면으로 이동
-    navigate(`/album/play`, { state: album.id })
+
+    navigate(`/album/play`, { state: { albumId: album.albumId } })
   }
 
-  const toggleLike = (e: React.MouseEvent) => {
+  const toggleLike = async (e: React.MouseEvent) => {
     e.stopPropagation()
-    setIsLiked(!isLiked)
-    // TODO: 좋아요 상태 업데이트 API 호출
+    const newLikedState = !isLiked
+    setIsLiked(newLikedState)
+    try {
+      let currentLikedCount
+      if (newLikedState) {
+        currentLikedCount = (await albumApi.addAlbumLikes(
+          album.albumId,
+        )) as number
+      } else {
+        currentLikedCount = (await albumApi.deleteAlbumLikes(
+          album.albumId,
+        )) as number
+      }
+      setLikeCount(currentLikedCount)
+
+      updateAlbum(album.albumId, newLikedState, currentLikedCount)
+    } catch (error) {
+      console.error('앨범 좋아요 상태 업데이트 중 오류 발생:', error)
+      setIsLiked(!newLikedState)
+    }
   }
 
-  const handleSwitchChange = (checked: boolean) => {
+  const handleSwitchChange = async (checked: boolean) => {
     setIsPublic(checked)
-    // TODO: 공개/비공개 상태 업데이트 API 호출
+    try {
+      await albumApi.toggleIsPublic(album.albumId)
+    } catch (error) {
+      setIsPublic(!checked)
+    }
   }
-  const deleteAlbum = () => {
-    // TODO: 앨범 삭제 API 호출
-    console.log('앨범 삭제: ', album.id)
 
-    if (viewType === 'my') {
-      navigate('/mypage/my')
-    } else if (viewType === 'liked') {
-      navigate('/mypage/liked')
+  const deleteAlbum = async () => {
+    try {
+      await albumApi.deleteAlbum(album.albumId)
+      onDelete(album.albumId)
+    } catch (error) {
+      console.error('삭제 중 오류 발생:', error)
     }
   }
 
@@ -62,11 +86,14 @@ export default function MyAlbumContent({ album, viewType }: MyAlbumProps) {
     return text.length > maxLength ? text.slice(0, maxLength) + '...' : text
   }
 
+  const isOwner =
+    viewType === view.MY || album.creatorNickname === userInfo?.nickname
+
   return (
     <div className="relative flex mb-4" onClick={goToAlbumDetail}>
       <div className="relative mr-2 w-24 h-24 flex-shrink-0">
         <img
-          src={album.coverImage}
+          src={album.albumCoverImageUrl}
           alt={album.albumName}
           className="absolute inset-0 w-full h-full rounded-lg object-cover"
         />
@@ -83,7 +110,7 @@ export default function MyAlbumContent({ album, viewType }: MyAlbumProps) {
         <div className="flex justify-between items-center font-bold text-base relative">
           <span>{truncateText(album.albumName, 20)}</span>
 
-          {viewType === 'my' && (
+          {isOwner && (
             <ConfirmDialog
               title="앨범 삭제"
               description="정말로 이 앨범을 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다."
@@ -94,7 +121,7 @@ export default function MyAlbumContent({ album, viewType }: MyAlbumProps) {
           )}
         </div>
 
-        <div className="text-sm">{truncateText(album.artistName, 20)}</div>
+        <div className="text-sm">{truncateText(album.creatorNickname, 20)}</div>
         <div className="flex items-center space-x-2 text-sm">
           <button
             type="button"
@@ -107,19 +134,17 @@ export default function MyAlbumContent({ album, viewType }: MyAlbumProps) {
             />
           </button>
           <span>
-            {viewType === 'my'
-              ? album.likeCount.toLocaleString()
-              : formatLikeCount(album.likeCount)}
+            {isOwner ? likeCount.toLocaleString() : formatLikeCount(likeCount)}
           </span>
         </div>
 
         <div className="flex justify-between items-center text-sm text-gray-400">
-          <span>{album.releaseDate}</span>
+          <span>{convertIsoToDotDate(album.createdAt)}</span>
 
-          {viewType === 'my' && (
+          {isOwner && (
             <div className="flex items-center space-x-2">
               <Switch
-                id={`album-${album.id}-switch`}
+                id={`album-${album.albumId}-switch`}
                 checked={isPublic}
                 onCheckedChange={handleSwitchChange}
                 onClick={(e) => e.stopPropagation()}
