@@ -4,8 +4,6 @@ import { Navigate, Outlet } from 'react-router-dom'
 const ProtectedRoute = () => {
   const { isLogin } = useAuth()
 
-  console.log(isLogin)
-
   if (!isLogin) {
     return <Navigate to="/login" replace /> // If not logged in, redirect to login page
   }

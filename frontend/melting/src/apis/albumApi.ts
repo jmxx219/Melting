@@ -2,35 +2,38 @@ import { createAxiosInstance, createApi, ApiResponse } from './axiosInstance'
 import {
   // AlbumCreateRequestDto,
   AddAlbumLikesData,
+  AiCoverImageRequestDto,
+  AiDescriptionRequestDto,
+  AlbumDetailsResponseDto,
+  AlbumRankingPageResponseDto,
+  AlbumRankingResponseDto,
+  AlbumSearchPageResponseDto,
+  AlbumUpdateRequestDto,
   CommentRequestDto,
+  CreateAiAlbumCoverImageData,
+  CreateAiAlbumCoverImageError,
+  CreateAiDescriptionData,
+  CreateAiDescriptionError,
   CreateAlbumData,
+  CreateAlbumError,
+  CreateAlbumPayload,
+  DeleteAlbumData,
   DeleteAlbumLikesData,
   GenreResponseDto,
+  GetAlbumDetailsData,
+  GetAlbumDetailsError,
   GetAlbumLikesCountData,
+  GetAlbumPageContainsHashtagData,
   GetAlbumsInCommunityMainPageData,
   GetAllCommentsData,
   GetAllGenresData,
-  WriteCommentData,
-  CreateAlbumPayload,
-  CreateAlbumError,
   GetHot5AlbumsData,
   GetHot5AlbumsError,
   GetMonthlyAlbumsData,
   GetMonthlyAlbumsError,
   GetSteadyAlbumsData,
   GetSteadyAlbumsError,
-  AlbumRankingResponseDto,
-  AiCoverImageRequestDto,
-  CreateAiAlbumCoverImageData,
-  CreateAiAlbumCoverImageError,
   ToggleIsPublicData,
-  DeleteAlbumData,
-  GetAlbumDetailsData,
-  GetAlbumDetailsError,
-  AlbumDetailsResponseDto,
-  CreateAiDescriptionData,
-  CreateAiDescriptionError,
-  AiDescriptionRequestDto,
   UpdateAlbumDescriptionData,
   UpdateAlbumDescriptionError,
   AlbumUpdateRequestDto,
@@ -47,8 +50,19 @@ import {
   ModifyCommentError,
   DeleteAlbumLikesError,
   CommentPageResponseDto,
+  WriteCommentData,
 } from '@/types/album.ts'
-import { SortType } from '@/types/constType'
+import {
+  CommunityConditionType,
+  communityVal,
+  SortType,
+} from '@/types/constType'
+import {
+  ApiResponse,
+  createApi,
+  createAxiosInstance,
+  CustomError,
+} from './axiosInstance'
 
 const instance = createAxiosInstance('albums')
 const api = createApi<ApiResponse>(instance)
@@ -346,15 +360,26 @@ export const albumApi = {
       throw error as GetAlbumPageContainsHashtagError // 오류 발생 시 예외 처리
     }
   },
-}
-
-export async function searchHashtags(query: string): Promise<string[]> {
-  // 실제 API 호출 로직을 여기에 구현합니다.
-  // 예시 코드:
-  // const response = await fetch(`/api/hashtags?query=${encodeURIComponent(query)}`);
-  // const data = await response.json();
-  // return data.hashtags;
-  return ['사진', '사랑해', '사랑합니다', '사진스타그램'].filter((tag) =>
-    tag.includes(query),
-  )
+  getCommunityAlbums: async (query: {
+    keyword: string
+    options: CommunityConditionType[]
+    page: number
+  }) => {
+    try {
+      const optionParam = query.options.map((v) => {
+        return communityVal[v]
+      })
+      const response = await api.get<AlbumSearchPageResponseDto>(`/search`, {
+        params: {
+          keyword: query.keyword,
+          options: optionParam.join(','),
+          page: query.page,
+        },
+      })
+      return response.data as AlbumSearchPageResponseDto
+    } catch (error) {
+      console.error('앨범 조회 중 오류 발생:', error)
+      throw error
+    }
+  },
 }
