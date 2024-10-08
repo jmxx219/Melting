@@ -1,6 +1,7 @@
-import { AlbumDetailInfoType } from '@/types/album'
-import { Pencil, X } from 'lucide-react'
 import { useMemo, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
+import { Pencil, X } from 'lucide-react'
+
 import Comment from '../../Icon/Comment'
 import Heart from '../../Icon/Heart'
 import {
@@ -13,9 +14,9 @@ import {
 import { Button } from '../../ui/button'
 import AlbumCover from '../AlbumCover'
 import AlbumUserProfile from './AlbumUserProfile'
+import { AlbumDetailInfoType } from '@/types/album'
 import { albumCategory } from '@/types/constType'
 import { albumApi } from '@/apis/albumApi'
-import { useNavigate } from 'react-router-dom'
 import { convertIsoToDotDate } from '@/utils/dateUtil'
 
 interface AlbumDetailProps {
