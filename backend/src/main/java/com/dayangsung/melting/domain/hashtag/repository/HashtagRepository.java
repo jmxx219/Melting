@@ -16,6 +16,6 @@ public interface HashtagRepository extends JpaRepository<Hashtag, Long> {
 
 	Boolean existsByContent(String content);
 
-	@Query("SELECT h FROM Hashtag h WHERE h.content LIKE %:keyword%")
+	@Query("SELECT h FROM Hashtag h WHERE h.content ILIKE %:keyword%")
 	Page<Hashtag> findByContentContaining(@Param("keyword") String keyword, Pageable pageable);
 }
