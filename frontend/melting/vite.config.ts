@@ -12,20 +12,21 @@ export default defineConfig({
       manifest: {
         name: 'Melting',
         short_name: '멜팅',
-        description: '나만의 AI 커버 앨범을 만들어보세요',
+        description: '나만의 AI 커버 앨범을 만들어보세요.',
         theme_color: '#ffaf25',
         icons: [
           {
-            src: 'pwa-192x192.png',
+            src: 'icons/pwa-192x192.png',
             sizes: '192x192',
             type: 'image/png',
           },
           {
-            src: 'pwa-512x512.png',
+            src: 'icons/pwa-512x512.png',
             sizes: '512x512',
             type: 'image/png',
           },
         ],
+        start_url: '/',
       },
     }),
   ],
