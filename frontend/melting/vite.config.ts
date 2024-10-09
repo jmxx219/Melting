@@ -11,8 +11,8 @@ export default defineConfig({
       includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'masked-icon.svg'],
       manifest: {
         name: 'Melting',
-        short_name: 'App',
-        description: 'Your app description',
+        short_name: '멜팅',
+        description: '나만의 AI 커버 앨범을 만들어보세요',
         theme_color: '#ffaf25',
         icons: [
           {
