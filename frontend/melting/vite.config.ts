@@ -28,8 +28,13 @@ export default defineConfig({
         ],
         start_url: '/',
       },
+      workbox: {
+        navigateFallback: null,
+        navigateFallbackDenylist: [/^\/oauth2\//, /^\/login\//],
+      },
     }),
   ],
+
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
