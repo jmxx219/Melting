@@ -9,6 +9,10 @@ export default function login(provider: 'kakao' | 'google') {
   const redirectUrl = encodeURIComponent(
     `${VITE_REDIRECT_URL}/login/callback/${provider}`,
   )
+  console.log(redirectUrl)
+  console.log(
+    `${VITE_API_BASE_URL}/oauth2/authorize/${provider}?redirect_url=${redirectUrl}`,
+  )
   window.location.assign(
     `${VITE_API_BASE_URL}/oauth2/authorize/${provider}?redirect_url=${redirectUrl}`,
   )
