@@ -169,7 +169,7 @@ export default function AlbumForm() {
             placeholder="앨범 명을 입력해주세요"
             value={albumName}
             onChange={(e) => setAlbumName(e.target.value)}
-            className={`${albumName ? 'border-primary-400' : ''}`}
+            className={`${albumName ? 'border-primary-400 text-black' : ''}`}
             autoComplete="off"
             spellCheck="false"
           />
