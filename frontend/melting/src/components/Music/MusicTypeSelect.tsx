@@ -41,11 +41,11 @@ export default function MusicTypeSelect({}: Props) {
           '사용자의 목소리를 AI가 학습하여',
           '원곡 커버를 자동 생성해요',
         ]}
-        isFooter={coverCnt >= 3 ? false : true}
+        isFooter={isEnable && coverCnt >= 3 ? false : true}
         footer={footerText}
         type="ai"
         icon={BrainCircuit}
-        disable={!isEnable || coverCnt < 3}
+        disable={!(isEnable && coverCnt >= 3)}
       ></MusicTypeButton>
     </div>
   )
