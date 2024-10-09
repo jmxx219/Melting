@@ -169,7 +169,7 @@ export default function AlbumForm() {
             placeholder="앨범 명을 입력해주세요"
             value={albumName}
             onChange={(e) => setAlbumName(e.target.value)}
-            className={`${albumName ? 'border-primary-400' : ''}`}
+            className={`${albumName ? 'border-primary-400 text-black' : ''}`}
             autoComplete="off"
             spellCheck="false"
           />
@@ -194,7 +194,7 @@ export default function AlbumForm() {
         <div className="relative">
           <Textarea
             id="albumDetail"
-            className={`min-h-[100px] ${albumIntro ? 'border-primary-400' : ''}`}
+            className={`min-h-[100px] ${albumIntro ? 'border-2 border-primary-400' : ''}`}
             placeholder={`앨범에 대한 소개를 입력해주세요.\n입력하지 않으면 AI가 자동으로 생성합니다.`}
             value={albumIntro}
             onChange={(e) => setAlbumIntro(e.target.value)}
