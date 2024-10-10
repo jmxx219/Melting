@@ -154,7 +154,7 @@ export default function MusicPlayContent({
           </ScrollArea>
         )}
       </div>
-      <div className="py-3">
+      <div>
         <AudioPlayer
           ref={audioPlayerRef}
           audioSrc={song.songUrl ?? ''}

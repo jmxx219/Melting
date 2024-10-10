@@ -28,7 +28,9 @@ export default function InfiniteScroll({
   return (
     <div>
       {children}
-      {loading && <p className="text-center">로딩 중...</p>}
+      <div className="w-full h-2">
+        {loading && <div className="text-center">로딩 중...</div>}
+      </div>
       {hasMore && !loading && (
         <div ref={ref} className="flex justify-center my-8">
           {/* 스크롤 트리거 아이콘이나 텍스트 */}

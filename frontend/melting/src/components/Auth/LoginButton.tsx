@@ -2,15 +2,12 @@ import login from '@/apis/authApi.ts'
 import OAuthButton from './OAuthButton'
 
 export default function LoginForm() {
-  const handleKakaoLogin = async () => {
-    console.log('카카오 로그인!')
-    await login('kakao')
+  const handleKakaoLogin = () => {
+    login('kakao')
   }
 
-  const handleGoogleLogin = async () => {
-    // window.location.href = '/oauth2/authorization/google';
-    console.log('구글 로그인!')
-    await login('google')
+  const handleGoogleLogin = () => {
+    login('google')
   }
 
   return (

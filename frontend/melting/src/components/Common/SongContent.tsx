@@ -12,6 +12,7 @@ interface LikedSongProps {
   songOrder?: number
   isTitle?: boolean
   fetchSongs?: () => void
+  updateSong?: (songId: number, isLiked: boolean, likedCount: number) => void
 }
 
 export default function SongContent({
@@ -20,10 +21,12 @@ export default function SongContent({
   songOrder = 0,
   isTitle,
   fetchSongs,
+  updateSong,
 }: LikedSongProps) {
   const navigate = useNavigate()
   const [isLiked, setIsLiked] = useState(song.isLiked)
   const [likeCount, setLikeCount] = useState(song.likedCount || 0)
+
   const toggleLike = async () => {
     const newLikedState = !isLiked
     setIsLiked(newLikedState)
@@ -36,6 +39,9 @@ export default function SongContent({
       }
       if (fetchSongs) {
         await fetchSongs()
+      }
+      if (updateSong) {
+        updateSong(song.songId, newLikedState, currentLikedCount)
       }
       setLikeCount(currentLikedCount)
     } catch (error) {

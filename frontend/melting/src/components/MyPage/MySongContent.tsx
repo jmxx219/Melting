@@ -13,13 +13,9 @@ import { songApi } from '@/apis/songApi'
 
 interface MySongProps {
   originalSong: SongListDto
-  isPossibleAiCover: boolean
 }
 
-export default function MySongContent({
-  originalSong,
-  isPossibleAiCover,
-}: MySongProps) {
+export default function MySongContent({ originalSong }: MySongProps) {
   const navigate = useNavigate()
   const [mySongs, setMySongs] = useState<SongMypageDto[]>(
     originalSong.songList ?? [],
@@ -127,24 +123,22 @@ export default function MySongContent({
                   </div>
                 </div>
                 <div className="flex space-x-2">
-                  <button
-                    type="button"
-                    className={`w-8 h-8 rounded-full flex items-center justify-center ${
-                      (mySong.songType === 'MELTING' || isPossibleAiCover) &&
-                      mySong.isCreated
-                        ? 'bg-primary-400'
-                        : 'bg-gray-200'
-                    }`}
-                    onClick={() => {
-                      if (mySong.songType === 'MELTING' || isPossibleAiCover) {
+                  {mySong.songType === 'MELTING' && (
+                    <button
+                      type="button"
+                      className={`w-8 h-8 rounded-full flex items-center justify-center ${
+                        mySong.songType === 'MELTING' && mySong.isCreated
+                          ? 'bg-primary-400'
+                          : 'bg-gray-200'
+                      }`}
+                      onClick={() => {
                         goToRecordSong()
-                      }
-                    }}
-                    disabled={!mySong.isCreated}
-                  >
-                    {' '}
-                    <Mic className="h-5 w-5 text-white" />
-                  </button>
+                      }}
+                      disabled={!mySong.isCreated}
+                    >
+                      <Mic className="h-5 w-5 text-white" />
+                    </button>
+                  )}
                   <button
                     type="button"
                     className={`w-8 h-8 rounded-full flex items-center justify-center ${

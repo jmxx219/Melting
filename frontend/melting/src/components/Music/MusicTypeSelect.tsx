@@ -7,13 +7,18 @@ type Props = {}
 
 export default function MusicTypeSelect({}: Props) {
   const [coverCnt, setCoverCnt] = useState<number>(0)
+  const [isEnable, setIsEnable] = useState<boolean>(false)
+  const [footerText, setFooterText] = useState<string>('')
   useEffect(() => {
     const fetchInitialSongs = async () => {
-      const response = await userApi.getUserCoverCnt()
-      if (!response.songcounts) {
-        setCoverCnt(0)
-      } else {
-        setCoverCnt(response.songcounts)
+      const { aiCoverEnabled, songCounts } = await userApi.getUserCoverCnt()
+
+      setCoverCnt(songCounts)
+      setIsEnable(aiCoverEnabled)
+      if (songCounts < 3) {
+        setFooterText(`현재 ${3 - songCounts}곡의 커버가 더 필요해요`)
+      } else if (songCounts >= 3 && !aiCoverEnabled) {
+        setFooterText('현재 사용자 음성 모델을 생성중입니다')
       }
     }
 
@@ -30,19 +35,17 @@ export default function MusicTypeSelect({}: Props) {
         icon={Mic}
       ></MusicTypeButton>
       <MusicTypeButton
-        bgColor={coverCnt >= 3 ? '#FFAF25' : '#A5A5A5'}
+        bgColor={isEnable && coverCnt >= 3 ? '#FFAF25' : '#A5A5A5'}
         title={'AI 자동 커버'}
         detail={[
           '사용자의 목소리를 AI가 학습하여',
           '원곡 커버를 자동 생성해요',
         ]}
-        isFooter={coverCnt >= 3 ? false : true}
-        footer={
-          coverCnt >= 3 ? '' : `현재 ${3 - coverCnt}곡의 커버가 더 필요해요`
-        }
+        isFooter={isEnable && coverCnt >= 3 ? false : true}
+        footer={footerText}
         type="ai"
         icon={BrainCircuit}
-        disable={coverCnt >= 3 ? false : true}
+        disable={!(isEnable && coverCnt >= 3)}
       ></MusicTypeButton>
     </div>
   )

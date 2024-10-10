@@ -38,7 +38,6 @@ export default function SignupForm() {
     if (isValidNickname(value)) {
       try {
         const response = await userApi.validateNickname(value)
-        console.log(nickname)
         setIsNicknameDuplicate(!response.data) // API 응답이 false면 중복
         setIsNicknameValid(response.data ?? false)
       } catch (error) {
