@@ -2,7 +2,7 @@ import DefaultHeader from '@/components/Layout/DefaultHeader'
 import Layout from '@/components/Layout'
 import { ChevronLeft } from 'lucide-react'
 import AlbumSongToggle from '@/components/MyPage/AlbumSongToggle'
-import { view } from '@/types/constType'
+import { view, tab } from '@/types/constType'
 
 export default function LikedAlbumsAndSongs() {
   return (
@@ -13,7 +13,7 @@ export default function LikedAlbumsAndSongs() {
           buttonArea={<ChevronLeft color="#FFAF25" />}
         />
       }
-      children={<AlbumSongToggle viewType={view.LIKED} />}
+      children={<AlbumSongToggle viewType={view.LIKED} tabType={tab.ALBUM} />}
     ></Layout>
   )
 }
