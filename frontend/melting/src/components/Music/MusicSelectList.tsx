@@ -9,6 +9,7 @@ import { Button } from '../ui/button'
 import { Input } from '../ui/input'
 import OriginalSongCard from './OriginalSongCard'
 import AlertModal from '../Common/AlertModal'
+import { tab } from '@/types/constType'
 
 type MusicSelectListProps = {
   recordType: CoverType
@@ -28,7 +29,7 @@ export default function MusicSelectList({ recordType }: MusicSelectListProps) {
   ]
   const handleCloseDialog = () => {
     setIsDialogOpen(false)
-    navigate('/mypage/my')
+    navigate(`/mypage/my/${tab.SONG}`)
   }
 
   const fetchSongs = useCallback(async () => {
