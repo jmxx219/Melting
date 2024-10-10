@@ -242,6 +242,7 @@ export interface SongDetailsResponseDto {
   artist: string
   albumCoverImageUrl: string
   isLiked: boolean
+  isTitle: boolean
   /** @format int32 */
   likedCount: number
   songUrl?: string

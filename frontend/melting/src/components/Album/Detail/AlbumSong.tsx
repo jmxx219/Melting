@@ -26,7 +26,7 @@ export default function AlbumSong({ songs, fetchSong }: AlbumSongProps) {
           key={song.songId}
           song={song}
           hasProfileImage={false}
-          isTitle={false}
+          isTitle={song.isTitle}
           songOrder={index + 1}
           fetchSongs={fetchSong}
         />
