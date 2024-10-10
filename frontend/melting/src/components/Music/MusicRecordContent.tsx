@@ -6,6 +6,7 @@ import AlertModal from '../Common/AlertModal'
 import { Button } from '../ui/button'
 import { ScrollArea } from '../ui/scroll-area'
 import AudioPlayer, { AudioPlayerHandle } from './AudioPlayer'
+import { tab } from '@/types/constType'
 import LodingModal from '../Common/LoadingModal'
 
 interface MusciRecordProps {
@@ -28,6 +29,7 @@ export default function MusciRecordContent({
   const chunksRef = useRef<Blob[]>([])
   const audioPlayerRef = useRef<AudioPlayerHandle>(null)
   const navigate = useNavigate()
+
   const [modalText, setModalText] = useState<string[]>([])
   const [modalTitle, setModalTitle] = useState<string>('')
   const [isApiModal, setIsApiModal] = useState<boolean>(false)
@@ -42,7 +44,7 @@ export default function MusciRecordContent({
   const handleCloseModal = useCallback(() => {
     setIsDialogOpen(false)
     if (isApiModal) {
-      navigate('/mypage/my')
+      navigate(`/mypage/my/${tab.SONG}`)
     }
   }, [isApiModal, navigate])
 

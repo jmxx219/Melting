@@ -40,6 +40,11 @@ export const view = {
   LIKED: 'LIKED',
 } as const
 
+export const tab = {
+  ALBUM: 'ALBUM',
+  SONG: 'SONG',
+} as const
+
 export const genres = [
   'POP',
   '발라드',
@@ -74,5 +79,6 @@ export type CoverType = keyof typeof cover
 export type GenreType = (typeof genres)[number]
 export type SortType = keyof typeof sort
 export type ViewType = keyof typeof view
+export type TabType = keyof typeof tab
 export type albumCategoryType = keyof typeof albumCategory
 export type CommunityConditionType = keyof typeof communityCondition
