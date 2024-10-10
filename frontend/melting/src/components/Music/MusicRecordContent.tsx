@@ -1,11 +1,12 @@
+import { songApi } from '@/apis/songApi'
 import { Mic, RotateCcw } from 'lucide-react'
-import { useCallback, useRef, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useCallback, useEffect, useRef, useState } from 'react'
+import { useLocation, useNavigate } from 'react-router-dom'
+import AlertModal from '../Common/AlertModal'
 import { Button } from '../ui/button'
 import { ScrollArea } from '../ui/scroll-area'
 import AudioPlayer, { AudioPlayerHandle } from './AudioPlayer'
-import { songApi } from '@/apis/songApi'
-import AlertModal from '../Common/AlertModal'
+import LodingModal from '../Common/LoadingModal'
 
 interface MusciRecordProps {
   lyrics?: string
@@ -20,20 +21,30 @@ export default function MusciRecordContent({
 }: MusciRecordProps) {
   const [isRecording, setIsRecording] = useState(false)
   const [isDialogOpen, setIsDialogOpen] = useState(false)
+
   const [isEnd, setIsEnd] = useState(false)
   const mediaRecorderRef = useRef<MediaRecorder | null>(null)
   const streamRef = useRef<MediaStream | null>(null)
   const chunksRef = useRef<Blob[]>([])
   const audioPlayerRef = useRef<AudioPlayerHandle>(null)
   const navigate = useNavigate()
-  const dialogMessages = [
-    '멜팅하기가 완료되었습니다.',
-    '내가 등록한 곡&앨범 에서 확인 가능합니다.',
-  ]
-  const handleCloseDialog = () => {
+  const [modalText, setModalText] = useState<string[]>([])
+  const [modalTitle, setModalTitle] = useState<string>('')
+  const [isApiModal, setIsApiModal] = useState<boolean>(false)
+  const [isLoading, setisLoading] = useState<boolean>(false)
+  const location = useLocation()
+  useEffect(() => {
+    setModalTitle('안내')
+    setModalText(['깔끔한 녹음을 위해', '조용한 곳에서 녹음 해주세요'])
+    setIsDialogOpen(true)
+  }, [])
+
+  const handleCloseModal = useCallback(() => {
     setIsDialogOpen(false)
-    navigate('/mypage/my')
-  }
+    if (isApiModal) {
+      navigate('/mypage/my')
+    }
+  }, [isApiModal, navigate])
 
   const stopMicrophoneUsage = useCallback(() => {
     if (
@@ -63,18 +74,32 @@ export default function MusciRecordContent({
 
   const handleCancel = useCallback(() => {
     resetRecording()
-    navigate('/music/list', { state: { type: 'melting' } })
+    if (location.key === 'default') {
+      navigate('/music/list', { state: { type: 'melting' } })
+    } else {
+      navigate(-1)
+    }
   }, [navigate, resetRecording])
 
   const handleComplete = useCallback(async () => {
     if (isEnd && !isRecording) {
-      // 녹음이 완료된 경우, API로 전송
       const recordedBlob = processRecordedAudio()
+      setIsApiModal(true)
+      setisLoading(true) // 로딩 시작
 
-      const response = await songApi.meltingApi(originalSongId, recordedBlob)
+      try {
+        const response = await songApi.meltingApi(originalSongId, recordedBlob)
 
-      if (response) {
-        setIsDialogOpen(true)
+        if (response) {
+          setModalTitle('멜팅 완료')
+          setModalText([
+            '멜팅하기가 완료되었습니다.',
+            '내가 등록한 곡&앨범 에서 확인 가능합니다.',
+          ])
+          setIsDialogOpen(true)
+        }
+      } finally {
+        setisLoading(false) // 로딩 끝
       }
     }
   }, [isEnd, isRecording, processRecordedAudio, navigate])
@@ -186,12 +211,13 @@ export default function MusciRecordContent({
       </div>
       {isDialogOpen && (
         <AlertModal
-          title="멜팅 완료"
-          messages={dialogMessages}
+          title={modalTitle}
+          messages={modalText}
           isOpen={isDialogOpen}
-          onClose={handleCloseDialog}
+          onClose={handleCloseModal}
         />
       )}
+      {isLoading && <LodingModal isOpen={isLoading} />}
     </div>
   )
 }
