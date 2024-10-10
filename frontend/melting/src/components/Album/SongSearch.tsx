@@ -31,6 +31,7 @@ const convertSongDtoToSong = (item: SongSearchResponseDto): Song => {
     aiCoverSongId: item.aiCoverSongId || null,
     likedCount: 0,
     isLiked: false,
+    isTitle: false,
     lengthInSeconds: 0,
   }
 }
