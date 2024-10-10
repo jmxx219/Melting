@@ -9,8 +9,8 @@ export default function MyPageRoutes() {
     <Routes>
       <Route index element={<MyPageMain />} />
       <Route path="profile/edit" element={<ProfileEdit />} />
-      <Route path="my" element={<MyAlbumsAndSongs />} />
-      <Route path="liked" element={<LikedAlbumsAndSongs />} />
+      <Route path="my/:tabType" element={<MyAlbumsAndSongs />} />
+      <Route path="liked/:tabType" element={<LikedAlbumsAndSongs />} />
     </Routes>
   )
 }
