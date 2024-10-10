@@ -118,15 +118,19 @@ export default function TagAlbum() {
     if (selectedHashtags.length > 0) {
       const tag = selectedHashtags[0]
 
-      if (tags.length < 5 && !tags.includes(tag)) {
-        try {
-          await userApi.addMemberHashtag({ content: tag })
-          setTags([...tags, tag])
-          setSelectedHashtags([])
-          setIsDialogOpen(false)
-        } catch (error) {
-          console.error('태그 추가 실패:', error)
-        }
+      // API 요청 시 에러를 처리하는 부분
+      try {
+        await userApi.addMemberHashtag({ content: tag })
+
+        // 태그 추가가 성공적으로 완료되면
+        setTags([...tags, tag])
+        setSelectedHashtags([]) // 입력한 해시태그 초기화
+        setIsDialogOpen(false) // 다이얼로그 닫기
+      } catch (error) {
+        // 400 에러 발생 시 경고 메시지 표시 및 selectedHashtags 초기화
+        setAlertMessages(['없는 해시태그입니다. 다시 한번 설정해주세요.']) // 경고 메시지 설정
+        setAlertOpen(true) // 모달 열기
+        setSelectedHashtags([]) // 입력한 해시태그 초기화
       }
     }
   }
