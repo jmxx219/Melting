@@ -17,9 +17,11 @@ import {
   CreateAlbumPayload,
 } from '@/types/album.ts'
 import { convertDateToWord } from '@/utils/dateUtil.ts'
+import LoadingModal from '@/components/Common/LoadingModal.tsx'
 
 export default function AlbumForm() {
   const [releaseDate, setReleaseDate] = useState<string>('')
+  const [isLoading, setIsLoading] = useState<boolean>(false)
   const navigate = useNavigate()
 
   const {
@@ -85,6 +87,7 @@ export default function AlbumForm() {
 
   const handleSubmit = async () => {
     if (isFormValid) {
+      setIsLoading(true)
       try {
         let generatedIntro = albumIntro
 
@@ -105,6 +108,7 @@ export default function AlbumForm() {
             setAlbumIntro(generatedIntro)
           } catch (error) {
             console.error('AI 소개 생성 중 오류 발생:', error)
+            setIsLoading(false)
             return // AI 소개 생성에 실패한 경우 제출 진행 중단
           }
         }
@@ -136,6 +140,7 @@ export default function AlbumForm() {
           }
         } else {
           console.error('앨범 커버 이미지가 없습니다.')
+          setIsLoading(false)
           return
         }
 
@@ -143,15 +148,18 @@ export default function AlbumForm() {
         const response = await albumApi.createAlbum(payload)
         // 앨범 생성 후 앨범 컨텍스트 초기화
         resetAlbum()
+        setIsLoading(false)
         navigate(`/album/detail/${response.albumId}`, { replace: true })
       } catch (error) {
         console.error('앨범 생성 중 오류 발생:', error)
+        setIsLoading(false)
       }
     }
   }
 
   return (
     <form className="space-y-6">
+      <LoadingModal isOpen={isLoading} content={'앨범 생성 중'} />
       <div>
         <Label htmlFor="hashtag" className="font-semibold">
           선정된 곡<span className="text-primary-400 ml-1">*</span>
@@ -169,7 +177,7 @@ export default function AlbumForm() {
             placeholder="앨범 명을 입력해주세요"
             value={albumName}
             onChange={(e) => setAlbumName(e.target.value)}
-            className={`${albumName ? 'border-primary-400' : ''}`}
+            className={`${albumName ? 'border-primary-400 text-black' : ''}`}
             autoComplete="off"
             spellCheck="false"
           />
@@ -194,7 +202,7 @@ export default function AlbumForm() {
         <div className="relative">
           <Textarea
             id="albumDetail"
-            className={`min-h-[100px] ${albumIntro ? 'border-primary-400' : ''}`}
+            className={`min-h-[100px] ${albumIntro ? 'border-2 border-primary-400' : ''}`}
             placeholder={`앨범에 대한 소개를 입력해주세요.\n입력하지 않으면 AI가 자동으로 생성합니다.`}
             value={albumIntro}
             onChange={(e) => setAlbumIntro(e.target.value)}

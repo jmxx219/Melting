@@ -1,9 +1,10 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { userApi } from '@/apis/userApi'
 import SongContent from '@/components/Common/SongContent'
 import { SongLikesResponseDto } from '@/types/user'
 import { Song } from '@/types/song'
 import { SortType, sort } from '@/types/constType'
+import InfiniteScroll from '@/components/Common/InfinityScroll.tsx'
 
 interface LikedSongListProps {
   sortOption: SortType
@@ -20,52 +21,74 @@ const convertSongLikesResponseToSong = (
     nickname: songLikes.creatorNickname || '',
     likedCount: songLikes.likedCount || 0,
     isLiked: songLikes.isLiked || false,
+    isTitle: false,
     lengthInSeconds: songLikes.lengthInSeconds,
     songUrl: '',
   }
 }
 
+const fetchLikedSongs = async (sortOption: SortType, page: number = 0) => {
+  const sortParam = sortOption === sort.LATEST ? '0' : '1'
+  try {
+    const response = await userApi.getMemberLikesSongs(sortParam, page, 10)
+    const newItems =
+      response.songLikesList?.map(convertSongLikesResponseToSong) || []
+    return { newItems, isLast: response.isLast }
+  } catch (error) {
+    console.error('좋아한 곡 목록 가져오기 실패:', error)
+    return { newItems: [], isLast: true }
+  }
+}
+
 export default function LikedSongList({ sortOption }: LikedSongListProps) {
   const [songs, setSongs] = useState<Song[]>([])
-  // const [isLast, setIsLast] = useState(false)
-  // const [loading, setLoading] = useState(false)
+  const [page, setPage] = useState(0)
+  const [loading, setLoading] = useState(false)
+  const [hasMore, setHasMore] = useState(true)
 
-  const fetchLikedSongs = async (page: number = 0) => {
-    // setLoading(true)
-    try {
-      setSongs([])
-      const sortParam = sortOption === sort.LATEST ? '0' : '1'
-      const response = await userApi.getMemberLikesSongs(sortParam, page, 10)
+  const loadMoreItems = useCallback(async () => {
+    if (loading || !hasMore) return
+    setLoading(true)
 
-      if (response.songLikesList) {
-        const convertedSongs = response.songLikesList.map(
-          convertSongLikesResponseToSong,
-        )
-        setSongs((prev) => [...prev, ...convertedSongs])
-      }
+    const { newItems, isLast } = await fetchLikedSongs(sortOption, page)
 
-      // setIsLast(response.isLast || false)
-    } catch (error) {
-      console.error('좋아한 곡 목록 가져오기 실패:', error)
-    } finally {
-      // setLoading(false)
-    }
+    setSongs((prev) => [...prev, ...newItems])
+    setHasMore(!isLast)
+    setPage((prev) => prev + 1)
+    setLoading(false)
+  }, [loading, hasMore, page, sortOption])
+
+  const updateSong = (songId: number, isLiked: boolean, likedCount: number) => {
+    setSongs((prevSongs) =>
+      prevSongs.map((song) =>
+        song.songId === songId ? { ...song, isLiked, likedCount } : song,
+      ),
+    )
   }
 
   useEffect(() => {
-    fetchLikedSongs()
+    setSongs([])
+    setPage(0)
+    setHasMore(true)
+    loadMoreItems()
   }, [sortOption])
 
   return (
     <div>
-      {songs.map((song) => (
-        <SongContent
-          key={song.songId}
-          song={song}
-          fetchSongs={fetchLikedSongs}
-          hasProfileImage={true}
-        />
-      ))}
+      <InfiniteScroll
+        loadMore={loadMoreItems}
+        hasMore={hasMore}
+        loading={loading}
+      >
+        {songs.map((song) => (
+          <SongContent
+            key={song.songId}
+            song={song}
+            updateSong={updateSong}
+            hasProfileImage={true}
+          />
+        ))}
+      </InfiniteScroll>
     </div>
   )
 }

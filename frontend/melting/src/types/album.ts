@@ -1,13 +1,13 @@
-import { Song } from './song'
 import {
-  ErrorResponse,
+  ApiResponseBoolean,
   ApiResponseInteger,
   ApiResponseString,
-  ApiResponseBoolean,
   ApiResponseVoid,
+  ErrorResponse,
 } from '@/types/globalType.ts'
 import { ApiResponseMemberResponseDto } from '@/types/user.ts'
 import { albumCategoryType } from './constType'
+import { Song } from './song'
 
 export interface AlbumForm {
   tracks: Song[]
@@ -58,7 +58,7 @@ export interface ApiResponseListAlbumMainResponseDto {
 
 export interface AlbumUpdateResponseDto {
   /** @format int64 */
-  albumId: number
+  album_id?: number
 }
 
 export interface ApiResponseAlbumUpdateResponseDto {
@@ -79,7 +79,7 @@ export interface ApiResponseCommentResponseDto {
 
 export interface CommentResponseDto {
   /** @format int64 */
-  commentId?: number
+  commentId: number
   writerProfileImage: string
   writerNickname: string
   content: string
@@ -115,13 +115,42 @@ export type DeleteAlbumLikesData = ApiResponseInteger
 
 export type DeleteAlbumLikesError = ErrorResponse
 
-export type GetAllCommentsData = ApiResponseListCommentResponseDto
+export interface CommentPageResponseDto {
+  commentPage?: CommentResponseDto[]
+  isLast?: boolean
+  /** @format int32 */
+  pageNumber?: number
+  /** @format int32 */
+  pageSize?: number
+  /** @format int32 */
+  totalPages?: number
+  /** @format int64 */
+  totalElements?: number
+  /** @format int32 */
+  numberOfElements?: number
+}
+
+export interface ApiResponseCommentPageResponseDto {
+  status?: string
+  data?: CommentPageResponseDto
+  errorMessage?: string
+}
+
+export type GetAllCommentsData = ApiResponseCommentPageResponseDto
 
 export type GetAllCommentsError = ErrorResponse
 
 export type WriteCommentData = ApiResponseCommentResponseDto
 
 export type WriteCommentError = ErrorResponse
+
+export type DeleteCommentData = ApiResponseCommentResponseDto
+
+export type DeleteCommentError = ErrorResponse
+
+export type ModifyCommentData = ApiResponseCommentResponseDto
+
+export type ModifyCommentError = ErrorResponse
 
 export type GetMemberInfoData = ApiResponseMemberResponseDto
 
@@ -213,6 +242,7 @@ export interface SongDetailsResponseDto {
   artist: string
   albumCoverImageUrl: string
   isLiked: boolean
+  isTitle: boolean
   /** @format int32 */
   likedCount: number
   songUrl?: string
@@ -246,6 +276,35 @@ export interface ApiResponseAlbumDetailsResponseDto {
   status?: string
   data?: AlbumDetailsResponseDto
   errorMessage?: string
+}
+
+export interface ApiResponseAlbumSearchPageResponseDto {
+  status?: string
+  data?: AlbumSearchPageResponseDto
+  errorMessage?: string
+}
+export interface AlbumSearchPageResponseDto {
+  albumInfoList: AlbumRankingResponseDto[]
+  isLast: boolean
+  /** @format int32 */
+  pageNumber: number
+  /** @format int32 */
+  pageSize: number
+  /** @format int32 */
+  totalPages: number
+  /** @format int64 */
+  totalElements: number
+  /** @format int32 */
+  numberOfElements: number
+}
+
+export interface AlbumSearchResponseDto {
+  /** @format int64 */
+  albumId?: number
+  albumName?: string
+  creatorNickname?: string
+  /** @format date-time */
+  createdAt?: string
 }
 
 export type GetAlbumDetailsData = ApiResponseAlbumDetailsResponseDto
@@ -288,3 +347,30 @@ export interface AlbumUpdateRequestDto {
 export type UpdateAlbumDescriptionData = ApiResponseAlbumDetailsResponseDto
 
 export type UpdateAlbumDescriptionError = ErrorResponse
+
+export interface AlbumRankingPageResponseDto {
+  albums?: AlbumRankingResponseDto[]
+  isLast?: boolean
+  /** @format int32 */
+  pageNumber?: number
+  /** @format int32 */
+  pageSize?: number
+  /** @format int32 */
+  totalPages?: number
+  /** @format int64 */
+  totalElements?: number
+  /** @format int32 */
+  numberOfElements?: number
+}
+
+export interface ApiResponseAlbumRankingPageResponseDto {
+  status?: string
+  data?: AlbumRankingPageResponseDto
+  errorMessage?: string
+}
+
+export type GetAlbumPageContainsHashtagData =
+  ApiResponseAlbumRankingPageResponseDto
+
+export type GetAlbumPageContainsHashtagError = ErrorResponse
+export type SearchAlbumsData = ApiResponseAlbumSearchPageResponseDto
