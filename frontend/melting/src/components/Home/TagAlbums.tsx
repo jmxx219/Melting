@@ -63,7 +63,6 @@ export default function TagAlbum() {
           '태그를 불러오는데 실패했습니다.',
           '다시 시도해주세요.',
         ])
-        console.error('태그 불러오기 실패:', error)
       }
     }
 
@@ -90,7 +89,6 @@ export default function TagAlbum() {
         '앨범을 불러오는데 실패했습니다.',
         '다시 시도해주세요.',
       ])
-      console.error('앨범 조회 실패:', error)
       setIsError(true)
       if (retryCount < maxRetries) {
         setTimeout(() => {
@@ -121,15 +119,14 @@ export default function TagAlbum() {
       // API 요청 시 에러를 처리하는 부분
       try {
         await userApi.addMemberHashtag({ content: tag })
-
         // 태그 추가가 성공적으로 완료되면
         setTags([...tags, tag])
-        setSelectedHashtags([]) // 입력한 해시태그 초기화
         setIsDialogOpen(false) // 다이얼로그 닫기
       } catch (error) {
         // 400 에러 발생 시 경고 메시지 표시 및 selectedHashtags 초기화
-        setAlertMessages(['없는 해시태그입니다. 다시 한번 설정해주세요.']) // 경고 메시지 설정
+        setAlertMessages(['없는 해시태그입니다.', '다시 한번 설정해주세요.']) // 경고 메시지 설정
         setAlertOpen(true) // 모달 열기
+      } finally {
         setSelectedHashtags([]) // 입력한 해시태그 초기화
       }
     }
@@ -150,7 +147,6 @@ export default function TagAlbum() {
           '태그를 삭제하는데 실패했습니다.',
           '다시 시도해주세요.',
         ])
-        console.error('태그 삭제 실패:', error)
       }
     }
   }
@@ -210,9 +206,10 @@ export default function TagAlbum() {
                     해시태그 검색
                   </DialogTitle>
                 </DialogHeader>
-                <p className="text-primary-400 text-left p-0 m-0">
-                  1개씩 설정 가능합니다
-                </p>
+                <div className="text-primary-400 text-left p-0 m-0">
+                  <p>1개씩 설정 가능합니다</p>
+                  <p>태그를 클릭하면 삭제가 가능합니다.</p>
+                </div>
                 <HashtagSelector
                   onHashtagsChange={handleHashtagsChange}
                   maxHashtags={1}
