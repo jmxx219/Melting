@@ -177,7 +177,7 @@ export default function MusciRecordContent({
       </div>
       <AudioPlayer
         ref={audioPlayerRef}
-        disabled={false}
+        disabled={true}
         audioSrc={audioSrc}
         onEnded={handleAudioEnded}
       />
