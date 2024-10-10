@@ -124,7 +124,10 @@ export default function TagAlbum() {
         setIsDialogOpen(false) // 다이얼로그 닫기
       } catch (error) {
         // 400 에러 발생 시 경고 메시지 표시 및 selectedHashtags 초기화
-        setAlertMessages(['없는 해시태그입니다.', '다시 한번 설정해주세요.']) // 경고 메시지 설정
+        setAlertMessages([
+          '존재하지 않는 해시태그입니다.',
+          '존재하는 해시태그로 설정해주세요',
+        ]) // 경고 메시지 설정
         setAlertOpen(true) // 모달 열기
       } finally {
         setSelectedHashtags([]) // 입력한 해시태그 초기화
