@@ -59,6 +59,10 @@ export default function TagAlbum() {
         const userTags = await userApi.getMemberHashtags()
         setTags(userTags)
       } catch (error) {
+        setAlertMessages([
+          '태그를 불러오는데 실패했습니다.',
+          '다시 시도해주세요.',
+        ])
         console.error('태그 불러오기 실패:', error)
       }
     }
@@ -82,6 +86,10 @@ export default function TagAlbum() {
       setHasMore(newAlbums.length > 0 && !response.isLast)
       setRetryCount(0) // 성공 시 retry 카운트 리셋
     } catch (error) {
+      setAlertMessages([
+        '앨범을 불러오는데 실패했습니다.',
+        '다시 시도해주세요.',
+      ])
       console.error('앨범 조회 실패:', error)
       setIsError(true)
       if (retryCount < maxRetries) {
@@ -134,6 +142,10 @@ export default function TagAlbum() {
         }
         setTagToDelete(null)
       } catch (error) {
+        setAlertMessages([
+          '태그를 삭제하는데 실패했습니다.',
+          '다시 시도해주세요.',
+        ])
         console.error('태그 삭제 실패:', error)
       }
     }
