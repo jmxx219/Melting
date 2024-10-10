@@ -4,12 +4,13 @@
 
 @font-face {
   font-family: 'Pretendard-Regular';
-  src: url('./fonts/Pretendard-Regular.woff') format('woff');
+  src: url('/fonts/Pretendard-Regular.woff') format('woff');
   font-weight: normal;
 }
 
+
 body {
-  background-color: #f5f7fa; /* 전체 페이지 배경 회색 */
+  background-color: #ffffff; /* 전체 페이지 배경 회색 */
   display: flex;
   justify-content: center;
   align-items: center;
@@ -27,7 +28,23 @@ body {
   background-color: #ffffff; /* 콘텐츠 배경 흰색 */
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* 그림자 추가 */
 }
+.progress-bg-orange::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 15px;
+  height: 15px;
+  background: #FFAF25;
+  cursor: pointer;
+  border-radius: 50%;
+}
 
+.progress-bg-orange::-webkit-slider-thumb {
+  width: 15px;
+  height: 15px;
+  background: #FFAF25;
+  cursor: pointer;
+  border-radius: 50%;
+}
 @layer base {
   :root {
     --background: 0 0% 100%;
