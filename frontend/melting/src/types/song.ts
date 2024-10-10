@@ -14,6 +14,7 @@ export type Song = {
   aiCoverSongId?: number | null
   likedCount: number
   isLiked: boolean
+  isTitle: boolean
   lengthInSeconds: number
   songUrl?: string
 }

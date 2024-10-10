@@ -21,6 +21,7 @@ const convertSongLikesResponseToSong = (
     nickname: songLikes.creatorNickname || '',
     likedCount: songLikes.likedCount || 0,
     isLiked: songLikes.isLiked || false,
+    isTitle: false,
     lengthInSeconds: songLikes.lengthInSeconds,
     songUrl: '',
   }
