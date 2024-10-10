@@ -24,6 +24,11 @@ export default function SearchInput({
   const [isComposing, setIsComposing] = useState(false)
 
   const validateInput = useCallback((value: string) => {
+    if (value === '') {
+      setWarningMessage(null)
+      return true
+    }
+
     if (value.length > 50) {
       setWarningMessage('50자 이내로 작성해주세요.')
       return false
