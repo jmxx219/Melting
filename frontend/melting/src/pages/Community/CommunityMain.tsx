@@ -10,6 +10,7 @@ export default function CommunityMainPage() {
         <DefaultHeader
           title="커뮤니티"
           buttonArea={<Logo width={10} height={10} />}
+          disableBack={true}
         />
       }
       children={<CommunityMain />}
