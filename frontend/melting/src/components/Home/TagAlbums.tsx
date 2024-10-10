@@ -197,7 +197,9 @@ export default function TagAlbum() {
                   onHashtagsChange={handleHashtagsChange}
                   maxHashtags={1}
                 />
-                <Button onClick={() => addTag()}>저장</Button>
+                <Button className="flex" onClick={() => addTag()}>
+                  저장
+                </Button>
               </DialogContent>
             </Dialog>
           )}
