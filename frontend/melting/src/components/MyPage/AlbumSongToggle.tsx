@@ -7,12 +7,12 @@ import { SortType, sort, ViewType, view, TabType, tab } from '@/types/constType'
 
 interface AlbumSongToggleProps {
   viewType: ViewType
-  tabType?: TabType
+  tabType: TabType
 }
 
 export default function AlbumSongToggle({
   viewType,
-  tabType = tab.ALBUM,
+  tabType,
 }: AlbumSongToggleProps) {
   const [selectedTab, setSelectedTab] = useState<TabType>(tabType)
   const [sortOption, setSortOption] = useState<SortType>(sort.LATEST)
