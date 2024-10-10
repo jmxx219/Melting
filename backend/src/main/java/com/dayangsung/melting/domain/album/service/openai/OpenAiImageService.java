@@ -77,7 +77,7 @@ public class OpenAiImageService {
 
 		String enhancedPrompt = String.format("%s. This is the subject of the picture you want." +
 						" If there is a request for a specific celebrity or player on the topic, it should not come out." +
-						" Please don't be too profound." +
+						" Please don't be too profound. Draw it in an anime style." +
 						" If there are too many objects, it will be distracting, so please draw it in a simple and cute way." +
 						" Please review if there is any awkwardness and if there is any awkwardness, please draw it again with great effort!",
 				prompt);
