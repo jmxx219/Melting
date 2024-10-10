@@ -71,7 +71,7 @@ export default function AlbumDetailTop({
           src={albumInfo.albumCoverImage}
         />
       </div>
-      <div className="flex-col mt-2" id="album-info">
+      <div className="flex-col mt-8" id="album-info">
         <div className="text-2xl font-bold">{albumInfo.albumName}</div>
         <div className="mt-2 flex space-x-5 text-sm justify-between">
           <div>{convertIsoToDotDate(albumInfo.createdAt)}</div>
@@ -85,10 +85,12 @@ export default function AlbumDetailTop({
             ))}
           </div>
         </div>
-        <AlbumUserProfile
-          nickname={albumInfo.albumCreatorNickname}
-          profileImage={albumInfo.albumCreatorProfileImageUrl}
-        />
+        <div className="mt-2">
+          <AlbumUserProfile
+            nickname={albumInfo.albumCreatorNickname}
+            profileImage={albumInfo.albumCreatorProfileImageUrl}
+          />
+        </div>
       </div>
       <div className="mt-2 flex">
         <div className="flex flex-1 justify-start items-center">
