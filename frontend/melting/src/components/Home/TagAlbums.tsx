@@ -27,6 +27,7 @@ import HashtagButton from '../Button/HashtagButton'
 import { AlertDialogCancel } from '@radix-ui/react-alert-dialog'
 import { userApi } from '@/apis/userApi.ts'
 import { albumApi } from '@/apis/albumApi.ts'
+import AlertModal from '@/components/Common/AlertModal.tsx'
 
 export default function TagAlbum() {
   const [tags, setTags] = useState<string[]>([])
@@ -41,6 +42,8 @@ export default function TagAlbum() {
   const [hasMore, setHasMore] = useState(true)
   const [isError, setIsError] = useState(false)
   const [retryCount, setRetryCount] = useState(0)
+  const [alertOpen, setAlertOpen] = useState(false) // AlertModal 상태 추가
+  const [alertMessages, setAlertMessages] = useState<string[]>([])
   const maxRetries = 3
   const retryDelay = 1000 // 1초
 
@@ -56,7 +59,10 @@ export default function TagAlbum() {
         const userTags = await userApi.getMemberHashtags()
         setTags(userTags)
       } catch (error) {
-        console.error('태그 불러오기 실패:', error)
+        setAlertMessages([
+          '태그를 불러오는데 실패했습니다.',
+          '다시 시도해주세요.',
+        ])
       }
     }
 
@@ -79,7 +85,10 @@ export default function TagAlbum() {
       setHasMore(newAlbums.length > 0 && !response.isLast)
       setRetryCount(0) // 성공 시 retry 카운트 리셋
     } catch (error) {
-      console.error('앨범 조회 실패:', error)
+      setAlertMessages([
+        '앨범을 불러오는데 실패했습니다.',
+        '다시 시도해주세요.',
+      ])
       setIsError(true)
       if (retryCount < maxRetries) {
         setTimeout(() => {
@@ -106,15 +115,19 @@ export default function TagAlbum() {
   const addTag = async () => {
     if (selectedHashtags.length > 0) {
       const tag = selectedHashtags[0]
-      if (tags.length < 5 && !tags.includes(tag)) {
-        try {
-          await userApi.addMemberHashtag({ content: tag })
-          setTags([...tags, tag])
-          setSelectedHashtags([])
-          setIsDialogOpen(false)
-        } catch (error) {
-          console.error('태그 추가 실패:', error)
-        }
+
+      // API 요청 시 에러를 처리하는 부분
+      try {
+        await userApi.addMemberHashtag({ content: tag })
+        // 태그 추가가 성공적으로 완료되면
+        setTags([...tags, tag])
+        setIsDialogOpen(false) // 다이얼로그 닫기
+      } catch (error) {
+        // 400 에러 발생 시 경고 메시지 표시 및 selectedHashtags 초기화
+        setAlertMessages(['없는 해시태그입니다.', '다시 한번 설정해주세요.']) // 경고 메시지 설정
+        setAlertOpen(true) // 모달 열기
+      } finally {
+        setSelectedHashtags([]) // 입력한 해시태그 초기화
       }
     }
   }
@@ -130,7 +143,10 @@ export default function TagAlbum() {
         }
         setTagToDelete(null)
       } catch (error) {
-        console.error('태그 삭제 실패:', error)
+        setAlertMessages([
+          '태그를 삭제하는데 실패했습니다.',
+          '다시 시도해주세요.',
+        ])
       }
     }
   }
@@ -190,16 +206,15 @@ export default function TagAlbum() {
                     해시태그 검색
                   </DialogTitle>
                 </DialogHeader>
-                <p className="text-primary-400 text-left p-0 m-0">
-                  1개씩 설정 가능합니다
-                </p>
+                <div className="text-primary-400 text-left p-0 m-0">
+                  <p>1개씩 설정 가능합니다</p>
+                  <p>태그를 클릭하면 삭제가 가능합니다.</p>
+                </div>
                 <HashtagSelector
                   onHashtagsChange={handleHashtagsChange}
                   maxHashtags={1}
                 />
-                <Button className="flex" onClick={() => addTag()}>
-                  저장
-                </Button>
+                <Button onClick={() => addTag()}>저장</Button>
               </DialogContent>
             </Dialog>
           )}
@@ -255,6 +270,13 @@ export default function TagAlbum() {
             </AlertDialogFooter>
           </AlertDialogContent>
         </AlertDialog>
+
+        <AlertModal
+          title={''}
+          isOpen={alertOpen}
+          onClose={() => setAlertOpen(false)}
+          messages={alertMessages} // 모달에 메시지 전달
+        />
       </div>
     </>
   )
