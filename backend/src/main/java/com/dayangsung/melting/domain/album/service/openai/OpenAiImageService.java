@@ -34,7 +34,7 @@ public class OpenAiImageService {
 
 	public OpenAiImageService(@Value("${openai.api-key}") String openAiApiKey,
 			@Lazy AlbumCoverImageService albumCoverImageService, OpenAiLyricsSummaryService openAiLyricsSummaryService,
-		SongService songService, ObjectMapper jacksonObjectMapper) {
+			SongService songService, ObjectMapper jacksonObjectMapper) {
 		this.albumCoverImageService = albumCoverImageService;
 		this.openAiLyricsSummaryService = openAiLyricsSummaryService;
 		this.songService = songService;
@@ -51,8 +51,8 @@ public class OpenAiImageService {
 	public String[] createAiCoverImage(List<Long> songs) throws JsonProcessingException {
 		List<Song> songList = songService.idListToSongList(songs);
 		List<String> lyricsList = songList.stream()
-			.map(song -> song.getOriginalSong().getLyrics().replace('\n', ' '))
-			.toList();
+				.map(song -> song.getOriginalSong().getLyrics().replace('\n', ' '))
+				.toList();
 
 		Mono<String> lyricsResult = openAiLyricsSummaryService.summarizeLyrics(lyricsList);
 		String content = jsonParsing(lyricsResult.block());
@@ -77,18 +77,19 @@ public class OpenAiImageService {
 
 		String enhancedPrompt = String.format("%s. This is the subject of the picture you want." +
 						" If there is a request for a specific celebrity or player on the topic, it should not come out." +
-						" If there are too many objects, it will be distracting, so please draw it so that it won't." +
+						" Please don't be too profound." +
+						" If there are too many objects, it will be distracting, so please draw it in a simple and cute way." +
 						" Please review if there is any awkwardness and if there is any awkwardness, please draw it again with great effort!",
 				prompt);
 
 		Map<String, Object> bodyValue = Map.of(
-			"prompt", enhancedPrompt,
-			"model", "dall-e-3",
-			"n", 1,
-			"quality", "standard",
-			"response_format", "b64_json",
-			"size", "1024x1024",
-			"style", "vivid"
+				"prompt", enhancedPrompt,
+				"model", "dall-e-3",
+				"n", 1,
+				"quality", "standard",
+				"response_format", "b64_json",
+				"size", "1024x1024",
+				"style", "vivid"
 		);
 
 		return this.webClient.post()
@@ -97,7 +98,7 @@ public class OpenAiImageService {
 				.bodyValue(bodyValue)
 				.retrieve()
 				.onStatus(HttpStatus.BAD_REQUEST::equals, clientResponse -> clientResponse.bodyToMono(String.class)
-				.flatMap(errorBody -> Mono.error(new RuntimeException("API Error: " + errorBody))))
+						.flatMap(errorBody -> Mono.error(new RuntimeException("API Error: " + errorBody))))
 				.bodyToMono(String.class);
 	}
 
