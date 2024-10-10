@@ -16,16 +16,16 @@ public interface AlbumRepository extends JpaRepository<Album, Long> {
 	@Query("SELECT a FROM Album a LEFT JOIN a.likesAlbums la WHERE a.isDeleted = false AND a.isPublic = true GROUP BY a.id ORDER BY COUNT(la) DESC")
 	Page<Album> findAllByOrderByLikesCountDesc(Pageable pageable);
 
-	@Query("SELECT a FROM Album a WHERE a.isDeleted = false AND a.isPublic = true AND a.albumName LIKE %:keyword%")
+	@Query("SELECT a FROM Album a WHERE a.isDeleted = false AND a.isPublic = true AND a.albumName ILIKE %:keyword%")
 	Page<Album> findByAlbumNameContaining(@Param("keyword") String keyword, Pageable pageable);
 
-	@Query("SELECT a FROM Album a JOIN a.songs s WHERE a.isDeleted = false AND a.isPublic = true AND s.originalSong.title LIKE %:keyword%")
+	@Query("SELECT a FROM Album a JOIN a.songs s WHERE a.isDeleted = false AND a.isPublic = true AND s.originalSong.title ILIKE %:keyword%")
 	Page<Album> findBySongTitleContaining(@Param("keyword") String keyword, Pageable pageable);
 
-	@Query("SELECT a FROM Album a JOIN a.hashtags ah WHERE a.isDeleted = false AND a.isPublic = true AND ah.hashtag.content LIKE %:keyword%")
+	@Query("SELECT a FROM Album a JOIN a.hashtags ah WHERE a.isDeleted = false AND a.isPublic = true AND ah.hashtag.content ILIKE %:keyword%")
 	Page<Album> findByHashtagContentContaining(@Param("keyword") String keyword, Pageable pageable);
 
-	@Query("SELECT a FROM Album a JOIN a.genres ag WHERE a.isDeleted = false AND a.isPublic = true AND ag.genre.content LIKE %:keyword%")
+	@Query("SELECT a FROM Album a JOIN a.genres ag WHERE a.isDeleted = false AND a.isPublic = true AND ag.genre.content ILIKE %:keyword%")
 	Page<Album> findByGenreNameContaining(@Param("keyword") String keyword, Pageable pageable);
 
 	@Query("SELECT a FROM Album a WHERE a.member.id = :memberId AND a.isDeleted = false ORDER BY a.createdAt DESC")
