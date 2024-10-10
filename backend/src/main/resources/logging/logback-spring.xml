@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <springProfile name="local">
+        <include resource="logging/logback-spring-local.xml"/>
+    </springProfile>
+    <springProfile name="prod">
+        <include resource="logging/logback-spring-prod.xml"/>
+    </springProfile>
+</configuration>
