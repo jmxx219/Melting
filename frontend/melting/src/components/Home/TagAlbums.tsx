@@ -27,6 +27,7 @@ import HashtagButton from '../Button/HashtagButton'
 import { AlertDialogCancel } from '@radix-ui/react-alert-dialog'
 import { userApi } from '@/apis/userApi.ts'
 import { albumApi } from '@/apis/albumApi.ts'
+import AlertModal from '@/components/Common/AlertModal.tsx'
 
 export default function TagAlbum() {
   const [tags, setTags] = useState<string[]>([])
@@ -41,6 +42,8 @@ export default function TagAlbum() {
   const [hasMore, setHasMore] = useState(true)
   const [isError, setIsError] = useState(false)
   const [retryCount, setRetryCount] = useState(0)
+  const [alertOpen, setAlertOpen] = useState(false) // AlertModal 상태 추가
+  const [alertMessages, setAlertMessages] = useState<string[]>([])
   const maxRetries = 3
   const retryDelay = 1000 // 1초
 
@@ -106,6 +109,7 @@ export default function TagAlbum() {
   const addTag = async () => {
     if (selectedHashtags.length > 0) {
       const tag = selectedHashtags[0]
+
       if (tags.length < 5 && !tags.includes(tag)) {
         try {
           await userApi.addMemberHashtag({ content: tag })
@@ -197,9 +201,7 @@ export default function TagAlbum() {
                   onHashtagsChange={handleHashtagsChange}
                   maxHashtags={1}
                 />
-                <Button className="flex" onClick={() => addTag()}>
-                  저장
-                </Button>
+                <Button onClick={() => addTag()}>저장</Button>
               </DialogContent>
             </Dialog>
           )}
@@ -255,6 +257,13 @@ export default function TagAlbum() {
             </AlertDialogFooter>
           </AlertDialogContent>
         </AlertDialog>
+
+        <AlertModal
+          title={''}
+          isOpen={alertOpen}
+          onClose={() => setAlertOpen(false)}
+          messages={alertMessages} // 모달에 메시지 전달
+        />
       </div>
     </>
   )
