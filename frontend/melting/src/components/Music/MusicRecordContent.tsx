@@ -217,7 +217,7 @@ export default function MusciRecordContent({
           onClose={handleCloseModal}
         />
       )}
-      {isLoading && <LodingModal isOpen={isLoading} />}
+      {isLoading && <LodingModal isOpen={isLoading} content={'멜팅 중'} />}
     </div>
   )
 }
