@@ -30,15 +30,6 @@ export default function MusciRecordContent({
   const audioPlayerRef = useRef<AudioPlayerHandle>(null)
   const navigate = useNavigate()
 
-  const dialogMessages = [
-    '멜팅하기가 완료되었습니다.',
-    '내가 등록한 곡&앨범 에서 확인 가능합니다.',
-  ]
-  const handleCloseDialog = () => {
-    setIsDialogOpen(false)
-    navigate(`/mypage/my/${tab.SONG}`)
-  }
-
   const [modalText, setModalText] = useState<string[]>([])
   const [modalTitle, setModalTitle] = useState<string>('')
   const [isApiModal, setIsApiModal] = useState<boolean>(false)
@@ -53,7 +44,7 @@ export default function MusciRecordContent({
   const handleCloseModal = useCallback(() => {
     setIsDialogOpen(false)
     if (isApiModal) {
-      navigate('/mypage/my')
+      navigate(`/mypage/my/${tab.SONG}`)
     }
   }, [isApiModal, navigate])
 
