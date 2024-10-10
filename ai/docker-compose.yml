@@ -1,0 +1,22 @@
+version: "3.8"
+services:
+  rvc:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: rvc-api
+    volumes:
+      - ./weights:/app/weights
+      - ./input:/app/input
+      - ./TEMP:/app/TEMP
+      - ./logs:/app/logs
+      # - ./dataset:/app/dataset # you can use this folder in order to provide your dataset for model training
+    ports:
+      - 8000:8000
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
