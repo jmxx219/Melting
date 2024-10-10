@@ -6,6 +6,7 @@ import { ScrollArea } from '../ui/scroll-area'
 import AudioPlayer, { AudioPlayerHandle } from './AudioPlayer'
 import { songApi } from '@/apis/songApi'
 import AlertModal from '../Common/AlertModal'
+import { tab } from '@/types/constType'
 
 interface MusciRecordProps {
   lyrics?: string
@@ -26,13 +27,14 @@ export default function MusciRecordContent({
   const chunksRef = useRef<Blob[]>([])
   const audioPlayerRef = useRef<AudioPlayerHandle>(null)
   const navigate = useNavigate()
+
   const dialogMessages = [
     '멜팅하기가 완료되었습니다.',
     '내가 등록한 곡&앨범 에서 확인 가능합니다.',
   ]
   const handleCloseDialog = () => {
     setIsDialogOpen(false)
-    navigate('/mypage/my')
+    navigate(`/mypage/my/${tab.SONG}`)
   }
 
   const stopMicrophoneUsage = useCallback(() => {

@@ -3,17 +3,18 @@ import { Button } from '@/components/ui/button'
 import { useNavigate } from 'react-router-dom'
 import ProfileImage from '@/components/Common/ProfileImage'
 import { useUserInfo } from '@/hooks/useUserInfo'
+import { tab } from '@/types/constType'
 
 export default function MyPageSelect() {
   const { data: userInfo } = useUserInfo()
   const navigate = useNavigate()
 
   const handleRegisteredSongs = () => {
-    navigate('/mypage/my') // 내가 등록한 한 곡 & 앨범 페이지 경로
+    navigate(`/mypage/my/${tab.ALBUM}`) // 내가 등록한 한 곡 & 앨범 페이지 경로
   }
 
   const handleLikedSongs = () => {
-    navigate('/mypage/liked') // 좋아요 한 곡 & 앨범 페이지 경로
+    navigate(`/mypage/liked/${tab.ALBUM}`) // 좋아요 한 곡 & 앨범 페이지 경로
   }
 
   const handleProfileEdit = () => {
