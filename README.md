@@ -72,7 +72,7 @@
 
 <br>
 
-### 차별점/독창성
+### Etc
 
 1. Logback & Mattermost 웹훅 Error 로깅: 중요한 오류를 실시간으로 Mattermost에 알림으로써 빠른 대응이 가능합니다.
 2. ElasticSearch & Nori 플러그인: 한국어 해시태그 검색을 최적화하여 정확하고 빠른 검색 경험을 제공합니다.
