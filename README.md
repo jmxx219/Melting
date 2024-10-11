@@ -16,8 +16,8 @@
 ## 목차
 
 1. [개요](#개요)
-2. [서비스 소개](#서비스-소개)
-3. [핵심 기능 소개](#기능-소개)
+2. [핵심 기능 소개](#기능-소개)
+3. [서비스 소개](#서비스-소개)
 4. [프로젝트 설계](#프로젝트-설계)
 5. [개발 환경 및 기술 스택](#개발-환경-및-기술-스택)
 6. [팀원 소개](#팀원-소개)
@@ -40,59 +40,6 @@
 
 <br>
 <br>
-
-## [서비스 소개](#목차)
-
-### 1️⃣ <b>메인 페이지</b>
-
-|                     **Login Page**                      |                        **Main Page**                        |                       **Main Page**                        |
-| :-----------------------------------------------------: | :---------------------------------------------------------: | :--------------------------------------------------------: |
-| <img src="./resources/gif/main_login.gif" height="400"> | <img src="./resources/gif/main_bestalbum.gif" height="400"> | <img src="./resources/gif/main_tagalbum.gif" height="400"> |
-
-<br>
-
-### 2️⃣ <b>곡 생성 페이지</b>
-
-> 사용자가 자신의 목소리를 녹음하여 곡을 만드는 페이지로, MR을 선택하고 바로 녹음할 수 있습니다.
-
-|                      **Melting Page**                      |                      **AI Cover Page**                      |
-| :--------------------------------------------------------: | :---------------------------------------------------------: |
-| <img src="./resources/gif/music_melting.gif" height="400"> | <img src="./resources/gif/music_ai_cover.gif" height="400"> |
-
-<br>
-
-### 3️⃣ <b>앨범 제작 페이지</b>
-
-> 완성된 커버곡과 멜팅곡을 선택하여 앨범을 발매하는 페이지입니다. 앨범 커버 이미지와 소개가 AI를 통해 자동 생성됩니다.
-
-|                  ** Album Register Page**                   |
-| :---------------------------------------------------------: |
-| <img src="./resources/gif/album_creation.gif" height="400"> |
-
-<br>
-
-### 4️⃣ <b>켜뮤니티 페이지</b>
-
-> 사용자들이 서로의 앨범을 공유하고 좋아요와 댓글을 남길 수 있는 커뮤니티 공간입니다.
-
-|                     **Community Page**                      |                        **Search Page**                        |
-| :---------------------------------------------------------: | :-----------------------------------------------------------: |
-| <img src="./resources/gif/community_main.gif" height="400"> | <img src="./resources/gif/community_search.gif" height="400"> |
-
-|                    **Album Detail Page**                     |                     **Album Streaming Page**                     |                     **Album Comment Page**                     |
-| :----------------------------------------------------------: | :--------------------------------------------------------------: | :------------------------------------------------------------: |
-| <img src="./resources/gif/community_liked.gif" height="400"> | <img src="./resources/gif/community_streaming.gif" height="400"> | <img src="./resources/gif/community_comment.gif" height="400"> |
-
-<br>
-
-### 5️⃣ <b>마이 페이지</b>
-
-|                          **Info Page**                          |                      **My Album/Song Page**                       |                      **Liked Album/Song Page**                       |
-| :-------------------------------------------------------------: | :---------------------------------------------------------------: | :------------------------------------------------------------------: |
-| <img src="./resources/gif/mypage_member_info.gif" height="400"> | <img src="./resources/gif/mypage_my_album_song.gif" height="400"> | <img src="./resources/gif/mypage_liked_album_song.gif" height="400"> |
-
-<br/>
-<br/>
 
 ## [핵심 기능 소개](#목차)
 
@@ -139,6 +86,59 @@
 <br/>
 <br/>
 
+## [서비스 소개](#목차)
+
+### 1️⃣ <b>메인 페이지</b>
+
+|                     **Login Page**                      |                        **Main Page**                        |                       **Main Page**                        |
+| :-----------------------------------------------------: | :---------------------------------------------------------: | :--------------------------------------------------------: |
+| <img src="./resources/gif/main_login.gif" height="400"> | <img src="./resources/gif/main_bestalbum.gif" height="400"> | <img src="./resources/gif/main_tagalbum.gif" height="400"> |
+
+<br>
+
+### 2️⃣ <b>곡 생성 페이지</b>
+
+> 사용자가 자신의 목소리를 녹음하여 곡을 만드는 페이지로, MR을 선택하고 바로 녹음할 수 있습니다.
+
+|                      **Melting Page**                      |                      **AI Cover Page**                      |
+| :--------------------------------------------------------: | :---------------------------------------------------------: |
+| <img src="./resources/gif/music_melting.gif" height="400"> | <img src="./resources/gif/music_ai_cover.gif" height="400"> |
+
+<br>
+
+### 3️⃣ <b>앨범 제작 페이지</b>
+
+> 완성된 커버곡과 멜팅곡을 선택하여 앨범을 발매하는 페이지입니다. 앨범 커버 이미지와 소개가 AI를 통해 자동 생성됩니다.
+
+|                   **Album Register Page**                   |
+| :---------------------------------------------------------: |
+| <img src="./resources/gif/album_creation.gif" height="400"> |
+
+<br>
+
+### 4️⃣ <b>켜뮤니티 페이지</b>
+
+> 사용자들이 서로의 앨범을 공유하고 좋아요와 댓글을 남길 수 있는 커뮤니티 공간입니다.
+
+|                     **Community Page**                      |                        **Search Page**                        |
+| :---------------------------------------------------------: | :-----------------------------------------------------------: |
+| <img src="./resources/gif/community_main.gif" height="400"> | <img src="./resources/gif/community_search.gif" height="400"> |
+
+|                    **Album Detail Page**                     |                     **Album Streaming Page**                     |                     **Album Comment Page**                     |
+| :----------------------------------------------------------: | :--------------------------------------------------------------: | :------------------------------------------------------------: |
+| <img src="./resources/gif/community_liked.gif" height="400"> | <img src="./resources/gif/community_streaming.gif" height="400"> | <img src="./resources/gif/community_comment.gif" height="400"> |
+
+<br>
+
+### 5️⃣ <b>마이 페이지</b>
+
+|                          **Info Page**                          |                      **My Album/Song Page**                       |                      **Liked Album/Song Page**                       |
+| :-------------------------------------------------------------: | :---------------------------------------------------------------: | :------------------------------------------------------------------: |
+| <img src="./resources/gif/mypage_member_info.gif" height="400"> | <img src="./resources/gif/mypage_my_album_song.gif" height="400"> | <img src="./resources/gif/mypage_liked_album_song.gif" height="400"> |
+
+<br/>
+<br/>
+
 ## [프로젝트 설계](#목차)
 
 ### 시스템 아키텍쳐
@@ -175,6 +175,15 @@
 |      **Infra**      | ![amazonec2](https://img.shields.io/badge/amazon_ec2-FF9900?style=for-the-badge&logo=amazonec2&logoColor=white) ![docker](https://img.shields.io/badge/docker-2496ED?style=for-the-badge&logo=docker&logoColor=white) ![nginx](https://img.shields.io/badge/nginx-009639?style=for-the-badge&logo=nginx&logoColor=white)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
 | **Management Tool** | ![Jira](https://img.shields.io/badge/jira-0052CC?style=for-the-badge&logo=jira&logoColor=white) ![Gitlab](https://img.shields.io/badge/GitLab-FC6D26?style=for-the-badge&logo=GitLab&logoColor=white) ![Mattermost](https://img.shields.io/badge/mattermost-0058CC?style=for-the-badge&logo=mattermost&logoColor=white) ![Notion](https://img.shields.io/badge/Notion-000000.svg?style=for-the-badge&logo=notion&logoColor=white) ![Figma](https://img.shields.io/badge/figma-F24E1E?style=for-the-badge&logo=figma&logoColor=white) ![Swagger](https://img.shields.io/badge/-Swagger-%23Clojure?style=for-the-badge&logo=swagger&logoColor=white)                                                                                                                                                                        |
 |       **App**       | ![ReactNative](https://img.shields.io/badge/ReactNative-61DAFB?style=for-the-badge)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
+
+<br/>
+
+<details>
+<summary>다양성팀 JIRA</summary>
+<div markdown="1">
+<img width="500px" src="./resources/jira/jira_flow_digram.PNG">
+</div>
+</details>
 
 <br/>
 <br/>
