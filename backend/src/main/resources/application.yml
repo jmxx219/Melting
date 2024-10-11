@@ -1,0 +1,6 @@
+spring:
+  application:
+    name: melting
+
+logging:
+  config: classpath:logging/logback-spring.xml
