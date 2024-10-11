@@ -1,0 +1,33 @@
+#!/usr/bin/env sh
+
+# 현재 브랜치 이름 가져오기
+BRANCH_NAME=$(git symbolic-ref --short HEAD)
+
+# master 및 develop 브랜치에서는 작업을 스킵
+if [ "$BRANCH_NAME" = "main" ] || [ "$BRANCH_NAME" = "dev" ] || [ "$BRANCH_NAME" = "fe-dev" ] || [ "$BRANCH_NAME" = "be-dev"  ]; then
+  exit 0
+fi
+
+if ! echo "$BRANCH_NAME" | grep -qE '^[a-z]+\/[a-z]+-S11P21A701-[0-9]+-[a-z0-9-]+$'; then
+  echo "커밋유형/분야-S11P21A701-숫자-이슈요약 형식의 브랜치명을 사용해주세요."
+  exit 1
+fi
+
+echo "현재 브랜치: $BRANCH_NAME"
+
+# 브랜치 이름을 "-" 기준으로 분할하여 배열로 저장
+IFS='-' read -ra BRANCH_PARTS <<< "$BRANCH_NAME"
+
+# JIRA 이슈 번호 추출 (두 번째와 세 번째 부분을 조합)
+JIRA_ID="${BRANCH_PARTS[1]}-${BRANCH_PARTS[2]}"
+
+echo "추출된 JIRA ID: $JIRA_ID"
+
+if ! grep -q "$JIRA_ID" "$1"; then
+  # 임시 파일에 새로운 메시지를 작성
+  {
+    cat "$1"  # 기존 커밋 메시지 내용 모두 추가
+    echo ""   # 개행 추가
+    echo "Jira: $JIRA_ID"  # JIRA ID 추가
+  } > "$1".tmp && mv "$1".tmp "$1"  # 임시 파일을 원래 파일로 교체
+fi
