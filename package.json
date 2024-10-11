@@ -1,0 +1,12 @@
+{
+  "dependencies": {
+    "husky": "^9.1.5",
+    "yarn": "^1.22.22"
+  },
+  "devDependencies": {
+    "husky": "^8.0.0"
+  },
+  "scripts": {
+    "prepare": "husky install"
+  }
+}
