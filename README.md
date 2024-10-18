@@ -3,7 +3,7 @@
     <img src="./resources/img/logo.png" width="22px" style="margin-right: 15px"/> 멜팅, Melting
   </h1>
   <img src="./resources/img/main.png"/>
-  <h3>🏆 SSAFY 11기 특화 프로젝트 최우수상 수상 🏆</h3>
+  <h3>🏆 SSAFY 11기 특화 프로젝트 우수상 수상 🏆</h3>
   <h4>AI와 함께 나만의 커버곡을 만들어 누구나 쉽게 앨범을 발매할 수 있는 웹앱 플랫폼 서비스</h5>
   <p>2024.09.26 ~ 2024.10.10</p>  
     
