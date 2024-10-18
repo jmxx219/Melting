@@ -72,11 +72,11 @@
 
 <br>
 
-### Etc
+### 차별점
 
 1. Logback & Mattermost 웹훅 Error 로깅: 중요한 오류를 실시간으로 Mattermost에 알림으로써 빠른 대응이 가능합니다.
 2. ElasticSearch & Nori 플러그인: 한국어 해시태그 검색을 최적화하여 정확하고 빠른 검색 경험을 제공합니다.
-3. GPT-4o, DALL-E 3: AI를 활용하여 가사를 요약하고 앨범 소개문과 앨범 커버 이미지를 자동으로 생성해, 사용자 편의성을 극대화합니다.
+3. GPT-4o, DALL-E 3: AI를 활용하여 가사를 요약하고 앨범 소개문과 앨범 커버 이미지를 자동으로 생성해, 사용자 편의성을 극대화했습니다.
 4. Spring Batch & Scheduler: 일별, 월별로 자동으로 랭킹을 관리하고 갱신하여 사용자 활동을 측정합니다.
 5. Redisson 분산락 적용: 좋아요 및 스트리밍 처리 시 동시성 문제를 해결하여 시스템 안정성 보장합니다.
 6. React 컴포넌트 모듈화: 유지보수성을 높여 개발 속도를 향상시키고, 코드 품질을 개선시켰습니다.
@@ -146,6 +146,15 @@
 
 <br/>
 
+<details>
+<summary>시스템 플로우 차트(멜팅, AI Cover)</summary>
+<div markdown="1">
+<img width="500px" src="./resources/img/아키텍쳐(멜팅, AI Cover).png">
+</div>
+</details>
+
+<br/>
+
 ### ERD
 
 <img width="500px" src="./resources/img/ERD.png">
@@ -154,18 +163,17 @@
 
 ### [멜팅 API 명세서](./resources/img/api_specification.png)
 
-
 <br/>
 <br/>
 
 ## [개발 환경 및 기술 스택](#목차)
 
-|      개발 환경      | 기술 스택                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |     |
-| :-----------------: | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --- |
+|      개발 환경      | 기술 스택                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
+| :-----------------: | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 |    **Frontend**     | ![HTML5](https://img.shields.io/badge/HTML5-E34F26?style=for-the-badge&logo=HTML5&logoColor=white) ![CSS](https://img.shields.io/badge/CSS-1572b6?style=for-the-badge&logo=css3&logoColor=white) ![react](https://img.shields.io/badge/react-61DAFB?style=for-the-badge&logo=react&logoColor=white) ![typescript](https://img.shields.io/badge/typescript-3178C6?style=for-the-badge&logo=typescript&logoColor=white) ![axios](https://img.shields.io/badge/axios-5A29E4?style=for-the-badge&logo=axios&logoColor=white) ![tailwind](https://img.shields.io/badge/tailwind-css-06B6D4.svg?style=for-the-badge&logo=tailwindcss&logoColor=white) ![shadcn](https://img.shields.io/badge/shadcn/ui-000000.svg?style=for-the-badge&logo=shadcnui&logoColor=white) ![pwa](https://img.shields.io/badge/pwa-5A0FC8.svg?style=for-the-badge&logo=pwa&logoColor=white) |
 |     **Backend**     | ![Java](https://img.shields.io/badge/Java_21-ED8B00?style=for-the-badge&logo=openjdk&logoColor=white) ![Gradle](https://img.shields.io/badge/Gradle-02303A?style=for-the-badge&logo=gradle&logoColor=white) ![Spring Boot](https://img.shields.io/badge/Spring_Boot_3.3.3-6DB33F?style=for-the-badge&logo=spring&logoColor=white) ![Spring Security](https://img.shields.io/badge/Spring_Security-6DB33F?style=for-the-badge&logo=spring-security&logoColor=white) ![OAuth2](https://img.shields.io/badge/OAuth2-6DB33F?style=for-the-badge&logo=spring-security&logoColor=white) ![Spring Data JPA](https://img.shields.io/badge/Spring_Data_JPA-gray?style=for-the-badge&logo=Spring_Data_JPA&logoColor=white) ![JWT](https://img.shields.io/badge/JWT-000000?style=for-the-badge&logo=json-web-tokens&logoColor=white)                                       |
-|       **DB**        | ![PostgreSQL](https://img.shields.io/badge/postgresql-4479A1?style=for-the-badge&logo=postgresql&logoColor=white) ![redis](https://img.shields.io/badge/redis-DC382D?style=for-the-badge&logo=redis&logoColor=white) ![Elastic Search](https://img.shields.io/badge/elasticsearch-005571?style=for-the-badge&logo=elasticsearch&logoColor=white)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |
-| **AI**| ![fast api](https://img.shields.io/badge/FastAPI-005571?style=for-the-badge&logo=fastapi) ![huggingface](https://img.shields.io/badge/huggingface-FFD21E?style=for-the-badge&logo=huggingface&logoColor=black)| 
+|       **DB**        | ![PostgreSQL](https://img.shields.io/badge/postgresql-4479A1?style=for-the-badge&logo=postgresql&logoColor=white) ![redis](https://img.shields.io/badge/redis-DC382D?style=for-the-badge&logo=redis&logoColor=white) ![Elasticsearch](https://img.shields.io/badge/elasticsearch-005571?style=for-the-badge&logo=elasticsearch&logoColor=white)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
+|       **AI**        | ![fast api](https://img.shields.io/badge/FastAPI-005571?style=for-the-badge&logo=fastapi) ![huggingface](https://img.shields.io/badge/huggingface-FFD21E?style=for-the-badge&logo=huggingface&logoColor=black)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
 |      **Infra**      | ![amazonec2](https://img.shields.io/badge/amazon_ec2-FF9900?style=for-the-badge&logo=amazonec2&logoColor=white) ![docker](https://img.shields.io/badge/docker-2496ED?style=for-the-badge&logo=docker&logoColor=white) ![nginx](https://img.shields.io/badge/nginx-009639?style=for-the-badge&logo=nginx&logoColor=white)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
 | **Management Tool** | ![Jira](https://img.shields.io/badge/jira-0052CC?style=for-the-badge&logo=jira&logoColor=white) ![Gitlab](https://img.shields.io/badge/GitLab-FC6D26?style=for-the-badge&logo=GitLab&logoColor=white) ![Mattermost](https://img.shields.io/badge/mattermost-0058CC?style=for-the-badge&logo=mattermost&logoColor=white) ![Notion](https://img.shields.io/badge/Notion-000000.svg?style=for-the-badge&logo=notion&logoColor=white) ![Figma](https://img.shields.io/badge/figma-F24E1E?style=for-the-badge&logo=figma&logoColor=white) ![Swagger](https://img.shields.io/badge/-Swagger-%23Clojure?style=for-the-badge&logo=swagger&logoColor=white)                                                                                                                                                                                                              |
 
@@ -174,7 +182,7 @@
 <details>
 <summary>다양성팀 JIRA</summary>
 <div markdown="1">
-<img width="500px" src="./resources/jira/jira_flow_digram.PNG">
+<img width="500px" src="./resources/img/jira/jira_flow_digram.PNG">
 </div>
 </details>
 
@@ -190,9 +198,9 @@
     <th style="text-align: center;"><a href="https://github.com/jmxx219">손지민</a></th>
   </tr>
   <tr>
-    <td style="text-align: center;"><img src="./resources/img/전상현.png" alt="" width="150px"/></td>
-    <td style="text-align: center;"><img src="./resources/img/이보연.png" alt="" width="150px"/></td>
-    <td style="text-align: center;"><img src="./resources/img/손지민.png" alt="" width="150px" /></td>
+    <td style="text-align: center;"><img src="./resources/img/member/전상현.png" alt="" width="150px"/></td>
+    <td style="text-align: center;"><img src="./resources/img/member/이보연.png" alt="" width="150px"/></td>
+    <td style="text-align: center;"><img src="./resources/img/member/손지민.png" alt="" width="150px" /></td>
   </tr>
   <tr>
     <td style="text-align: center;"><b>Frontend</b></td>
@@ -208,9 +216,9 @@
     <th style="text-align: center;"><a href="https://github.com/EH05">최은혜</a></th>
   </tr>
   <tr>
-    <td style="text-align: center;"><img src="./resources/img/유승현.png" alt="" width="150px" /></td>
-    <td style="text-align: center;"><img src="./resources/img/염규영.png" alt="" width="150px"/></td>
-    <td style="text-align: center;"><img src="./resources/img/최은혜.png" alt="" width="150px" /></td>
+    <td style="text-align: center;"><img src="./resources/img/member/유승현.png" alt="" width="150px" /></td>
+    <td style="text-align: center;"><img src="./resources/img/member/염규영.png" alt="" width="150px"/></td>
+    <td style="text-align: center;"><img src="./resources/img/member/최은혜.png" alt="" width="150px" /></td>
   </tr>
   <tr>
     <td style="text-align: center;"><b>Backend</b></td>

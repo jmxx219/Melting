@@ -4,7 +4,7 @@ IMAGE_NAME="melting-spring"
 IMAGE_TAG="latest"
 CONTAINER_NAME="melting-spring-container"
 LOG_DIR=~/melting_log
-WEBHOOK_URL="https://meeting.ssafy.com/hooks/145xrm8t33f1by3az1p3mfpm3w"
+WEBHOOK_URL="https://meeting.ssafy.com/hooks/{URL}"
 now_port=8080
 
 TIMEOUT=20

@@ -1,7 +1,0 @@
-AWS_ACCESS_KEY_ID = AKIAQZFG43ZCVMPQ4DGH
-AWS_SECRET_ACCESS_KEY = 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
-AWS_REGION = ap-northeast-2
-S3_BUCKET_NAME = melting-data-bucket
-CLOUDFRONT_DOMAIN = d35fpwscei7sb8.cloudfront.net
-REDIS_HOST = j11a701.p.ssafy.io
-REDIS_PASSWORD = melting1234!
