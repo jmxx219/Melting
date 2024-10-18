@@ -3,13 +3,15 @@
     <img src="./resources/img/logo.png" width="22px" style="margin-right: 15px"/> 멜팅, Melting
   </h1>
   <img src="./resources/img/main.png"/>
-  <h3>SSAFY 11기 특화 프로젝트 최우수상 수상</h3>
+  <h3>🏆 SSAFY 11기 특화 프로젝트 최우수상 수상 🏆</h3>
   <h4>AI와 함께 나만의 커버곡을 만들어 누구나 쉽게 앨범을 발매할 수 있는 웹앱 플랫폼 서비스</h5>
   <p>2024.09.26 ~ 2024.10.10</p>  
     
   <a href="https://j11a701.p.ssafy.io">멜팅 서비스</a>
   &nbsp; | &nbsp; 
   <a href="https://jmxx219.notion.site/d6dd5f133d194f14becf18077ff9bfb6?pvs=4">다양성 팀 Notion</a>
+  &nbsp; | &nbsp; 
+   <a href="exec/멜팅_발표자료.pdf">발표 PPT</a>
 </div>
 
 <br>
