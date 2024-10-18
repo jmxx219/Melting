@@ -1,17 +1,18 @@
-# <img src="./resources/img/logo.png" width="20px"/> 멜팅, Melting
+<div align="center">
+  <h1 style="display: flex; align-items: center; justify-content: center; width: 100%;">
+    <img src="./resources/img/logo.png" width="22px" style="margin-right: 15px"/> 멜팅, Melting
+  </h1>
+  <img src="./resources/img/main.png"/>
+  <h3>SSAFY 11기 특화 프로젝트 최우수상 수상</h3>
+  <h4>AI와 함께 나만의 커버곡을 만들어 누구나 쉽게 앨범을 발매할 수 있는 웹앱 플랫폼 서비스</h5>
+  <p>2024.09.26 ~ 2024.10.10</p>  
+    
+  <a href="https://j11a701.p.ssafy.io">멜팅 서비스</a>
+  &nbsp; | &nbsp; 
+  <a href="https://jmxx219.notion.site/d6dd5f133d194f14becf18077ff9bfb6?pvs=4">다양성 팀 Notion</a>
+</div>
 
-<br/>
-<img src="./resources/img/main.png" />
-<br/><br/>
-
-> '멜팅'은 AI와 함께 나만의 커버곡을 만들어 누구나 쉽게 앨범을 발매할 수 있는 웹앱 플랫폼 서비스입니다.
-
-<br/>
-
-| [멜팅 랜딩 페이지](https://j11a701.p.ssafy.io) | [멜팅 서비스](https://j11a701.p.ssafy.io/main) | [다양성 팀 Notion](https://www.notion.so/jmxx219/d6dd5f133d194f14becf18077ff9bfb6) |
-| :--------------------------------------------: | :--------------------------------------------: | :--------------------------------------------------------------------------------: |
-
-<br><br>
+<br>
 
 ## 목차
 
@@ -25,10 +26,6 @@
 <br/>
 
 ## [개요](#목차)
-
-> **개발 기간** : `2024-09-26 ~ 2024-10-10`
-
-<br>
 
 멜팅은 AI를 활용해 누구나 손쉽게 커버곡을 만들고 앨범을 발매할 수 있는 플랫폼입니다. 최근 AI 기술과 음악이 결합된 사례들이 많은 주목을 받고 있으며, 특히 AI를 활용한 커버곡에 대한 관심이 높아지고 있습니다. 멜팅은 노래 실력이 부족하거나 노래하는 것이 부끄러운 사람들도 자신의 목소리를 활용해 고품질의 커버곡을 제작하고, 이를 앨범으로 완성할 수 있도록 도와줍니다. 덕분에 일반인도 가수처럼 자신만의 앨범을 멋지게 만들어볼 수 있습니다.
 
